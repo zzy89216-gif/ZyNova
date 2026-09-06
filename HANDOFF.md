@@ -154,9 +154,46 @@ git push "https://zzy89216-gif:<TOKEN>@github.com/zzy89216-gif/ZyNova.git" main:
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新提交：合规整改（About 页声明、GPL-3.0、链接指向 ZyNova）
+- 已发布版本：**v2.5**（Release 链接：https://github.com/zzy89216-gif/ZyNova/releases/tag/v2.5）
+- 最新提交：合规整改（About 页声明、GPL-3.0、链接指向 ZyNova）+ 交接文档
 - 编译 workflow：`build_apk.yml`（Release arm64）
 
 ---
 
-**最后更新**：2026-09-06（合规整改后，等待编译+发布 Release）
+## 十一、发布 Release 的完整步骤（以后重复用）
+
+APK 编译由 GitHub Actions 自动完成，发布 Release 用 GitHub API。下面是完整命令（`<TOKEN>` 需用户提供）：
+
+```bash
+TOKEN="<TOKEN>"
+REPO="zzy89216-gif/ZyNova"
+
+# 1. 等编译完成后，找最新成功的 run id 和 artifact id
+curl -s -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO/actions/runs?status=success" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(r['id'], r['name']) for r in d['workflow_runs'][:5]]"
+
+# 2. 下载 APK artifact（zip 格式，需解压得到 .apk）
+RUN_ID="<上面的 run id>"
+curl -s -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(a['id'], a['name']) for a in d['artifacts']]"
+ARTIFACT_ID="<上面的 artifact id>"
+curl -sL -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO/actions/artifacts/$ARTIFACT_ID/zip" -o apk.zip
+unzip apk.zip -d apk_dir/
+
+# 3. 创建 Release
+curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  "https://api.github.com/repos/$REPO/releases" \
+  -d '{"tag_name":"v2.5","name":"ZyNova v2.5","body":"发布说明","draft":false,"prerelease":false}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['id'], d['upload_url'])"
+
+# 4. 上传 APK（把 upload_url 里的 {?name,label} 去掉，加 ?name=xxx.apk）
+RELEASE_ID="<上面的 release id>"
+curl -sL -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/vnd.android.package-archive" \
+  --data-binary @apk_dir/ZyNova-2.5-arm64-v8a.apk \
+  "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=ZyNova-2.5-arm64-v8a.apk"
+```
+
+> ⚠️ 大文件上传/下载可能中断，APK 下载可用 `curl -C -` 断点续传。
+
+---
+
+**最后更新**：2026-09-06（v2.5 已发布 Release，等待清理本地临时文件）
+
