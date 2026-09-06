@@ -1239,6 +1239,8 @@
     <!--  关于  -->
     <string name="about_launcher_title">关于启动器</string>
     <string name="about_launcher_version">启动器版本：%s</string>
+    <string name="about_launcher_unofficial_notice">ZyNova 是 ZalithLauncher2 的非官方修改版本，并非官方发布。</string>
+    <string name="about_launcher_license">许可证</string>
     <string name="about_launcher_author_movtery_title">墨北MovTery</string>
     <string name="about_launcher_author_movtery_text">%s 的作者</string>
     <string name="about_launcher_project_link">项目地址</string>

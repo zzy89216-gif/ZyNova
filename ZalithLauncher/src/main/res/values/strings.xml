@@ -1239,6 +1239,8 @@
     <!-- About -->
     <string name="about_launcher_title">About Launcher</string>
     <string name="about_launcher_version">Launcher Version: %s</string>
+    <string name="about_launcher_unofficial_notice">ZyNova is an unofficial modified version of ZalithLauncher2, not an official release.</string>
+    <string name="about_launcher_license">License</string>
     <string name="about_launcher_author_movtery_title">MovTery</string>
     <string name="about_launcher_author_movtery_text">Author of %s</string>
     <string name="about_launcher_project_link">Project Link</string>

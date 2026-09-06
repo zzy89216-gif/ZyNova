@@ -117,7 +117,20 @@ fun AboutInfoScreen(
                                 ) {
                                     Text(text = stringResource(R.string.about_launcher_project_link))
                                 }
+                                Button(
+                                    onClick = { openLicense(R.raw.gpl_3_license) }
+                                ) {
+                                    Text(text = stringResource(R.string.about_launcher_license))
+                                }
                             }
+                        )
+
+                        //非官方声明
+                        Text(
+                            text = stringResource(R.string.about_launcher_unofficial_notice),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(horizontal = 14.dp)
                         )
 
                         ButtonIconItem(
