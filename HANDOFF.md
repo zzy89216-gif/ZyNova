@@ -159,6 +159,7 @@ git push "https://zzy89216-gif:<TOKEN>@github.com/zzy89216-gif/ZyNova.git" main:
 - 历史版本：v2.5（有前置依赖 bug，已修复于 v2.5.1）
 - 最新提交：合规整改（About 页声明、GPL-3.0、链接指向 ZyNova）+ 交接文档
 - 编译 workflow：`build_apk.yml`（Release arm64）
+- 更新日志：`CHANGELOG.md`（记录每个版本的变更，发布新版本时记得同步更新）
 
 ---
 
