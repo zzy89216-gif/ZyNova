@@ -137,6 +137,7 @@ git push "https://zzy89216-gif:<TOKEN>@github.com/zzy89216-gif/ZyNova.git" main:
 4. **sdkmanager SSL 报错**（trustAnchors）→ 已通过 `update-ca-certificates -f` 修复。
 5. **GitHub Actions KSP 插件解析失败** → 是阿里云镜像导致的，settings.gradle.kts 必须用官方源。
 6. **GitHub fine-grained token 不能 push** → 要用 classic token（ghp_ 开头），勾选 repo 权限。
+7. **一键安装不自动下载前置依赖**（已在 v2.5.1 修复）→ 原因是 `_Download.QuickInstall.kt` 忽略了 Modrinth 依赖的 `version_id`（作者指定的精确版本），改成重新查项目版本+选适配导致选不到。修复方法：`PlatformDependency` 增加 `versionId` 字段，`collectDependencies` 优先用 `getVersionById()` 获取精确版本。
 
 ---
 
@@ -154,7 +155,8 @@ git push "https://zzy89216-gif:<TOKEN>@github.com/zzy89216-gif/ZyNova.git" main:
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 已发布版本：**v2.5**（Release 链接：https://github.com/zzy89216-gif/ZyNova/releases/tag/v2.5）
+- 已发布版本：**v2.5.1**（最新，Release 链接：https://github.com/zzy89216-gif/ZyNova/releases/tag/v2.5.1）
+- 历史版本：v2.5（有前置依赖 bug，已修复于 v2.5.1）
 - 最新提交：合规整改（About 页声明、GPL-3.0、链接指向 ZyNova）+ 交接文档
 - 编译 workflow：`build_apk.yml`（Release arm64）
 
@@ -195,5 +197,5 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application
 
 ---
 
-**最后更新**：2026-09-06（v2.5 已发布 Release，等待清理本地临时文件）
+**最后更新**：2026-09-06（v2.5.1 已发布，修复前置依赖自动下载）
 
