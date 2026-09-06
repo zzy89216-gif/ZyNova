@@ -25,6 +25,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDependencyType
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
+import com.movtery.zalithlauncher.game.download.assets.platform.getVersionById
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.mcim.mapMCIMMirrorUrls
 import com.movtery.zalithlauncher.game.version.installed.Version
@@ -148,14 +149,36 @@ private suspend fun collectDependencies(
 
     requiredDeps.forEach { dep ->
         runCatching {
-            val depVersions = resolveAdaptVersions(dep.projectId, dep.platform, currentVersion)
-            if (depVersions != null) {
-                collectDependencies(depVersions, currentVersion, visited, out)
+            val depVersion = resolveDependencyVersion(dep, currentVersion)
+            if (depVersion != null) {
+                collectDependencies(depVersion, currentVersion, visited, out)
             }
         }.onFailure { e ->
             Logger.warning(TAG, "Failed to resolve dependency ${dep.projectId}: ${e.message}")
         }
     }
+}
+
+/**
+ * 解析单个依赖的具体版本
+ * 优先使用作者在平台上指定的精确版本 ID（如 Modrinth 的 version_id），
+ * 若没有精确版本或获取失败，则回退为「根据项目 ID 选择适配当前游戏版本的最新版本」
+ */
+private suspend fun resolveDependencyVersion(
+    dep: PlatformVersion.PlatformDependency,
+    currentVersion: Version
+): PlatformVersion? {
+    dep.versionId?.let { versionId ->
+        runCatching {
+            val exact = getVersionById(versionId, dep.platform)
+            if (exact != null && exact.initFile(dep.projectId)) {
+                return exact
+            }
+        }.onFailure { e ->
+            Logger.warning(TAG, "Failed to load exact dependency version $versionId: ${e.message}")
+        }
+    }
+    return resolveAdaptVersions(dep.projectId, dep.platform, currentVersion)
 }
 
 /**

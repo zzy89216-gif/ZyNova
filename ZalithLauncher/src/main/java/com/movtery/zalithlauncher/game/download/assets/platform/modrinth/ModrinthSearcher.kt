@@ -105,4 +105,14 @@ class ModrinthSearcher(
             null
         }
     }
+
+    override suspend fun getVersionById(
+        versionID: String
+    ): ModrinthVersion? {
+        return try {
+            httpGetJson(url = "$api/version/$versionID")
+        } catch (_: ClientRequestException) {
+            null
+        }
+    }
 }

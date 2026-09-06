@@ -227,6 +227,27 @@ suspend fun getVersions(
     }
 }
 
+/**
+ * 通过版本ID获取单个版本的完整信息
+ * @return 对应版本；若该平台不支持或未找到则返回 null
+ */
+suspend fun getVersionById(
+    versionID: String,
+    platform: Platform,
+): PlatformVersion? = when (platform) {
+    Platform.CURSEFORGE -> mirroredPlatformSearcher(
+        searchers = mirroredCurseForgeSource()
+    ) { searcher ->
+        searcher.getVersionById(versionID)
+    }
+    Platform.MODRINTH -> mirroredPlatformSearcher(
+        searchers = mirroredModrinthSource()
+    ) { searcher ->
+        searcher.getVersionById(versionID)
+    }
+}
+
+
 suspend fun <E> getVersions(
     projectID: String,
     platform: Platform,

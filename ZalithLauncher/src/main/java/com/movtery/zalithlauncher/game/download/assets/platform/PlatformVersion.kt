@@ -104,10 +104,12 @@ interface PlatformVersion {
     /**
      * 平台版本依赖项目类，保存依赖项关键信息
      * @param type 依赖类型
+     * @param versionId 依赖的精确版本 ID，作者在平台上指定的版本（如 Modrinth 的 version_id），可为 null
      */
     class PlatformDependency(
         val platform: Platform,
         val projectId: String,
-        val type: PlatformDependencyType
+        val type: PlatformDependencyType,
+        val versionId: String? = null
     )
 }

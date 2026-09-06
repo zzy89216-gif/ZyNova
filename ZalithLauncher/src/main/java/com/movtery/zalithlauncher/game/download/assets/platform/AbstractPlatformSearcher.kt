@@ -60,4 +60,12 @@ abstract class AbstractPlatformSearcher(
         file: File,
         sha1: String,
     ): PlatformVersion?
+
+    /**
+     * 通过版本ID获取单个版本的完整信息
+     * @return 对应版本；若该平台不支持或未找到则返回 null
+     */
+    abstract suspend fun getVersionById(
+        versionID: String,
+    ): PlatformVersion?
 }

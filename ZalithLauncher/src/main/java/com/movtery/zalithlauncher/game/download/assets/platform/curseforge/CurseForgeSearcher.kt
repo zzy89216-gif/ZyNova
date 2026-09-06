@@ -138,6 +138,10 @@ class CurseForgeSearcher(
             ?.firstOrNull()
             ?.file
     }
+
+    override suspend fun getVersionById(
+        versionID: String
+    ): CurseForgeFile? = null
 }
 
 /**
