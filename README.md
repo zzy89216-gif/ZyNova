@@ -5,11 +5,11 @@
 > 基于 ZalithLauncher2 开源代码开发的独立非官方项目  
 > **全流程使用 Android 手机开发、构建、测试与发布**
 
-[![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](#)
-[![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](#)
-[![License](https://img.shields.io/badge/License-GPL--3.0-orange)](#)
-[![Release](https://img.shields.io/badge/Release-2.5.1-purple)](#)
-[![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](#)
+""Platform" (https://img.shields.io/badge/Platform-Android-brightgreen)" (https://developer.android.com/)
+""Language" (https://img.shields.io/badge/Primary-Kotlin-blue)" (https://kotlinlang.org/)
+""License" (https://img.shields.io/badge/License-GPL--3.0-orange)" (https://www.gnu.org/licenses/gpl-3.0.html)
+""Release" (https://img.shields.io/badge/Release-2.5.1-purple)" (https://github.com/zzy89216-gif/ZyNova/releases/tag/v2.5.1)
+""Architecture" (https://img.shields.io/badge/Architecture-Multi--ABI-red)" (https://github.com/zzy89216-gif/ZyNova)
 
 ---
 
