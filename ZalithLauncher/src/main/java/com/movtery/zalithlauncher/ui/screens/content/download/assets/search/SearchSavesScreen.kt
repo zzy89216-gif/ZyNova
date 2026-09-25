@@ -31,9 +31,9 @@ fun SearchSavesScreen(
     downloadScreenKey: TitledNavKey?,
     downloadSavesScreenKey: TitledNavKey,
     downloadSavesScreenCurrentKey: TitledNavKey?,
-    swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> },
     /** 资源安装上下文（目标实例名称） */
-    installTargetVersion: String? = null
+    installTargetVersion: String? = null,
+    swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
     SearchAssetsScreen(
         mainScreenKey = mainScreenKey,
