@@ -27,7 +27,16 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 26.1.0
+## ✨ Highlights of 26.2.0
+
+- **Fixed**: resource installation context being lost when entering the download center
+  from *Version Settings → resource management* (the `@Transient` field on a NavKey was
+  silently dropped by Navigation3's saveable serialization)
+- **Improved**: resource search now automatically filters by the current instance's
+  Minecraft version — no need to pick the version manually
+- **New**: a **⚠️ Extreme** glass level (with a performance warning before enabling)
+
+### Highlights of 26.1.0
 
 The goal of this release is to further move away from the legacy logic of ZalithLauncher2,
 and to establish ZyNova's own resource management, download, home screen and UI foundation.

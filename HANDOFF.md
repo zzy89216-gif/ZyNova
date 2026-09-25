@@ -142,6 +142,20 @@
 | `utils/device/VulkanRequirement.kt` | Minecraft 的 Vulkan 要求档案 |
 | `utils/device/VulkanCheckResult.kt` | Vulkan 三态检测结果模型 |
 
+### 26.2.0 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `viewmodel/ScreenBackStackViewModel.kt` | 新增 `resourceInstallTarget`，持有资源安装上下文 |
+| `ui/screens/BackStackNavKey.kt` | 移除失效的 `@Transient installTargetVersion` 字段 |
+| `ui/screens/content/DownloadScreen.kt` | `navigateToDownload` 写入上下文；4 个入口透传给页面 |
+| `ui/screens/content/download/Download*Screen.kt` | 新增 `installTargetVersion` 参数；透传给搜索页 |
+| `ui/screens/content/download/assets/search/Search*.kt` | 支持初始安装上下文；按实例 MC 版本初始化过滤条件 |
+| `ui/screens/content/elements/LauncherElements.kt` | 新增极致档效果 `extremeGlassEffects()` 与动态模糊半径 |
+| `ui/screens/main/card_home/CardHomePage.kt` | 极致档下的卡片吸附与动态阴影 |
+| `setting/enums/GlassLevel.kt` | 新增 `Extreme` 档位 |
+| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 极致档切换前的性能警告弹窗 |
+
 ### 主要修改文件
 
 | 文件 | 改动 |
