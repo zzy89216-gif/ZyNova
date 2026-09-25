@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.platform.AggregatedSearchResult
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSortField
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform

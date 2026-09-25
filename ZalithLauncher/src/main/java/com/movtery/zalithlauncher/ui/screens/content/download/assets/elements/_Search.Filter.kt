@@ -112,8 +112,10 @@ fun SearchFilter(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     enablePlatform: Boolean = true,
-    searchPlatform: Platform,
-    onPlatformChange: (Platform) -> Unit = {},
+    searchPlatform: SearchPlatform,
+    onPlatformChange: (SearchPlatform) -> Unit = {},
+    /** 平台选择是否包含「所有」 */
+    includeAllPlatform: Boolean = true,
     searchName: String,
     onSearchNameChange: (String) -> Unit = {},
     onSearch: () -> Unit,
@@ -196,6 +198,7 @@ fun SearchFilter(
                     modifier = Modifier.fillMaxWidth(),
                     searchPlatform = searchPlatform,
                     onPlatformChange = onPlatformChange,
+                    includeAll = includeAllPlatform,
                 )
             }
         }
@@ -502,11 +505,13 @@ fun <E> FilterListLayout(
 fun PlatformListLayout(
     searchPlatform: SearchPlatform,
     onPlatformChange: (SearchPlatform) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** 是否包含「所有」选项；按 ID 搜索等场景只需要具体来源 */
+    includeAll: Boolean = true
 ) {
     FilterListLayout(
         modifier = modifier,
-        items = SearchPlatform.entries,
+        items = if (includeAll) SearchPlatform.entries else SearchPlatform.entries.filter { !it.isAll },
         selectionMode = FilterSelectionMode.Single,
         selectedItems = listOfNotNull(searchPlatform),
         onSelectionChange = { new ->
