@@ -119,7 +119,7 @@ fun DownloadShadersScreen(
                         downloadScreenKey = downloadScreenKey,
                         downloadShadersScreenKey = key,
                         downloadShadersScreenCurrentKey = downloadShadersScreenKey,
-                        installTargetVersion = installTargetVersion
+                        installTargetVersion = installTargetVersion,
                         onQuickInstall = installTargetVersion?.let { target ->
                             { platform, projectId, _ ->
                                 quickInstallResource(

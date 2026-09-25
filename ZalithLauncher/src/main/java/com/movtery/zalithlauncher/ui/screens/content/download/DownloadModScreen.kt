@@ -119,7 +119,7 @@ fun DownloadModScreen(
                         downloadScreenKey = downloadScreenKey,
                         downloadModScreenKey = key,
                         downloadModScreenCurrentKey = downloadModScreenKey,
-                        installTargetVersion = installTargetVersion
+                        installTargetVersion = installTargetVersion,
                         onQuickInstall = installTargetVersion?.let { target ->
                             { platform, projectId, _ ->
                                 quickInstallResource(

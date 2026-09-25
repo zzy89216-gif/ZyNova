@@ -138,7 +138,7 @@ fun DownloadSavesScreen(
                         downloadScreenKey = downloadScreenKey,
                         downloadSavesScreenKey = key,
                         downloadSavesScreenCurrentKey = downloadSavesScreenKey,
-                        installTargetVersion = installTargetVersion
+                        installTargetVersion = installTargetVersion,
                         onQuickInstall = installTargetVersion?.let { target ->
                             { platform, projectId, _ ->
                                 quickInstallResource(

@@ -119,7 +119,7 @@ fun DownloadResourcePackScreen(
                         downloadScreenKey = downloadScreenKey,
                         downloadResourcePackScreenKey = key,
                         downloadResourcePackScreenCurrentKey = downloadResourcePackScreenKey,
-                        installTargetVersion = installTargetVersion
+                        installTargetVersion = installTargetVersion,
                         onQuickInstall = installTargetVersion?.let { target ->
                             { platform, projectId, _ ->
                                 quickInstallResource(
