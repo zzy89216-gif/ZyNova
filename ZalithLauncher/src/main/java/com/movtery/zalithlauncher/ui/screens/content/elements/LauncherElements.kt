@@ -121,6 +121,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.io.File
+import kotlin.random.Random
 import kotlin.math.sqrt
 
 @Parcelize
@@ -648,24 +649,180 @@ private fun Modifier.glass(
     // null 表示没有外部模糊源（背景模式），直接模糊自身内容
     val input = if (hazeState != null) HazeInput.Sources(hazeState) else HazeInput.Content
 
+    val glassLevel = AllSettings.glassLevel.state
+
+    //【Variable Gaussian Blur】极致档下让模糊半径随时间缓慢变化
+    val blurScale = if (glassLevel == GlassLevel.Extreme) {
+        val blurTransition = rememberInfiniteTransition(label = "extremeBlurRadius")
+        val scale by blurTransition.animateFloat(
+            initialValue = 0.85f,
+            targetValue = 1.25f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 7000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "extremeBlurScale"
+        )
+        scale
+    } else {
+        1f
+    }
+
     val blurred = this.hazeBlur(
         input = input,
         style = HazeBlurStyle {
             blurEnabled(true)
-            blurRadius(blur.dp)
+            blurRadius((blur * blurScale).dp)
             noiseFactor(noiseFactor)
             colorEffects(colorEffects)
         }
     )
 
     //玻璃效果档位：默认关闭，避免高开销实时模糊与持续动画
-    return when (AllSettings.glassLevel.state) {
+    return when (glassLevel) {
         GlassLevel.Off -> blurred
         GlassLevel.Standard -> blurred.drawGlassHighlights(
             primaryShift = STATIC_PRIMARY_SHIFT,
             secondaryShift = STATIC_SECONDARY_SHIFT
         )
         GlassLevel.Enhanced -> blurred.liquidGlassHighlights()
+        GlassLevel.Extreme -> blurred.extremeGlassEffects()
+    }
+}
+
+/**
+ * 极致档玻璃效果
+ *
+ * 在增强档的基础上叠加全部视觉效果：
+ *
+ * 1. Real-time Backdrop Blur —— 由外层 Haze 提供的实时背景模糊
+ * 2. Variable Gaussian Blur —— 模糊半径随时间变化（见 [glass]）
+ * 3. Refraction / Distortion —— 多层反向流动的折射光带，形成背景扭曲感
+ * 4. Specular Highlight —— 高光光晕随位置移动
+ * 5. Dynamic Lighting —— 光照强度随时间脉动
+ * 6. Depth / Parallax —— 三层以不同速度流动，产生景深与视差
+ * 7. Magnetic / Snap Interaction —— 由卡片侧实现（见 CardHomePage）
+ * 8. Dynamic Shadow —— 由卡片侧实现（见 CardHomePage）
+ * 9. Noise / Grain —— 固定分布的玻璃噪点纹理
+ * 10. Multi-layer Blur —— 由宽到窄的多层光带模拟不同模糊半径的层次
+ */
+@Composable
+private fun Modifier.extremeGlassEffects(): Modifier {
+    val transition = rememberInfiniteTransition(label = "extremeGlass")
+
+    //【Depth / Parallax】三层不同速度的流动
+    val layerOuter by transition.animateFloat(
+        initialValue = -1.4f,
+        targetValue = 1.8f,
+        animationSpec = infiniteRepeatable(tween(21000, easing = LinearEasing), RepeatMode.Restart),
+        label = "extremeLayerOuter"
+    )
+    val layerMain by transition.animateFloat(
+        initialValue = -1f,
+        targetValue = 2f,
+        animationSpec = infiniteRepeatable(tween(9000, easing = LinearEasing), RepeatMode.Restart),
+        label = "extremeLayerMain"
+    )
+    val layerSub by transition.animateFloat(
+        initialValue = 2f,
+        targetValue = -1f,
+        animationSpec = infiniteRepeatable(tween(14000, easing = LinearEasing), RepeatMode.Restart),
+        label = "extremeLayerSub"
+    )
+    //【Dynamic Lighting】光照强度脉动
+    val lighting by transition.animateFloat(
+        initialValue = 0.72f,
+        targetValue = 1.28f,
+        animationSpec = infiniteRepeatable(tween(6000, easing = LinearEasing), RepeatMode.Reverse),
+        label = "extremeLighting"
+    )
+    //【Refraction / Distortion】折射强度
+    val refraction by transition.animateFloat(
+        initialValue = 0.55f,
+        targetValue = 1.45f,
+        animationSpec = infiniteRepeatable(tween(11000, easing = LinearEasing), RepeatMode.Reverse),
+        label = "extremeRefraction"
+    )
+
+    //【Noise / Grain】固定分布的噪点，避免每帧随机导致闪烁
+    val grain = remember {
+        val random = Random(20_260_925L)
+        List(110) { Offset(random.nextFloat(), random.nextFloat()) }
+    }
+
+    return this.drawBehind {
+        val w = size.width
+        val h = size.height
+        val diagonal = w + h
+        val span = w.coerceAtLeast(h)
+
+        //【Multi-layer Blur + Refraction】最外层柔光带：最宽最柔，模拟大半径模糊的折射边缘
+        drawRect(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color.White.copy(alpha = 0.09f * lighting),
+                    Color.Transparent
+                ),
+                start = Offset(layerOuter * diagonal * refraction - w * 1.5f, -h),
+                end = Offset(layerOuter * diagonal * refraction + w * 0.5f, h)
+            )
+        )
+
+        //【Specular Highlight】主高光带（最亮）
+        drawRect(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color.White.copy(alpha = 0.34f * lighting),
+                    Color.White.copy(alpha = 0.11f * lighting),
+                    Color.Transparent
+                ),
+                start = Offset(layerMain * diagonal - w, -h),
+                end = Offset(layerMain * diagonal + w, h)
+            )
+        )
+
+        //【Refraction / Distortion】次级折射带：反向流动，制造错位与扭曲感
+        drawRect(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color.White.copy(alpha = 0.16f * lighting),
+                    Color.Transparent
+                ),
+                start = Offset(layerSub * diagonal - w, -h),
+                end = Offset(layerSub * diagonal + w, h)
+            )
+        )
+
+        //【Specular Highlight + Dynamic Lighting】随位置移动的高光光晕
+        val specularRadius = span * (0.34f + 0.06f * refraction)
+        val specularCenter = Offset(
+            x = (0.5f + layerMain * 0.28f) * w,
+            y = (0.5f + layerSub * 0.18f) * h
+        )
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.20f * lighting),
+                    Color.Transparent
+                ),
+                center = specularCenter,
+                radius = specularRadius
+            ),
+            radius = specularRadius,
+            center = specularCenter
+        )
+
+        //【Noise / Grain】玻璃噪点纹理
+        grain.forEach { point ->
+            drawCircle(
+                color = Color.White.copy(alpha = 0.016f),
+                radius = 1.2f,
+                center = Offset(point.x * w, point.y * h)
+            )
+        }
     }
 }
 

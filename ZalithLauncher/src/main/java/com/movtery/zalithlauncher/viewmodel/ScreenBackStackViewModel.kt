@@ -18,11 +18,24 @@
 
 package com.movtery.zalithlauncher.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 
 class ScreenBackStackViewModel : ViewModel() {
+    /**
+     * 资源安装上下文：从「版本设置 → 资源管理」进入下载中心时，
+     * 记录目标游戏实例名称。为 null 表示从主界面进入的资源中心（纯浏览）。
+     *
+     * ⚠️ 该状态必须放在 ViewModel 上，而不能放在 NavKey 上：
+     * NavKey 是 @Serializable，Navigation3 的 saveable 机制会序列化 / 反序列化 key，
+     * @Transient 字段会在这一过程中丢失，导致页面读不到上下文。
+     */
+    var resourceInstallTarget by mutableStateOf<String?>(null)
+
     /** 主屏幕 */
     val mainScreen = NestedNavKey.Main()
     /** 设置屏幕 */

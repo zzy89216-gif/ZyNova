@@ -2,6 +2,37 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [26.2.0] - 2026-09-25
+
+### 修复
+- **修复从「版本设置 → 资源管理」进入下载中心时安装上下文丢失的问题**
+  - 原因是安装上下文原本存放在 NavKey 上，而 NavKey 是 `@Serializable`，
+    Navigation3 的 saveable 机制会序列化 / 反序列化 key，`@Transient` 字段会在这一过程中丢失
+  - 现象：进入资源页面后无法与当前实例关联，资源卡片旁也不显示快捷安装按钮
+  - 修复方式：安装上下文改由 `ScreenBackStackViewModel` 持有，不再依赖 NavKey 传递
+- **资源搜索现在会自动按当前实例的 Minecraft 版本过滤**
+  - 从版本设置进入资源页面时，直接使用目标实例的 MC 版本作为初始过滤条件
+  - 不再需要用户手动选择 Minecraft 版本（Context First）
+  - 搜索状态按目标版本独立保存，切换实例时不会串用旧的搜索条件
+
+### 新增
+- **玻璃效果新增「⚠️极致」档位**
+  - 切换到该档位前会先弹出**性能警告**，用户确认后才启用
+  - 该档位同时开启以下高开销视觉效果：
+    | 效果 | 说明 |
+    |---|---|
+    | Real-time Backdrop Blur | 实时背景模糊 |
+    | Variable Gaussian Blur | 动态变化的高斯模糊半径 |
+    | Refraction / Distortion | 多层反向流动的折射光带，形成背景扭曲感 |
+    | Specular Highlight | 高光光晕随位置移动 |
+    | Dynamic Lighting | 光照强度随时间脉动 |
+    | Depth / Parallax | 三层不同速度流动，产生景深与视差 |
+    | Magnetic / Snap Interaction | 卡片按下时产生吸附式回弹 |
+    | Dynamic Shadow | 阴影随交互状态实时变化 |
+    | Noise / Grain | 固定分布的玻璃噪点纹理 |
+    | Multi-layer Blur | 由宽到窄的多层光带，模拟不同模糊半径的层次 |
+  - 默认仍为「关闭」，不会影响未主动开启的用户
+
 ## [26.1.1] - 2026-09-25
 
 ### 修复

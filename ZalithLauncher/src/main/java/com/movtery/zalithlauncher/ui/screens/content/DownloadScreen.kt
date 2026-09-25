@@ -56,7 +56,6 @@ import com.movtery.zalithlauncher.ui.components.fadeEdge
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
-import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadGameScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadModPackScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadModScreen
@@ -83,7 +82,8 @@ fun ScreenBackStackViewModel.navigateToDownload(
     installTargetVersion: String? = null
 ) {
     //记录本次进入资源页面的上下文：为 null 表示资源中心（纯浏览）
-    (targetScreen as? BackStackNavKey<*>)?.withInstallTarget(installTargetVersion)
+    //放在 ViewModel 上，避免 NavKey 序列化导致上下文丢失
+    resourceInstallTarget = installTargetVersion
     downloadScreen.clearWith(targetScreen ?: downloadGameScreen)
     mainScreen.removeAndNavigateTo(
         removes = clearBeforeNavKeys,
@@ -246,6 +246,7 @@ private fun NavigationUI(
                 entry<NestedNavKey.DownloadMod> { key ->
                     DownloadModScreen(
                         key = key,
+                        installTargetVersion = backScreenViewModel.resourceInstallTarget,
                         mainScreenKey = backScreenViewModel.mainScreen.currentKey,
                         downloadScreenKey = backScreenViewModel.downloadScreen.currentKey,
                         downloadModScreenKey = backScreenViewModel.downloadModScreen.currentKey,
@@ -259,6 +260,7 @@ private fun NavigationUI(
                 entry<NestedNavKey.DownloadResourcePack> { key ->
                     DownloadResourcePackScreen(
                         key = key,
+                        installTargetVersion = backScreenViewModel.resourceInstallTarget,
                         mainScreenKey = backScreenViewModel.mainScreen.currentKey,
                         downloadScreenKey = backScreenViewModel.downloadScreen.currentKey,
                         downloadResourcePackScreenKey = backScreenViewModel.downloadResourcePackScreen.currentKey,
@@ -272,6 +274,7 @@ private fun NavigationUI(
                 entry<NestedNavKey.DownloadSaves> { key ->
                     DownloadSavesScreen(
                         key = key,
+                        installTargetVersion = backScreenViewModel.resourceInstallTarget,
                         mainScreenKey = backScreenViewModel.mainScreen.currentKey,
                         downloadScreenKey = backScreenViewModel.downloadScreen.currentKey,
                         downloadSavesScreenKey = backScreenViewModel.downloadSavesScreen.currentKey,
@@ -285,6 +288,7 @@ private fun NavigationUI(
                 entry<NestedNavKey.DownloadShaders> { key ->
                     DownloadShadersScreen(
                         key = key,
+                        installTargetVersion = backScreenViewModel.resourceInstallTarget,
                         mainScreenKey = backScreenViewModel.mainScreen.currentKey,
                         downloadScreenKey = backScreenViewModel.downloadScreen.currentKey,
                         downloadShadersScreenKey = backScreenViewModel.downloadShadersScreen.currentKey,

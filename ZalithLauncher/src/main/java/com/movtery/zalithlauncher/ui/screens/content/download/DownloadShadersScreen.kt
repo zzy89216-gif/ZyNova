@@ -57,7 +57,9 @@ fun DownloadShadersScreen(
     downloadShadersScreenKey: TitledNavKey?,
     onCurrentKeyChange: (TitledNavKey?) -> Unit,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    /** 资源安装上下文（目标实例名称）；为 null 表示纯浏览模式 */
+    installTargetVersion: String? = null
 ) {
     val backStack = key.backStack
     val stackTopKey = backStack.lastOrNull()
@@ -86,7 +88,7 @@ fun DownloadShadersScreen(
                 classes = classes,
                 submitError = submitError,
                 //上下文优先：直接把资源安装到进入本页面的那个实例
-                targetVersionName = key.installTargetVersion
+                targetVersionName = installTargetVersion
             )
         },
         onDependencyClicked = { dep, classes ->
@@ -115,7 +117,8 @@ fun DownloadShadersScreen(
                         mainScreenKey = mainScreenKey,
                         downloadScreenKey = downloadScreenKey,
                         downloadShadersScreenKey = key,
-                        downloadShadersScreenCurrentKey = downloadShadersScreenKey
+                        downloadShadersScreenCurrentKey = downloadShadersScreenKey,
+                        installTargetVersion = installTargetVersion
                     ) { platform, projectId, _ ->
                         backStack.navigateTo(
                             NormalNavKey.DownloadAssets(platform, projectId, PlatformClasses.SHADERS)
@@ -137,10 +140,10 @@ fun DownloadShadersScreen(
                                 DownloadSingleOperation.SelectVersion(classes, version, deps)
                             }
                         },
-                        installTargetVersion = key.installTargetVersion,
+                        installTargetVersion = installTargetVersion,
                         //只有从「版本设置 → 资源管理」进入时才提供快捷安装，
                         //资源中心只负责浏览与管理
-                        onQuickInstall = key.installTargetVersion?.let { target ->
+                        onQuickInstall = installTargetVersion?.let { target ->
                             { classes: PlatformClasses, version: PlatformVersion ->
                                 operation = DownloadSingleOperation.QuickInstall(
                                     classes = classes,

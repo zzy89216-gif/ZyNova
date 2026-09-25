@@ -44,5 +44,15 @@ enum class GlassLevel(
     /**
      * 增强：高光缓慢流动，效果最好，但会产生持续动画开销
      */
-    Enhanced(R.string.settings_launcher_glass_level_enhanced)
+    Enhanced(R.string.settings_launcher_glass_level_enhanced),
+
+    /**
+     * ⚠️ 极致：开启全部视觉效果
+     *
+     * 包含多层实时模糊、动态高斯模糊、玻璃折射与背景扭曲、高光随位置变化、
+     * 动态光照、景深视差、卡片吸附、动态阴影、玻璃噪点纹理等。
+     *
+     * 该档位开销很高，仅建议高性能设备使用，因此切换前会向用户显示性能警告。
+     */
+    Extreme(R.string.settings_launcher_glass_level_extreme)
 }

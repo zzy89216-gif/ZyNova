@@ -1074,7 +1074,12 @@
     <string name="settings_launcher_liquid_glass_title">Liquid Glass Effect</string>
     <string name="settings_launcher_glass_level_off">Off</string>
     <string name="settings_launcher_glass_level_standard">Standard</string>
+    <string name="settings_launcher_glass_level_extreme">⚠️ Extreme</string>
     <string name="settings_launcher_glass_level_enhanced">Enhanced</string>
+    <string name="settings_launcher_glass_extreme_warning_title">Performance Warning</string>
+    <string name="settings_launcher_glass_extreme_warning_text">The «Extreme» level enables all glass effects at once: multi-layer real-time blur, dynamic blur radius, refraction / distortion, position-dependent specular highlights, dynamic lighting, depth & parallax, card snapping, dynamic shadows and glass grain.
+
+This is very GPU-intensive and may cause lag, overheating or battery drain on low-end devices. It is recommended only for high-performance devices.</string>
     <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look</string>
     <string name="settings_launcher_festivals_effects_title">Festival Easter Eggs</string>
     <string name="settings_launcher_festivals_effects_summary">Display persistent easter egg effects during specific time periods</string>
