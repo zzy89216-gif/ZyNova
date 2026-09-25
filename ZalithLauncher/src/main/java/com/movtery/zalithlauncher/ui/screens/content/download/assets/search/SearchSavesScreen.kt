@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.ui.screens.content.download.assets.search
 
 import androidx.compose.runtime.Composable
+import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.CurseForgeSavesCategory
@@ -33,6 +34,8 @@ fun SearchSavesScreen(
     downloadSavesScreenCurrentKey: TitledNavKey?,
     /** 资源安装上下文（目标实例名称） */
     installTargetVersion: String? = null,
+    /** 一键安装回调；为 null 时不显示安装按钮 */
+    onQuickInstall: ((Platform, projectId: String, iconUrl: String?) -> Unit)? = null,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
     SearchAssetsScreen(
@@ -42,13 +45,15 @@ fun SearchSavesScreen(
         screenKey = NormalNavKey.SearchSaves,
         currentKey = downloadSavesScreenCurrentKey,
         platformClasses = PlatformClasses.SAVES,
-        initialPlatform = Platform.CURSEFORGE,
+        //存档资源只有 CurseForge 提供，这里统一使用「所有」选项
+        initialPlatform = SearchPlatform.ALL,
         enablePlatform = false,
         getCategories = { CurseForgeSavesCategory.entries },
         mapCategories = { platform, string ->
             CurseForgeSavesCategory.entries.find { it.describe() == string }
         },
         swapToDownload = swapToDownload,
-        installTargetVersion = installTargetVersion
+        installTargetVersion = installTargetVersion,
+        onQuickInstall = onQuickInstall
     )
 }

@@ -226,6 +226,9 @@
     <string name="download_install_input_version_name">Waiting for user to enter version name</string>
     <string name="download_install_input_version_name_title">Enter the pre-installed version name</string>
     <string name="download_install_warning_mobile_data">You are using mobile data. Continuing the download will consume data.</string>
+    <string name="download_assets_platform_all">All</string>
+    <string name="download_assets_platform_curseforge">CurseForge</string>
+    <string name="download_assets_platform_modrinth">Modrinth</string>
     <string name="download_assets_filter_search_name">Search Name</string>
     <string name="download_assets_filter_search_platform">Target Platform</string>
     <string name="download_assets_filter_game_version">Game Version</string>
@@ -244,6 +247,7 @@
     <string name="download_assets_failed_to_get_project">Failed to retrieve project information: %s. Tap to retry.</string>
     <string name="download_assets_failed_to_get_versions">Failed to retrieve version list: %s. Tap to retry.</string>
     <string name="download_assets_show_only_mc_release">Show Only MC Releases</string>
+    <string name="download_assets_search_failed">Search failed, please try again later</string>
     <string name="download_assets_search_mc_versions">Search MC Versions</string>
     <string name="download_assets_dependency_projects">Dependencies</string>
     <string name="download_assets_optional_projects">Optional Projects</string>
@@ -1089,6 +1093,9 @@ This is very GPU-intensive and may cause lag, overheating or battery drain on lo
     <string name="home_card_versions_title">Recent Versions</string>
     <string name="home_card_worlds_title">Local Worlds</string>
     <string name="home_card_servers_title">Servers</string>
+    <string name="home_instance_launch">Launch</string>
+    <string name="home_instance_empty">This version has no worlds or servers yet</string>
+    <string name="home_instance_none">No installed game versions yet</string>
     <string name="home_card_empty">Nothing here yet</string>
     <string name="settings_launcher_home_page_type_local">Load from Local</string>
     <string name="settings_launcher_home_page_type_url">Load from URL</string>

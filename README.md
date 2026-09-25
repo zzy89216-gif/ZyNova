@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.0)
+[![Release](https://img.shields.io/badge/Release-26.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.1)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -204,7 +204,7 @@ ZyNova 提供面向 Minecraft 26.4 Snapshot 1 的 Vulkan 检测：
   - 标准档为静态高光，不启动持续动画
   - 增强档才启用高光流动效果
   - 极致档会一次性开启多层实时模糊、动态模糊半径、折射扭曲、动态光照、
-    景深视差、卡片吸附、动态阴影与噪点纹理等全部效果，
+    景深视差、卡片吸附、动态阴影与噪点纹理等全部效果（使用真实 GPU 着色器实现），
     切换前会弹出性能警告（GPU 负载很高，仅建议高性能设备使用）
 - 在性能与视觉效果之间优先保证移动设备的流畅度，
   避免高开销实时模糊、大量透明层叠加与持续动画
@@ -302,10 +302,11 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.0**
+**ZyNova 26.2.1**
 
-26.2.0 修复了从版本设置进入资源页面时安装上下文丢失的问题，
-并新增玻璃效果「⚠️极致」档位（含性能警告）。
+26.2.1 重做了「⚠️极致」玻璃效果（改用真实 GPU 着色器实现多层模糊与折射扭曲）、
+修复了搜索结果缺少安装按钮与模组加载器未自动选中的问题，
+并把主页改为以「版本」为模块、新增「所有平台」聚合搜索。
 
 26.1.0 版本的核心目标是：进一步脱离 ZalithLauncher2 的遗留逻辑，
 建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。
@@ -530,7 +531,16 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.0（当前版本）
+### 26.2.1（当前版本）
+
+- [x] 极致玻璃效果重做（真实 GPU 多重采样模糊 + 波纹折射扭曲）
+- [x] 搜索结果卡片增加一键安装按钮
+- [x] 模组加载器按当前实例自动选中
+- [x] 主页改为以「版本」为模块，模块内展示该版本的世界与服务器
+- [x] 新增「所有平台」聚合搜索（CurseForge + Modrinth 合并到同一列表）
+- [x] 排序方式默认改为「总下载量」
+
+### 26.2.0
 
 - [x] 修复资源安装上下文丢失（导航键的 `@Transient` 字段会被序列化机制丢弃）
 - [x] 资源搜索自动按当前实例的 Minecraft 版本过滤

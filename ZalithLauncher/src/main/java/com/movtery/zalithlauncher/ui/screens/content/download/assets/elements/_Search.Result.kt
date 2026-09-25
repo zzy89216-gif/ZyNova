@@ -121,6 +121,8 @@ fun ResultListLayout(
     onPreviousPage: (pageNumber: Int) -> Unit,
     onNextPage: (pageNumber: Int, isLastPage: Boolean) -> Unit,
     onNavigatePage: (Int) -> Unit,
+    /** 快捷安装：入参为 (平台, 项目ID, 图标链接) */
+    onQuickInstall: ((Platform, projectId: String, iconUrl: String?) -> Unit)? = null,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
     when (searchState) {
@@ -161,7 +163,8 @@ fun ResultListLayout(
                     contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 60.dp, bottom = 6.dp),
                     classes = classes,
                     data = page.data,
-                    swapToDownload = swapToDownload
+                    onQuickInstall = onQuickInstall,
+        swapToDownload = swapToDownload
                 )
 
                 val targetScale = 1f - (1f - controllerMinScale) * fraction
@@ -359,6 +362,8 @@ private fun ResultList(
     contentPadding: PaddingValues = PaddingValues(),
     classes: PlatformClasses,
     data: List<Pair<PlatformSearchData, ModTranslations.McMod?>>,
+    /** 快捷安装：入参为 (平台, 项目ID, 图标链接) */
+    onQuickInstall: ((Platform, projectId: String, iconUrl: String?) -> Unit)? = null,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
     val context = LocalContext.current
@@ -391,6 +396,9 @@ private fun ResultList(
                 follows = follows,
                 modloaders = modloaders,
                 categories = categories?.sortedWith { o1, o2 -> o1.index() - o2.index() },
+                onInstall = onQuickInstall?.let { install ->
+                    { install(platform, item.platformId(), iconUrl) }
+                },
                 onClick = {
                     swapToDownload(platform, item.platformId(), iconUrl)
                 }
@@ -417,6 +425,14 @@ fun ResultProjectLayout(
     color: Color = cardColor(influencedByBackground),
     contentColor: Color = onCardColor(),
     blur: Int = AllSettings.backgroundBlur.state,
+    /**
+     * 快捷安装入口
+     *
+     * 为 null 时不显示安装按钮（例如从主界面资源中心进入的纯浏览模式）；
+     * 从「版本设置 → 资源管理」进入时会提供该入口，
+     * 点击后直接完成「版本匹配 → 选文件 → 装前置 → 下载 → 校验 → 安装」。
+     */
+    onInstall: (() -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -548,6 +564,21 @@ fun ResultProjectLayout(
                     }
                 }
             }
+
+            //快捷安装按钮：具备实例上下文时才显示，直接安装到当前实例
+            onInstall?.let { install ->
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    onClick = install
+                ) {
+                    Icon(
+                        modifier = Modifier.size(26.dp),
+                        painter = painterResource(R.drawable.ic_download_2_filled),
+                        contentDescription = stringResource(R.string.download_assets_quick_install)
+                    )
+                }
+            }
+
         }
     }
 }

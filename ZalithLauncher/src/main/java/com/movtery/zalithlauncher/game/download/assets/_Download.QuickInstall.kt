@@ -112,3 +112,81 @@ fun quickInstallAsset(
         )
     )
 }
+
+/**
+ * 从资源 ID 一步安装到当前实例（极简安装）
+ *
+ * 用于资源**搜索结果**卡片上的快捷安装：用户只需要点一下，
+ * 剩下的「版本匹配 → 选兼容文件 → 递归装必需前置 → 下载 → 校验 → 安装」
+ * 全部由统一资源核心完成，不需要用户再选择 Minecraft 版本或前置依赖。
+ *
+ * @param platform 资源来源
+ * @param projectId 资源项目 ID
+ * @param classes 资源类别（决定安装目录）
+ * @param targetVersionName 目标游戏实例名称；为空时使用当前实例
+ */
+fun quickInstallResource(
+    platform: Platform,
+    projectId: String,
+    classes: PlatformClasses,
+    targetVersionName: String?,
+    submitError: (ErrorViewModel.ThrowableMessage) -> Unit
+) {
+    val instance = targetVersionName
+        ?.let { name -> VersionsManager.versions.value.firstOrNull { it.getVersionName() == name } }
+        ?: VersionsManager.currentVersion.value
+
+    if (instance == null || !instance.isValid()) {
+        submitError(
+            ErrorViewModel.ThrowableMessage(
+                title = androidText(R.string.download_assets_install_failed),
+                message = androidText(R.string.download_assets_no_installed_versions)
+            )
+        )
+        return
+    }
+
+    TaskSystem.submitTask(
+        Task.runTask(
+            id = "quick_install_${platform.name}_$projectId",
+            task = { task ->
+                task.updateProgress(-1f)
+                task.updateMessage(androidText(R.string.download_assets_quick_install_resolving))
+
+                val installed = ResourceManager.installToInstance(
+                    platform = platform,
+                    projectId = projectId,
+                    type = ResourceType.of(classes),
+                    instance = instance,
+                    onProgress = { progress ->
+                        task.updateProgress(progress.fraction)
+                        task.updateMessage(
+                            androidText(
+                                R.string.download_assets_quick_install_progress,
+                                (progress.finishedCount + 1).coerceAtMost(progress.totalCount),
+                                progress.totalCount,
+                                progress.fileName
+                            )
+                        )
+                    }
+                )
+
+                //没有找到与该实例兼容的版本
+                if (installed == null) {
+                    throw IllegalStateException(
+                        "No compatible version found for this instance"
+                    )
+                }
+            },
+            onError = { e ->
+                Logger.warning(TAG, "Quick install from search result failed.", e)
+                submitError(
+                    ErrorViewModel.ThrowableMessage(
+                        title = androidText(R.string.download_assets_install_failed),
+                        message = mapExceptionToMessage(e)
+                    )
+                )
+            }
+        )
+    )
+}

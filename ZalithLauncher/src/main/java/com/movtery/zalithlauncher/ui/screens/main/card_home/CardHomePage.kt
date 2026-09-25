@@ -18,6 +18,10 @@
 
 package com.movtery.zalithlauncher.ui.screens.main.card_home
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -25,19 +29,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,25 +54,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.home.HomeDataProvider
+import com.movtery.zalithlauncher.game.home.HomeInstance
+import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
-import com.movtery.zalithlauncher.game.home.HomeDataProvider
-import com.movtery.zalithlauncher.game.home.HomeServer
-import com.movtery.zalithlauncher.game.home.HomeWorld
-import com.movtery.zalithlauncher.game.version.installed.Version
-
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 
 /**
  * 卡片式主页
  *
- * 自动识别并展示：
- * - 最近使用的 Minecraft 版本 → 点击启动
- * - 本地世界 → 点击进入
- * - 已保存的服务器 → 点击加入
+ * 以「游戏版本」为模块组织内容：每个已安装的实例是一个模块，
+ * 模块内部直接展示该实例自己的本地世界与已保存服务器。
  *
- * 数据按需加载：只有真正进入主页时才读取版本、世界与服务器，
+ * 数据按需加载：只有真正进入主页时才读取，且限量扫描，
  * 启动器启动时不会进行一次性的全盘扫描。
  */
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -80,15 +79,11 @@ fun cardHomePage(
     onPlayWorld: (Version, String) -> Unit = { _, _ -> },
     onJoinServer: (Version, String) -> Unit = { _, _ -> },
 ) {
-    var versions by remember { mutableStateOf<List<Version>>(emptyList()) }
-    var worlds by remember { mutableStateOf<List<HomeWorld>>(emptyList()) }
-    var servers by remember { mutableStateOf<List<HomeServer>>(emptyList()) }
+    var instances by remember { mutableStateOf<List<HomeInstance>>(emptyList()) }
     var loaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        versions = HomeDataProvider.recentVersions()
-        worlds = HomeDataProvider.recentWorlds()
-        servers = HomeDataProvider.savedServers()
+        instances = HomeDataProvider.instances()
         loaded = true
     }
 
@@ -108,130 +103,72 @@ fun cardHomePage(
         modifier = modifier
             .fillMaxWidth()
             .padding(all = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        HomeSection(
-            titleRes = R.string.home_card_versions_title,
-            empty = versions.isEmpty()
-        ) {
-            versions.forEach { version ->
-                HomeCard(
-                    title = version.getVersionName(),
-                    subtitle = version.getVersionInfo()?.minecraftVersion,
-                    onClick = { onLaunchVersion(version) }
-                )
-            }
-        }
-
-        HomeSection(
-            titleRes = R.string.home_card_worlds_title,
-            empty = worlds.isEmpty()
-        ) {
-            worlds.forEach { world ->
-                HomeCard(
-                    title = world.name,
-                    subtitle = world.save.levelMCVersion,
-                    onClick = { onPlayWorld(world.instance, world.name) }
-                )
-            }
-        }
-
-        HomeSection(
-            titleRes = R.string.home_card_servers_title,
-            empty = servers.isEmpty()
-        ) {
-            servers.forEach { server ->
-                HomeCard(
-                    title = server.server.name.ifBlank { server.server.originIp },
-                    subtitle = server.server.originIp,
-                    onClick = { onJoinServer(server.instance, server.server.originIp) }
-                )
-            }
-        }
-    }
-}
-
-/**
- * 主页分组：标题 + 卡片区域
- */
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun HomeSection(
-    titleRes: Int,
-    empty: Boolean,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Text(
-            text = stringResource(titleRes),
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        if (empty) {
+        if (instances.isEmpty()) {
             Text(
-                text = stringResource(R.string.home_card_empty),
-                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(R.string.home_instance_none),
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                content()
+            instances.forEach { instance ->
+                InstanceModule(
+                    instance = instance,
+                    onLaunch = { onLaunchVersion(instance.instance) },
+                    onPlayWorld = onPlayWorld,
+                    onJoinServer = onJoinServer
+                )
             }
         }
     }
 }
 
 /**
- * 单张主页卡片
+ * 单个游戏实例模块
  *
- * 在「极致」玻璃档位下额外启用：
- * - Magnetic / Snap Interaction：按下时卡片产生吸附式回弹
- * - Dynamic Shadow：阴影随交互状态实时变化
+ * 顶部是该实例的版本信息与启动入口，
+ * 下面按「世界 / 服务器」两组直接列出属于该实例的内容。
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun HomeCard(
-    title: String,
-    subtitle: String?,
-    onClick: () -> Unit
+private fun InstanceModule(
+    instance: HomeInstance,
+    onLaunch: () -> Unit,
+    onPlayWorld: (Version, String) -> Unit,
+    onJoinServer: (Version, String) -> Unit,
 ) {
     val extremeGlass = AllSettings.glassLevel.state == GlassLevel.Extreme
 
-    //【Magnetic / Snap Interaction】按下时的吸附回弹
+    //【Magnetic / Snap Interaction】按下时的吸附回弹（仅极致档）
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val snapScale by animateFloatAsState(
-        targetValue = if (extremeGlass && pressed) 0.965f else 1f,
+        targetValue = if (extremeGlass && pressed) 0.985f else 1f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMediumLow
         ),
-        label = "homeCardSnapScale"
+        label = "instanceModuleSnapScale"
     )
 
-    //【Dynamic Shadow】阴影随交互状态变化
+    //【Dynamic Shadow】阴影随交互状态变化（仅极致档）
     val shadowElevation by animateDpAsState(
         targetValue = when {
-            extremeGlass && pressed -> 14.dp
-            extremeGlass -> 6.dp
+            extremeGlass && pressed -> 12.dp
+            extremeGlass -> 5.dp
             else -> 1.dp
         },
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioLowBouncy,
             stiffness = Spring.StiffnessLow
         ),
-        label = "homeCardShadow"
+        label = "instanceModuleShadow"
     )
 
     Surface(
         modifier = Modifier
-            .widthIn(min = 150.dp, max = 260.dp)
+            .fillMaxWidth()
             .graphicsLayer {
                 scaleX = snapScale
                 scaleY = snapScale
@@ -241,15 +178,132 @@ private fun HomeCard(
         contentColor = onCardColor(),
         shadowElevation = shadowElevation,
         interactionSource = interactionSource,
-        onClick = onClick
+        onClick = onLaunch
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            //版本标题行
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        text = instance.instance.getVersionName(),
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = buildString {
+                            if (instance.minecraftVersion.isNotBlank()) append(instance.minecraftVersion)
+                            instance.loaderName?.takeIf { it.isNotBlank() }?.let {
+                                if (isNotEmpty()) append(" · ")
+                                append(it)
+                            }
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Button(onClick = onLaunch) {
+                    Text(text = stringResource(R.string.home_instance_launch))
+                }
+            }
+
+            if (instance.isEmpty) {
+                Text(
+                    text = stringResource(R.string.home_instance_empty),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            //该实例的本地世界
+            if (instance.worlds.isNotEmpty()) {
+                HomeGroup(titleRes = R.string.home_card_worlds_title) {
+                    instance.worlds.forEach { world ->
+                        HomeEntryChip(
+                            title = world.name,
+                            subtitle = world.save.levelMCVersion,
+                            onClick = { onPlayWorld(world.instance, world.name) }
+                        )
+                    }
+                }
+            }
+
+            //该实例的服务器
+            if (instance.servers.isNotEmpty()) {
+                HomeGroup(titleRes = R.string.home_card_servers_title) {
+                    instance.servers.forEach { server ->
+                        HomeEntryChip(
+                            title = server.server.name.ifBlank { server.server.originIp },
+                            subtitle = server.server.originIp,
+                            onClick = { onJoinServer(server.instance, server.server.originIp) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 模块内的一组内容（世界 / 服务器）
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun HomeGroup(
+    titleRes: Int,
+    content: @Composable () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(
+            text = stringResource(titleRes),
+            style = MaterialTheme.typography.labelLarge
+        )
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            content()
+        }
+    }
+}
+
+/**
+ * 世界 / 服务器条目
+ */
+@Composable
+private fun HomeEntryChip(
+    title: String,
+    subtitle: String?,
+    onClick: () -> Unit
+) {
+    FilledTonalButton(
+        modifier = Modifier.widthIn(min = 120.dp, max = 240.dp),
+        onClick = onClick
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+            horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.labelLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

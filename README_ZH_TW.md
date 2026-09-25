@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.0)
+[![Release](https://img.shields.io/badge/Release-26.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.1)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -27,7 +27,17 @@
 
 ---
 
-## ✨ 26.2.0 主要內容
+## ✨ 26.2.1 主要內容
+
+- **重做**：**⚠️極致** 玻璃效果改用真實 GPU 著色器（多重取樣模糊 + 波紋折射扭曲），
+  此前只是幾乎看不見的漸層
+- **修復**：搜尋結果卡片現在提供一鍵安裝按鈕
+- **修復**：模組載入器會依目前實例自動選取
+- **主頁**：改為**以版本為模組**，每個模組直接列出自己的世界與伺服器
+- **新增**：**所有** 平台選項，將 CurseForge 與 Modrinth 結果合併到同一份清單
+- **變更**：排序方式預設改為**總下載量**
+
+### 26.2.0 主要內容
 
 - **修復**：從「版本設定 → 資源管理」進入下載中心時，資源安裝上下文遺失
   （NavKey 上的 `@Transient` 欄位會被 Navigation3 的 saveable 序列化機制丟棄）
@@ -48,7 +58,7 @@
 | 資源來源 Provider（Modrinth / CurseForge） | ✅ |
 | 統一下載管理器（佇列 / 併發 / 續傳 / 重試 / 校驗） | ✅ |
 | 極簡資源安裝（帶上下文直接安裝） | ✅ |
-| 玻璃效果四檔（關閉 / 標準 / 增強 / ⚠️極致） | ✅ |
+| 玻璃效果四檔（關閉 / 標準 / 增強 / ⚠️極致，GPU 著色器） | ✅ |
 | Minecraft 26.4 Snapshot 1 Vulkan 偵測與相容性判斷 | ✅ |
 | 啟動器自有更新體系（GitHub Releases） | ✅ |
 | 按需載入與效能策略 | ✅ |

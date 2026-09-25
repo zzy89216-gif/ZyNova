@@ -37,6 +37,8 @@ fun SearchShadersScreen(
     downloadShadersScreenCurrentKey: TitledNavKey?,
     /** 资源安装上下文（目标实例名称） */
     installTargetVersion: String? = null,
+    /** 一键安装回调；为 null 时不显示安装按钮 */
+    onQuickInstall: ((Platform, projectId: String, iconUrl: String?) -> Unit)? = null,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
     val initialPlatform = remember {
@@ -71,6 +73,7 @@ fun SearchShadersScreen(
             }
         },
         swapToDownload = swapToDownload,
-        installTargetVersion = installTargetVersion
+        installTargetVersion = installTargetVersion,
+        onQuickInstall = onQuickInstall
     )
 }
