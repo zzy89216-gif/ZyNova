@@ -180,18 +180,7 @@
     <string name="account_supporting_username_invalid_empty">Требуется имя пользователя</string>
     <string name="account_supporting_email_invalid_empty">Требуется электронная почта</string>
     <string name="account_supporting_password_invalid_empty">Требуется пароль</string>
-    <string name="account_supporting_microsoft_tip_title">Добавить аккаунт Microsoft</string>
-    <string name="account_supporting_microsoft_tip_link_text">Полезные ссылки:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Купить Minecraft</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">Создать профиль / Изменить имя профиля</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Пожалуйста, следуйте этим шагам для добавления аккаунта:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Нажмите кнопку «Войти» — лаунчер попытается получить код подтверждения;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Введите код, предоставленный %s, на открывшейся веб-странице и нажмите «Разрешить доступ»;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Следуйте инструкциям на веб-странице для завершения процесса входа;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Когда появится запрос «Разрешить этому приложению доступ к вашей информации?», нажмите «Принять»;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Когда веб-страница покажет «Готово!», аккаунт будет добавлен автоматически. Пожалуйста, подождите немного.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Если веб-страница показывает сообщение об ошибке или аккаунт не добавляется, повторите указанные шаги.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Совет: Если ваше сетевое соединение слабое, веб-страница может загружаться медленно или не открыться. Попробуйте использовать сетевой прокси и повторите попытку.</string>
     <string name="account_delete_title">Удалить аккаунт</string>
     <string name="account_delete_message">Удалить аккаунт %s из лаунчера?</string>
     <string name="account_microsoft_fetch_device_code">Получить код устройства</string>
@@ -1018,8 +1007,6 @@
     <string name="control_editor_special_joystick_style_joystick_size">Размер джойстика</string>
     <string name="upgrade_title">Проверить обновления</string>
     <string name="upgrade_new">Найдена новая версия</string>
-    <string name="upgrade_more">Подробнее</string>
-    <string name="upgrade_files">Доступный APK-файл</string>
     <string name="upgrade_files_arch">Архитектура: %s</string>
     <string name="upgrade_version_change">Версия: %s</string>
     <string name="upgrade_version_size">Размер: %s</string>

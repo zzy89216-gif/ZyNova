@@ -336,18 +336,7 @@
     <string name="account_supporting_username_invalid_empty">Nama pengguna diperlukan</string>
     <string name="account_supporting_email_invalid_empty">Email diperlukan</string>
     <string name="account_supporting_password_invalid_empty">Kata sandi diperlukan</string>
-    <string name="account_supporting_microsoft_tip_title">Tambahkan Akun Microsoft</string>
-    <string name="account_supporting_microsoft_tip_link_text">Pintasan:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Beli Minecraft</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">Buat Profil / Edit Nama Profil</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Untuk menambahkan akun, ikuti langkah-langkah berikut:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Klik tombol Masuk — launcher akan mencoba mengambil kode verifikasi;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Masukkan kode yang diberikan oleh %s pada halaman web dan klik Izinkan akses;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Ikuti petunjuk di halaman web untuk menyelesaikan proses masuk;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Saat ditanya Biarkan aplikasi ini mengakses info Anda?, klik Terima;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Ketika halaman web menampilkan \"Selesai!\", akun akan ditambahkan secara otomatis. Mohon tunggu sebentar.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Jika halaman web menampilkan Kesalahan atau akun gagal ditambahkan, coba lagi langkah-langkah di atas.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Tips: Jika koneksi jaringanmu buruk, halaman web mungkin lambat dimuat atau tidak dapat dibuka. Coba gunakan VPN dan coba lagi.</string>
     <string name="account_delete_title">Hapus Akun</string>
     <string name="account_delete_message">Kamu yakin ingin menghapus akun %s dari launcher?</string>
     <string name="account_microsoft_fetch_device_code">Dapatkan kode perangkat</string>
@@ -996,8 +985,6 @@
     <string name="control_editor_special_joystick_style_joystick_rounded_corner">Sudut Membulat Joystick</string>
     <string name="upgrade_title">Cek Pembaruan</string>
     <string name="upgrade_new">Versi Baru Ditemukan</string>
-    <string name="upgrade_more">Lihat</string>
-    <string name="upgrade_files">APK Tersedia</string>
     <string name="upgrade_files_arch">Arsitektur: %s</string>
     <string name="upgrade_version_change">Versi: %s</string>
     <string name="upgrade_version_size">Ukuran: %s</string>

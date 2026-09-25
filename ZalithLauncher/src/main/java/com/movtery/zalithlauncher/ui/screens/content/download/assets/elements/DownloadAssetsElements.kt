@@ -229,7 +229,7 @@ fun AssetsVersionItemLayout(
     contentColor: Color = onCardColor(),
     blur: Int = AllSettings.backgroundBlur.state,
     onItemClicked: (PlatformVersion) -> Unit = {},
-    onQuickInstall: (PlatformVersion) -> Unit = {}
+    onQuickInstall: ((PlatformVersion) -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -355,7 +355,7 @@ private fun AssetsVersionListItem(
     modifier: Modifier = Modifier,
     version: PlatformVersion,
     onClick: () -> Unit = {},
-    onQuickInstall: (PlatformVersion) -> Unit = {}
+    onQuickInstall: ((PlatformVersion) -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -451,16 +451,19 @@ private fun AssetsVersionListItem(
             }
         }
 
-        //一键安装按钮：直接安装到当前版本，跳过版本选择
-        IconButton(
-            modifier = Modifier.padding(end = 8.dp),
-            onClick = { onQuickInstall(version) }
-        ) {
-            Icon(
-                modifier = Modifier.size(22.dp),
-                painter = painterResource(R.drawable.ic_download_2_outlined),
-                contentDescription = stringResource(R.string.download_assets_quick_install)
-            )
+        //快捷安装入口：只有具备实例上下文（从版本设置进入）时才提供。
+        //资源中心只负责浏览与管理，不提供一键安装
+        onQuickInstall?.let { install ->
+            IconButton(
+                modifier = Modifier.padding(end = 8.dp),
+                onClick = { install(version) }
+            ) {
+                Icon(
+                    modifier = Modifier.size(22.dp),
+                    painter = painterResource(R.drawable.ic_download_2_outlined),
+                    contentDescription = stringResource(R.string.download_assets_quick_install)
+                )
+            }
         }
     }
 }

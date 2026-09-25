@@ -300,7 +300,10 @@ fun DownloadAssetsScreen(
     nestedNavKeyClass: Class<out TitledNavKey>? = null,
     versionsUIWeight: Float = 6.5f,
     projectUIWeight: Float = 3.5f,
-    onQuickInstall: (PlatformClasses, PlatformVersion) -> Unit = { _, _ -> },
+    /** 资源安装上下文（目标实例名称）；为 null 表示纯浏览模式 */
+    installTargetVersion: String? = null,
+    /** 快捷安装回调；为 null 时不展示快捷安装入口 */
+    onQuickInstall: ((PlatformClasses, PlatformVersion) -> Unit)? = null,
 ) {
     val viewModel: DownloadScreenViewModel = rememberDownloadAssetsViewModel(key)
 
@@ -328,8 +331,8 @@ fun DownloadAssetsScreen(
                     }
                     onItemClicked(key.classes, version, key.iconUrl, deps)
                 },
-                onQuickInstall = { version ->
-                    onQuickInstall(key.classes, version)
+                onQuickInstall = onQuickInstall?.let { install ->
+                    { version: PlatformVersion -> install(key.classes, version) }
                 },
             )
 
@@ -365,7 +368,7 @@ private fun Versions(
     viewModel: DownloadScreenViewModel,
     onReload: () -> Unit = {},
     onItemClicked: (PlatformVersion) -> Unit = {},
-    onQuickInstall: (PlatformVersion) -> Unit = {}
+    onQuickInstall: ((PlatformVersion) -> Unit)? = null
 ) {
     when (val versions = viewModel.versionsResult) {
         is DownloadAssetsState.Getting -> {

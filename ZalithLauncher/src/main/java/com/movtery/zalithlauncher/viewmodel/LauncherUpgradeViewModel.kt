@@ -18,74 +18,45 @@
 
 package com.movtery.zalithlauncher.viewmodel
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.movtery.zalithlauncher.BuildConfig
-import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.path.GLOBAL_CLIENT
-import com.movtery.zalithlauncher.path.GLOBAL_JSON
-import com.movtery.zalithlauncher.path.URL_PROJECT_INFO
+import com.movtery.zalithlauncher.path.URL_ZY_NOVA_RELEASE_LATEST
 import com.movtery.zalithlauncher.setting.AllSettings
-import com.movtery.zalithlauncher.ui.components.MarqueeText
-import com.movtery.zalithlauncher.ui.components.SimpleListDialog
-import com.movtery.zalithlauncher.ui.screens.content.elements.DisabledAlpha
 import com.movtery.zalithlauncher.ui.upgrade.UpgradeDialog
-import com.movtery.zalithlauncher.ui.upgrade.UpgradeFilesDialog
-import com.movtery.zalithlauncher.upgrade.GithubContentApi
-import com.movtery.zalithlauncher.upgrade.RemoteData
 import com.movtery.zalithlauncher.upgrade.TooFrequentOperationException
+import com.movtery.zalithlauncher.upgrade.ZyNovaRelease
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.safeBodyAsJson
 import com.movtery.zalithlauncher.utils.network.withRetry
-import com.movtery.zalithlauncher.utils.string.decodeBase64
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "LauncherUpgradeVM"
 
 sealed interface LauncherUpgradeOperation {
     data object None : LauncherUpgradeOperation
-    /** 已检查到启动器存在新版本，展示更新信息 */
-    data class Upgrade(val data: RemoteData) : LauncherUpgradeOperation
-    /** 选择要安装的安装包文件 */
-    data class SelectApk(val data: RemoteData) : LauncherUpgradeOperation
-    /** 打开网盘分享 */
-    data class OpenCloudDrive(val cloudDrive: RemoteData.CloudDrive) : LauncherUpgradeOperation
+
+    /** 已检查到 ZyNova 存在新版本，展示更新信息 */
+    data class Upgrade(val release: ZyNovaRelease) : LauncherUpgradeOperation
 }
 
 /**
- * 最新版本的信息获取源
- */
-private const val LATEST_VERSION = "latest_version_md.json"
-private const val LATEST_API_URL = "$URL_PROJECT_INFO/$LATEST_VERSION"
-private const val LATEST_API_CHINESE_URL = "https://repo.miawa.cn/zalith-info/v2/$LATEST_VERSION"
-
-/**
  * 用于记录启动器更新 ViewModel
+ *
+ * ZyNova 只维护自己的更新体系：版本信息与安装包全部来自 ZyNova 自己的
+ * GitHub Releases，不再包含任何上游 ZL2 的更新检查、更新提示、
+ * 更新弹窗、更新 URL 与网盘分发逻辑。
  */
 class LauncherUpgradeViewModel: ViewModel() {
     var operation by mutableStateOf<LauncherUpgradeOperation>(LauncherUpgradeOperation.None)
@@ -134,11 +105,11 @@ class LauncherUpgradeViewModel: ViewModel() {
                 return@launch
             }
 
-            val data = fetchRemoteData()
-            if (data != null) {
+            val release = fetchLatestRelease()
+            if (release != null) {
                 checkForUpgrade(
-                    data = data,
-                    lastIgnored = AllSettings.lastIgnoredVersion.getValue(),
+                    release = release,
+                    lastIgnored = AllSettings.lastIgnoredVersionName.getValue(),
                     ignoreDismissedVersions = true, //启动时检查忽略用户已忽略的版本
                     onUpgrade = { data ->
                         operation = LauncherUpgradeOperation.Upgrade(data)
@@ -169,11 +140,11 @@ class LauncherUpgradeViewModel: ViewModel() {
 
             onInProgress()
 
-            val data = fetchRemoteData()
-            if (data != null) {
+            val release = fetchLatestRelease()
+            if (release != null) {
                 checkForUpgrade(
-                    data = data,
-                    lastIgnored = AllSettings.lastIgnoredVersion.getValue(),
+                    release = release,
+                    lastIgnored = AllSettings.lastIgnoredVersionName.getValue(),
                     ignoreDismissedVersions = false,
                     onUpgrade = { data ->
                         operation = LauncherUpgradeOperation.Upgrade(data)
@@ -182,73 +153,56 @@ class LauncherUpgradeViewModel: ViewModel() {
                 )
             }
             updateLastCheckTime()
-            data != null
+            release != null
         }
     }
 
     /**
-     * 从远端获取最新的启动器信息
+     * 从 ZyNova 自己的 GitHub Releases 获取最新版本信息
      */
-    private suspend fun fetchRemoteData(): RemoteData? {
+    private suspend fun fetchLatestRelease(): ZyNovaRelease? {
         return withContext(Dispatchers.IO) {
             runCatching {
                 withRetry(logTag = "LauncherUpgrade", maxRetries = 2) {
-                    //获取最新的启动器信息
-                    val api = GLOBAL_CLIENT.get(LATEST_API_URL).safeBodyAsJson<GithubContentApi>()
-                    //需要Base64解密
-                    val contentString = decodeBase64(api.content)
-                    GLOBAL_JSON.decodeFromString(RemoteData.serializer(), contentString)
+                    GLOBAL_CLIENT.get(URL_ZY_NOVA_RELEASE_LATEST).safeBodyAsJson<ZyNovaRelease>()
                 }
             }.getOrElse { e ->
-                if (Locale.getDefault().language == "zh") {
-                    runCatching {
-                        Logger.info(TAG, "Check for updates in the Chinese region.")
-                        //在中国地区，可能因为无法访问 Github API 导致获取更新信息失败
-                        withRetry(logTag = "LauncherUpgrade_Chinese", maxRetries = 2) {
-                            GLOBAL_CLIENT.get(LATEST_API_CHINESE_URL).safeBodyAsJson<RemoteData>()
-                        }
-                    }.getOrElse { e ->
-                        Logger.warning(TAG, "Failed to check for launcher upgrade!", e)
-                        null
-                    }
-                } else {
-                    Logger.warning(TAG, "Failed to check for launcher upgrade!", e)
-                    null
-                }
+                Logger.warning(TAG, "Failed to check for ZyNova updates!", e)
+                null
             }
         }
     }
 
     /**
-     * 检查启动器是否需要更新
+     * 检查 ZyNova 是否需要更新
      * @param lastIgnored 上次弹出更新弹窗时，用户所忽略的版本号
      * @param ignoreDismissedVersions 是否忽略用户已忽略的版本
      * @param onUpgrade 发现需要更新时调用
      * @param onIsLatest 当前已是最新版本时
      */
     private suspend fun checkForUpgrade(
-        data: RemoteData,
-        lastIgnored: Int?,
+        release: ZyNovaRelease,
+        lastIgnored: String,
         ignoreDismissedVersions: Boolean,
-        onUpgrade: suspend (RemoteData) -> Unit,
+        onUpgrade: suspend (ZyNovaRelease) -> Unit,
         onIsLatest: suspend () -> Unit = {}
     ) {
-        val currentVersionCode = BuildConfig.VERSION_CODE
-        if (currentVersionCode < data.code) {
+        val currentVersion = BuildConfig.VERSION_NAME
+        if (ZyNovaRelease.compareVersion(release.version, currentVersion) > 0) {
             //启动器为旧版本
             when {
-                ignoreDismissedVersions && lastIgnored == data.code -> {
+                ignoreDismissedVersions && lastIgnored == release.version -> {
                     //忽略这次更新
-                    Logger.info(TAG, "Launcher update detected: $currentVersionCode -> ${data.code}, but ignored by user")
+                    Logger.info(TAG, "ZyNova update detected: $currentVersion -> ${release.version}, but ignored by user")
                 }
                 else -> {
                     //弹出更新弹窗
-                    Logger.info(TAG, "Launcher update detected: $currentVersionCode -> ${data.code}, dialog shown to user")
-                    onUpgrade(data)
+                    Logger.info(TAG, "ZyNova update detected: $currentVersion -> ${release.version}, dialog shown to user")
+                    onUpgrade(release)
                 }
             }
         } else {
-            Logger.info(TAG, "Launcher is running the latest version: $currentVersionCode")
+            Logger.info(TAG, "ZyNova is running the latest version: $currentVersion")
             onIsLatest()
         }
     }
@@ -258,108 +212,21 @@ class LauncherUpgradeViewModel: ViewModel() {
 fun LauncherUpgradeOperation(
     operation: LauncherUpgradeOperation,
     onChanged: (LauncherUpgradeOperation) -> Unit,
-    onIgnoredClick: (code: Int) -> Unit,
+    onIgnoredClick: (version: String) -> Unit,
     onLinkClick: (String) -> Unit
 ) {
     when (operation) {
         is LauncherUpgradeOperation.None -> {}
         is LauncherUpgradeOperation.Upgrade -> {
             UpgradeDialog(
-                data = operation.data,
+                release = operation.release,
                 onDismissRequest = {
                     onChanged(LauncherUpgradeOperation.None)
-                },
-                onFilesClick = {
-                    onChanged(LauncherUpgradeOperation.SelectApk(operation.data))
                 },
                 onIgnored = {
-                    onIgnoredClick(operation.data.code)
+                    onIgnoredClick(operation.release.version)
                 },
-                onLinkClick = onLinkClick,
-                onCloudDriveClick = { cloudDrive ->
-                    onChanged(LauncherUpgradeOperation.OpenCloudDrive(cloudDrive))
-                }
-            )
-        }
-        is LauncherUpgradeOperation.SelectApk -> {
-            UpgradeFilesDialog(
-                data = operation.data,
-                onDismissRequest = {
-                    onChanged(LauncherUpgradeOperation.None)
-                },
-                onFileSelected = { file ->
-                    onLinkClick(file.uri)
-                    onChanged(LauncherUpgradeOperation.None)
-                }
-            )
-        }
-        is LauncherUpgradeOperation.OpenCloudDrive -> {
-            val current by remember(operation) {
-                mutableStateOf<RemoteData.CloudDrive.Link?>(null)
-            }
-            SimpleListDialog(
-                title = stringResource(R.string.upgrade_cloud_drive),
-                items = operation.cloudDrive.links,
-                onItemSelected = { link ->
-                    onLinkClick(link.link)
-                },
-                onDismissRequest = {
-                    onChanged(LauncherUpgradeOperation.None)
-                },
-                current = current,
-                itemLayout = { item, isCurrent, onClick ->
-                    CloudDriveLayout(
-                        link = item,
-                        selected = isCurrent,
-                        onClick = onClick
-                    )
-                },
-                showConfirm = true,
-                confirmText = {
-                    MarqueeText(text = stringResource(R.string.generic_confirm))
-                }
-            )
-        }
-    }
-}
-
-
-@Composable
-private fun CloudDriveLayout(
-    link: RemoteData.CloudDrive.Link,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
-    Row(
-        modifier = modifier
-            .clip(shape = MaterialTheme.shapes.large)
-            .clickable(enabled = enabled, onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = selected,
-            onClick = onClick,
-            enabled = enabled
-        )
-        Column(
-            modifier = Modifier.alpha(if (enabled) 1.0f else DisabledAlpha),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            //网盘名称
-            MarqueeText(
-                modifier = Modifier.fillMaxWidth(),
-                text = link.name,
-                style = MaterialTheme.typography.labelMedium
-            )
-            //网盘链接
-            MarqueeText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(0.7f),
-                text = link.link,
-                style = MaterialTheme.typography.labelSmall
+                onLinkClick = onLinkClick
             )
         }
     }

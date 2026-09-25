@@ -33,7 +33,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.game.download.assets.downloadSingleForVersions
-import com.movtery.zalithlauncher.game.download.assets.quickInstallAsset
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -78,9 +77,6 @@ fun AssetInfoScreen(
                 submitError = submitError
             )
         },
-        doQuickInstall = { classes, version ->
-            quickInstallAsset(version, classes, submitError)
-        },
         onDependencyClicked = { dep, classes ->
             backStack.navigateTo(
                 NormalNavKey.DownloadAssets(dep.platform, dep.projectId, classes)
@@ -116,9 +112,6 @@ fun AssetInfoScreen(
                             } else {
                                 DownloadSingleOperation.SelectVersion(classes, version, deps)
                             }
-                        },
-                        onQuickInstall = { classes, version ->
-                            operation = DownloadSingleOperation.QuickInstall(classes, version)
                         },
                         nestedNavKeyClass = NestedNavKey.AssetInfo::class.java,
                         versionsUIWeight = 7f,

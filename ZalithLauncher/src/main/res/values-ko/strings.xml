@@ -440,18 +440,7 @@
     <string name="account_supporting_username_invalid_empty">사용자 이름을 입력해 주세요</string>
     <string name="account_supporting_email_invalid_empty">이메일 주소를 입력해 주세요</string>
     <string name="account_supporting_password_invalid_empty">비밀번호를 입력해 주세요</string>
-    <string name="account_supporting_microsoft_tip_title">Microsoft 계정 추가</string>
-    <string name="account_supporting_microsoft_tip_link_text">자주 찾는 기능:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">마인크래프트 구매</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">프로필 생성 / 프로필 이름 수정</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">다음 단계에 따라 계정을 추가해 주세요:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. 로그인 버튼을 클릭하세요, 런처에서 인증 코드를 불러옵니다;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. 웹페이지가 나타나면 %s에서 제공한 코드를 입력하고 \'액세스 허용\'을 클릭하세요;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. 웹페이지의 안내에 따라 로그인을 완료해 주세요;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. 웹페이지에 \"이 앱이 귀하의 정보에 액세스하도록 허용하시겠습니까?\"라는 문구가 나오면 [예]를 클릭하세요;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. 웹페이지에 \"모두 완료되었습니다!\"라는 문구가 표시되면 계정이 자동으로 추가됩니다. 잠시만 기다려 주세요.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">웹페이지에 오류 메시지가 표시되거나 계정 추가에 실패할 경우, 위 단계를 다시 시도해 주세요.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">팁: 인터넷 연결 상태에 따라 페이지 로딩이 지연될 수 있습니다. 접속이 안 될 경우 프록시 설정을 확인한 후 다시 시도해 주시기 바랍니다.</string>
     <string name="account_delete_title">계정 삭제</string>
     <string name="account_delete_message">정말 %s 계정을 런처에서 삭제할까요?</string>
     <string name="account_microsoft_fetch_device_code">인증 코드 생성</string>
@@ -875,7 +864,6 @@
     <string name="about_library_title">서드파티 라이브러리</string>
     <string name="upgrade_title">업데이트 확인</string>
     <string name="upgrade_new">새로운 버전 발견됨</string>
-    <string name="upgrade_files">사용 가능한 APK</string>
     <string name="upgrade_files_arch">아키텍처: %s</string>
     <string name="upgrade_version_change">버전: %s</string>
     <string name="upgrade_version_size">크기: %s</string>

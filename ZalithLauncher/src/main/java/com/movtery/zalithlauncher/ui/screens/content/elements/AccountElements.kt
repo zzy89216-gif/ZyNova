@@ -174,16 +174,6 @@ sealed interface LoginMenuOperation {
 }
 
 /**
- * 微软登录的操作状态
- */
-sealed interface MicrosoftLoginOperation {
-    data object None : MicrosoftLoginOperation
-
-    /** 微软账号相关提示Dialog流程 */
-    data object Tip : MicrosoftLoginOperation
-}
-
-/**
  * 离线登陆的操作状态
  */
 sealed interface LocalLoginOperation {
@@ -448,7 +438,6 @@ fun AccountItem(
 @Composable
 fun LoginMenuDialog(
     onDismissRequest: () -> Unit,
-    onMicrosoftLogin: () -> Unit,
     onLocalLogin: () -> Unit,
     authServers: List<AuthServer>,
     onAuthServerLogin: (server: AuthServer) -> Unit,
@@ -493,15 +482,6 @@ fun LoginMenuDialog(
                                 .padding(start = 12.dp, end = 6.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            //微软登录
-                            LoginItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                title = stringResource(R.string.account_type_microsoft),
-                                onClick = {
-                                    onMicrosoftLogin()
-                                    onDismissRequest()
-                                }
-                            )
                             //离线登录
                             LoginItem(
                                 modifier = Modifier.fillMaxWidth(),
@@ -582,7 +562,6 @@ private fun PreviewLoginMenuDialog() {
     MaterialExpressiveTheme {
         LoginMenuDialog(
             onDismissRequest = {},
-            onMicrosoftLogin = {},
             onLocalLogin = {},
             authServers = emptyList(),
             onAuthServerLogin = {},
@@ -627,80 +606,6 @@ private fun PreviewLoginItem() {
             )
         }
     }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun MicrosoftLoginTipDialog(
-    onDismissRequest: () -> Unit = {},
-    onConfirm: () -> Unit = {},
-    openLink: (url: String) -> Unit = {}
-) {
-    SimpleAlertDialog(
-        title = stringResource(R.string.account_supporting_microsoft_tip_title),
-        text = {
-            Text(
-                text = stringResource(R.string.account_supporting_microsoft_tip_link_text),
-                style = MaterialTheme.typography.bodyMedium
-            )
-            FlowRow {
-                IconTextButton(
-                    onClick = {
-                        openLink(URL_MINECRAFT_PURCHASE)
-                    },
-                    painter = painterResource(R.drawable.ic_link),
-                    contentDescription = null,
-                    text = stringResource(R.string.account_supporting_microsoft_tip_link_purchase)
-                )
-                IconTextButton(
-                    onClick = {
-                        openLink("https://www.minecraft.net/msaprofile/mygames/editprofile")
-                    },
-                    painter = painterResource(R.drawable.ic_link),
-                    contentDescription = null,
-                    text = stringResource(R.string.account_supporting_microsoft_tip_link_make_gameid)
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.account_supporting_microsoft_tip_hint_t1),
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = buildAnnotatedString {
-                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t2))
-                    append(
-                        stringResource(
-                            R.string.account_supporting_microsoft_tip_hint_t3,
-                            BuildKeys.LAUNCHER_NAME
-                        )
-                    )
-                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t4))
-                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t5))
-                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t6))
-                },
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = buildAnnotatedString {
-                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t7))
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(stringResource(R.string.account_supporting_microsoft_tip_hint_t8))
-                    }
-                },
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        confirmText = stringResource(R.string.account_login),
-        onConfirm = onConfirm,
-        onCancel = onDismissRequest,
-        onDismissRequest = onDismissRequest
-    )
 }
 
 private val localNamePattern = Pattern.compile("[^a-zA-Z0-9_]")

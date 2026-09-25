@@ -38,7 +38,6 @@ import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
 import com.movtery.zalithlauncher.game.account.isReloginRequired
 import com.movtery.zalithlauncher.game.account.localLogin
 import com.movtery.zalithlauncher.game.account.microsoft.MINECRAFT_SERVICES_URL
-import com.movtery.zalithlauncher.game.account.microsoftLogin
 import com.movtery.zalithlauncher.game.account.refreshMicrosoft
 import com.movtery.zalithlauncher.game.account.wardrobe.EmptyCape
 import com.movtery.zalithlauncher.game.account.wardrobe.SkinModelType
@@ -62,7 +61,6 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.ChangeCape
 import com.movtery.zalithlauncher.ui.screens.content.elements.ChangeSkin
 import com.movtery.zalithlauncher.ui.screens.content.elements.LocalLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.LoginMenuOperation
-import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.OtherLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.ServerOperation
 import com.movtery.zalithlauncher.utils.network.toLocal
@@ -95,9 +93,6 @@ sealed interface AccountManageIntent {
     /** 呼出账号登录菜单 */
     data class UpdateLoginMenuOp(val operation: LoginMenuOperation) : AccountManageIntent
 
-    data class UpdateMicrosoftLoginOp(val operation: MicrosoftLoginOperation) :
-        AccountManageIntent
-
     data class UpdateLocalLoginOp(val operation: LocalLoginOperation) : AccountManageIntent
     data class UpdateOtherLoginOp(val operation: OtherLoginOperation) : AccountManageIntent
     data class UpdateServerOp(val operation: ServerOperation) : AccountManageIntent
@@ -111,13 +106,6 @@ sealed interface AccountManageIntent {
     data class OnSkinPicked(val uri: Uri) : AccountManageIntent
     data object ResetAccountSkinDialogState : AccountManageIntent
 
-
-    /** 执行微软登录流程 */
-    data class PerformMicrosoftLogin(
-        val toWeb: (url: String) -> Unit,
-        val backToMain: () -> Unit,
-        val checkIfInWebScreen: () -> Boolean
-    ) : AccountManageIntent
 
     /** 应用选中的皮肤 */
     data class ApplySkin(val account: Account, val file: File, val model: SkinModelType) : AccountManageIntent
@@ -201,8 +189,6 @@ class AccountManageViewModel @AssistedInject constructor(
     }
     private val _loginMenuOp = MutableStateFlow<LoginMenuOperation>(LoginMenuOperation.None)
 
-    private val _microsoftLoginOp =
-        MutableStateFlow<MicrosoftLoginOperation>(MicrosoftLoginOperation.None)
     private val _localLoginOp = MutableStateFlow<LocalLoginOperation>(LocalLoginOperation.None)
     private val _otherLoginOp = MutableStateFlow<OtherLoginOperation>(OtherLoginOperation.None)
     private val _serverOp = MutableStateFlow<ServerOperation>(ServerOperation.None)
@@ -219,13 +205,11 @@ class AccountManageViewModel @AssistedInject constructor(
      */
     val loginUiState: StateFlow<LoginUiState> = kotlinxCombine(
         _loginMenuOp,
-        _microsoftLoginOp,
         _localLoginOp,
         _otherLoginOp
-    ) { loginMenuOp, microsoftLoginOp, localLoginOp, otherLoginOp ->
+    ) { loginMenuOp, localLoginOp, otherLoginOp ->
         LoginUiState(
             menuOp = loginMenuOp,
-            microsoftOp = microsoftLoginOp,
             localOp = localLoginOp,
             otherOp = otherLoginOp
         )
@@ -237,7 +221,6 @@ class AccountManageViewModel @AssistedInject constructor(
 
     data class LoginUiState(
         val menuOp: LoginMenuOperation = LoginMenuOperation.None,
-        val microsoftOp: MicrosoftLoginOperation = MicrosoftLoginOperation.None,
         val localOp: LocalLoginOperation = LocalLoginOperation.None,
         val otherOp: OtherLoginOperation = OtherLoginOperation.None
     )
@@ -316,9 +299,6 @@ class AccountManageViewModel @AssistedInject constructor(
             is AccountManageIntent.UpdateLoginMenuOp ->
                 _loginMenuOp.value = intent.operation
 
-            is AccountManageIntent.UpdateMicrosoftLoginOp ->
-                _microsoftLoginOp.value = intent.operation
-
             is AccountManageIntent.UpdateLocalLoginOp -> _localLoginOp.value = intent.operation
             is AccountManageIntent.UpdateOtherLoginOp -> _otherLoginOp.value = intent.operation
             is AccountManageIntent.UpdateServerOp -> _serverOp.value = intent.operation
@@ -348,7 +328,6 @@ class AccountManageViewModel @AssistedInject constructor(
                 _accountSkinDialogState.update { AccountSkinDialogState() }
             }
 
-            is AccountManageIntent.PerformMicrosoftLogin -> performMicrosoftLogin(intent)
             is AccountManageIntent.ApplySkin ->
                 applySkin(intent.account, intent.file, intent.model)
 
@@ -437,19 +416,6 @@ class AccountManageViewModel @AssistedInject constructor(
         eventViewModel.sendToast(text, duration)
     }
 
-    /** 执行微软登录流程 */
-    private fun performMicrosoftLogin(intent: AccountManageIntent.PerformMicrosoftLogin) {
-        microsoftLogin(
-            context,
-            intent.toWeb,
-            intent.backToMain,
-            intent.checkIfInWebScreen,
-            { onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(it)) },
-            showToast = ::emitToast,
-            { emitError(it.title, it.message) }
-        )
-        onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.None))
-    }
 
     /** 应用选中的皮肤 */
     private fun applySkin(account: Account, file: File, model: SkinModelType) {

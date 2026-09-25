@@ -340,9 +340,6 @@
     <string name="account_logging_blocked_ip">O IP atual está bloqueado para acesso.</string>
     <string name="account_add_new_server">Adicionar servidor Auth</string>
     <string name="account_label_email">Usuário ou endereço de e-mail</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">Criar perfil / Editar nome do perfil</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Por favor, siga os passos abaixo para adicionar sua conta:</string>
-    <string name="account_supporting_microsoft_tip_title">Adicionar conta Microsoft</string>
     <string name="control_keyboard_bind_title">Selecionar tecla</string>
     <string name="game_menu_option_force_close_text">Forçar o fechamento do jogo em execução pode causar a corrupção do dados ou impedir que as configurações sejam salvas. Utilize essa ação apenas quando necessário.</string>
     <string name="game_menu_option_switch_log">Registro de saída</string>
@@ -381,14 +378,6 @@
     <string name="account_supporting_username_invalid_short">Nome de usuário muito curto</string>
     <string name="account_supporting_username_invalid_long">Nome de usuário muito longo</string>
     <string name="account_supporting_username_invalid_illegal_characters">Caracteres não permitidos foram detectados</string>
-    <string name="account_supporting_microsoft_tip_link_text">Atalhos:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Clique no botão de login — o launcher tentará recuperar o código de verificação;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Insira o código disponibilizado pelo %s na página pop-up e clique em Permitir acesso;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Siga as instruções da página para completar o registro;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Quando solicitado a opção \"Permitir que este aplicativo acesse suas informações?\", clique em Aceitar;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Quando a página exibir \"Tudo pronto!\", a conta será adicionada automaticamente. Aguarde um momento.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Se a página da web mostrar uma mensagem de erro ou a conta não for adicionada, tente novamente as etapas acima.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Dica: Se a sua conexão de rede estiver ruim, a página da web pode carregar lentamente ou não abrir. Tente usar um proxy de rede e tente novamente.</string>
     <string name="account_delete_message">Tem certeza que deseja apagar a conta %s do launcher?</string>
     <string name="account_microsoft_fetch_device_code">Obter código do dispositivo</string>
     <string name="account_microsoft_coped_device_code">Código do dispositivo copiado: %s. Por favor complete a verificação no seu navegador em breve.</string>
@@ -1161,8 +1150,6 @@
     <string name="about_acknowledgements_weblate_community_text">Todos os tradutores que participaram da tradução de idiomas da comunidade</string>
     <string name="upgrade_title">Verificar atualizações</string>
     <string name="upgrade_new">Nova versão encontrada</string>
-    <string name="upgrade_more">Visualizar</string>
-    <string name="upgrade_files">APK Disponível</string>
     <string name="upgrade_files_arch">Arquitetura: %s</string>
     <string name="upgrade_version_change">Versão: %s</string>
     <string name="upgrade_version_size">Tamanho: %s</string>

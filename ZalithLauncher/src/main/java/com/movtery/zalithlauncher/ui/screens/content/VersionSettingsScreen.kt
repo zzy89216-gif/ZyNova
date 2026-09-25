@@ -453,7 +453,8 @@ private fun NavigationUI(
                         backToMainScreen = backToMainScreen,
                         swapToDownload = {
                             backScreenViewModel.navigateToDownload(
-                                targetScreen = backScreenViewModel.downloadModScreen
+                                targetScreen = backScreenViewModel.downloadModScreen,
+                                installTargetVersion = version.getVersionName()
                             )
                         },
                         onSwapMoreInfo = { projectId, platform ->
@@ -474,7 +475,8 @@ private fun NavigationUI(
                         backToMainScreen = backToMainScreen,
                         swapToDownload = {
                             backScreenViewModel.navigateToDownload(
-                                targetScreen = backScreenViewModel.downloadSavesScreen
+                                targetScreen = backScreenViewModel.downloadSavesScreen,
+                                installTargetVersion = version.getVersionName()
                             )
                         },
                         onQuickPlay = { version, saveName ->
@@ -496,7 +498,8 @@ private fun NavigationUI(
                         backToMainScreen = backToMainScreen,
                         swapToDownload =  {
                             backScreenViewModel.navigateToDownload(
-                                targetScreen = backScreenViewModel.downloadResourcePackScreen
+                                targetScreen = backScreenViewModel.downloadResourcePackScreen,
+                                installTargetVersion = version.getVersionName()
                             )
                         },
                         submitError = submitError
@@ -510,7 +513,8 @@ private fun NavigationUI(
                         backToMainScreen = backToMainScreen,
                         swapToDownload = {
                             backScreenViewModel.navigateToDownload(
-                                targetScreen = backScreenViewModel.downloadShadersScreen
+                                targetScreen = backScreenViewModel.downloadShadersScreen,
+                                installTargetVersion = version.getVersionName()
                             )
                         },
                         submitError = submitError

@@ -40,6 +40,23 @@ abstract class BackStackNavKey<E: TitledNavKey>(
     /** 当前屏幕的Key */
     var currentKey by mutableStateOf<E?>(null)
 
+    /**
+     * 资源安装上下文：从「版本设置 → 资源管理」进入时，记录目标游戏实例名称。
+     *
+     * 为 null 表示从资源中心进入，只浏览与管理，不提供快捷安装。
+     * 该状态不参与序列化，仅用于同一次导航会话。
+     */
+    @Transient
+    var installTargetVersion: String? = null
+        private set
+
+    /**
+     * 设置资源安装上下文
+     */
+    fun withInstallTarget(versionName: String?) {
+        installTargetVersion = versionName
+    }
+
     @Suppress("unused")
     fun navigateOnce(key: E) {
         backStack.navigateOnce(key)

@@ -290,11 +290,9 @@
     <string name="versions_config_game_settings">ゲーム個別設定</string>
     <string name="versions_config_renderer">レンダラー</string>
     <string name="versions_config_vulkan_driver">Vulkanドライバー</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. ログインボタンをクリック ― ランチャーが認証コードを取得しようとします;\n</string>
     <string name="account_supporting_username_invalid_empty">ユーザー名が必要</string>
     <string name="account_supporting_email_invalid_empty">メールアドレスが必要</string>
     <string name="account_supporting_password_invalid_empty">パスワードが必要</string>
-    <string name="account_supporting_microsoft_tip_title">Microsoftアカウントを追加</string>
     <string name="download_game_addon_stable">安定版</string>
     <string name="generic_input_invalid_character">名前に無効な文字が含まれています: \"%s\"</string>
     <string name="generic_input_too_small">入力値は %s 未満にできません</string>
@@ -426,8 +424,6 @@
     <string name="minecraft_download_stat_verify_task">検証の準備中</string>
     <string name="versions_config_auto_join_server_ip_summary">サーバーのIPをここに入力すると、ゲーム起動後に自動で参加します (例、114.514.114.514:114514)</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Minecraftを購入</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">プロフィールの作成 / プロフィール名を編集</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">アカウントを追加するには、以下の手順に従ってください:</string>
     <string name="account_supporting_username_invalid_local_message_hint3">有効なユーザー名: Name、Name_、Name123</string>
     <string name="account_supporting_username_invalid_local_message_hint4">無効なユーザー名: Name@、N ame、name_name_name_name</string>
     <string name="account_change_skin">スキンを変更</string>
@@ -449,7 +445,6 @@
     <string name="download_game_install_forgelike_preparing_mapping_file">%s マッピングファイルを準備中</string>
     <string name="download_install_error_cant_fetch_optifine_download_url">メインのOptiFineファイルのダウンロードリンクを取得できません</string>
     <string name="download_modpack_install_get_mod_url">モッドのダウンロードリンクを取得 (%1$d/%2$d)</string>
-    <string name="account_supporting_microsoft_tip_link_text">必要かもしれないショートカット:</string>
     <string name="versions_manage_game_path_delete_message">このフォルダを削除しますか？ファイルは残りますが、ランチャーからはリンクが解除されます。</string>
     <string name="download_install_input_version_name">ユーザーがバージョン名を入力するのを待機中</string>
     <string name="download_install_input_version_name_title">プリインストールバージョン名を入力してください</string>
@@ -692,12 +687,6 @@
     <string name="versions_manage_copy_version_all">全てのファイルをコピー</string>
     <string name="versions_manage_delete_version">バージョンを削除</string>
     <string name="account_change_skin_update_toast">スキンのアップロードに成功しました。もし変更されてなかったら、しばらくしてからアカウントを更新してください</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. ポップアップウェブページに %s から提供されたコードを入力してアクセスを許可をクリックします;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. ウェブページの指示に従ってサインインプロセスを完了してください;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. このアプリがあなたの情報にアクセスすることを許可しますか？と出たら許可をクリック;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. ウェブページに完了！と表示されたら自動的にアカウントが追加されます。しばらくお待ち下さい。</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">ウェブページにエラーメッセージが表示されるか、アカウントの追加に失敗したら、上記の手順を再試行してください。\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Tip: ネットワーク接続が不安定な場合、ウェブページの読み込みが遅かったり開くのに失敗する場合があります。ネットワークプロキシを使って再接続してください。</string>
     <string name="versions_manage_copy_version_tip">バージョン分離を有効にしてこのバージョンをコピーします。リソースを含めるには\"全てのファイルをコピー\"にチェックを入れてください。</string>
     <string name="versions_manage_no_versions">インストールされたバージョンはありません</string>
     <string name="versions_manage_cleanup_progress">ファイル: %s</string>
@@ -998,8 +987,6 @@
     <string name="control_editor_special_joystick_style_joystick_size">ジョイスティックの大きさ</string>
     <string name="upgrade_title">アップデートを確認</string>
     <string name="upgrade_new">新しいバージョンが見つかりました</string>
-    <string name="upgrade_more">表示</string>
-    <string name="upgrade_files">利用可能なAPK</string>
     <string name="upgrade_files_arch">アーキテクチャ: %s</string>
     <string name="upgrade_version_change">バージョン: %s</string>
     <string name="upgrade_version_size">サイズ: %s</string>

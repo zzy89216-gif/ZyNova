@@ -503,7 +503,7 @@ class MainActivity : BaseAppCompatActivity() {
                     operation = launcherUpgradeViewModel.operation,
                     onChanged = { launcherUpgradeViewModel.operation = it },
                     onIgnoredClick = { ver ->
-                        AllSettings.lastIgnoredVersion.save(ver)
+                        AllSettings.lastIgnoredVersionName.save(ver)
                     },
                     onLinkClick = { eventViewModel.sendEvent(EventViewModel.Event.OpenLink(it)) }
                 )
