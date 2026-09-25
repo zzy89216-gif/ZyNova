@@ -1020,8 +1020,8 @@
     <string name="game_vulkan_check_title">Kiểm tra Vulkan</string>
     <string name="game_vulkan_check_version">Vulkan: %s</string>
     <string name="game_vulkan_check_turnip">Dùng Turnip: %s</string>
-    <string name="game_vulkan_check_unsupp">Thiết bị không hỗ trợ Vulkan chạy MC 26.2+</string>
-    <string name="game_vulkan_check_supp">Thiết bị có thể dùng Vulkan chạy MC 26.2+</string>
+    <string name="game_vulkan_check_unsupp">Thiết bị không hỗ trợ Vulkan chạy MC 26.4 Snapshot 1</string>
+    <string name="game_vulkan_check_supp">Thiết bị có thể dùng Vulkan chạy MC 26.4 Snapshot 1</string>
     <string name="account_label_server_url">URL server</string>
     <string name="account_change_skin_arm_style">Steve hay Alex</string>
     <string name="account_change_skin_arm_wide">Steve</string>
@@ -1062,7 +1062,7 @@
     <string name="game_menu_option_hotbar_long_click">Nhấn giữ để vứt vật phẩm đã chọn</string>
     <string name="game_menu_option_hotbar_long_click_delay">Độ trễ khi nhấn giữ thanh công cụ (hotbar)</string>
     <string name="game_saponsorship_finished_game">Trình khởi chạy đã khởi động trò chơi thành công %s lần! Nếu bạn thấy nó hữu ích, hãy cân nhắc ủng hộ tác giả nhé! :D</string>
-    <string name="game_vulkan_check_text">Kiểm tra xem thiết bị của bạn có hỗ trợ chạy Minecraft 26.2+ bằng Vulkan hay không. Kết quả chỉ mang tính chất tham khảo.</string>
+    <string name="game_vulkan_check_text">Kiểm tra xem thiết bị của bạn có hỗ trợ chạy Minecraft 26.4 Snapshot 1 bằng Vulkan hay không. Kết quả chỉ mang tính chất tham khảo.</string>
     <string name="game_vulkan_check_extensions">Các tiện ích mở rộng bắt buộc:</string>
     <string name="game_vulkan_check_missing_extensions">Các tiện ích mở rộng còn thiếu:</string>
     <string name="game_vulkan_check_features">Các tính năng bắt buộc:</string>
@@ -1153,7 +1153,7 @@
     <string name="settings_game_native_lib_plugin_title">Plugin thư viện gốc</string>
     <string name="settings_game_native_lib_plugin_summary">Liệt kê tất cả plugin thư viện gốc đã tải. Bạn có thể bật hoặc tắt chúng trong danh sách.</string>
     <string name="settings_game_graphics_api_title">API đồ hoạ</string>
-    <string name="settings_game_graphics_api_summary">Đặt API đồ hoạ dùng bởi MC 26.2+</string>
+    <string name="settings_game_graphics_api_summary">Đặt API đồ hoạ dùng bởi MC 26.4 Snapshot 1</string>
     <string name="settings_gamepad_config_create_name">Tên cấu hình</string>
     <string name="settings_gamepad_config_create_contains">Một cấu hình với tên tương tự đã tồn tại</string>
     <string name="settings_gamepad_config_no_items">Không cấu hình nào được tạo, không thể chuyển đổi</string>

@@ -25,19 +25,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
-import com.movtery.zalithlauncher.utils.device.VulkanCapabilities
+import com.movtery.zalithlauncher.utils.device.VulkanCheckResult
+import com.movtery.zalithlauncher.utils.device.VulkanRequirements
 
 @Composable
 fun VulkanChecker(
@@ -59,9 +62,10 @@ fun VulkanChecker(
             )
         }
         is VCOperation.Result -> {
-            val data = operation.data
-            val useTurnip = operation.useTurnip
-            val isUnsupp = data == null || !data.isAllSupported
+            val result = operation.result
+            val version = operation.version
+            //用于在非 Composable 的 lambda 中解析资源文案
+            val context = LocalContext.current
 
             AlertDialog(
                 onDismissRequest = {
@@ -80,42 +84,122 @@ fun VulkanChecker(
                         CompositionLocalProvider(
                             LocalTextStyle provides MaterialTheme.typography.labelMedium
                         ) {
-                            //检测结果
-                            val result = if (isUnsupp) {
-                                stringResource(R.string.game_vulkan_check_unsupp)
-                            } else {
-                                stringResource(R.string.game_vulkan_check_supp)
-                            }
-                            Text(result)
+                            //检测状态：可用 / 不可用 / 检测失败
+                            Text(
+                                text = stringResource(result.statusTextRes()),
+                                style = MaterialTheme.typography.titleSmall
+                            )
 
-                            if (data != null) {
-                                //版本号
-                                Text(stringResource(R.string.game_vulkan_check_version, data.versionString))
-                                //是否使用Turnip
-                                Text(stringResource(R.string.game_vulkan_check_turnip, useTurnip))
+                            //目标 Minecraft 版本
+                            Text(
+                                stringResource(
+                                    R.string.game_vulkan_check_target,
+                                    VulkanRequirements.CURRENT.minecraftVersion
+                                )
+                            )
 
-                                if (data.isAllSupported) {
+                            //GPU / 渲染器信息
+                            Text(
+                                stringResource(
+                                    R.string.game_vulkan_check_gpu,
+                                    result.deviceInfo.gpuRenderer
+                                )
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.game_vulkan_check_device,
+                                    result.deviceInfo.deviceModel
+                                )
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.game_vulkan_check_driver,
+                                    result.deviceInfo.driverPath
+                                        ?: stringResource(R.string.game_vulkan_check_driver_system)
+                                )
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.game_vulkan_check_turnip,
+                                    result.useTurnip.toString()
+                                )
+                            )
+
+                            when (result) {
+                                is VulkanCheckResult.Available -> {
+                                    Text(
+                                        stringResource(
+                                            R.string.game_vulkan_check_version,
+                                            result.capabilities.versionString
+                                        )
+                                    )
                                     TextGroup(
                                         text = stringResource(R.string.game_vulkan_check_extensions),
-                                        columns = VulkanCapabilities.REQUIRED_EXTENSIONS
+                                        columns = VulkanRequirements.CURRENT.requiredExtensions
                                     )
                                     TextGroup(
                                         text = stringResource(R.string.game_vulkan_check_features),
-                                        columns = VulkanCapabilities.REQUIRED_FEATURES
+                                        columns = VulkanRequirements.CURRENT.requiredFeatures
                                     )
-                                } else {
-                                    //不支持时，显示缺失的扩展、功能
+                                }
+
+                                is VulkanCheckResult.Unavailable -> {
+                                    result.capabilities?.let { caps ->
+                                        Text(
+                                            stringResource(
+                                                R.string.game_vulkan_check_version,
+                                                caps.versionString
+                                            )
+                                        )
+                                    }
+                                    Text(
+                                        stringResource(
+                                            R.string.game_vulkan_check_required_api,
+                                            result.requiredApiVersion
+                                        )
+                                    )
+                                    //具体原因
                                     TextGroup(
-                                        text = stringResource(R.string.game_vulkan_check_missing_extensions),
-                                        columns = data.missingExtensions
+                                        text = stringResource(R.string.game_vulkan_check_reasons),
+                                        columns = result.issues.map { context.getString(it.textRes) }
                                     )
-                                    TextGroup(
-                                        text = stringResource(R.string.game_vulkan_check_missing_features),
-                                        columns = data.missingFeatures
+                                    if (result.missingExtensions.isNotEmpty()) {
+                                        TextGroup(
+                                            text = stringResource(R.string.game_vulkan_check_missing_extensions),
+                                            columns = result.missingExtensions
+                                        )
+                                    }
+                                    if (result.missingFeatures.isNotEmpty()) {
+                                        TextGroup(
+                                            text = stringResource(R.string.game_vulkan_check_missing_features),
+                                            columns = result.missingFeatures
+                                        )
+                                    }
+                                }
+
+                                is VulkanCheckResult.Failed -> {
+                                    Text(
+                                        stringResource(R.string.game_vulkan_check_failed_reason)
                                     )
+                                    result.message?.let { message ->
+                                        Text(
+                                            modifier = Modifier.padding(start = 16.dp),
+                                            text = message
+                                        )
+                                    }
                                 }
                             }
                         }
+                    }
+                },
+                dismissButton = {
+                    //支持用户主动重新检测
+                    FilledTonalButton(
+                        onClick = {
+                            startCheck(version)
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.game_vulkan_check_retry))
                     }
                 },
                 confirmButton = {
@@ -131,6 +215,15 @@ fun VulkanChecker(
             )
         }
     }
+}
+
+/**
+ * 检测状态对应的文案
+ */
+private fun VulkanCheckResult.statusTextRes(): Int = when (this) {
+    is VulkanCheckResult.Available -> R.string.game_vulkan_result_available
+    is VulkanCheckResult.Unavailable -> R.string.game_vulkan_result_unavailable
+    is VulkanCheckResult.Failed -> R.string.game_vulkan_result_failed
 }
 
 @Composable

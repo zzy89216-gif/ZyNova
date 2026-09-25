@@ -96,6 +96,10 @@ class HomePageViewModel : ViewModel() {
                 HomePageType.Blank -> {
                     _pageState.update { HomePageState.Blank }
                 }
+                HomePageType.Cards -> {
+                    //卡片主页的数据在进入主页时按需加载
+                    _pageState.update { HomePageState.Cards }
+                }
                 HomePageType.FromLocal -> {
                     val page = reloadPageFromLocal()
                     _pageState.update { HomePageState.None(page) }
@@ -303,6 +307,8 @@ sealed interface HomePageState {
     data class None(val page: List<MarkdownBlock>) : HomePageState
     /** 空白主页 */
     data object Blank : HomePageState
+    /** 卡片式主页 */
+    data object Cards : HomePageState
 }
 
 /** 启动器主页操作状态 */

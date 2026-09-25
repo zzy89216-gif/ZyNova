@@ -80,7 +80,7 @@ fun DownloadModScreen(
                 submitError = submitError
             )
         },
-        doQuickInstall = { classes, version ->
+        doQuickInstall = { classes, version, _ ->
             quickInstallAsset(
                 version = version,
                 classes = classes,

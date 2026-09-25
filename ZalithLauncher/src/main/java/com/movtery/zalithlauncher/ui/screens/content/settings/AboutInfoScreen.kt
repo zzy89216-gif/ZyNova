@@ -62,11 +62,10 @@ import com.movtery.zalithlauncher.game.plugin.PluginLoader
 import com.movtery.zalithlauncher.game.plugin.appCacheIcon
 import com.movtery.zalithlauncher.library.LibraryInfo
 import com.movtery.zalithlauncher.library.libraryData
-import com.movtery.zalithlauncher.path.URL_COMMUNITY
+import com.movtery.zalithlauncher.path.URL_DISCORD
 import com.movtery.zalithlauncher.path.URL_MCMOD
 import com.movtery.zalithlauncher.path.URL_PROJECT
 import com.movtery.zalithlauncher.path.URL_SUPPORT
-import com.movtery.zalithlauncher.path.URL_WEBLATE
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedLazyColumn
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
@@ -77,6 +76,9 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPositi
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCard
 import com.movtery.zalithlauncher.ui.theme.itemColor
 import com.movtery.zalithlauncher.ui.theme.onItemColor
+
+/** 上游项目名称，用于署名区分 */
+private const val UPSTREAM_PROJECT_NAME = "ZalithLauncher2"
 
 @Composable
 fun AboutInfoScreen(
@@ -113,11 +115,6 @@ fun AboutInfoScreen(
                                     Text(text = stringResource(R.string.upgrade_title))
                                 }
                                 Button(
-                                    onClick = { openLink(URL_PROJECT) }
-                                ) {
-                                    Text(text = stringResource(R.string.about_launcher_project_link))
-                                }
-                                Button(
                                     onClick = { openLicense(R.raw.gpl_3_license) }
                                 ) {
                                     Text(text = stringResource(R.string.about_launcher_license))
@@ -133,15 +130,21 @@ fun AboutInfoScreen(
                             modifier = Modifier.padding(horizontal = 14.dp)
                         )
 
+                        //项目维护者
                         ButtonIconItem(
-                            icon = painterResource(R.drawable.img_avatar_movtery),
-                            title = stringResource(R.string.about_launcher_author_movtery_title),
-                            text = stringResource(R.string.about_launcher_author_movtery_text, BuildKeys.LAUNCHER_NAME),
+                            icon = painterResource(R.drawable.img_launcher),
+                            title = stringResource(R.string.about_launcher_author_zzy_title),
+                            text = stringResource(R.string.about_launcher_author_zzy_text, BuildKeys.LAUNCHER_NAME),
                             button = {
                                 Button(
-                                    onClick = { openLink(URL_SUPPORT) }
+                                    onClick = { openLink(URL_PROJECT) }
                                 ) {
-                                    Text(text = stringResource(R.string.about_sponsor))
+                                    Text(text = stringResource(R.string.about_launcher_project_link))
+                                }
+                                Button(
+                                    onClick = { openLink(URL_DISCORD) }
+                                ) {
+                                    Text(text = stringResource(R.string.about_launcher_discord))
                                 }
                             }
                         )
@@ -155,6 +158,22 @@ fun AboutInfoScreen(
                     title = stringResource(R.string.about_acknowledgements_title)
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        //上游项目 ZalithLauncher2 的作者（保留赞助入口）
+                        ButtonIconItem(
+                            icon = painterResource(R.drawable.img_avatar_movtery),
+                            title = stringResource(R.string.about_launcher_author_movtery_title),
+                            text = stringResource(
+                                R.string.about_launcher_author_movtery_text,
+                                UPSTREAM_PROJECT_NAME
+                            ),
+                            button = {
+                                Button(
+                                    onClick = { openLink(URL_SUPPORT) }
+                                ) {
+                                    Text(text = stringResource(R.string.about_sponsor))
+                                }
+                            }
+                        )
                         ButtonIconItem(
                             icon = painterResource(R.drawable.img_avatar_bangbang93),
                             title = "bangbang93",
@@ -213,17 +232,11 @@ fun AboutInfoScreen(
                             openLink = { openLink("https://github.com/PojavLauncherTeam/PojavLauncher") }
                         )
                         LinkIconItem(
-                            icon = painterResource(R.drawable.ic_github),
-                            title = stringResource(R.string.about_acknowledgements_github_community),
-                            text = stringResource(R.string.about_acknowledgements_github_community_text),
-                            openLink = { openLink(URL_COMMUNITY) },
+                            icon = painterResource(R.drawable.ic_link),
+                            title = stringResource(R.string.about_acknowledgements_discord_community),
+                            text = stringResource(R.string.about_acknowledgements_discord_community_text),
+                            openLink = { openLink(URL_DISCORD) },
                             useImage = false
-                        )
-                        LinkIconItem(
-                            icon = painterResource(R.drawable.img_platform_weblate),
-                            title = stringResource(R.string.about_acknowledgements_weblate_community),
-                            text = stringResource(R.string.about_acknowledgements_weblate_community_text),
-                            openLink = { openLink(URL_WEBLATE) }
                         )
                     }
                 }

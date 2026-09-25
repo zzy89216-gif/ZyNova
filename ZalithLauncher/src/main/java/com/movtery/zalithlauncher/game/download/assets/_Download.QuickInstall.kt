@@ -23,7 +23,7 @@ import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
-import com.movtery.zalithlauncher.game.download.resources.ResourceInstallManager
+import com.movtery.zalithlauncher.game.download.resources.ResourceManager
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.download.resources.toResourceVersion
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
@@ -79,16 +79,12 @@ fun quickInstallAsset(
                 task.updateProgress(-1f)
                 task.updateMessage(androidText(R.string.download_assets_quick_install_resolving))
 
-                //1. 统一模型转换 + 递归解析必需的（前置依赖）
+                //1. 统一模型转换
                 val resourceVersion = version.toResourceVersion(projectId ?: version.platformId())
-                val plan = ResourceInstallManager.buildInstallPlan(
-                    version = resourceVersion,
-                    instance = currentVersion
-                )
 
-                //2. 统一下载 → 校验 → 安装
-                ResourceInstallManager.install(
-                    plan = plan,
+                //2. 统一下载 → 校验 → 安装（统一走资源管理核心）
+                ResourceManager.installVersion(
+                    version = resourceVersion,
                     type = type,
                     instance = currentVersion,
                     onProgress = { progress ->

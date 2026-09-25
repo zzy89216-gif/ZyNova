@@ -1106,7 +1106,7 @@
     <string name="settings_renderer_surface_title">SurfaceView Oluşturma Kullanımı</string>
     <string name="settings_renderer_surface_summary">Kullanıcı arayüzünün dışında ayrı bir katman kullanarak render işlemleri gerçekleştirir.</string>
     <string name="settings_game_graphics_api_title">Grafikler API</string>
-    <string name="settings_game_graphics_api_summary">Minecraft 26.2 ve üzeri sürümlerde kullanılan grafik API\'sini ayarlayın.</string>
+    <string name="settings_game_graphics_api_summary">Minecraft 26.4 Snapshot 1 ve üzeri sürümlerde kullanılan grafik API\'sini ayarlayın.</string>
     <string name="settings_game_graphics_api_default">Oyun ayarlarını takip et</string>
     <string name="settings_launcher_festivals_effects_title">Paskalya Festivali Yumurtaları</string>
     <string name="settings_launcher_festivals_effects_summary">Belirli zaman dilimlerinde kalıcı paskalya yumurtası efektlerini göster.</string>
@@ -1155,15 +1155,15 @@
     <string name="settings_launcher_home_page_url">Ana Sayfa İndirme Bağlantısı:</string>
     <string name="settings_launcher_home_page_loading">Ana Sayfa Yükleniyor</string>
     <string name="game_vulkan_check_title">Vulkan Kontrolü</string>
-    <string name="game_vulkan_check_text">Cihazınızın Minecraft 26.2+ sürümünü Vulkan ile çalıştırmayı destekleyip desteklemediğini kontrol edin. Sonuçlar yalnızca referans amaçlıdır.</string>
+    <string name="game_vulkan_check_text">Cihazınızın Minecraft 26.4 Snapshot 1 sürümünü Vulkan ile çalıştırmayı destekleyip desteklemediğini kontrol edin. Sonuçlar yalnızca referans amaçlıdır.</string>
     <string name="game_vulkan_check_version">Vulkan sürümü: %s</string>
     <string name="game_vulkan_check_turnip">Turnip Kullanımı: %s</string>
     <string name="game_vulkan_check_extensions">Gerekli eklentiler:</string>
     <string name="game_vulkan_check_missing_extensions">Eksik uzantılar:</string>
     <string name="game_vulkan_check_features">Gerekli özellikler:</string>
     <string name="game_vulkan_check_missing_features">Eksik özellikler:</string>
-    <string name="game_vulkan_check_unsupp">Cihazınız Minecraft 26.2+ sürümünü Vulkan ile çalıştırmayı desteklemiyor.</string>
-    <string name="game_vulkan_check_supp">Cihazınız Minecraft 26.2+ sürümünü Vulkan ile çalıştırmayı destekliyor.</string>
+    <string name="game_vulkan_check_unsupp">Cihazınız Minecraft 26.4 Snapshot 1 sürümünü Vulkan ile çalıştırmayı desteklemiyor.</string>
+    <string name="game_vulkan_check_supp">Cihazınız Minecraft 26.4 Snapshot 1 sürümünü Vulkan ile çalıştırmayı destekliyor.</string>
     <string name="error_bad_request">(%s) Sunucu isteği anlayamadı</string>
     <string name="error_forbidden">(%s) Bu kaynağa erişim izniniz yok.</string>
     <string name="error_not_acceptable">(%s) Kabul Edilemez</string>

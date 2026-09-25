@@ -387,15 +387,15 @@
     <string name="game_menu_option_controls_opacity">控制佈局不透明度</string>
     <string name="game_saponsorship_finished_game">啟動器已成功執行遊戲 %s 次！如果您覺得好用，可以考慮贊助支持作者喔！qwq</string>
     <string name="game_vulkan_check_title">Vulkan 檢測</string>
-    <string name="game_vulkan_check_text">檢查您的裝置是否支援使用 Vulkan 執行 Minecraft 26.2+，結果僅供參考</string>
+    <string name="game_vulkan_check_text">檢查您的裝置是否支援使用 Vulkan 執行 Minecraft 26.4 Snapshot 1，結果僅供參考</string>
     <string name="game_vulkan_check_version">Vulkan 版本：%s</string>
     <string name="game_vulkan_check_turnip">使用 Turnip：%s</string>
     <string name="game_vulkan_check_extensions">依賴的擴充功能：</string>
     <string name="game_vulkan_check_missing_extensions">缺少的擴充功能：</string>
     <string name="game_vulkan_check_features">依賴的功能：</string>
     <string name="game_vulkan_check_missing_features">缺少的功能：</string>
-    <string name="game_vulkan_check_unsupp">您的裝置不支援使用 Vulkan 執行 Minecraft 26.2+</string>
-    <string name="game_vulkan_check_supp">您的裝置可以使用 Vulkan 執行 Minecraft 26.2+</string>
+    <string name="game_vulkan_check_unsupp">您的裝置不支援使用 Vulkan 執行 Minecraft 26.4 Snapshot 1</string>
+    <string name="game_vulkan_check_supp">您的裝置可以使用 Vulkan 執行 Minecraft 26.4 Snapshot 1</string>
     <!--  渲染器  -->
     <string name="renderer_version_support">MC 版本支援：</string>
     <string name="renderer_version_unsupported_warning">目前渲染器 %s 不支援此遊戲版本，繼續使用可能導致渲染錯誤或遊戲崩潰！您確定要忽略風險並繼續嗎？</string>
@@ -802,7 +802,7 @@
     <string name="settings_game_native_lib_plugin_title">原生函式庫外掛</string>
     <string name="settings_game_native_lib_plugin_summary">列出所有已載入的原生函式庫外掛，您可在清單中啟用或停用它們</string>
     <string name="settings_game_graphics_api_title">圖形 API</string>
-    <string name="settings_game_graphics_api_summary">設定 Minecraft 26.2+ 將使用的圖形 API</string>
+    <string name="settings_game_graphics_api_summary">設定 Minecraft 26.4 Snapshot 1 將使用的圖形 API</string>
     <string name="settings_game_graphics_api_default">依照遊戲設定</string>
     <string name="settings_game_graphics_api_default_opengl">僅首次啟動時設為 OpenGL</string>
     <string name="settings_game_jvm_args_title">JVM 啟動參數</string>

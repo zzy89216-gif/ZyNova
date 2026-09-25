@@ -66,6 +66,9 @@ import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
+import com.movtery.zalithlauncher.game.download.resources.ResourceInstallManager
+import com.movtery.zalithlauncher.game.download.resources.ResourceType
+import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.download.assets.platform.getProject
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.isAllNull
@@ -307,6 +310,17 @@ fun DownloadAssetsScreen(
 ) {
     val viewModel: DownloadScreenViewModel = rememberDownloadAssetsViewModel(key)
 
+    //当前实例在该资源类别下已经安装的文件，用于显示「已安装」状态。
+    //只有确实知道目标实例时才计算，纯浏览模式不做多余 IO。
+    val installedFileNames = remember(key.classes, installTargetVersion) {
+        val instance = installTargetVersion
+            ?.let { name -> VersionsManager.versions.value.firstOrNull { it.getVersionName() == name } }
+            ?: VersionsManager.currentVersion.value
+        instance?.let {
+            ResourceInstallManager.installedFileNames(it, ResourceType.of(key.classes))
+        }.orEmpty()
+    }
+
     BaseScreen(
         levels1 = listOf(
             Pair(nestedNavKeyClass ?: NestedNavKey.Download::class.java, mainScreenKey)
@@ -334,6 +348,7 @@ fun DownloadAssetsScreen(
                 onQuickInstall = onQuickInstall?.let { install ->
                     { version: PlatformVersion -> install(key.classes, version) }
                 },
+                installedFileNames = installedFileNames,
             )
 
             val xOffset by swapAnimateDpAsState(
@@ -368,7 +383,8 @@ private fun Versions(
     viewModel: DownloadScreenViewModel,
     onReload: () -> Unit = {},
     onItemClicked: (PlatformVersion) -> Unit = {},
-    onQuickInstall: ((PlatformVersion) -> Unit)? = null
+    onQuickInstall: ((PlatformVersion) -> Unit)? = null,
+    installedFileNames: List<String> = emptyList()
 ) {
     when (val versions = viewModel.versionsResult) {
         is DownloadAssetsState.Getting -> {
@@ -489,7 +505,8 @@ private fun Versions(
                                 .padding(vertical = 6.dp),
                             infoMap = info,
                             onItemClicked = onItemClicked,
-                            onQuickInstall = onQuickInstall
+                            onQuickInstall = onQuickInstall,
+                            installedFileNames = installedFileNames
                         )
                     }
                 }

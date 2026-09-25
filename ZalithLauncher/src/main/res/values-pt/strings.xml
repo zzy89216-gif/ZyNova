@@ -871,15 +871,15 @@
     <string name="game_menu_option_show_menu">Ativar menu flutuante</string>
     <string name="game_saponsorship_finished_game">O launcher iniciou o jogo com sucesso %s vezes! Se o achar útil, considere apoiar o programador! :)</string>
     <string name="game_vulkan_check_title">Verificar Vulkan</string>
-    <string name="game_vulkan_check_text">Verifique se o seu dispositivo é compatível com a execução do Minecraft 26.2 ou superior com Vulkan. Os resultados são apenas para referência.</string>
+    <string name="game_vulkan_check_text">Verifique se o seu dispositivo é compatível com a execução do Minecraft 26.4 Snapshot 1 ou superior com Vulkan. Os resultados são apenas para referência.</string>
     <string name="game_vulkan_check_version">Versão do Vulkan: %s</string>
     <string name="game_vulkan_check_turnip">A usar Turnip: %s</string>
     <string name="game_vulkan_check_extensions">Extensões necessárias:</string>
     <string name="game_vulkan_check_missing_extensions">Extensões ausentes:</string>
     <string name="game_vulkan_check_features">Recursos necessários:</string>
     <string name="game_vulkan_check_missing_features">Recursos ausentes:</string>
-    <string name="game_vulkan_check_unsupp">O seu dispositivo não apoia a execução do minecraft 26.2+ com Vulkan</string>
-    <string name="game_vulkan_check_supp">O seu dispositivo é compatível com a execução do minecraft 26.2+ com Vulkan</string>
+    <string name="game_vulkan_check_unsupp">O seu dispositivo não apoia a execução do minecraft 26.4 Snapshot 1 com Vulkan</string>
+    <string name="game_vulkan_check_supp">O seu dispositivo é compatível com a execução do minecraft 26.4 Snapshot 1 com Vulkan</string>
     <string name="plugin_unsupported_warning">O plugin %s não é compatível com esta versão do jogo. Continuar a usá-lo pode causar o crash, bug de renderer ou travamento no jogo! Tem certeza que vai ignorar o risco e prosseguir?</string>
     <string name="plugin_download_title">Descarregar Plugin</string>
     <string name="plugin_download_summary">Descarregue o plugin e instale-o como uma app. Basta reabrir o launcher e ele será carregado automaticamente!</string>
@@ -1008,7 +1008,7 @@
     <string name="settings_renderer_surface_summary">Renderiza usando uma camada separada fora da interface do utilizador</string>
     <string name="settings_game_java_memory_used_text">Usando: %1$dMB | Total do dispositivo: %2$dMB</string>
     <string name="settings_game_native_lib_plugin_title">Plugins da Biblioteca Nativa</string>
-    <string name="settings_game_graphics_api_summary">Defina a API gráfica usada pelo Minecraft 26.2+</string>
+    <string name="settings_game_graphics_api_summary">Defina a API gráfica usada pelo Minecraft 26.4 Snapshot 1</string>
     <string name="settings_game_graphics_api_default">Siga as configurações do jogo</string>
     <string name="settings_game_graphics_api_default_opengl">Definido para OpenGL apenas na primeira inicialização</string>
     <string name="settings_control_mouse_enable_click_title">Modo TouchScreen</string>

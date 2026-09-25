@@ -19,7 +19,7 @@
 package com.movtery.zalithlauncher.ui.vulkan_checker
 
 import com.movtery.zalithlauncher.game.version.installed.Version
-import com.movtery.zalithlauncher.utils.device.VulkanCapabilities
+import com.movtery.zalithlauncher.utils.device.VulkanCheckResult
 
 /**
  * Vulkan 检查器 UI 操作状态
@@ -33,11 +33,13 @@ sealed interface VCOperation {
     data class Tip(val version: Version): VCOperation
 
     /**
-     * @param data 检查结果
-     * @param useTurnip 是否使用了 Turnip
+     * Vulkan 检查结果
+     *
+     * @param result 检测结果（可用 / 不可用 / 检测失败）
+     * @param version 被检测的游戏版本，用于主动重新检测
      */
     data class Result(
-        val data: VulkanCapabilities?,
-        val useTurnip: Boolean = false
+        val result: VulkanCheckResult,
+        val version: Version
     ): VCOperation
 }

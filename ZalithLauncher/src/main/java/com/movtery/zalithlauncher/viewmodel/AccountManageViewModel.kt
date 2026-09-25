@@ -35,6 +35,7 @@ import com.movtery.zalithlauncher.game.account.auth_server.AuthServerHelper
 import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.isLocalAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
+import com.movtery.zalithlauncher.game.account.microsoftLogin
 import com.movtery.zalithlauncher.game.account.isReloginRequired
 import com.movtery.zalithlauncher.game.account.localLogin
 import com.movtery.zalithlauncher.game.account.microsoft.MINECRAFT_SERVICES_URL
@@ -106,6 +107,18 @@ sealed interface AccountManageIntent {
     data class OnSkinPicked(val uri: Uri) : AccountManageIntent
     data object ResetAccountSkinDialogState : AccountManageIntent
 
+
+    /**
+     * 已有微软账号的会话续期（重新登录）
+     *
+     * 与「添加账号」无关：仅用于让数据库中已存在的微软账号在会话过期后重新登录，
+     * 保证旧用户依然可以正常启动游戏。
+     */
+    data class ReloginMicrosoft(
+        val toWeb: (url: String) -> Unit,
+        val backToMain: () -> Unit,
+        val checkIfInWebScreen: () -> Boolean
+    ) : AccountManageIntent
 
     /** 应用选中的皮肤 */
     data class ApplySkin(val account: Account, val file: File, val model: SkinModelType) : AccountManageIntent
@@ -328,6 +341,7 @@ class AccountManageViewModel @AssistedInject constructor(
                 _accountSkinDialogState.update { AccountSkinDialogState() }
             }
 
+            is AccountManageIntent.ReloginMicrosoft -> reloginMicrosoft(intent)
             is AccountManageIntent.ApplySkin ->
                 applySkin(intent.account, intent.file, intent.model)
 
@@ -416,6 +430,18 @@ class AccountManageViewModel @AssistedInject constructor(
         eventViewModel.sendToast(text, duration)
     }
 
+
+    /** 已有微软账号的会话续期 */
+    private fun reloginMicrosoft(intent: AccountManageIntent.ReloginMicrosoft) {
+        microsoftLogin(
+            context = context,
+            toWeb = intent.toWeb,
+            backToMain = intent.backToMain,
+            checkIfInWebScreen = intent.checkIfInWebScreen,
+            showToast = ::emitToast,
+            submitError = { emitError(it.title, it.message) }
+        )
+    }
 
     /** 应用选中的皮肤 */
     private fun applySkin(account: Account, file: File, model: SkinModelType) {

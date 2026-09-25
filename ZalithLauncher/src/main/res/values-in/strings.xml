@@ -1118,7 +1118,7 @@
     <string name="account_change_skin_arm_style">Gaya Lengan</string>
     <string name="account_change_skin_arm_wide">Lengan Lebar</string>
     <string name="settings_game_graphics_api_title">API Grafis</string>
-    <string name="settings_game_graphics_api_summary">Atur API grafis yang digunakan oleh Minecraft 26.2+</string>
+    <string name="settings_game_graphics_api_summary">Atur API grafis yang digunakan oleh Minecraft 26.4 Snapshot 1</string>
     <string name="settings_game_graphics_api_default">Ikuti pengaturan game</string>
     <string name="settings_renderer_surface_title">Gunakan rendering SurfaceView</string>
     <string name="settings_renderer_surface_summary">Menggunakan layer terpisah di luar UI untuk rendering</string>
@@ -1155,15 +1155,15 @@
     <string name="settings_launcher_home_page_url">URL beranda:</string>
     <string name="settings_launcher_home_page_loading">Memuat beranda</string>
     <string name="game_vulkan_check_title">Cek Vulkan</string>
-    <string name="game_vulkan_check_text">Periksa apakah perangkat kamu bisa menjalankan Minecraft 26.2+ dengan Vulkan. Hasil ini hanya untuk referensi saja.</string>
+    <string name="game_vulkan_check_text">Periksa apakah perangkat kamu bisa menjalankan Minecraft 26.4 Snapshot 1 dengan Vulkan. Hasil ini hanya untuk referensi saja.</string>
     <string name="game_vulkan_check_version">Versi Vulkan: %s</string>
     <string name="game_vulkan_check_turnip">Menggunakan Turnip: %s</string>
     <string name="game_vulkan_check_extensions">Ekstensi yang diperlukan:</string>
     <string name="game_vulkan_check_missing_extensions">Ekstensi yang tidak tersedia:</string>
     <string name="game_vulkan_check_features">Fitur yang diperlukan:</string>
     <string name="game_vulkan_check_missing_features">Fitur yang tidak tersedia:</string>
-    <string name="game_vulkan_check_unsupp">Perangkat kamu tidak bisa menjalankan Minecraft 26.2+ dengan Vulkan</string>
-    <string name="game_vulkan_check_supp">Perangkat kamu bisa menjalankan Minecraft 26.2+ dengan Vulkan</string>
+    <string name="game_vulkan_check_unsupp">Perangkat kamu tidak bisa menjalankan Minecraft 26.4 Snapshot 1 dengan Vulkan</string>
+    <string name="game_vulkan_check_supp">Perangkat kamu bisa menjalankan Minecraft 26.4 Snapshot 1 dengan Vulkan</string>
     <string name="cape_name_builder">Builder</string>
     <string name="cape_name_crafter">Crafter</string>
     <string name="settings_title_blur">Efek Blur</string>

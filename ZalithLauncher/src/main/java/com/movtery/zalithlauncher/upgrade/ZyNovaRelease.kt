@@ -23,6 +23,20 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
+ * 已知的 CPU 架构标记
+ *
+ * 按长度降序匹配，避免短标记（"x86"）错误命中长标记（"x86_64"）。
+ */
+private val KNOWN_ABIS = listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+    .sortedByDescending { it.length }
+
+/**
+ * 该构建产物所属的 CPU 架构；不包含任何已知架构标记时返回 null（通用包）
+ */
+fun ZyNovaRelease.Asset.abiOrNull(): String? =
+    KNOWN_ABIS.firstOrNull { name.contains(it, ignoreCase = true) }
+
+/**
  * ZyNova 自有更新体系的数据模型。
  *
  * ZyNova 只维护自己的更新体系：直接以 ZyNova 仓库的 GitHub Releases
@@ -75,12 +89,6 @@ data class ZyNovaRelease(
         get() = tagName.trim().removePrefix("v").removePrefix("V").trim()
 
     /**
-     * 该构建产物所属的 CPU 架构；不包含任何已知架构标记时返回 null（通用包）
-     */
-    fun Asset.abiOrNull(): String? =
-        KNOWN_ABIS.firstOrNull { name.contains(it, ignoreCase = true) }
-
-    /**
      * 根据当前设备实际支持的 ABI 自动选择最合适的安装包。
      *
      * 用户不需要自己挑选架构：能自动判断，就不让用户选择。
@@ -100,14 +108,6 @@ data class ZyNovaRelease(
     }
 
     companion object {
-        /**
-         * 已知的 CPU 架构标记。
-         *
-         * 按长度降序匹配，避免 short 标记（"x86"）错误命中 long 标记（"x86_64"）。
-         */
-        private val KNOWN_ABIS = listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-            .sortedByDescending { it.length }
-
         /**
          * 比较两个启动器版本号（形如 26.1.0）
          *

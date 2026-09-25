@@ -1119,7 +1119,7 @@
     <string name="settings_game_native_lib_plugin_title">ネイティブライブラリプラグイン</string>
     <string name="settings_game_native_lib_plugin_summary">読み込まれた全てのネイティブライブラリプラグインを表示します。一覧からプラグインを有効または無効にできます。</string>
     <string name="settings_game_graphics_api_title">グラフィックス API</string>
-    <string name="settings_game_graphics_api_summary">Minecraft 26.2+ で使用するグラフィック API を設定します</string>
+    <string name="settings_game_graphics_api_summary">Minecraft 26.4 Snapshot 1 で使用するグラフィック API を設定します</string>
     <string name="settings_game_graphics_api_default">ゲーム設定に従う</string>
     <string name="settings_game_graphics_api_default_opengl">初回起動時は OpenGL のみに設定</string>
     <string name="settings_launcher_festivals_effects_title">永続的なイースターエッグ効果</string>

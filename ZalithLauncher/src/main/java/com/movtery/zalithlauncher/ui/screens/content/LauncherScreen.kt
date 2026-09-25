@@ -86,6 +86,7 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.AccountAvatar
 import com.movtery.zalithlauncher.ui.screens.content.elements.CommonVersionInfoLayout
 import com.movtery.zalithlauncher.ui.screens.content.elements.VersionIconImage
 import com.movtery.zalithlauncher.ui.screens.main.custom_home.MarkdownBlock
+import com.movtery.zalithlauncher.ui.screens.main.card_home.cardHomePage
 import com.movtery.zalithlauncher.ui.screens.main.custom_home.customHomePage
 import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.viewmodel.HomePageState
@@ -99,6 +100,8 @@ fun LauncherScreen(
     onLaunchGame: (Version?) -> Unit,
     onOpenLink: (String) -> Unit,
     onHomePageEvent: (MarkdownBlock.Button.Event) -> Unit,
+    onPlayWorld: (Version, String) -> Unit = { _, _ -> },
+    onJoinServer: (Version, String) -> Unit = { _, _ -> },
 ) {
     BaseScreen(
         screenKey = NormalNavKey.LauncherMain,
@@ -117,7 +120,10 @@ fun LauncherScreen(
                 ContentMenu(
                     modifier = Modifier.weight(7f),
                     isVisible = isVisible,
-                    onHomePageEvent = onHomePageEvent
+                    onHomePageEvent = onHomePageEvent,
+                    onLaunchGame = onLaunchGame,
+                    onPlayWorld = onPlayWorld,
+                    onJoinServer = onJoinServer
                 )
             }
 
@@ -159,6 +165,9 @@ private fun ContentMenu(
     isVisible: Boolean,
     onHomePageEvent: (MarkdownBlock.Button.Event) -> Unit,
     modifier: Modifier = Modifier,
+    onLaunchGame: (Version?) -> Unit = {},
+    onPlayWorld: (Version, String) -> Unit = { _, _ -> },
+    onJoinServer: (Version, String) -> Unit = { _, _ -> },
 ) {
     val yOffset by swapAnimateDpAsState(
         targetValue = (-40).dp,
@@ -235,6 +244,16 @@ private fun ContentMenu(
                     richTextStyle = richTextStyle,
                     onEvent = onHomePageEvent
                 )
+            }
+            is HomePageState.Cards -> {
+                item(key = "homepage_cards") {
+                    cardHomePage(
+                        modifier = Modifier.fillMaxWidth(),
+                        onLaunchVersion = { version -> onLaunchGame(version) },
+                        onPlayWorld = onPlayWorld,
+                        onJoinServer = onJoinServer
+                    )
+                }
             }
         }
     }

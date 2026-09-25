@@ -84,6 +84,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
+import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.setting.enums.applyLanguage
@@ -329,13 +330,17 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        SwitchSettingsCard(
+                        //玻璃效果档位：关闭 / 标准 / 增强
+                        EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Bottom,
-                            unit = AllSettings.liquidGlass,
+                            value = AllSettings.glassLevel.state,
+                            entries = GlassLevel.entries,
                             title = stringResource(R.string.settings_launcher_liquid_glass_title),
                             summary = stringResource(R.string.settings_launcher_liquid_glass_summary),
-                            enabled = backgroundViewModel.isValid,
+                            getRadioText = { stringResource(it.textRes) },
+                            getRadioEnable = { backgroundViewModel.isValid },
+                            onRadioClick = { AllSettings.glassLevel.save(it) }
                         )
                     }
                 }

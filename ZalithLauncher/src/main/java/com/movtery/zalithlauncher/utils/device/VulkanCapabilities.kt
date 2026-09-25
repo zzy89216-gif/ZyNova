@@ -25,6 +25,11 @@ import java.io.File
 
 private const val TAG = "VulkanCapabilities"
 
+/**
+ * 设备实际枚举出来的 Vulkan 能力
+ *
+ * 注意：构造器签名由 native 层反射调用，不能修改参数列表。
+ */
 @Keep
 data class VulkanCapabilities(
     val apiVersionMajor: Int,
@@ -37,42 +42,59 @@ data class VulkanCapabilities(
     val versionString: String
         get() = "$apiVersionMajor.$apiVersionMinor.$apiVersionPatch"
 
-    /** 检查 Vulkan 版本是否至少为 1.2 */
+    /**
+     * 在指定要求档案下，Vulkan 版本是否达标
+     */
+    fun isVersionSupportedFor(requirement: VulkanRequirement): Boolean =
+        apiVersionMajor > requirement.minApiMajor ||
+            (apiVersionMajor == requirement.minApiMajor && apiVersionMinor >= requirement.minApiMinor)
+
+    /**
+     * 在指定要求档案下缺失的必要扩展
+     */
+    fun missingExtensionsFor(requirement: VulkanRequirement): List<String> =
+        requirement.requiredExtensions.filter { it !in extensions }
+
+    /**
+     * 在指定要求档案下缺失的必要功能
+     */
+    fun missingFeaturesFor(requirement: VulkanRequirement): List<String> =
+        requirement.requiredFeatures.filter { features[it] != true }
+
+    /**
+     * 是否满足指定要求档案
+     */
+    fun isAllSupportedFor(requirement: VulkanRequirement): Boolean =
+        isVersionSupportedFor(requirement) &&
+            missingExtensionsFor(requirement).isEmpty() &&
+            missingFeaturesFor(requirement).isEmpty()
+
+    // ===== 以下为使用当前要求档案的便捷属性 =====
+
+    /** 检查 Vulkan 版本是否满足当前要求 */
     val isVersionSupported: Boolean
-        get() = apiVersionMajor > 1 || (apiVersionMajor == 1 && apiVersionMinor >= 2)
+        get() = isVersionSupportedFor(VulkanRequirements.CURRENT)
 
     /** 返回设备缺失的必要扩展 */
     val missingExtensions: List<String>
-        get() = REQUIRED_EXTENSIONS.filter { it !in extensions }
+        get() = missingExtensionsFor(VulkanRequirements.CURRENT)
 
     /** 返回设备不支持的必要功能 */
     val missingFeatures: List<String>
-        get() = REQUIRED_FEATURES.filter { features[it] != true }
+        get() = missingFeaturesFor(VulkanRequirements.CURRENT)
 
-    /** 设备是否满足所有需求 */
+    /** 设备是否满足当前所有要求 */
     val isAllSupported: Boolean
-        get() = isVersionSupported && missingExtensions.isEmpty() && missingFeatures.isEmpty()
+        get() = isAllSupportedFor(VulkanRequirements.CURRENT)
 
     companion object {
-        val REQUIRED_EXTENSIONS = listOf(
-            "VK_KHR_dynamic_rendering",
-            "VK_KHR_push_descriptor",
-            "VK_KHR_synchronization2",
-            "VK_EXT_vertex_attribute_divisor",
-            "VK_KHR_swapchain"
-        )
+        /** 当前要求的必要扩展 */
+        val REQUIRED_EXTENSIONS: List<String>
+            get() = VulkanRequirements.CURRENT.requiredExtensions
 
-        val REQUIRED_FEATURES = listOf(
-            "multiDrawIndirect",
-            "fillModeNonSolid",
-            "samplerAnisotropy",
-            "shaderDrawParameters",
-            "timelineSemaphore",
-            "hostQueryReset",
-            "synchronization2",
-            "dynamicRendering",
-            "vertexAttributeInstanceRateDivisor"
-        )
+        /** 当前要求的必要功能 */
+        val REQUIRED_FEATURES: List<String>
+            get() = VulkanRequirements.CURRENT.requiredFeatures
     }
 }
 
@@ -81,6 +103,12 @@ fun interface VulkanLogCallback {
     fun log(level: String, message: String)
 }
 
+/**
+ * Vulkan 检测器
+ *
+ * 检测结果明确区分「可用 / 不可用 / 检测失败」三种状态，
+ * 并且给出失败的具体原因，而不是笼统地返回"不支持"。
+ */
 @Keep
 object VulkanChecker {
     init {
@@ -100,41 +128,106 @@ object VulkanChecker {
     }
 
     /**
-     * 查询系统 Vulkan 支持情况
-     * @return 如果不支持 Vulkan 或初始化失败，返回 null
+     * 检测设备的 Vulkan 能力
+     *
+     * @param driverPath 自定义驱动路径
+     * @param nativeDir 自定义驱动所在目录（为空时使用系统 Vulkan 驱动）
+     * @param cacheDir 驱动解压等操作使用的临时目录
      */
     fun checkCapabilities(
         driverPath: String?,
         nativeDir: String?,
         cacheDir: String?
-    ): VulkanCapabilities? {
+    ): VulkanCheckResult {
+        val requirement = VulkanRequirements.CURRENT
+        val customDriver = !nativeDir.isNullOrBlank()
+        val useTurnip = customDriver
+        val deviceInfo = VulkanDeviceInfo.collect(nativeDir)
+
         return try {
-            nativeCheckVulkan(
+            val caps = nativeCheckVulkan(
                 driverPath = driverPath,
                 nativeDir = nativeDir,
                 cacheDir = cacheDir,
-            )?.also { caps ->
-                Logger.info(TAG, "Vulkan version: ${caps.versionString}")
-                Logger.info(TAG, "Version >= 1.2: ${caps.isVersionSupported}")
-                if (caps.missingExtensions.isNotEmpty()) {
-                    Logger.warning(TAG, "Missing required extensions: ${caps.missingExtensions}")
+            )
+
+            if (caps == null) {
+                //检测顺利完成，但没能拿到可用的 Vulkan 设备
+                Logger.warning(TAG, "No usable Vulkan device found (custom driver: $customDriver)")
+                VulkanCheckResult.Unavailable(
+                    capabilities = null,
+                    issues = listOf(
+                        if (customDriver) VulkanIssue.DRIVER_ABNORMAL else VulkanIssue.NO_VULKAN_DEVICE
+                    ),
+                    missingExtensions = requirement.requiredExtensions,
+                    missingFeatures = requirement.requiredFeatures,
+                    requiredApiVersion = requirement.minApiVersionString,
+                    deviceInfo = deviceInfo,
+                    useTurnip = useTurnip
+                )
+            } else {
+                logCapabilities(caps, requirement)
+
+                val issues = buildList {
+                    if (!caps.isVersionSupportedFor(requirement)) add(VulkanIssue.API_VERSION_TOO_LOW)
+                    if (caps.missingExtensionsFor(requirement).isNotEmpty()) add(VulkanIssue.MISSING_EXTENSIONS)
+                    if (caps.missingFeaturesFor(requirement).isNotEmpty()) add(VulkanIssue.MISSING_FEATURES)
                 }
-                if (caps.missingFeatures.isNotEmpty()) {
-                    Logger.warning(TAG, "Missing required features: ${caps.missingFeatures}")
+
+                if (issues.isEmpty()) {
+                    VulkanCheckResult.Available(
+                        capabilities = caps,
+                        deviceInfo = deviceInfo,
+                        useTurnip = useTurnip
+                    )
+                } else {
+                    VulkanCheckResult.Unavailable(
+                        capabilities = caps,
+                        issues = issues,
+                        missingExtensions = caps.missingExtensionsFor(requirement),
+                        missingFeatures = caps.missingFeaturesFor(requirement),
+                        requiredApiVersion = requirement.minApiVersionString,
+                        deviceInfo = deviceInfo,
+                        useTurnip = useTurnip
+                    )
                 }
-                Logger.info(TAG, "All requirements satisfied: ${caps.isAllSupported}")
             }
         } catch (e: UnsatisfiedLinkError) {
+            //检测库本身不可用：无法得出任何结论
             Logger.error(TAG, "Native library or method not found", e)
-            null
+            VulkanCheckResult.Failed(
+                message = e.message ?: e::class.qualifiedName,
+                deviceInfo = deviceInfo,
+                useTurnip = useTurnip
+            )
         } catch (e: Exception) {
             Logger.error(TAG, "Native check failed", e)
-            null
+            VulkanCheckResult.Failed(
+                message = e.message ?: e::class.qualifiedName,
+                deviceInfo = deviceInfo,
+                useTurnip = useTurnip
+            )
         } finally {
             if (nativeDir != null && cacheDir != null) {
                 FileUtils.deleteQuietly(File(cacheDir))
             }
         }
+    }
+
+    /**
+     * 输出检测日志，便于排查设备兼容问题
+     */
+    private fun logCapabilities(caps: VulkanCapabilities, requirement: VulkanRequirement) {
+        Logger.info(TAG, "Target Minecraft: ${requirement.minecraftVersion}")
+        Logger.info(TAG, "Vulkan version: ${caps.versionString}")
+        Logger.info(TAG, "Version >= ${requirement.minApiVersionString}: ${caps.isVersionSupportedFor(requirement)}")
+        if (caps.missingExtensionsFor(requirement).isNotEmpty()) {
+            Logger.warning(TAG, "Missing required extensions: ${caps.missingExtensionsFor(requirement)}")
+        }
+        if (caps.missingFeaturesFor(requirement).isNotEmpty()) {
+            Logger.warning(TAG, "Missing required features: ${caps.missingFeaturesFor(requirement)}")
+        }
+        Logger.info(TAG, "All requirements satisfied: ${caps.isAllSupportedFor(requirement)}")
     }
 
     @Keep
