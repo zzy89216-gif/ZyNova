@@ -260,10 +260,16 @@ git push origin main
 
 ## 七、GitHub Actions 编译流程
 
-- Workflow 文件：`.github/workflows/build_apk.yml`
-- 触发：push 到 `main` 分支 + 手动 `workflow_dispatch`
-- 编译：`./gradlew ZalithLauncher:assembleRelease -Darch=arm64`
-- 产物：arm64 Release APK
+仓库中共有 3 个 workflow：
+
+| 文件 | 触发 | 作用 |
+|---|---|---|
+| `.github/workflows/build_apk.yml` | push 到 `main` + 手动 `workflow_dispatch` | 单 ABI（arm64-v8a）验证编译 |
+| `.github/workflows/build.yml` | 手动 / 被 `release_ci.yml` 调用 | 多 ABI 矩阵 `all`/`arm`/`arm64`/`x86`/`x86_64`，上传 `mapping.txt` |
+| `.github/workflows/release_ci.yml` | Release 发布（`release: published`） | 调用 `build.yml`，打包 mapping 并自动上传全部产物 |
+
+- 编译命令：`./gradlew ZalithLauncher:assembleRelease -Darch=<架构>`
+- 产物：Release APK（按 `-Darch` 决定架构）+ 对应 `mapping.<架构>.zip`
 
 ### 查看编译结果（需要 Token）
 
@@ -366,17 +372,20 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.1.0**
-- 历史版本：v2.5.1、v2.5
+- 最新版本：**26.2.1**
+- 历史版本：26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
-- 编译 workflow：`build_apk.yml`
+- 编译 workflow：
+  - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
+  - `build.yml` —— 多 ABI 矩阵（`all`/`arm`/`arm64`/`x86`/`x86_64`），上传 `mapping.txt`
+  - `release_ci.yml` —— 发布 Release 时自动调用 `build.yml`，打包 mapping 并上传全部产物
 
 ---
 
 ## 十二、发布 Release 的完整步骤
 
 APK 编译由 GitHub Actions 自动完成，发布 Release 使用 GitHub API。
-（`<TOKEN>` 需用户提供，**不要写入任何文件**）
+（`<TOKEN>` 需用户提供、`<VERSION>` 替换为实际版本号，**都不要写入任何文件**）
 
 ```bash
 TOKEN="<TOKEN>"
@@ -400,24 +409,24 @@ unzip apk.zip -d apk_dir/
 # 3. 创建 Release（更新日志要写详细）
 curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   "https://api.github.com/repos/$REPO/releases" \
-  -d '{"tag_name":"v26.1.0","name":"ZyNova 26.1.0","body":"<发布说明>","draft":false,"prerelease":false}' \
+  -d '{"tag_name":"v<VERSION>","name":"ZyNova <VERSION>","body":"<发布说明>","draft":false,"prerelease":false}' \
   | python3 -c "import sys,json;d=json.load(sys.stdin);print(d['id'],d['upload_url'])"
 
 # 4. 上传产物（去掉 upload_url 里的 {?name,label}，加 ?name=xxx）
 RELEASE_ID="<上面的 release id>"
 curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/vnd.android.package-archive" \
-  --data-binary @apk_dir/ZyNova-26.1.0-arm64-v8a.apk \
-  "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=ZyNova-26.1.0-arm64-v8a.apk"
+  --data-binary @apk_dir/ZyNova-<VERSION>-arm64-v8a.apk \
+  "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=ZyNova-<VERSION>-arm64-v8a.apk"
 ```
 
 ### Release 应包含的产物
 
-- `ZyNova-26.1.0-arm64-v8a.apk`
-- `ZyNova-26.1.0-armeabi-v7a.apk`
-- `ZyNova-26.1.0-x86_64.apk`
-- `ZyNova-26.1.0-x86.apk`
-- `ZyNova-26.1.0.apk`（universal）
+- `ZyNova-<VERSION>-arm64-v8a.apk`
+- `ZyNova-<VERSION>-armeabi-v7a.apk`
+- `ZyNova-<VERSION>-x86_64.apk`
+- `ZyNova-<VERSION>-x86.apk`
+- `ZyNova-<VERSION>.apk`（universal）
 - mapping（防代码混淆）文件
 
 > ⚠️ 大文件上传 / 下载可能中断，APK 下载可用 `curl -C -` 断点续传。

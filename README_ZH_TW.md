@@ -108,11 +108,13 @@ Mod、資源包、光影與存檔共用同一條流程：
 
 ### 環境要求
 
-* Android Studio **Bumblebee** 或更新版本
+* 支援 **AGP 9.3.0** 的 Android Studio（近期穩定版）—— 舊版本無法開啟本專案
 * Android SDK：
   * **最低 API 等級**：26
-  * **目標 API 等級**：35
+  * **目標 API 等級**：34
+  * **Compile SDK**：37
 * JDK 17
+* Gradle **9.5.0**（Wrapper 會自動處理）
 
 ### 構建步驟
 
