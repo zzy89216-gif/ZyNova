@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.0)
+[![Release](https://img.shields.io/badge/Release-26.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.1)
 
 [简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
