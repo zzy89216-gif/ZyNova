@@ -720,8 +720,8 @@
     <string name="game_vulkan_check_turnip">Turnip 사용: %s</string>
     <string name="game_vulkan_check_missing_extensions">누락된 확장:</string>
     <string name="game_vulkan_check_missing_features">누락된 기능:</string>
-    <string name="game_vulkan_check_unsupp">현재 기기는 Minecraft 26.2 이상을 Vulkan으로 실행하는 것을 지원하지 않습니다</string>
-    <string name="game_vulkan_check_supp">현재 기기는 Minecraft 26.2 이상을 Vulkan으로 실행하는 것을 지원합니다</string>
+    <string name="game_vulkan_check_unsupp">현재 기기는 Minecraft 26.4 Snapshot 1 이상을 Vulkan으로 실행하는 것을 지원하지 않습니다</string>
+    <string name="game_vulkan_check_supp">현재 기기는 Minecraft 26.4 Snapshot 1 이상을 Vulkan으로 실행하는 것을 지원합니다</string>
     <string name="plugin_download_title">플러그인 다운로드</string>
     <string name="account_change_skin_arm_style">팔 스타일</string>
     <string name="account_change_skin_arm_wide">굵은 팔</string>
@@ -763,7 +763,7 @@
     <string name="error_bad_gateway">(%s) 서버가 업스트림에서 유효하지 않은 응답을 받았습니다</string>
     <string name="error_service_unavailable">(%s) 현재 서버가 일시적으로 요청을 처리할 수 없습니다</string>
     <string name="error_gateway_timeout">(%s) 서버가 제시간에 응답을 받지 못했습니다</string>
-    <string name="game_vulkan_check_text">현재 기기가 Minecraft 26.2 이상에서 Vulkan을 지원하는지 확인합니다. 참고만 해주세요.</string>
+    <string name="game_vulkan_check_text">현재 기기가 Minecraft 26.4 Snapshot 1 이상에서 Vulkan을 지원하는지 확인합니다. 참고만 해주세요.</string>
     <string name="game_vulkan_check_title">Vulkan 확인</string>
     <string name="game_vulkan_check_extensions">필요한 확장:</string>
     <string name="game_vulkan_check_features">필요한 기능:</string>
@@ -827,7 +827,7 @@
     <string name="settings_game_native_lib_plugin_title">네이티브 라이브러리 플러그인</string>
     <string name="settings_game_native_lib_plugin_summary">로딩된 모든 네이티브 라이브러리 플러그인을 나열합니다. 목록에서 활성화하거나 비활성화할 수 있습니다.</string>
     <string name="settings_game_graphics_api_title">그래픽 API</string>
-    <string name="settings_game_graphics_api_summary">Minecraft 26.2 이상에서 사용되는 그래픽 API를 설정합니다</string>
+    <string name="settings_game_graphics_api_summary">Minecraft 26.4 Snapshot 1 이상에서 사용되는 그래픽 API를 설정합니다</string>
     <string name="settings_game_graphics_api_default">게임 설정 따르기</string>
     <string name="settings_game_jvm_args_title">JVM 인수</string>
     <string name="settings_game_show_log_automatic_title">로그 자동 표시</string>

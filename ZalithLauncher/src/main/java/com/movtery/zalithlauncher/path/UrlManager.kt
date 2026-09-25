@@ -53,14 +53,14 @@ const val URL_MINECRAFT_VERSION_REPOS: String = "https://piston-meta.mojang.com/
 const val URL_MINECRAFT_ASSETS_INDEX: String = "https://launchermeta.mojang.com/v1/packages"
 const val URL_MINECRAFT_PURCHASE = "https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj"
 const val URL_PROJECT: String = "https://github.com/zzy89216-gif/ZyNova"
-const val URL_COMMUNITY: String = "https://github.com/zzy89216-gif/ZyNova"
+const val URL_COMMUNITY: String = "https://discord.gg/Tbn8Bqg2Yp"
+const val URL_DISCORD: String = "https://discord.gg/Tbn8Bqg2Yp"
 
 /**
  * ZyNova 自己的更新体系：版本信息与安装包全部来自本项目的 GitHub Releases
  */
 const val URL_ZY_NOVA_RELEASES: String = "$URL_PROJECT/releases"
 const val URL_ZY_NOVA_RELEASE_LATEST: String = "https://api.github.com/repos/zzy89216-gif/ZyNova/releases/latest"
-const val URL_WEBLATE: String = "https://hosted.weblate.org/projects/zalithlauncher2"
 const val URL_SUPPORT: String = "https://ifdian.net/a/MovTery"
 const val URL_EASYTIER: String = "https://easytier.cn/"
 

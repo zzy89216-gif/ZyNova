@@ -1118,7 +1118,7 @@
     <string name="account_change_skin_arm_wide">Braços Masculino</string>
     <string name="account_change_skin_arm_slim">Braços Feminino</string>
     <string name="settings_game_graphics_api_title">APIs Gráficas:</string>
-    <string name="settings_game_graphics_api_summary">Defina a API gráfica usada pelo Minecraft 26.2+</string>
+    <string name="settings_game_graphics_api_summary">Defina a API gráfica usada pelo Minecraft 26.4 Snapshot 1</string>
     <string name="settings_game_graphics_api_default">Siga as configurações do jogo</string>
     <string name="settings_renderer_surface_title">Usar renderização SurfaceView</string>
     <string name="settings_renderer_surface_summary">Renderiza usando uma camada separada fora da interface do usuário</string>
@@ -1155,15 +1155,15 @@
     <string name="settings_launcher_home_page_url">URL de download da página inicial:</string>
     <string name="settings_launcher_home_page_loading">Carregando a página inicial</string>
     <string name="game_vulkan_check_title">Verificar Vulkan</string>
-    <string name="game_vulkan_check_text">Verifique se seu dispositivo é compatível com a execução do Minecraft 26.2 ou superior com Vulkan. Os resultados são apenas para referência.</string>
+    <string name="game_vulkan_check_text">Verifique se seu dispositivo é compatível com a execução do Minecraft 26.4 Snapshot 1 ou superior com Vulkan. Os resultados são apenas para referência.</string>
     <string name="game_vulkan_check_version">Versão do Vulkan: %s</string>
     <string name="game_vulkan_check_turnip">Usando Turnip: %s</string>
     <string name="game_vulkan_check_extensions">Extensões necessárias:</string>
     <string name="game_vulkan_check_missing_extensions">Extensões ausentes:</string>
     <string name="game_vulkan_check_features">Recursos necessários:</string>
     <string name="game_vulkan_check_missing_features">Recursos ausentes:</string>
-    <string name="game_vulkan_check_unsupp">Seu dispositivo não suporta a execução do minecraft 26.2+ com Vulkan</string>
-    <string name="game_vulkan_check_supp">Seu dispositivo é compatível com a execução do minecraft 26.2+ com Vulkan</string>
+    <string name="game_vulkan_check_unsupp">Seu dispositivo não suporta a execução do minecraft 26.4 Snapshot 1 com Vulkan</string>
+    <string name="game_vulkan_check_supp">Seu dispositivo é compatível com a execução do minecraft 26.4 Snapshot 1 com Vulkan</string>
     <string name="cape_name_builder">Construtor</string>
     <string name="cape_name_crafter">Artesão</string>
     <string name="settings_title_blur">Efeito de Desfoque</string>

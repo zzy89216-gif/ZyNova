@@ -1,6 +1,6 @@
 /*
- * Zalith Launcher 2
- * Copyright (C) 2025 MovTery <movtery228@qq.com> and contributors
+ * ZyNova Launcher
+ * Copyright (C) 2025 ZyNova Contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +22,27 @@ import androidx.annotation.StringRes
 import com.movtery.zalithlauncher.R
 
 /**
- * 启动器主页类型
+ * 液态玻璃（Liquid Glass / Glass UI）效果档位
+ *
+ * Android 设备的 GPU 性能差异很大，因此默认关闭；
+ * 并且只有最高档位才会启用持续动画，避免不必要的 GPU 负载。
  */
-enum class HomePageType(
+enum class GlassLevel(
     @field:StringRes
     val textRes: Int
 ) {
     /**
-     * 空白主页
+     * 关闭：不叠加任何额外的玻璃高光层，性能优先（默认）
      */
-    Blank(R.string.settings_launcher_home_page_type_blank),
+    Off(R.string.settings_launcher_glass_level_off),
 
     /**
-     * 卡片式主页：自动展示最近使用的版本、本地世界与已保存的服务器
+     * 标准：叠加静态高光，不启动任何持续动画，开销很低
      */
-    Cards(R.string.settings_launcher_home_page_type_cards),
+    Standard(R.string.settings_launcher_glass_level_standard),
 
     /**
-     * 从本地加载
+     * 增强：高光缓慢流动，效果最好，但会产生持续动画开销
      */
-    FromLocal(R.string.settings_launcher_home_page_type_local),
-
-    /**
-     * 从网络加载
-     */
-    FromURL(R.string.settings_launcher_home_page_type_url)
+    Enhanced(R.string.settings_launcher_glass_level_enhanced)
 }

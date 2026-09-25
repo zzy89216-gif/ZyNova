@@ -561,8 +561,8 @@ class MainActivity : BaseAppCompatActivity() {
      */
     private suspend fun checkVulkan(version: Version) {
         withContext(Dispatchers.Main) {
-            val (result, useTurnip) = vulkanCheckerViewModel.check(version)
-            vulkanCheckerViewModel.changeOperation(VCOperation.Result(result, useTurnip))
+            val result = vulkanCheckerViewModel.check(version)
+            vulkanCheckerViewModel.changeOperation(VCOperation.Result(result, version))
         }
     }
 

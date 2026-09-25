@@ -533,6 +533,16 @@ private fun NavigationUI(
                         },
                         onHomePageEvent = { event ->
                             eventViewModel.sendEvent(EventViewModel.Event.HomePage.Event(event))
+                        },
+                        onPlayWorld = { version, saveName ->
+                            eventViewModel.sendEvent(
+                                EventViewModel.Event.Launch.PlaySave(version, saveName)
+                            )
+                        },
+                        onJoinServer = { version, address ->
+                            eventViewModel.sendEvent(
+                                EventViewModel.Event.Launch.PlayServer(version, address)
+                            )
                         }
                     )
                 }

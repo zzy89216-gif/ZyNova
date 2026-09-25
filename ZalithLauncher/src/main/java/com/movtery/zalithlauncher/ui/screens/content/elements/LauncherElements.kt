@@ -88,6 +88,7 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.hasVulkanBackend
 import com.movtery.zalithlauncher.game.version.installed.utils.isBiggerVer
 import com.movtery.zalithlauncher.game.version.installed.utils.isLowerVer
+import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -657,18 +658,29 @@ private fun Modifier.glass(
         }
     )
 
-    return if (AllSettings.liquidGlass.state) {
-        blurred.liquidGlassHighlights()
-    } else {
-        blurred
+    //玻璃效果档位：默认关闭，避免高开销实时模糊与持续动画
+    return when (AllSettings.glassLevel.state) {
+        GlassLevel.Off -> blurred
+        GlassLevel.Standard -> blurred.drawGlassHighlights(
+            primaryShift = STATIC_PRIMARY_SHIFT,
+            secondaryShift = STATIC_SECONDARY_SHIFT
+        )
+        GlassLevel.Enhanced -> blurred.liquidGlassHighlights()
     }
 }
 
+/** 标准档位下固定的高光位置，不随任何动画变化 */
+private const val STATIC_PRIMARY_SHIFT = 0.36f
+private const val STATIC_SECONDARY_SHIFT = 0.64f
+
 /**
- * 液态玻璃动态高光效果
+ * 液态玻璃增强档：动态高光效果
  *
  * 在毛玻璃模糊的基础上，叠加缓慢流动的高光与折射光晕，
  * 模拟 iOS 26 风格的液态玻璃质感。
+ *
+ * 只有「增强」档位才会启动持续动画；标准档位使用静态高光，
+ * 关闭档位完全不叠加这一层，从而避免持续的高 GPU 负载。
  */
 @Composable
 private fun Modifier.liquidGlassHighlights(): Modifier {
@@ -696,10 +708,19 @@ private fun Modifier.liquidGlassHighlights(): Modifier {
         label = "liquidGlassSecondaryShift"
     )
 
-    return this.drawBehind {
-        val w = size.width
-        val h = size.height
-        val diagonal = w + h
+    return this.drawGlassHighlights(highlightShift, secondaryShift)
+}
+
+/**
+ * 绘制玻璃高光带（标准档与增强档共用同一套绘制逻辑）
+ */
+private fun Modifier.drawGlassHighlights(
+    primaryShift: Float,
+    secondaryShift: Float
+): Modifier = this.drawBehind {
+    val w = size.width
+    val h = size.height
+    val diagonal = w + h
 
         // 主高光带
         val primaryStart = Offset(highlightShift * diagonal - w, -h)

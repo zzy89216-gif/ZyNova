@@ -47,6 +47,7 @@ import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 import com.movtery.zalithlauncher.upgrade.ZyNovaRelease
+import com.movtery.zalithlauncher.upgrade.abiOrNull
 import com.movtery.zalithlauncher.utils.file.formatFileSize
 import com.movtery.zalithlauncher.utils.formatDate
 
@@ -66,37 +67,36 @@ fun UpgradeDialog(
     //能自动判断，就不让用户选择：直接匹配当前设备架构
     val asset = remember(release) { release.pickAsset() }
     val abiLabel = remember(asset) {
-        asset?.let { release.abiOrNull(it) } ?: "universal"
+        asset?.abiOrNull() ?: "universal"
     }
     val downloadUrl = remember(asset, release) {
         asset?.downloadUrl?.takeIf { it.isNotBlank() } ?: release.htmlUrl
     }
 
-    val markdownBody = remember(release, asset) {
-        buildString {
-            append(stringResource(R.string.upgrade_version_change, release.version))
-            release.publishedAt?.takeIf { it.isNotBlank() }?.let { publishedAt ->
-                append("  \n")
-                append(
-                    stringResource(
-                        R.string.upgrade_version_create_at,
-                        formatDate(
-                            input = publishedAt,
-                            pattern = stringResource(R.string.date_format)
-                        )
+    //注意：这里不能放进 remember，因为 stringResource 是 @Composable 调用
+    val markdownBody = buildString {
+        append(stringResource(R.string.upgrade_version_change, release.version))
+        release.publishedAt?.takeIf { it.isNotBlank() }?.let { publishedAt ->
+            append("  \n")
+            append(
+                stringResource(
+                    R.string.upgrade_version_create_at,
+                    formatDate(
+                        input = publishedAt,
+                        pattern = stringResource(R.string.date_format)
                     )
                 )
-            }
-            asset?.let {
-                append("  \n")
-                append(stringResource(R.string.upgrade_version_size, formatFileSize(it.size)))
-            }
-            append("  \n\n")
-            append(
-                release.body?.takeIf { it.isNotBlank() }
-                    ?: stringResource(R.string.upgrade_no_changelog)
             )
         }
+        asset?.let {
+            append("  \n")
+            append(stringResource(R.string.upgrade_version_size, formatFileSize(it.size)))
+        }
+        append("  \n\n")
+        append(
+            release.body?.takeIf { it.isNotBlank() }
+                ?: stringResource(R.string.upgrade_no_changelog)
+        )
     }
 
     Dialog(

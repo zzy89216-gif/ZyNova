@@ -803,7 +803,7 @@ private fun AccountOperation(
                     onConfirm = {
                         actions.onIntent(AccountManageIntent.UpdateAccountOp(AccountOperation.None))
                         actions.onIntent(
-                            AccountManageIntent.PerformMicrosoftLogin(
+                            AccountManageIntent.ReloginMicrosoft(
                                 toWeb = actions.navigateToWeb,
                                 backToMain = actions.backToMainScreen,
                                 checkIfInWebScreen = actions.checkIfInWebScreen

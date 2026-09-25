@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.setting
 
 import android.content.Context
+import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.utils.device.Architecture
 import com.movtery.zalithlauncher.utils.platform.bytesToMB
 import com.movtery.zalithlauncher.utils.platform.getTotalMemory
@@ -32,6 +33,12 @@ private const val LWJGL_LIB_NAME_ARG = "-Dorg.lwjgl.opengl.libname="
  */
 fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     if (reloadAll) AllSettings.reloadAll()
+
+    //旧配置兼容：把旧版「液态玻璃」布尔开关迁移为新的玻璃效果档位
+    if (AllSettings.liquidGlass.getValue()) {
+        AllSettings.glassLevel.save(GlassLevel.Standard)
+        AllSettings.liquidGlass.save(false)
+    }
     if (AllSettings.ramAllocation.getValue() == null) {
         val ram = findBestRAMAllocation(context)
         AllSettings.ramAllocation.save(ram)

@@ -76,6 +76,8 @@ import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
+import com.movtery.zalithlauncher.game.download.resources.ResourceInstallManager
+import com.movtery.zalithlauncher.game.download.resources.ResourceInstallState
 import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
@@ -229,7 +231,9 @@ fun AssetsVersionItemLayout(
     contentColor: Color = onCardColor(),
     blur: Int = AllSettings.backgroundBlur.state,
     onItemClicked: (PlatformVersion) -> Unit = {},
-    onQuickInstall: ((PlatformVersion) -> Unit)? = null
+    onQuickInstall: ((PlatformVersion) -> Unit)? = null,
+    /** 目标实例中该资源类别下已安装的文件名，用于显示安装状态 */
+    installedFileNames: List<String> = emptyList()
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -276,7 +280,8 @@ fun AssetsVersionItemLayout(
                                     onClick = {
                                         onItemClicked(version)
                                     },
-                                    onQuickInstall = onQuickInstall
+                                    onQuickInstall = onQuickInstall,
+                                    installedFileNames = installedFileNames
                                 )
                             }
                         }
@@ -355,8 +360,16 @@ private fun AssetsVersionListItem(
     modifier: Modifier = Modifier,
     version: PlatformVersion,
     onClick: () -> Unit = {},
-    onQuickInstall: ((PlatformVersion) -> Unit)? = null
+    onQuickInstall: ((PlatformVersion) -> Unit)? = null,
+    installedFileNames: List<String> = emptyList()
 ) {
+    //安装状态：由统一资源核心判断，页面不自己实现判断逻辑
+    val installState = remember(version, installedFileNames) {
+        ResourceInstallManager.installState(
+            installedFileNames = installedFileNames,
+            targetFileName = version.platformFileName()
+        )
+    }
     Row(
         modifier = modifier
             .clip(shape = MaterialTheme.shapes.medium)
@@ -448,6 +461,21 @@ private fun AssetsVersionListItem(
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
+            }
+        }
+
+        //安装状态标记
+        if (installState == ResourceInstallState.INSTALLED) {
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                    text = stringResource(R.string.download_assets_installed),
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
         }
 

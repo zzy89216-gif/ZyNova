@@ -1135,7 +1135,7 @@
     <string name="settings_game_native_lib_plugin_title">Нативные библиотеки</string>
     <string name="settings_game_native_lib_plugin_summary">Отображает все установленные нативные библиотеки. Вы можете включать или отключать их в списке.</string>
     <string name="settings_game_graphics_api_title">Графический API</string>
-    <string name="settings_game_graphics_api_summary">Установите графический API, используемый Minecraft 26.2 и выше</string>
+    <string name="settings_game_graphics_api_summary">Установите графический API, используемый Minecraft 26.4 Snapshot 1 и выше</string>
     <string name="settings_game_graphics_api_default">По умолчанию</string>
     <string name="settings_game_graphics_api_default_opengl">При первом запуске использовать только OpenGL</string>
     <string name="settings_gamepad_config_title">Настройка привязки кнопок геймпада</string>
@@ -1175,15 +1175,15 @@
     <string name="festivals_april_fools">С Первым апреля!</string>
     <string name="festivals_christmas">С Рождеством!</string>
     <string name="game_vulkan_check_title">Vulkan проверен</string>
-    <string name="game_vulkan_check_text">Проверьте, поддерживает ли ваше устройство запуск Minecraft 26.2+ с Vulkan. Результаты приведены только для справки.</string>
+    <string name="game_vulkan_check_text">Проверьте, поддерживает ли ваше устройство запуск Minecraft 26.4 Snapshot 1 с Vulkan. Результаты приведены только для справки.</string>
     <string name="game_vulkan_check_version">Vulkan версия: %s</string>
     <string name="game_vulkan_check_turnip">Использование Turnip: %s</string>
     <string name="game_vulkan_check_extensions">Необходимые расширения:</string>
     <string name="game_vulkan_check_missing_extensions">Отсутствующие расширения:</string>
     <string name="game_vulkan_check_features">Необходимые функции:</string>
     <string name="game_vulkan_check_missing_features">Отсутствующие функции:</string>
-    <string name="game_vulkan_check_unsupp">Ваше устройство не поддерживает запуск Minecraft 26.2+ с Vulkan.</string>
-    <string name="game_vulkan_check_supp">Ваше устройство поддерживает запуск Minecraft 26.2+ с Vulkan.</string>
+    <string name="game_vulkan_check_unsupp">Ваше устройство не поддерживает запуск Minecraft 26.4 Snapshot 1 с Vulkan.</string>
+    <string name="game_vulkan_check_supp">Ваше устройство поддерживает запуск Minecraft 26.4 Snapshot 1 с Vulkan.</string>
     <string name="error_bad_request">(%s) Сервер не мог понять запрос</string>
     <string name="error_forbidden">(%s) У вас нет прав на доступ к этому ресурсу</string>
     <string name="error_not_acceptable">(%s) Неприемлемо</string>

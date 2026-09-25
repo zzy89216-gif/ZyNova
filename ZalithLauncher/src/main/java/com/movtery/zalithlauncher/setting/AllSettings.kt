@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.enums.GestureActionType
 import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
+import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
@@ -416,6 +417,14 @@ object AllSettings : SettingsRegistry() {
 
     /**
      * 启动器液态玻璃效果
+     */
+    val glassLevel = enumSetting("glassLevel", GlassLevel.Off)
+
+    /**
+     * 旧的液态玻璃开关（布尔值）
+     *
+     * 旧配置兼容项：保留定义以便旧用户升级后仍能正常读取原有配置，
+     * 实际效果已完全由 [glassLevel] 接管，不再写入。
      */
     val liquidGlass = boolSetting("liquidGlass", false)
 

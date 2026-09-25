@@ -26,7 +26,7 @@ import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.launcherMMKV
 import com.movtery.zalithlauncher.ui.vulkan_checker.VCOperation
 import com.movtery.zalithlauncher.utils.GSON
-import com.movtery.zalithlauncher.utils.device.VulkanCapabilities
+import com.movtery.zalithlauncher.utils.device.VulkanCheckResult
 import com.movtery.zalithlauncher.utils.device.VulkanChecker
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
@@ -79,19 +79,25 @@ class VulkanCheckerViewModel: ViewModel() {
         vulkanCheckerCont = null
     }
 
-    suspend fun check(version: Version): Pair<VulkanCapabilities?, Boolean> {
+    suspend fun check(version: Version): VulkanCheckResult {
         return mutex.withLock {
             val driver = DriverPluginManager.getDriver(version.getDriver())
             val useTurnip = !driver.isLauncher
-            val capabilities = doCheck(useTurnip, driver)
-            saveRecord(
-                VulkanCheckRecord(
-                    allSupported = capabilities?.isAllSupported == true,
-                    useTurnip = useTurnip,
-                    driverPath = driverPath(useTurnip, driver)
+            val result = doCheck(useTurnip, driver)
+            //只有得出明确结论（可用 / 不可用）时才写入缓存。
+            //检测失败不代表设备不支持，写入缓存会导致以后再也不重新检测。
+            if (result !is VulkanCheckResult.Failed) {
+                saveRecord(
+                    VulkanCheckRecord(
+                        allSupported = result is VulkanCheckResult.Available,
+                        useTurnip = useTurnip,
+                        driverPath = driverPath(useTurnip, driver)
+                    )
                 )
-            )
-            capabilities to useTurnip
+            } else {
+                Logger.warning(TAG, "Vulkan check did not conclude; result will not be cached.")
+            }
+            result
         }
     }
 
@@ -116,7 +122,7 @@ class VulkanCheckerViewModel: ViewModel() {
         return if (useTurnip) driver.path else ""
     }
 
-    private suspend fun doCheck(useTurnip: Boolean, driver: Driver): VulkanCapabilities? {
+    private suspend fun doCheck(useTurnip: Boolean, driver: Driver): VulkanCheckResult {
         return withContext(Dispatchers.IO) {
             if (useTurnip) {
                 val tempDir = File(PathManager.DIR_CACHE, "vulkan_temp")
