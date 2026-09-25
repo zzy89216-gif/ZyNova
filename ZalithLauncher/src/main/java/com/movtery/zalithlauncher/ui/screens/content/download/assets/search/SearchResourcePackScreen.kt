@@ -35,7 +35,9 @@ fun SearchResourcePackScreen(
     downloadScreenKey: TitledNavKey?,
     downloadResourcePackScreenKey: TitledNavKey,
     downloadResourcePackScreenCurrentKey: TitledNavKey?,
-    swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
+    swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> },
+    /** 资源安装上下文（目标实例名称） */
+    installTargetVersion: String? = null
 ) {
     val initialPlatform = remember {
         AllSettings.searchResourcePackPlatform.getValue()
@@ -68,6 +70,7 @@ fun SearchResourcePackScreen(
                 }
             }
         },
-        swapToDownload = swapToDownload
+        swapToDownload = swapToDownload,
+        installTargetVersion = installTargetVersion
     )
 }

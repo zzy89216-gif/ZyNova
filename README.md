@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.1)
+[![Release](https://img.shields.io/badge/Release-26.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -183,9 +183,12 @@ ZyNova 提供面向 Minecraft 26.4 Snapshot 1 的 Vulkan 检测：
 
 ### 🎨 界面与视觉效果
 
-- 玻璃效果（Glass UI）提供三档：**关闭 / 标准 / 增强**，默认关闭
+- 玻璃效果（Glass UI）提供四档：**关闭 / 标准 / 增强 / ⚠️极致**，默认关闭
   - 标准档为静态高光，不启动持续动画
   - 增强档才启用高光流动效果
+  - 极致档会一次性开启多层实时模糊、动态模糊半径、折射扭曲、动态光照、
+    景深视差、卡片吸附、动态阴影与噪点纹理等全部效果，
+    切换前会弹出性能警告（GPU 负载很高，仅建议高性能设备使用）
 - 在性能与视觉效果之间优先保证移动设备的流畅度，
   避免高开销实时模糊、大量透明层叠加与持续动画
 
@@ -282,9 +285,10 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.1.1**
+**ZyNova 26.2.0**
 
-26.1.1 是 26.1.0 的修复版本，修复了卡片式主页导致的启动器崩溃问题。
+26.2.0 修复了从版本设置进入资源页面时安装上下文丢失的问题，
+并新增玻璃效果「⚠️极致」档位（含性能警告）。
 
 26.1.0 版本的核心目标是：进一步脱离 ZalithLauncher2 的遗留逻辑，
 建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。
@@ -523,7 +527,7 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 - [x] 统一下载管理器
 - [x] 极简资源安装（上下文直装）
 - [x] 卡片式主页
-- [x] 玻璃效果三档（关闭 / 标准 / 增强）
+- [x] 玻璃效果四档（关闭 / 标准 / 增强 / ⚠️极致）
 - [x] Minecraft 26.4 Snapshot 1 Vulkan 检测适配
 - [x] 移除 ZalithLauncher2 更新链
 - [x] 移除添加账号界面的正版登录入口

@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.1.1**（`launcher_version_code=260011`）
+**当前版本：26.2.0**（`launcher_version_code=260200`）
 
 26.1.0 的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -86,6 +86,14 @@
     - 开发者署名 zzy，补 GitHub 与 Discord 入口
     - 修复署名错误（原「ZalithLauncher2 作者」卡片被错误显示为 ZyNova 的作者）
     - ZalithLauncher2 作者卡片下移至致谢区，保留赞助入口
+
+### 26.2.0 修复与新增 ✅
+
+- **修复安装上下文丢失**：上下文原本放在 NavKey 的 `@Transient` 字段上，
+  被 Navigation3 的 saveable 序列化丢弃；已改由 `ScreenBackStackViewModel` 持有
+- **资源搜索自动按当前实例 MC 版本过滤**（Context First）
+- **玻璃效果新增「⚠️极致」档**：切换前弹出性能警告，包含 10 项高开销视觉效果
+- 详见 `CHANGELOG.md`
 
 ### 26.1.1 修复 ✅
 
@@ -281,7 +289,11 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - `stringResource()` 是 `@Composable` 调用，**不能放在 `remember {}` 的 lambda 里**
    - 删除状态类型（如 `MicrosoftLoginOperation`）前，先全局搜索所有使用点
 7. **native 反射约束**：`VulkanCapabilities` 由 native 通过反射构造，**不能修改其构造参数列表**，只能增加方法 / 属性。
-8. **Compose 滚动容器不可嵌套**（26.1.1 实际踩到并修复）：
+8. **不要把导航上下文放在 NavKey 上**（26.2.0 实际踩到并修复）：
+   - NavKey 是 `@Serializable`，Navigation3 的 saveable 机制会序列化 / 反序列化 key
+   - 因此 `@Transient` 字段在导航过程中会**静默丢失**（不报错，但读到 null）
+   - 正确做法：把这类跨页面上下文放在 **ViewModel**（如 `ScreenBackStackViewModel`）上
+9. **Compose 滚动容器不可嵌套**（26.1.1 实际踩到并修复）：
    - `LazyColumn` 的 `item` 中**不能**再放 `Column(Modifier.verticalScroll(...))`
    - 会触发 `IllegalStateException: Vertically scrollable component was measured with an infinity maximum height constraints`
    - 放进 `LazyColumn` item 的组件应让外层负责滚动，自身只做 `fillMaxWidth()`；

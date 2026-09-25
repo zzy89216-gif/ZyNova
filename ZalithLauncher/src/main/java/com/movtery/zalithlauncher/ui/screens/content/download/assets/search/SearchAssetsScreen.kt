@@ -38,6 +38,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
+import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformFilterCode
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
@@ -78,13 +79,17 @@ private const val TAG = "SearchAssetsScreen"
  */
 private class SearchScreenViewModel(
     initialPlatform: Platform,
-    private val platformClasses: PlatformClasses
+    private val platformClasses: PlatformClasses,
+    initialGameVersion: String? = null
 ): ViewModel() {
     var searchResult by mutableStateOf<SearchAssetsState>(SearchAssetsState.Searching)
     val pages = mutableStateListOf<AssetsPage?>()
 
     var searchPlatform by mutableStateOf(initialPlatform)
-    var searchFilter by mutableStateOf(PlatformSearchFilter())
+    //上下文优先：若已知目标实例的 Minecraft 版本，则直接作为初始过滤条件
+    var searchFilter by mutableStateOf(
+        PlatformSearchFilter(gameVersion = initialGameVersion.orEmpty())
+    )
 
     private val _searchedMcMods = MutableStateFlow<List<ModTranslations.McMod>>(emptyList())
     /** 搜索得到的所有 MCMOD 项目 */
@@ -227,13 +232,15 @@ private class SearchScreenViewModel(
 private fun rememberSearchAssetsViewModel(
     navKey: TitledNavKey,
     initialPlatform: Platform,
-    platformClasses: PlatformClasses
+    platformClasses: PlatformClasses,
+    initialGameVersion: String? = null
 ): SearchScreenViewModel {
     val screenKey = navKey.toString()
     return viewModel(
-        key = "${screenKey}_search"
+        //把初始版本纳入 key：切换目标实例时使用独立的搜索状态
+        key = "${screenKey}_search_${initialGameVersion.orEmpty()}"
     ) {
-        SearchScreenViewModel(initialPlatform, platformClasses)
+        SearchScreenViewModel(initialPlatform, platformClasses, initialGameVersion)
     }
 }
 
@@ -269,12 +276,27 @@ fun SearchAssetsScreen(
     getModloaders: (Platform) -> List<PlatformDisplayLabel> = { emptyList() },
     mapCategories: (Platform, String) -> PlatformFilterCode?,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> },
-    extraFilter: (LazyListScope.() -> Unit)? = null
+    extraFilter: (LazyListScope.() -> Unit)? = null,
+    /**
+     * 资源安装上下文（目标游戏实例名称）
+     *
+     * 从「版本设置 → 资源管理」进入时，自动使用该实例的 Minecraft 版本作为过滤条件，
+     * 不需要用户再手动选择版本。
+     */
+    installTargetVersion: String? = null
 ) {
+    //上下文优先：解析目标实例的 Minecraft 版本
+    val initialGameVersion = remember(installTargetVersion) {
+        installTargetVersion
+            ?.let { name -> VersionsManager.versions.value.firstOrNull { it.getVersionName() == name } }
+            ?.getVersionInfo()
+            ?.minecraftVersion
+    }
     val viewModel: SearchScreenViewModel = rememberSearchAssetsViewModel(
         navKey = screenKey,
         initialPlatform = initialPlatform,
-        platformClasses = platformClasses
+        platformClasses = platformClasses,
+        initialGameVersion = initialGameVersion
     )
 
     //跟随平台自动变更的内容

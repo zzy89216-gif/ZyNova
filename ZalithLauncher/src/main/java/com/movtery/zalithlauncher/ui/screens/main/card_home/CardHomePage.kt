@@ -18,6 +18,8 @@
 
 package com.movtery.zalithlauncher.ui.screens.main.card_home
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,10 @@ import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,10 +46,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.game.home.HomeDataProvider
 import com.movtery.zalithlauncher.game.home.HomeServer
 import com.movtery.zalithlauncher.game.home.HomeWorld
@@ -181,6 +190,10 @@ private fun HomeSection(
 
 /**
  * 单张主页卡片
+ *
+ * 在「极致」玻璃档位下额外启用：
+ * - Magnetic / Snap Interaction：按下时卡片产生吸附式回弹
+ * - Dynamic Shadow：阴影随交互状态实时变化
  */
 @Composable
 private fun HomeCard(
@@ -188,11 +201,46 @@ private fun HomeCard(
     subtitle: String?,
     onClick: () -> Unit
 ) {
+    val extremeGlass = AllSettings.glassLevel.state == GlassLevel.Extreme
+
+    //【Magnetic / Snap Interaction】按下时的吸附回弹
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val snapScale by animateFloatAsState(
+        targetValue = if (extremeGlass && pressed) 0.965f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "homeCardSnapScale"
+    )
+
+    //【Dynamic Shadow】阴影随交互状态变化
+    val shadowElevation by animateDpAsState(
+        targetValue = when {
+            extremeGlass && pressed -> 14.dp
+            extremeGlass -> 6.dp
+            else -> 1.dp
+        },
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "homeCardShadow"
+    )
+
     Surface(
-        modifier = Modifier.widthIn(min = 150.dp, max = 260.dp),
+        modifier = Modifier
+            .widthIn(min = 150.dp, max = 260.dp)
+            .graphicsLayer {
+                scaleX = snapScale
+                scaleY = snapScale
+            },
         shape = MaterialTheme.shapes.large,
         color = cardColor(false),
         contentColor = onCardColor(),
+        shadowElevation = shadowElevation,
+        interactionSource = interactionSource,
         onClick = onClick
     ) {
         Column(

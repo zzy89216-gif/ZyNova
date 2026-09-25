@@ -330,7 +330,9 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        //玻璃效果档位：关闭 / 标准 / 增强
+                        //玻璃效果档位：关闭 / 标准 / 增强 / ⚠️极致
+                        var pendingExtremeGlass by remember { mutableStateOf(false) }
+
                         EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Bottom,
@@ -340,8 +342,30 @@ fun LauncherSettingsScreen(
                             summary = stringResource(R.string.settings_launcher_liquid_glass_summary),
                             getRadioText = { stringResource(it.textRes) },
                             getRadioEnable = { backgroundViewModel.isValid },
-                            onRadioClick = { AllSettings.glassLevel.save(it) }
+                            onRadioClick = { level ->
+                                if (level == GlassLevel.Extreme) {
+                                    //极致档开销很高，先向用户提示性能影响，确认后再启用
+                                    pendingExtremeGlass = true
+                                } else {
+                                    AllSettings.glassLevel.save(level)
+                                }
+                            }
                         )
+
+                        if (pendingExtremeGlass) {
+                            SimpleAlertDialog(
+                                title = stringResource(R.string.settings_launcher_glass_extreme_warning_title),
+                                text = stringResource(R.string.settings_launcher_glass_extreme_warning_text),
+                                confirmText = stringResource(R.string.generic_confirm),
+                                onConfirm = {
+                                    AllSettings.glassLevel.save(GlassLevel.Extreme)
+                                    pendingExtremeGlass = false
+                                },
+                                onDismiss = {
+                                    pendingExtremeGlass = false
+                                }
+                            )
+                        }
                     }
                 }
             }
