@@ -25,7 +25,32 @@
 
 **当前版本：26.2.1**（`launcher_version_code=260210`）
 
-26.1.0 的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.2.1 修复与新增 ✅
+
+- **极致玻璃效果重做**：此前用 `drawBehind` 画渐变，视觉上"等于没做"；
+  现改为 `RuntimeShader`（AGSL）实现 6 点环形多重采样模糊 + 波纹折射扭曲
+- **搜索结果卡片增加一键安装按钮**（此前只加在版本列表，用户实际浏览的是搜索结果）
+- **模组加载器按实例自动选中**
+- **主页改为以「版本」为模块**，模块内直接展示该版本自己的世界与服务器
+- **新增「所有平台」聚合搜索**（CurseForge + Modrinth 合并，默认）
+- **排序默认改为「总下载量」**
+
+### 26.2.0 修复与新增 ✅
+
+- **修复安装上下文丢失**：上下文原本放在 NavKey 的 `@Transient` 字段上，
+  被 Navigation3 的 saveable 序列化丢弃；已改由 `ScreenBackStackViewModel` 持有
+- **资源搜索自动按当前实例 MC 版本过滤**（Context First）
+- **玻璃效果新增「⚠️极致」档**：切换前弹出性能警告，包含 10 项高开销视觉效果
+- 详见 `CHANGELOG.md`
+
+### 26.1.1 修复 ✅
+
+- **修复卡片式主页导致的启动器崩溃**
+  - 卡片主页内部使用了 `verticalScroll`，而它被放在 `LauncherScreen` 的 `LazyColumn` 的 `item` 中，
+    造成滚动容器嵌套、高度约束无界，触发 `IllegalStateException` 崩溃
+  - 修复方式：卡片主页不再自带滚动，统一由外层 `LazyColumn` 负责
 
 ### 26.1.0 已完成 ✅
 
@@ -87,31 +112,6 @@
     - 开发者署名 zzy，补 GitHub 与 Discord 入口
     - 修复署名错误（原「ZalithLauncher2 作者」卡片被错误显示为 ZyNova 的作者）
     - ZalithLauncher2 作者卡片下移至致谢区，保留赞助入口
-
-### 26.2.1 修复与新增 ✅
-
-- **极致玻璃效果重做**：此前用 `drawBehind` 画渐变，视觉上"等于没做"；
-  现改为 `RuntimeShader`（AGSL）实现 6 点环形多重采样模糊 + 波纹折射扭曲
-- **搜索结果卡片增加一键安装按钮**（此前只加在版本列表，用户实际浏览的是搜索结果）
-- **模组加载器按实例自动选中**
-- **主页改为以「版本」为模块**，模块内直接展示该版本自己的世界与服务器
-- **新增「所有平台」聚合搜索**（CurseForge + Modrinth 合并，默认）
-- **排序默认改为「总下载量」**
-
-### 26.2.0 修复与新增 ✅
-
-- **修复安装上下文丢失**：上下文原本放在 NavKey 的 `@Transient` 字段上，
-  被 Navigation3 的 saveable 序列化丢弃；已改由 `ScreenBackStackViewModel` 持有
-- **资源搜索自动按当前实例 MC 版本过滤**（Context First）
-- **玻璃效果新增「⚠️极致」档**：切换前弹出性能警告，包含 10 项高开销视觉效果
-- 详见 `CHANGELOG.md`
-
-### 26.1.1 修复 ✅
-
-- **修复卡片式主页导致的启动器崩溃**
-  - 卡片主页内部使用了 `verticalScroll`，而它被放在 `LauncherScreen` 的 `LazyColumn` 的 `item` 中，
-    造成滚动容器嵌套、高度约束无界，触发 `IllegalStateException` 崩溃
-  - 修复方式：卡片主页不再自带滚动，统一由外层 `LazyColumn` 负责
 
 ### 后续待办 ⬜
 
