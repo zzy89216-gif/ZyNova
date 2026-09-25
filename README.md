@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-2.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v2.5.1)
+[![Release](https://img.shields.io/badge/Release-26.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -54,16 +54,18 @@ ZyNova 不以简单复制上游项目为目标，而是在已有开源代码基�
 | Android Minecraft Java Edition 启动器 | ✅ |
 | 用户界面重新设计 | ✅ |
 | 交互逻辑调整 | ✅ |
-| 动态毛玻璃效果 | ✅ |
-| 启动器功能修改 | ✅ |
+| **卡片式主页**（最近版本 / 本地世界 / 服务器） | ✅ |
+| **统一资源管理核心**（Resource Management Core） | ✅ |
+| **资源来源 Provider**（Modrinth / CurseForge） | ✅ |
+| **统一下载管理器**（队列 / 并发 / 续传 / 重试 / 校验 / 清理） | ✅ |
+| **极简资源安装**（上下文直装，不再重复选择） | ✅ |
+| **玻璃效果三档**（关闭 / 标准 / 增强） | ✅ |
+| **Minecraft 26.4 Snapshot 1 Vulkan 检测与兼容判断** | ✅ |
+| **按需加载与性能策略** | ✅ |
+| **启动器自有更新体系**（GitHub Releases） | ✅ |
 | Minecraft 启动相关功能 | ✅ |
 | 游戏实例管理 | ✅ |
-| 安装与管理功能 | ✅ |
-| 前置依赖自动下载与安装 | ✅ |
 | Android 平台功能调整 | ✅ |
-| 原有代码结构调整 | ✅ |
-| 新功能开发 | ✅ |
-| 性能与兼容性调整 | ✅ |
 | ZalithLauncher2 扩展兼容 | ✅ |
 | 多 ABI APK 构建 | ✅ |
 | GitHub Release | ✅ |
@@ -97,17 +99,102 @@ ZyNova 对原有启动器的用户界面和交互体验进行了较大范围的�
 
 针对 Minecraft: Java Edition 启动流程进行修改和调整。
 
-### 📦 游戏实例管理
+### 🏠 卡片式主页
 
-支持 Minecraft 游戏实例相关的管理和操作。
+ZyNova 提供卡片式主页，自动识别并展示：
 
-### 📥 安装与依赖
+| 内容 | 操作 |
+|---|---|
+| 最近使用的 Minecraft 版本 | 点击直接启动 |
+| 本地世界 | 点击直接进入 |
+| 已保存的服务器 | 点击直接加入 |
 
-对游戏、组件以及相关文件的安装和管理流程进行了调整。
+主页数据**按需加载**：只有真正进入主页时才读取，并且限量扫描，
+启动器启动时不会进行全盘扫描。
 
-ZyNova 支持部分前置依赖的自动下载与安装。
+设置中可以选择主页类型：
 
-在开发过程中，自动下载前置依赖功能曾出现 Bug，并在后续版本中进行了修复。
+- 默认主页
+- 卡片主页
+- 自定义主页
+
+卡片主页与自定义主页共用同一套主页数据访问接口。
+
+### 📦 统一资源管理核心
+
+ZyNova 建立了自己的资源管理核心（Resource Management Core），
+统一处理 Mod、资源包、光影、存档等 Minecraft 资源：
+
+> **搜索 → 资源详情 → 版本匹配 → 文件选择 → 下载 → 校验 → 安装**
+
+所有资源类型走同一条流程，界面不再分别实现自己的下载与安装逻辑。
+
+### 🔌 资源来源（Resource Provider）
+
+资源来源与界面完全解耦：
+
+```
+Resource Provider
+├── Modrinth
+└── CurseForge
+```
+
+上层只依赖统一接口。以后增加其他资源来源时，通过 Provider 扩展即可，
+不需要重写整个资源系统。
+
+### 📥 统一下载管理
+
+Mod、资源包、光影、存档以及它们的前置依赖，全部使用统一下载管理器：
+
+- 下载队列
+- 并发控制
+- 下载进度
+- 断点续传
+- 失败重试
+- 取消下载
+- 文件校验
+- 临时文件清理
+- 下载完成后的安装触发
+
+### ⚡ 极简资源安装
+
+当用户从「版本设置 → Mods / 资源包 / 光影 / 存档」进入资源页面时，
+系统已经知道当前实例、Minecraft 版本、加载器和资源目录。
+
+因此点击资源卡片上的下载按钮后会直接：
+
+> **检查兼容性 → 选择兼容文件 → 下载 → 校验 → 安装**
+
+不会再重复要求用户选择 Minecraft 版本、实例或安装位置。
+安装完成后资源列表会根据状态显示「已安装」。
+
+从主界面进入的资源中心则只负责浏览与管理，不提供一键安装入口。
+
+### 🖥️ Vulkan 检测与兼容性
+
+ZyNova 提供面向 Minecraft 26.4 Snapshot 1 的 Vulkan 检测：
+
+- 检测结果明确区分：**可用 / 不可用 / 检测失败**
+- 检测内容包括：Vulkan 是否可用、Vulkan API 版本、驱动是否正常、
+  必要扩展与功能、GPU / 渲染器信息，以及检测失败的具体原因
+- 不可用时给出具体原因，并支持用户主动重新检测
+- 判断依据是设备**实际枚举出来的 Vulkan 能力**，
+  而不是设备对外声明的 Vulkan 支持情况
+
+### 🎨 界面与视觉效果
+
+- 玻璃效果（Glass UI）提供三档：**关闭 / 标准 / 增强**，默认关闭
+  - 标准档为静态高光，不启动持续动画
+  - 增强档才启用高光流动效果
+- 在性能与视觉效果之间优先保证移动设备的流畅度，
+  避免高开销实时模糊、大量透明层叠加与持续动画
+
+### 🔄 启动器更新
+
+ZyNova 只维护自己的更新体系：
+
+- 版本信息与更新日志来自 ZyNova 自己的 GitHub Releases
+- 安装包会根据当前设备实际支持的 ABI 自动挑选，用户不需要选择架构
 
 ### 🔌 扩展兼容
 
@@ -195,9 +282,20 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 2.5.1**
+**ZyNova 26.1.0**
 
-2.5.1 版本主要修复了此前自动下载前置依赖过程中发现的问题。
+26.1.0 版本的核心目标是：进一步脱离 ZalithLauncher2 的遗留逻辑，
+建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。
+
+主要变化包括：
+
+- 统一资源管理核心与资源来源 Provider
+- 统一下载管理器与极简资源安装
+- 卡片式主页与玻璃效果三档
+- Minecraft 26.4 Snapshot 1 的 Vulkan 检测与兼容判断
+- 移除 ZalithLauncher2 更新链与添加账号界面的正版登录入口
+
+完整的变更记录见 [CHANGELOG](CHANGELOG.md)。
 
 Release 根据版本情况提供：
 
@@ -414,6 +512,30 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ---
 
+## 🗺️ Roadmap
+
+### 26.1.0（当前版本）
+
+- [x] 统一资源管理核心（Resource Management Core）
+- [x] 资源来源 Provider 化（Modrinth / CurseForge）
+- [x] 统一下载管理器
+- [x] 极简资源安装（上下文直装）
+- [x] 卡片式主页
+- [x] 玻璃效果三档（关闭 / 标准 / 增强）
+- [x] Minecraft 26.4 Snapshot 1 Vulkan 检测适配
+- [x] 移除 ZalithLauncher2 更新链
+- [x] 移除添加账号界面的正版登录入口
+- [x] 按需加载与性能策略
+
+### 后续方向
+
+- [ ] 为自定义主页开放更完整的统一数据接口
+- [ ] 让统一资源管理核心覆盖更多资源来源
+- [ ] 继续收敛 ZalithLauncher2 的遗留逻辑
+- [ ] 渲染与键位相关的进一步优化
+
+---
+
 ## 🎯 项目定位
 
 ZyNova 定位为：
@@ -517,6 +639,11 @@ ZyNova 从一个最初的界面与功能需求开始，逐渐发展成为一个�
 - 独立源码仓库
 - 完整 Android 工程
 - Kotlin / Java / C / NDK
+- 统一资源管理核心
+- 资源来源 Provider 体系
+- 统一下载管理器
+- 卡片式主页
+- 自有更新体系
 - 多 ABI 构建
 - GitHub Release
 - 正式 APK

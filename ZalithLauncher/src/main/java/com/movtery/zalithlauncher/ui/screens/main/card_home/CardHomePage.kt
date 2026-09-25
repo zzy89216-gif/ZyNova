@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,7 +50,7 @@ import com.movtery.zalithlauncher.game.home.HomeDataProvider
 import com.movtery.zalithlauncher.game.home.HomeServer
 import com.movtery.zalithlauncher.game.home.HomeWorld
 import com.movtery.zalithlauncher.game.version.installed.Version
-import com.movtery.zalithlauncher.ui.components.LoadingIndicator
+
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 
@@ -63,7 +65,7 @@ import com.movtery.zalithlauncher.ui.theme.onCardColor
  * 数据按需加载：只有真正进入主页时才读取版本、世界与服务器，
  * 启动器启动时不会进行一次性的全盘扫描。
  */
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun cardHomePage(
     modifier: Modifier = Modifier,
