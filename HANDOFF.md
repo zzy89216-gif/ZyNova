@@ -153,20 +153,6 @@
 | `utils/device/VulkanRequirement.kt` | Minecraft 的 Vulkan 要求档案 |
 | `utils/device/VulkanCheckResult.kt` | Vulkan 三态检测结果模型 |
 
-### 26.2.0 涉及文件
-
-| 文件 | 改动 |
-|---|---|
-| `viewmodel/ScreenBackStackViewModel.kt` | 新增 `resourceInstallTarget`，持有资源安装上下文 |
-| `ui/screens/BackStackNavKey.kt` | 移除失效的 `@Transient installTargetVersion` 字段 |
-| `ui/screens/content/DownloadScreen.kt` | `navigateToDownload` 写入上下文；4 个入口透传给页面 |
-| `ui/screens/content/download/Download*Screen.kt` | 新增 `installTargetVersion` 参数；透传给搜索页 |
-| `ui/screens/content/download/assets/search/Search*.kt` | 支持初始安装上下文；按实例 MC 版本初始化过滤条件 |
-| `ui/screens/content/elements/LauncherElements.kt` | 新增极致档效果 `extremeGlassEffects()` 与动态模糊半径 |
-| `ui/screens/main/card_home/CardHomePage.kt` | 极致档下的卡片吸附与动态阴影 |
-| `setting/enums/GlassLevel.kt` | 新增 `Extreme` 档位 |
-| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 极致档切换前的性能警告弹窗 |
-
 ### 主要修改文件
 
 | 文件 | 改动 |
@@ -198,6 +184,25 @@
 | `ui/screens/BackStackNavKey.kt` | 新增资源安装上下文 |
 | `ZalithLauncher/gradle.properties` | 版本 26.1.0，主页链接指向 ZyNova |
 
+### 26.2.x 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `viewmodel/ScreenBackStackViewModel.kt` | 新增 `resourceInstallTarget`，持有资源安装上下文 |
+| `ui/screens/BackStackNavKey.kt` | 移除失效的 `@Transient installTargetVersion` 字段 |
+| `ui/screens/content/DownloadScreen.kt` | `navigateToDownload` 写入上下文；4 个入口透传给页面 |
+| `ui/screens/content/download/Download*Screen.kt` | 新增 `installTargetVersion` 参数；透传给搜索页 |
+| `ui/screens/content/download/assets/search/Search*.kt` | 支持初始安装上下文；按实例 MC 版本初始化过滤条件 |
+| `ui/screens/main/card_home/CardHomePage.kt` | 极致档下的卡片吸附与动态阴影 |
+| `setting/enums/GlassLevel.kt` | 新增 `Extreme` 档位 |
+| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 极致档切换前的性能警告弹窗 |
+| `game/download/assets/platform/SearchPlatform.kt` | 新增「所有」平台选项（聚合搜索） |
+| `game/download/assets/platform/AggregatedSearchResult.kt` | 新增聚合搜索结果（合并多个来源） |
+| `ui/screens/content/elements/LauncherElements.kt` | 极致档效果：`extremeGlassEffects()`、动态模糊半径，并使用 `RuntimeShader` 实现多重采样模糊与折射扭曲 |
+| `ui/screens/content/download/assets/elements/_Search.Result.kt` | 搜索结果卡片增加一键安装按钮 |
+| `ui/screens/content/download/assets/elements/_Search.Filter.kt` | 平台选择支持「所有」 |
+| `game/download/assets/_Download.QuickInstall.kt` | 新增 `quickInstallResource()`（从搜索结果一键安装） |
+| `game/home/HomeDataProvider.kt` | 改为按「版本模块」组织主页数据（`instances()`） |
 ### 已删除文件
 
 | 文件 | 原因 |
