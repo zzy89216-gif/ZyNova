@@ -462,18 +462,7 @@
     <string name="account_supporting_username_invalid_empty">未填寫使用者名稱</string>
     <string name="account_supporting_email_invalid_empty">未填寫電子郵件或使用者名稱</string>
     <string name="account_supporting_password_invalid_empty">未填寫密碼</string>
-    <string name="account_supporting_microsoft_tip_title">新增 Microsoft 帳號</string>
-    <string name="account_supporting_microsoft_tip_link_text">您可能需要的捷徑：</string>
     <string name="account_supporting_microsoft_tip_link_purchase">購買 Minecraft</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">建立設定檔 / 編輯設定檔名稱</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">請依照以下步驟新增帳號：</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. 點擊「登入」按鈕，啟動器將嘗試獲取驗證碼；\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. 在彈出的網頁中輸入 %s 提供的代碼，並點擊「允許存取」；\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. 根據網頁提示完成登入流程；\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. 當網頁詢問「是否允許此應用程式存取您的資訊？」時，請點擊「接受」；\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. 當網頁顯示「大功告成」時，帳號將自動新增，請稍候片刻。</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">如果網頁提示「發生錯誤」或帳號新增失敗，請依照上述步驟重新嘗試。\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">提示：若目前網路狀況不佳，可能會導致網頁載入緩慢或無法開啟。請嘗試使用網路代理後重試。</string>
     <string name="account_delete_title">刪除帳號</string>
     <string name="account_delete_message">您確定要將帳號 %s 從啟動器內刪除嗎？</string>
     <string name="account_microsoft_fetch_device_code">獲取裝置代碼</string>
@@ -974,8 +963,6 @@
     <string name="about_library_title">額外引入的相依性項目</string>
     <string name="upgrade_title">檢查更新</string>
     <string name="upgrade_new">發現新版本</string>
-    <string name="upgrade_more">查看</string>
-    <string name="upgrade_files">可用 APK</string>
     <string name="upgrade_files_arch">架構：%s</string>
     <string name="upgrade_version_change">版本號：%s</string>
     <string name="upgrade_version_size">大小：%s</string>

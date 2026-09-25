@@ -233,11 +233,8 @@ fun LaunchGameOperation(
         is LaunchGameOperation.NoAccount -> {
             LaunchedEffect(Unit) {
                 eventViewModel.sendToast(androidText(R.string.game_launch_no_account))
-                val isOffline = AccountsManager.isOffline.value
-                toAccountManageScreen(
-                    if (isOffline) FirstLoginMenu.MICROSOFT
-                    else FirstLoginMenu.NORMAL
-                )
+                //直接进入账号管理界面，打开离线登录 / 认证服务器菜单
+                toAccountManageScreen(FirstLoginMenu.NORMAL)
                 launchGameViewModel.updateOperation(LaunchGameOperation.None)
             }
         }
@@ -366,7 +363,6 @@ fun LaunchGameOperation(
                             toWeb = navigateToWeb,
                             backToMain = backToMain,
                             checkIfInWebScreen = checkIfInWebScreen,
-                            updateOperation = {},
                             showToast = { text, duration -> eventViewModel.sendToast(text, duration) },
                             submitError = submitError
                         ) {

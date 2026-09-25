@@ -347,18 +347,7 @@
     <string name="account_supporting_username_invalid_empty">Kullanıcı adı gir</string>
     <string name="account_supporting_email_invalid_empty">E-posta gir</string>
     <string name="account_supporting_password_invalid_empty">Şifre gir</string>
-    <string name="account_supporting_microsoft_tip_title">Microsoft Hesabı Ekle</string>
-    <string name="account_supporting_microsoft_tip_link_text">Kısa yollar:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Minecraft Satın Al</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">Profil Oluştur / Ad Düzenle</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Hesap ekleme adımlarını takip et:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. “Giriş Yap” düğmesine tıklayın, başlatıcı doğrulama kodunu almaya çalışacaktır;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Açılan sayfaya %s tarafından verilen kodu gir ve “Erişime İzin Ver”e tıkla;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Web sayfasındaki talimatları izleyerek giriş işlemini tamamlayın;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Bu uygulama bilgilerine erişsin mi? sorusuna Kabul Et de;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Web sitesinde “Hepsi tamam!” mesajı göründüğünde, hesap otomatik olarak eklenecektir. Lütfen bir süre bekleyin.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Web sayfası bir Hata mesajı gösterirse veya hesap eklenemezse, lütfen yukarıdaki adımları tekrar deneyin.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">İpucu: Ağ bağlantınız zayıfsa, web sayfası yavaş yüklenebilir veya açılamayabilir. Bir ağ proxy’si kullanmayı deneyin ve tekrar deneyin.</string>
     <string name="account_delete_title">Hesabı Sil</string>
     <string name="account_delete_message">%s hesabını başlatıcıdan silmek istediğinizden emin misiniz?</string>
     <string name="account_microsoft_fetch_device_code">Cihaz Kodu Al</string>
@@ -998,8 +987,6 @@
     <string name="about_acknowledgements_mcmod">MCMod (mcmod.cn)</string>
     <string name="upgrade_title">Güncelleme</string>
     <string name="upgrade_new">Yeni Sürüm Mevcut</string>
-    <string name="upgrade_more">İndir</string>
-    <string name="upgrade_files">Dosyalar</string>
     <string name="upgrade_files_arch">Mimari:%s</string>
     <string name="upgrade_version_change">Değişiklikler:%s</string>
     <string name="upgrade_version_size">Boyut:%s</string>

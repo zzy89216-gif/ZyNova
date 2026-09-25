@@ -341,18 +341,7 @@
     <string name="account_supporting_username_invalid_empty">Chưa nhập tên</string>
     <string name="account_supporting_email_invalid_empty">Chưa nhập email</string>
     <string name="account_supporting_password_invalid_empty">Chưa nhập mật khẩu</string>
-    <string name="account_supporting_microsoft_tip_title">Thêm tài khoản Microsoft</string>
-    <string name="account_supporting_microsoft_tip_link_text">Có thể cần:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Mua Minecraft</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">Tạo hồ sơ / sửa tên</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Làm theo các bước sau:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Bấm Đăng nhập, launcher sẽ lấy mã xác thực;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Nhập mã %s trên trang web và bấm "Cho phép truy cập";\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Làm theo hướng dẫn trên web để đăng nhập;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Khi web hỏi "Cho phép ứng dụng này truy cập?", bấm Chấp nhận;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Khi web hiện "Xong!", tài khoản tự thêm. Chờ lát.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Nếu web báo lỗi, làm lại từ đầu.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Mạng kém có thể load web chậm. Thử dùng VPN.</string>
     <string name="account_delete_title">Xóa tài khoản</string>
     <string name="account_delete_message">Xóa tài khoản %s khỏi launcher hả?</string>
     <string name="account_microsoft_fetch_device_code">Lấy mã thiết bị</string>
@@ -998,8 +987,6 @@
     <string name="control_editor_special_joystick_style_joystick_size">Kích thước cần</string>
     <string name="upgrade_title">Cập nhật</string>
     <string name="upgrade_new">Có bản mới</string>
-    <string name="upgrade_more">Xem</string>
-    <string name="upgrade_files">APK</string>
     <string name="upgrade_files_arch">CPU: %s</string>
     <string name="upgrade_version_change">Bản: %s</string>
     <string name="upgrade_version_size">Dung lượng: %s</string>

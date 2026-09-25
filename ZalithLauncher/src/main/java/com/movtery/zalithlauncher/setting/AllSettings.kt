@@ -430,9 +430,20 @@ object AllSettings : SettingsRegistry() {
     val homePageURL = stringSetting("homePageURL", "")
 
     /**
-     * 启动器上次检查更新时，用户选择忽略的版本号
+     * 启动器上次检查更新时，用户选择忽略的版本号（整数版本号）
+     *
+     * 旧的 ZL2 更新链路遗留配置项。
+     * 保留定义是为了让旧用户升级后仍能正常读取原有配置，不再写入。
      */
     val lastIgnoredVersion = intSetting("lastIgnoredVersion", null)
+
+    /**
+     * 启动器上次检查更新时，用户选择忽略的版本号（版本名字符串，如 26.1.0）
+     *
+     * ZyNova 自己的更新体系使用版本名进行比较，因此单独使用一个配置键，
+     * 避免与旧配置项产生存储类型冲突。
+     */
+    val lastIgnoredVersionName = stringSetting("lastIgnoredVersionName", "")
 
     /**
      * 启动器日志保留天数

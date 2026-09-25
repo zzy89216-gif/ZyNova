@@ -43,7 +43,6 @@ import com.movtery.zalithlauncher.path.DOWNLOAD_OKHTTP_CLIENT
 import com.movtery.zalithlauncher.path.URL_USER_AGENT
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
-import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginOperation
 import com.movtery.zalithlauncher.utils.copyText
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.toLocal
@@ -96,17 +95,11 @@ fun Account.accountTypePriority(): Int {
 
 private const val MICROSOFT_LOGGING_TASK = "microsoft_logging_task"
 
-/**
- * 检查当前微软账号登陆是否正在进行中
- */
-fun isMicrosoftLogging() = TaskSystem.containsTask(MICROSOFT_LOGGING_TASK)
-
 fun microsoftLogin(
     context: Context,
     toWeb: (url: String) -> Unit,
     backToMain: () -> Unit,
     checkIfInWebScreen: () -> Boolean,
-    updateOperation: (MicrosoftLoginOperation) -> Unit,
     showToast: (AndroidStringText, duration: Int) -> Unit,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
     onSuccess: () -> Unit = {}
@@ -184,9 +177,6 @@ fun microsoftLogin(
                 )
             }
         },
-        onFinally = {
-            updateOperation(MicrosoftLoginOperation.None)
-        }
     )
 
     TaskSystem.submitTask(task)

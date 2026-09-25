@@ -431,18 +431,7 @@
     <string name="account_supporting_username_invalid_empty">Nombre de usuario requerido</string>
     <string name="account_supporting_email_invalid_empty">Correo electrónico requerido</string>
     <string name="account_supporting_password_invalid_empty">Contraseña requerida</string>
-    <string name="account_supporting_microsoft_tip_title">Añadir cuenta de Microsoft</string>
-    <string name="account_supporting_microsoft_tip_link_text">Atajos que podrías necesitar:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Comprar Minecraft</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">Crear perfil / Editar nombre de perfil</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Por favor, sigue los pasos a continuación para agregar tu cuenta:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Haz clic en el botón Iniciar sesión — el launcher intentará recuperar un código de verificación;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Introduce el código proporcionado por %s en la página web emergente y haz clic en Permitir acceso;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Sigue las instrucciones en la página web para completar el proceso de inicio de sesión;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Cuando se te pregunte ¿Permitir que esta aplicación acceda a tu información?, haz clic en Aceptar;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Cuando la página web muestre ¡Todo listo!, la cuenta se agregará automáticamente. Por favor, espera un momento.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Si la página web muestra un mensaje de Error o la cuenta no se agrega, por favor reintenta los pasos anteriores.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Consejo: Si tu conexión de red es deficiente, la página web puede cargar lentamente o no abrirse. Intenta usar un proxy de red y vuelve a intentarlo.</string>
     <string name="account_delete_title">Eliminar cuenta</string>
     <string name="account_delete_message">¿Eliminar cuenta %s del launcher?</string>
     <string name="account_microsoft_fetch_device_code">Obtener código de dispositivo</string>
@@ -988,8 +977,6 @@
     <string name="about_library_title">Bibliotecas de terceros</string>
     <string name="upgrade_title">Buscar actualizaciones</string>
     <string name="upgrade_new">Nueva versión encontrada</string>
-    <string name="upgrade_more">Ver</string>
-    <string name="upgrade_files">APK disponible</string>
     <string name="upgrade_files_arch">Arquitectura: %s</string>
     <string name="upgrade_version_change">Versión: %s</string>
     <string name="upgrade_version_size">Tamaño: %s</string>

@@ -46,26 +46,57 @@ import com.movtery.zalithlauncher.ui.components.defaultRichTextStyle
 import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
-import com.movtery.zalithlauncher.upgrade.RemoteData
-import com.movtery.zalithlauncher.upgrade.findCurrentBody
-import com.movtery.zalithlauncher.upgrade.getCurrentCouldDrive
+import com.movtery.zalithlauncher.upgrade.ZyNovaRelease
+import com.movtery.zalithlauncher.utils.file.formatFileSize
 import com.movtery.zalithlauncher.utils.formatDate
-import java.util.Locale
 
+/**
+ * ZyNova 更新提示弹窗
+ *
+ * 更新日志直接来自 ZyNova 自己 GitHub Release 的发布说明；
+ * 安装包会根据当前设备实际支持的 ABI 自动挑选，用户不需要选择架构。
+ */
 @Composable
 fun UpgradeDialog(
-    data: RemoteData,
+    release: ZyNovaRelease,
     onDismissRequest: () -> Unit,
-    onFilesClick: () -> Unit,
     onIgnored: () -> Unit,
-    onLinkClick: (String) -> Unit,
-    onCloudDriveClick: (RemoteData.CloudDrive) -> Unit
+    onLinkClick: (String) -> Unit
 ) {
-    val body = remember(data) {
-        data.findCurrentBody(Locale.getDefault()) ?: data.defaultBody
+    //能自动判断，就不让用户选择：直接匹配当前设备架构
+    val asset = remember(release) { release.pickAsset() }
+    val abiLabel = remember(asset) {
+        asset?.let { release.abiOrNull(it) } ?: "universal"
     }
-    val cloudDrive = remember(data) {
-        data.getCurrentCouldDrive(Locale.getDefault())
+    val downloadUrl = remember(asset, release) {
+        asset?.downloadUrl?.takeIf { it.isNotBlank() } ?: release.htmlUrl
+    }
+
+    val markdownBody = remember(release, asset) {
+        buildString {
+            append(stringResource(R.string.upgrade_version_change, release.version))
+            release.publishedAt?.takeIf { it.isNotBlank() }?.let { publishedAt ->
+                append("  \n")
+                append(
+                    stringResource(
+                        R.string.upgrade_version_create_at,
+                        formatDate(
+                            input = publishedAt,
+                            pattern = stringResource(R.string.date_format)
+                        )
+                    )
+                )
+            }
+            asset?.let {
+                append("  \n")
+                append(stringResource(R.string.upgrade_version_size, formatFileSize(it.size)))
+            }
+            append("  \n\n")
+            append(
+                release.body?.takeIf { it.isNotBlank() }
+                    ?: stringResource(R.string.upgrade_no_changelog)
+            )
+        }
     }
 
     Dialog(
@@ -90,18 +121,6 @@ fun UpgradeDialog(
                     text = stringResource(R.string.upgrade_new)
                 )
 
-                //版本号
-                val versionStr = stringResource(R.string.upgrade_version_change, data.version)
-                //更新时间
-                val dateStr = stringResource(
-                    R.string.upgrade_version_create_at,
-                    formatDate(
-                        input = data.createdAt,
-                        pattern = stringResource(R.string.date_format)
-                    )
-                )
-                val markdownBody = "$versionStr  \n$dateStr  \n\n${body.markdown}"
-
                 CompositionLocalProvider(
                     LocalUriHandler provides object : UriHandler {
                         override fun openUri(uri: String) {
@@ -120,6 +139,15 @@ fun UpgradeDialog(
                     )
                 }
 
+                //自动挑选的安装包架构，仅作为说明，不需要用户操作
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    text = stringResource(R.string.upgrade_files_arch, abiLabel),
+                    style = MaterialTheme.typography.labelSmall
+                )
+
                 //按钮
                 Row(
                     modifier = Modifier
@@ -129,26 +157,7 @@ fun UpgradeDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (cloudDrive == null) {
-                        Spacer(Modifier.weight(1f))
-                    } else {
-                        FilledTonalButton(
-                            onClick = {
-                                if (cloudDrive.links.isEmpty()) {
-                                    //未配置多网盘链接，使用默认链接（旧版兼容，必定会有）
-                                    onLinkClick(cloudDrive.link)
-                                } else if (cloudDrive.links.size == 1) {
-                                    //只有一个网盘链接，则直接访问链接
-                                    onLinkClick(cloudDrive.links[0].link)
-                                } else {
-                                    onCloudDriveClick(cloudDrive)
-                                }
-                            }
-                        ) {
-                            Text(text = stringResource(R.string.upgrade_cloud_drive))
-                        }
-                        Spacer(Modifier.weight(1f))
-                    }
+                    Spacer(Modifier.weight(1f))
 
                     FilledTonalButton(
                         onClick = {
@@ -160,9 +169,12 @@ fun UpgradeDialog(
                     }
 
                     Button(
-                        onClick = onFilesClick
+                        onClick = {
+                            onLinkClick(downloadUrl)
+                            onDismissRequest()
+                        }
                     ) {
-                        Text(text = stringResource(R.string.upgrade_more))
+                        Text(text = stringResource(R.string.upgrade_download))
                     }
                 }
             }

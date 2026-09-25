@@ -440,18 +440,7 @@
     <string name="account_supporting_username_invalid_empty">Nome de usuário obrigatório</string>
     <string name="account_supporting_email_invalid_empty">Email obrigatório</string>
     <string name="account_supporting_password_invalid_empty">Senha obrigatória</string>
-    <string name="account_supporting_microsoft_tip_title">Adicionar conta da Microsoft</string>
-    <string name="account_supporting_microsoft_tip_link_text">Atalhos que você pode precisar:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">1° - Compre o Minecraft Java</string>
-    <string name="account_supporting_microsoft_tip_link_make_gameid">2° - Vá no seu perfil do minecraft.net, coloque um Nickname e volte para o launcher</string>
-    <string name="account_supporting_microsoft_tip_hint_t1">Siga os passos abaixo para adicionar sua conta:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Clique no botão Login - o launcher tentará recuperar um código de verificação;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Digite o código fornecido por %s na página pop-up e clique em Permitir acesso;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Siga as instruções na página da web para concluir o processo de login;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Quando solicitado com \"Permitir que este aplicativo acesse suas informações?\", clique em Aceitar;\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t6">5. Quando a página exibir \"Concluído!\", a conta será adicionada automaticamente. Aguarde um momento.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Se a página da web exibir uma mensagem de erro ou a conta não puder ser adicionada, tente novamente as etapas acima.\n</string>
-    <string name="account_supporting_microsoft_tip_hint_t8">Dica: Se sua conexão for ruim, a página pode demorar para carregar ou não abrir. Tente usar um proxy de rede e tente novamente.</string>
     <string name="account_delete_title">Excluir conta</string>
     <string name="account_delete_message">Tem certeza de que deseja excluir a conta %s do launcher?</string>
     <string name="account_microsoft_fetch_device_code">Obter código do dispositivo</string>
@@ -1027,8 +1016,6 @@
     <string name="about_library_title">Bibliotecas externas</string>
     <string name="upgrade_title">Verificar atualizações</string>
     <string name="upgrade_new">Nova versão encontrada</string>
-    <string name="upgrade_more">Visualizar</string>
-    <string name="upgrade_files">APK Disponível</string>
     <string name="upgrade_files_arch">Arquitetura: %s</string>
     <string name="upgrade_version_change">Versão: %s</string>
     <string name="upgrade_version_size">Tamanho: %s</string>

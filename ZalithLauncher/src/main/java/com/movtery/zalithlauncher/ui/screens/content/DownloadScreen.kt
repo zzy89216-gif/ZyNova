@@ -56,6 +56,7 @@ import com.movtery.zalithlauncher.ui.components.fadeEdge
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadGameScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadModPackScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadModScreen
@@ -77,7 +78,12 @@ import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 /**
  * 导航至DownloadScreen
  */
-fun ScreenBackStackViewModel.navigateToDownload(targetScreen: TitledNavKey? = null) {
+fun ScreenBackStackViewModel.navigateToDownload(
+    targetScreen: TitledNavKey? = null,
+    installTargetVersion: String? = null
+) {
+    //记录本次进入资源页面的上下文：为 null 表示资源中心（纯浏览）
+    (targetScreen as? BackStackNavKey<*>)?.withInstallTarget(installTargetVersion)
     downloadScreen.clearWith(targetScreen ?: downloadGameScreen)
     mainScreen.removeAndNavigateTo(
         removes = clearBeforeNavKeys,

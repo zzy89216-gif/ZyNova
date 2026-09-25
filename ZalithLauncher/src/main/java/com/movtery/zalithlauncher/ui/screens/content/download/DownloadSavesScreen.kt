@@ -34,6 +34,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.game.download.assets.downloadSingleForVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
+import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.quickInstallAsset
 import com.movtery.zalithlauncher.game.version.saves.unpackSaveZip
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
@@ -99,7 +100,13 @@ fun DownloadSavesScreen(
             )
         },
         doQuickInstall = { classes, version ->
-            quickInstallAsset(version, classes, submitError)
+            quickInstallAsset(
+                version = version,
+                classes = classes,
+                submitError = submitError,
+                //上下文优先：直接把资源安装到进入本页面的那个实例
+                targetVersionName = key.installTargetVersion
+            )
         },
         onDependencyClicked = { dep, classes ->
             backStack.navigateTo(
@@ -149,8 +156,17 @@ fun DownloadSavesScreen(
                                 DownloadSingleOperation.SelectVersion(classes, version, deps)
                             }
                         },
-                        onQuickInstall = { classes, version ->
-                            operation = DownloadSingleOperation.QuickInstall(classes, version)
+                        installTargetVersion = key.installTargetVersion,
+                        //只有从「版本设置 → 资源管理」进入时才提供快捷安装，
+                        //资源中心只负责浏览与管理
+                        onQuickInstall = key.installTargetVersion?.let { target ->
+                            { classes: PlatformClasses, version: PlatformVersion ->
+                                operation = DownloadSingleOperation.QuickInstall(
+                                    classes = classes,
+                                    version = version,
+                                    targetVersionName = target
+                                )
+                            }
                         }
                     )
                 }

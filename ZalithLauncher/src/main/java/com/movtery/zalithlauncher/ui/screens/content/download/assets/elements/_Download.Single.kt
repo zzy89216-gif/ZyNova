@@ -96,10 +96,12 @@ sealed interface DownloadSingleOperation {
         val version: PlatformVersion,
         val dependencyProjects: List<Pair<PlatformVersion.PlatformDependency, PlatformProject>>
     ) : DownloadSingleOperation
-    /** 一键安装：直接安装到当前选中的游戏版本，跳过版本选择 */
+    /** 快捷安装：直接安装到已确定的实例，跳过版本选择 */
     data class QuickInstall(
         val classes: PlatformClasses,
         val version: PlatformVersion,
+        /** 目标游戏实例名称；为空表示安装到当前实例 */
+        val targetVersionName: String? = null,
     ) : DownloadSingleOperation
     /** 安装 */
     data class Install(
@@ -115,7 +117,7 @@ fun DownloadSingleOperation(
     changeOperation: (DownloadSingleOperation) -> Unit,
     doInstall: (PlatformClasses, PlatformVersion, List<Version>) -> Unit,
     onDependencyClicked: (PlatformVersion.PlatformDependency, PlatformClasses) -> Unit = { _, _ -> },
-    doQuickInstall: (PlatformClasses, PlatformVersion) -> Unit = { _, _ -> }
+    doQuickInstall: (PlatformClasses, PlatformVersion, String?) -> Unit = { _, _, _ -> }
 ) {
     when (operation) {
         DownloadSingleOperation.None -> {}
@@ -160,7 +162,7 @@ fun DownloadSingleOperation(
         }
         is DownloadSingleOperation.QuickInstall -> {
             LaunchedEffect(Unit) {
-                doQuickInstall(operation.classes, operation.version)
+                doQuickInstall(operation.classes, operation.version, operation.targetVersionName)
                 changeOperation(DownloadSingleOperation.None)
             }
         }
