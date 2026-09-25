@@ -216,8 +216,7 @@ fun SearchIdScreen(
             onProjectIdChange = { viewModel.projectId = it },
             //按 ID 搜索必须使用具体来源，「所有」在这里没有意义
             searchPlatform = SearchPlatform.of(viewModel.platform),
-            onPlatformChange = { new -> new.platform?.let { viewModel.platform = it } },
-            includeAllPlatform = false
+            onPlatformChange = { new -> new.platform?.let { viewModel.platform = it } }
         )
     }
 }
@@ -525,6 +524,8 @@ private fun ContentFilter(
             modifier = Modifier.fillMaxWidth(),
             searchPlatform = searchPlatform,
             onPlatformChange = onPlatformChange,
+            //按 ID 搜索只针对具体来源，不提供「所有」选项
+            includeAll = false,
         )
     }
 }
