@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.0)
+[![Release](https://img.shields.io/badge/Release-26.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.1)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -282,7 +282,9 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.1.0**
+**ZyNova 26.1.1**
+
+26.1.1 是 26.1.0 的修复版本，修复了卡片式主页导致的启动器崩溃问题。
 
 26.1.0 版本的核心目标是：进一步脱离 ZalithLauncher2 的遗留逻辑，
 建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。

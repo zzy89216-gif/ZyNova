@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.1.0**（`launcher_version_code=260010`）
+**当前版本：26.1.1**（`launcher_version_code=260011`）
 
 26.1.0 的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -86,6 +86,13 @@
     - 开发者署名 zzy，补 GitHub 与 Discord 入口
     - 修复署名错误（原「ZalithLauncher2 作者」卡片被错误显示为 ZyNova 的作者）
     - ZalithLauncher2 作者卡片下移至致谢区，保留赞助入口
+
+### 26.1.1 修复 ✅
+
+- **修复卡片式主页导致的启动器崩溃**
+  - 卡片主页内部使用了 `verticalScroll`，而它被放在 `LauncherScreen` 的 `LazyColumn` 的 `item` 中，
+    造成滚动容器嵌套、高度约束无界，触发 `IllegalStateException` 崩溃
+  - 修复方式：卡片主页不再自带滚动，统一由外层 `LazyColumn` 负责
 
 ### 后续待办 ⬜
 
@@ -274,6 +281,11 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - `stringResource()` 是 `@Composable` 调用，**不能放在 `remember {}` 的 lambda 里**
    - 删除状态类型（如 `MicrosoftLoginOperation`）前，先全局搜索所有使用点
 7. **native 反射约束**：`VulkanCapabilities` 由 native 通过反射构造，**不能修改其构造参数列表**，只能增加方法 / 属性。
+8. **Compose 滚动容器不可嵌套**（26.1.1 实际踩到并修复）：
+   - `LazyColumn` 的 `item` 中**不能**再放 `Column(Modifier.verticalScroll(...))`
+   - 会触发 `IllegalStateException: Vertically scrollable component was measured with an infinity maximum height constraints`
+   - 放进 `LazyColumn` item 的组件应让外层负责滚动，自身只做 `fillMaxWidth()`；
+     若确实需要滚动，应把滚动放在 `Dialog` / 固定高度容器等**有界约束**中
 
 ---
 
