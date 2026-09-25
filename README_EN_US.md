@@ -1,24 +1,88 @@
-# Zalith Launcher 2
-![Downloads](https://img.shields.io/github/downloads/ZalithLauncher/ZalithLauncher2/total)
-[![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors)](https://afdian.com/a/MovTery)
+# ZyNova
 
-[简体中文](README.md) | [繁體中文](README_ZH_TW.md)
+> **Minecraft: Java Edition · Android Launcher**
+>
+> An independent, unofficial project based on the open-source code of ZalithLauncher2
 
+[![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
+[![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Release](https://img.shields.io/badge/Release-26.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.0)
 
-> [!IMPORTANT]
-> This project is **completely separate** from [ZalithLauncher](https://github.com/ZalithLauncher/ZalithLauncher).  
+[简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
-**Zalith Launcher 2** is a newly designed launcher for **Android devices** tailored for [Minecraft: Java Edition](https://www.minecraft.net/). The project uses [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher/tree/v3_openjdk/app_pojavlauncher/src/main/jni) as its core launching engine and features a modern UI built with **Jetpack Compose** and **Material Design 3**.  
-We are currently building our official website [zalithlauncher.cn](https://zalithlauncher.cn)  
-Additionally, we are aware that a third-party website has been set up using the name “Zalith Launcher”, appearing to be official. Please note: **this site was not created by us**. It exploits the name to display ads for profit. We **do not participate in, endorse, or trust** such content.  
-Please stay vigilant and **protect your personal privacy**!  
+---
 
-[Discord Server Shutdown Announcement](/.github/notice/DiscordStatus.md)  
+## ✦ About
 
-## 🌐 Language and Translation Support
+**ZyNova** is an **unofficial** Minecraft: Java Edition launcher for Android, built on the
+open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2).
 
-We are using the Weblate platform to translate Zalith Launcher 2. You're welcome to join our [Weblate project](https://hosted.weblate.org/projects/zalithlauncher2) and contribute to the translations!  
-Thank you to every language contributor for helping make Zalith Launcher 2 more multilingual and global!
+> **ZyNova is NOT an official version of ZalithLauncher2.**
+>
+> ZyNova is an unofficial modified project based on ZalithLauncher2's open-source code.
+
+- GitHub: <https://github.com/zzy89216-gif/ZyNova>
+- Discord: <https://discord.gg/Tbn8Bqg2Yp>
+
+---
+
+## ✨ Highlights of 26.1.0
+
+The goal of this release is to further move away from the legacy logic of ZalithLauncher2,
+and to establish ZyNova's own resource management, download, home screen and UI foundation.
+
+> **Context First. Less Steps.**
+
+| Feature | Status |
+|---|:---:|
+| Card-style home screen (recent versions / local worlds / servers) | ✅ |
+| Unified Resource Management Core | ✅ |
+| Resource Providers (Modrinth / CurseForge) | ✅ |
+| Unified Download Manager (queue / concurrency / resume / retry / verification) | ✅ |
+| Minimal resource installation (context-aware) | ✅ |
+| Glass UI with three levels (Off / Standard / Enhanced) | ✅ |
+| Vulkan detection and compatibility for Minecraft 26.4 Snapshot 1 | ✅ |
+| Launcher updates via ZyNova's own GitHub Releases | ✅ |
+| On-demand loading and performance strategy | ✅ |
+
+### Card-style home screen
+
+Automatically detects and displays recently used Minecraft versions, local worlds and saved
+servers. Tap to launch, enter or join directly. Data is loaded on demand — the launcher does
+not scan everything at startup. The default / card / custom home screen can be selected in settings.
+
+### Unified Resource Management Core
+
+Mods, resource packs, shaders and worlds all share a single pipeline:
+
+> Search → Details → Version matching → File selection → Download → Verification → Install
+
+### Resource Providers
+
+Resource sources are decoupled from the UI. Upper layers only depend on a unified interface.
+Adding another source later only requires implementing a provider — no rewrite needed.
+
+### Unified Download Manager
+
+One download entry point for everything: download queue, concurrency control, progress,
+resume, retry, cancellation, checksum verification, temporary file cleanup, and
+post-download install triggering.
+
+### Minimal resource installation
+
+When entering a resource page from *Version Settings → Mods*, the launcher already knows the
+current instance, Minecraft version, loader and resource directory. Tapping download installs
+directly, without repeatedly asking for the Minecraft version, instance or installation path.
+The resource list shows an **Installed** state afterwards.
+
+### Vulkan detection
+
+Detection results are clearly split into **available / unavailable / check failed**, with
+concrete reasons, GPU and driver information, and a manual re-check button. Detection is based
+on the capabilities actually enumerated from the device, not on what the device claims to support.
+
+---
 
 ## 📦 Build Instructions (For Developers)
 
@@ -30,14 +94,16 @@ Thank you to every language contributor for helping make Zalith Launcher 2 more 
 * Android SDK:
   * **Minimum API level**: 26
   * **Target API level**: 35
-* JDK 11
+* JDK 17
 
 ### Build Steps
 
 ```bash
-git clone git@github.com:ZalithLauncher/ZalithLauncher2.git
+git clone https://github.com/zzy89216-gif/ZyNova.git
 # Open the project in Android Studio and build
 ```
+
+---
 
 ## 📜 License
 

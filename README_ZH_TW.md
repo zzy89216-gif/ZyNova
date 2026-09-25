@@ -1,53 +1,107 @@
-# Zalith Launcher 2
-![Downloads](https://img.shields.io/github/downloads/ZalithLauncher/ZalithLauncher2/total)
-[![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors)](https://afdian.com/a/MovTery)
+# ZyNova
 
-[English](README_EN_US.md) | [简体中文](README.md)
+> **Minecraft: Java Edition · Android 啟動器**
+>
+> 基於 ZalithLauncher2 開源程式碼開發的獨立非官方專案
 
+[![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
+[![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Release](https://img.shields.io/badge/Release-26.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.1.0)
 
-> [!IMPORTANT]
-> 該專案與 [ZalithLauncher](https://github.com/ZalithLauncher/ZalithLauncher) 屬於兩個完全不同的專案  
+[简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
-**Zalith Launcher 2** 是一個全新設計、面向 **Android 裝置** 的 [Minecraft: Java Edition](https://www.minecraft.net/) 啟動器。專案使用 [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher/tree/v3_openjdk/app_pojavlauncher/src/main/jni) 作為啟動核心，採用 **Jetpack Compose** 與 **Material Design 3** 構建現代化 UI 體驗。  
-我們目前正在搭建自己的官方網站 [zalithlauncher.cn](https://zalithlauncher.cn)  
-此外，我們已注意到有第三方使用「Zalith Launcher」名稱搭建了一個看似官方的網站。請注意：**該網站並非我們創建**，其透過冒用名義並植入廣告牟利。我們對此類行為**不參與、不認可、不信任**。  
-請務必提高警覺，**謹防個人隱私資訊洩露**！  
+---
 
-[Discord 伺服器停止營運公告](.github/notice/DiscordStatus_ZH_TW.md)  
+## ✦ 專案簡介
 
+**ZyNova** 是一個基於 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2)
+開源程式碼開發的 **非官方** Minecraft: Java Edition Android 啟動器。
 
+> **ZyNova 並非 ZalithLauncher2 官方版本。**
+>
+> ZyNova 是基於 ZalithLauncher2 開源程式碼進行開發的非官方修改專案。
 
+- GitHub：<https://github.com/zzy89216-gif/ZyNova>
+- Discord：<https://discord.gg/Tbn8Bqg2Yp>
 
-## 🌐 語言與翻譯支援
+---
 
-我們正在使用 Weblate 平台翻譯 Zalith Launcher 2，歡迎您前往我們的 [Weblate 專案](https://hosted.weblate.org/projects/zalithlauncher2) 參與翻譯！  
-感謝每一位語言貢獻者的支持，讓 Zalith Launcher 2 更加多語化、更加國際化！
+## ✨ 26.1.0 主要內容
 
+本版本目標是進一步脫離 ZalithLauncher2 的遺留邏輯，
+建立 ZyNova 自己的資源管理、下載、首頁與 UI 基礎。
 
+> **Context First. Less Steps.**
 
+| 功能 | 狀態 |
+|---|:---:|
+| 卡片式首頁（最近版本 / 本機世界 / 伺服器） | ✅ |
+| 統一資源管理核心 | ✅ |
+| 資源來源 Provider（Modrinth / CurseForge） | ✅ |
+| 統一下載管理器（佇列 / 併發 / 續傳 / 重試 / 校驗） | ✅ |
+| 極簡資源安裝（帶上下文直接安裝） | ✅ |
+| 玻璃效果三檔（關閉 / 標準 / 增強） | ✅ |
+| Minecraft 26.4 Snapshot 1 Vulkan 偵測與相容性判斷 | ✅ |
+| 啟動器自有更新體系（GitHub Releases） | ✅ |
+| 按需載入與效能策略 | ✅ |
 
+### 卡片式首頁
+
+自動辨識並展示最近使用的 Minecraft 版本、本機世界與已儲存的伺服器，
+點擊即可直接啟動、進入或加入。資料按需載入，啟動器啟動時不會全盤掃描。
+設定中可選擇預設 / 卡片 / 自訂首頁。
+
+### 統一資源管理核心
+
+Mod、資源包、光影與存檔共用同一條流程：
+
+> 搜尋 → 資源詳情 → 版本匹配 → 檔案選擇 → 下載 → 校驗 → 安裝
+
+### 資源來源 Provider
+
+資源來源與介面完全解耦，上層只依賴統一介面。
+日後新增其他來源只需實作 Provider，不需要重寫整個資源系統。
+
+### 統一下載管理器
+
+所有下載共用同一個入口：下載佇列、併發控制、下載進度、斷點續傳、失敗重試、
+取消下載、檔案校驗、臨時檔案清理，以及下載完成後的安裝觸發。
+
+### 極簡資源安裝
+
+從「版本設定 → Mods」進入資源頁面時，系統已知目前實例、Minecraft 版本、
+載入器與資源目錄，點擊下載即可直接安裝，不會重複要求選擇版本、實例或安裝位置。
+安裝完成後資源列表會顯示「已安裝」狀態。
+
+### Vulkan 偵測
+
+偵測結果明確區分 **可用 / 不可用 / 偵測失敗**，並提供具體原因、GPU 與驅動資訊，
+以及主動重新偵測按鈕。判斷依據是裝置**實際列舉出來的 Vulkan 能力**，
+而不是裝置對外宣稱的支援情況。
+
+---
 
 ## 📦 構建方式（開發者）
 
-> 以下內容適用於希望參與開發或自行構建應用的使用者。
+> 以下內容供希望參與開發或在本機構建專案的開發者參考。
 
 ### 環境要求
 
-* Android Studio Bumblebee 以上
+* Android Studio **Bumblebee** 或更新版本
 * Android SDK：
-    * **最低 API**：26
-    * **目標 API**：35
-* JDK 11
+  * **最低 API 等級**：26
+  * **目標 API 等級**：35
+* JDK 17
 
 ### 構建步驟
 
 ```bash
-git clone git@github.com:ZalithLauncher/ZalithLauncher2.git
+git clone https://github.com/zzy89216-gif/ZyNova.git
 # 使用 Android Studio 開啟專案並進行構建
 ```
 
-
-
+---
 
 ## 📜 License
 

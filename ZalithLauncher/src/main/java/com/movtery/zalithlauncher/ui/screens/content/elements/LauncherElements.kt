@@ -722,37 +722,36 @@ private fun Modifier.drawGlassHighlights(
     val h = size.height
     val diagonal = w + h
 
-        // 主高光带
-        val primaryStart = Offset(highlightShift * diagonal - w, -h)
-        val primaryEnd = Offset(highlightShift * diagonal + w, h)
-        drawRect(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color.Transparent,
-                    Color.White.copy(alpha = 0.35f),
-                    Color.White.copy(alpha = 0.10f),
-                    Color.Transparent
-                ),
-                start = primaryStart,
-                end = primaryEnd
-            )
+    // 主高光带
+    val primaryStart = Offset(primaryShift * diagonal - w, -h)
+    val primaryEnd = Offset(primaryShift * diagonal + w, h)
+    drawRect(
+        brush = Brush.linearGradient(
+            colors = listOf(
+                Color.Transparent,
+                Color.White.copy(alpha = 0.35f),
+                Color.White.copy(alpha = 0.10f),
+                Color.Transparent
+            ),
+            start = primaryStart,
+            end = primaryEnd
         )
+    )
 
-        // 次级折射高光带
-        val secondaryStart = Offset(secondaryShift * diagonal - w, -h)
-        val secondaryEnd = Offset(secondaryShift * diagonal + w, h)
-        drawRect(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color.Transparent,
-                    Color.White.copy(alpha = 0.16f),
-                    Color.Transparent
-                ),
-                start = secondaryStart,
-                end = secondaryEnd
-            )
+    // 次级折射高光带
+    val secondaryStart = Offset(secondaryShift * diagonal - w, -h)
+    val secondaryEnd = Offset(secondaryShift * diagonal + w, h)
+    drawRect(
+        brush = Brush.linearGradient(
+            colors = listOf(
+                Color.Transparent,
+                Color.White.copy(alpha = 0.16f),
+                Color.Transparent
+            ),
+            start = secondaryStart,
+            end = secondaryEnd
         )
-    }
+    )
 }
 
 @Composable
