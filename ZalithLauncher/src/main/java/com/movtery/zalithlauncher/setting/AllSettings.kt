@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.toArgb
 import com.materialkolor.PaletteStyle
 import com.movtery.layer_controller.utils.snap.SnapMode
 import com.movtery.zalithlauncher.BuildKeys
-import com.movtery.zalithlauncher.game.download.assets.platform.Platform
+import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
 import com.movtery.zalithlauncher.game.path.GamePathManager
 import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
@@ -604,20 +604,20 @@ object AllSettings : SettingsRegistry() {
     /**
      * 搜索模组的初始搜索平台
      */
-    val searchModPlatform = enumSetting("searchModPlatform", Platform.CURSEFORGE)
+    val searchModPlatform = enumSetting("searchModPlatform", SearchPlatform.ALL)
 
     /**
      * 搜索整合包的初始搜索平台
      */
-    val searchModpackPlatform = enumSetting("searchModpackPlatform", Platform.CURSEFORGE)
+    val searchModpackPlatform = enumSetting("searchModpackPlatform", SearchPlatform.ALL)
 
     /**
      * 搜索资源包的初始搜索平台
      */
-    val searchResourcePackPlatform = enumSetting("searchResourcePackPlatform", Platform.CURSEFORGE)
+    val searchResourcePackPlatform = enumSetting("searchResourcePackPlatform", SearchPlatform.ALL)
 
     /**
      * 搜索光影的初始搜索平台
      */
-    val searchShadersPlatform = enumSetting("searchShadersPlatform", Platform.CURSEFORGE)
+    val searchShadersPlatform = enumSetting("searchShadersPlatform", SearchPlatform.ALL)
 }

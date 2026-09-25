@@ -36,6 +36,7 @@ import com.movtery.zalithlauncher.game.download.assets.downloadSingleForVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.quickInstallAsset
+import com.movtery.zalithlauncher.game.download.assets.quickInstallResource
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -119,6 +120,17 @@ fun DownloadModScreen(
                         downloadModScreenKey = key,
                         downloadModScreenCurrentKey = downloadModScreenKey,
                         installTargetVersion = installTargetVersion
+                        onQuickInstall = installTargetVersion?.let { target ->
+                            { platform, projectId, _ ->
+                                quickInstallResource(
+                                    platform = platform,
+                                    projectId = projectId,
+                                    classes = PlatformClasses.MOD,
+                                    targetVersionName = target,
+                                    submitError = submitError
+                                )
+                            }
+                        }
                     ) { platform, projectId, _ ->
                         backStack.navigateTo(
                             NormalNavKey.DownloadAssets(platform, projectId, PlatformClasses.MOD)

@@ -36,7 +36,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
+import com.movtery.zalithlauncher.game.download.assets.platform.AggregatedSearchResult
+import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSortField
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
+import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.curseForgeModLoaderFilters
+import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.modrinthModLoaderFilters
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
@@ -55,6 +60,7 @@ import com.movtery.zalithlauncher.game.versioninfo.popularVersions
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.AssetsPage
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.ResultListLayout
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.SearchAssetsState
@@ -62,6 +68,8 @@ import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.Se
 import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,17 +86,31 @@ private const val TAG = "SearchAssetsScreen"
  * @param platformClasses 资源搜索的类型
  */
 private class SearchScreenViewModel(
-    initialPlatform: Platform,
+    initialPlatform: SearchPlatform,
     private val platformClasses: PlatformClasses,
-    initialGameVersion: String? = null
+    initialGameVersion: String? = null,
+    initialLoaderName: String? = null
 ): ViewModel() {
     var searchResult by mutableStateOf<SearchAssetsState>(SearchAssetsState.Searching)
     val pages = mutableStateListOf<AssetsPage?>()
 
+    /** 目标平台选项；SearchPlatform.ALL 表示同时搜索全部来源并合并结果 */
     var searchPlatform by mutableStateOf(initialPlatform)
-    //上下文优先：若已知目标实例的 Minecraft 版本，则直接作为初始过滤条件
+
+    /** 目标实例的加载器名称，用于为每个来源分别解析对应的加载器过滤器 */
+    private val instanceLoaderName: String? = initialLoaderName
+    
+    /** 为指定来源解析加载器过滤器（不同来源的过滤器类型不同） */
+    private fun loaderFor(platform: Platform): PlatformDisplayLabel? =
+        resolveModloader(SearchPlatform.of(platform), instanceLoaderName)
+    //上下文优先：若已知目标实例的 Minecraft 版本与模组加载器，直接作为初始过滤条件
     var searchFilter by mutableStateOf(
-        PlatformSearchFilter(gameVersion = initialGameVersion.orEmpty())
+        PlatformSearchFilter(
+            gameVersion = initialGameVersion.orEmpty(),
+            //默认按总下载量排序
+            sortField = PlatformSortField.DOWNLOADS,
+            modloader = resolveModloader(initialPlatform, initialLoaderName)
+        )
     )
 
     private val _searchedMcMods = MutableStateFlow<List<ModTranslations.McMod>>(emptyList())
@@ -101,6 +123,55 @@ private class SearchScreenViewModel(
     var currentSearchJob: Job? = null
     var currentSearchMCMODSJob: Job? = null
     var currentSearchVersionJob: Job? = null
+
+    /**
+     * 把实例的模组加载器名称映射为当前平台的加载器过滤器
+     *
+     * 这样从「版本设置 → 资源管理」进入时，加载器也会自动选中，
+     * 不需要用户再手动选择 Forge / Fabric / NeoForge / Quilt。
+     */
+    private fun resolveModloader(
+        platform: SearchPlatform,
+        loaderName: String?
+    ): PlatformDisplayLabel? {
+        if (loaderName.isNullOrBlank()) return null
+        return when (platform) {
+            //「所有」时按初始的首个来源（CurseForge）解析加载器标签
+            SearchPlatform.ALL, SearchPlatform.CURSEFORGE -> curseForgeModLoaderFilters.firstOrNull {
+                it.getDisplayName().equals(loaderName, ignoreCase = true)
+            }
+            SearchPlatform.MODRINTH -> modrinthModLoaderFilters.firstOrNull {
+                it.getDisplayName().equals(loaderName, ignoreCase = true)
+            }
+        }
+    }
+
+    /**
+     * 搜索单个来源
+     * @return 搜索失败时返回 null
+     */
+    private suspend fun searchSingle(
+        platform: Platform,
+        filter: PlatformSearchFilter
+    ): PlatformSearchResult? {
+        //加载器与类别都是「来源相关」的过滤条件：
+        //- 加载器：不同来源的过滤器类型不同，按来源重新解析
+        //- 类别：不同来源的类别 ID 不通用，「所有」模式下选择的类别属于参照来源，
+        //        直接传给其他来源会匹配失败，因此聚合时清空
+        val platformFilter = filter.copy(
+            modloader = loaderFor(platform),
+            categories = if (searchPlatform.isAll) emptyList() else filter.categories
+        )
+        var result: PlatformSearchResult? = null
+        searchAssets(
+            searchPlatform = platform,
+            searchFilter = platformFilter,
+            platformClasses = platformClasses,
+            onSuccess = { result = it },
+            onError = { result = null }
+        )
+        return result
+    }
 
     /**
      * 仅更新搜索名称
@@ -143,7 +214,7 @@ private class SearchScreenViewModel(
                 else -> allVersions.filter {
                     it.version.id.contains(version) &&
                             //CurseForge只能使用正式版进行过滤
-                            (searchPlatform != Platform.CURSEFORGE || it.type == MinecraftVersion.Type.Release)
+                            (!searchPlatform.selectsCurseForge || it.type == MinecraftVersion.Type.Release)
                 }.map { it.version.id }.take(20) //仅展示20个搜索结果
             }
             withContext(Dispatchers.Main) {
@@ -195,17 +266,37 @@ private class SearchScreenViewModel(
 
         currentSearchJob = viewModelScope.launch {
             searchResult = SearchAssetsState.Searching
-            searchAssets(
-                searchPlatform = searchPlatform,
-                searchFilter = searchFilter,
-                platformClasses = platformClasses,
-                onSuccess = { result ->
-                    putResult(result)
-                },
-                onError = {
-                    searchResult = it
-                }
-            )
+
+            val single = searchPlatform.platform
+            if (single != null) {
+                //单一来源
+                searchAssets(
+                    searchPlatform = single,
+                    searchFilter = searchFilter,
+                    platformClasses = platformClasses,
+                    onSuccess = { result ->
+                        putResult(result)
+                    },
+                    onError = {
+                        searchResult = it
+                    }
+                )
+                return@launch
+            }
+
+            //「所有」：并发搜索全部来源，把结果合并到同一个列表
+            val results = SearchPlatform.ALL_PLATFORMS
+                .map { platform -> async { searchSingle(platform, searchFilter) } }
+                .awaitAll()
+                .filterNotNull()
+
+            if (results.isEmpty()) {
+                searchResult = SearchAssetsState.Error(
+                    androidText(R.string.download_assets_search_failed)
+                )
+            } else {
+                putResult(AggregatedSearchResult(results))
+            }
         }
     }
 
@@ -231,16 +322,17 @@ private class SearchScreenViewModel(
 @Composable
 private fun rememberSearchAssetsViewModel(
     navKey: TitledNavKey,
-    initialPlatform: Platform,
+    initialPlatform: SearchPlatform,
     platformClasses: PlatformClasses,
-    initialGameVersion: String? = null
+    initialGameVersion: String? = null,
+    initialLoaderName: String? = null
 ): SearchScreenViewModel {
     val screenKey = navKey.toString()
     return viewModel(
-        //把初始版本纳入 key：切换目标实例时使用独立的搜索状态
-        key = "${screenKey}_search_${initialGameVersion.orEmpty()}"
+        //把初始上下文纳入 key：切换目标实例时使用独立的搜索状态
+        key = "${screenKey}_search_${initialGameVersion.orEmpty()}_${initialLoaderName.orEmpty()}"
     ) {
-        SearchScreenViewModel(initialPlatform, platformClasses, initialGameVersion)
+        SearchScreenViewModel(initialPlatform, platformClasses, initialGameVersion, initialLoaderName)
     }
 }
 
@@ -268,8 +360,8 @@ fun SearchAssetsScreen(
     screenKey: TitledNavKey,
     currentKey: TitledNavKey?,
     platformClasses: PlatformClasses,
-    initialPlatform: Platform,
-    onPlatformChange: (Platform) -> Unit = {},
+    initialPlatform: SearchPlatform,
+    onPlatformChange: (SearchPlatform) -> Unit = {},
     enablePlatform: Boolean = true,
     getCategories: (Platform) -> List<PlatformFilterCode>,
     enableModLoader: Boolean = false,
@@ -283,28 +375,38 @@ fun SearchAssetsScreen(
      * 不需要用户再手动选择版本。
      */
     installTargetVersion: String? = null,
+    /**
+     * 搜索结果的一键安装回调；为 null 时不显示安装按钮（纯浏览模式）
+     * 入参为 (平台, 项目ID, 图标链接)
+     */
+    onQuickInstall: ((Platform, projectId: String, iconUrl: String?) -> Unit)? = null,
     extraFilter: (LazyListScope.() -> Unit)? = null
 ) {
-    //上下文优先：解析目标实例的 Minecraft 版本
-    val initialGameVersion = remember(installTargetVersion) {
-        installTargetVersion
+    //上下文优先：解析目标实例的 Minecraft 版本与模组加载器
+    val instanceContext = remember(installTargetVersion) {
+        val info = installTargetVersion
             ?.let { name -> VersionsManager.versions.value.firstOrNull { it.getVersionName() == name } }
             ?.getVersionInfo()
-            ?.minecraftVersion
+        (info?.minecraftVersion) to (info?.loaderInfo?.loader?.displayName)
     }
+    val initialGameVersion = instanceContext.first
+    val initialLoaderName = instanceContext.second
     val viewModel: SearchScreenViewModel = rememberSearchAssetsViewModel(
         navKey = screenKey,
         initialPlatform = initialPlatform,
         platformClasses = platformClasses,
-        initialGameVersion = initialGameVersion
+        initialGameVersion = initialGameVersion,
+        initialLoaderName = initialLoaderName
     )
 
     //跟随平台自动变更的内容
-    val categories = remember(viewModel.searchPlatform) {
-        getCategories(viewModel.searchPlatform)
+    //「所有」时以 CurseForge 作为类别/加载器列表的参照来源
+    val concretePlatform = viewModel.searchPlatform.platform ?: Platform.CURSEFORGE
+    val categories = remember(concretePlatform) {
+        getCategories(concretePlatform)
     }
-    val modloaders = remember(viewModel.searchPlatform) {
-        getModloaders(viewModel.searchPlatform)
+    val modloaders = remember(concretePlatform) {
+        getModloaders(concretePlatform)
     }
 
     BaseScreen(
@@ -327,6 +429,7 @@ fun SearchAssetsScreen(
                     viewModel.search()
                 },
                 swapToDownload = swapToDownload,
+                onQuickInstall = onQuickInstall,
                 onPreviousPage = { pageNumber ->
                     previousPage(
                         pageNumber = pageNumber,
@@ -415,7 +518,7 @@ fun SearchAssetsScreen(
                         viewModel.searchFilter.copy(sortField = it)
                     )
                 },
-                allCategories = categories,
+                allCategories = if (viewModel.searchPlatform.isAll) emptyList() else categories,
                 categories = viewModel.searchFilter.categories,
                 onCategoryChanged = { categories ->
                     viewModel.researchWithFilter(

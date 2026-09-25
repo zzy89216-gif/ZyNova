@@ -227,6 +227,9 @@
     <string name="download_install_input_version_name">等待用户输入版本名称</string>
     <string name="download_install_input_version_name_title">输入预安装的版本名称</string>
     <string name="download_install_warning_mobile_data">您正在使用移动数据网络，继续下载将消耗流量。</string>
+    <string name="download_assets_platform_all">所有</string>
+    <string name="download_assets_platform_curseforge">CurseForge</string>
+    <string name="download_assets_platform_modrinth">Modrinth</string>
     <string name="download_assets_filter_search_name">搜索名称</string>
     <string name="download_assets_filter_search_platform">目标平台</string>
     <string name="download_assets_filter_game_version">游戏版本</string>
@@ -245,6 +248,7 @@
     <string name="download_assets_failed_to_get_project">获取项目信息失败：%s，点击重试。</string>
     <string name="download_assets_failed_to_get_versions">获取版本列表失败：%s，点击重试。</string>
     <string name="download_assets_show_only_mc_release">仅展示 MC 正式版</string>
+    <string name="download_assets_search_failed">搜索失败，请稍后重试</string>
     <string name="download_assets_search_mc_versions">搜索 MC 版本</string>
     <string name="download_assets_dependency_projects">依赖前置</string>
     <string name="download_assets_optional_projects">可选项目</string>
@@ -1089,6 +1093,9 @@
     <string name="home_card_versions_title">最近使用的版本</string>
     <string name="home_card_worlds_title">本地世界</string>
     <string name="home_card_servers_title">服务器</string>
+    <string name="home_instance_launch">启动</string>
+    <string name="home_instance_empty">该版本还没有世界或服务器</string>
+    <string name="home_instance_none">还没有已安装的游戏版本</string>
     <string name="home_card_empty">暂无内容</string>
     <string name="settings_launcher_home_page_type_local">从本地加载</string>
     <string name="settings_launcher_home_page_type_url">从网络加载</string>

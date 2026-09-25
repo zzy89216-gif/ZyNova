@@ -75,6 +75,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.movtery.layer_controller.utils.animateShapeAsState
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformFilterCode
@@ -499,13 +500,13 @@ fun <E> FilterListLayout(
 
 @Composable
 fun PlatformListLayout(
-    searchPlatform: Platform,
-    onPlatformChange: (Platform) -> Unit,
+    searchPlatform: SearchPlatform,
+    onPlatformChange: (SearchPlatform) -> Unit,
     modifier: Modifier = Modifier
 ) {
     FilterListLayout(
         modifier = modifier,
-        items = Platform.entries,
+        items = SearchPlatform.entries,
         selectionMode = FilterSelectionMode.Single,
         selectedItems = listOfNotNull(searchPlatform),
         onSelectionChange = { new ->
@@ -517,23 +518,41 @@ fun PlatformListLayout(
             item.displayName
         },
         selectedLabel = { item ->
-            PlatformIdentifier(
-                platform = item,
-                shape = MaterialTheme.shapes.small
-            )
+            val concrete = item.platform
+            if (concrete == null) {
+                //「所有」没有具体的平台标识，直接显示文字
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        text = stringResource(item.textRes),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            } else {
+                PlatformIdentifier(
+                    platform = concrete,
+                    shape = MaterialTheme.shapes.small
+                )
+            }
         },
-        itemLayout = { platform ->
+        itemLayout = { item ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(
-                    modifier = Modifier.size(14.dp),
-                    painter = painterResource(platform.getDrawable()),
-                    contentDescription = platform.displayName
-                )
+                item.platform?.let { concrete ->
+                    Icon(
+                        modifier = Modifier.size(14.dp),
+                        painter = painterResource(concrete.getDrawable()),
+                        contentDescription = concrete.displayName
+                    )
+                }
                 Text(
-                    text = platform.displayName,
+                    text = stringResource(item.textRes),
                     style = MaterialTheme.typography.labelMedium
                 )
             }

@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.0**（`launcher_version_code=260200`）
+**当前版本：26.2.1**（`launcher_version_code=260210`）
 
 26.1.0 的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -86,6 +86,16 @@
     - 开发者署名 zzy，补 GitHub 与 Discord 入口
     - 修复署名错误（原「ZalithLauncher2 作者」卡片被错误显示为 ZyNova 的作者）
     - ZalithLauncher2 作者卡片下移至致谢区，保留赞助入口
+
+### 26.2.1 修复与新增 ✅
+
+- **极致玻璃效果重做**：此前用 `drawBehind` 画渐变，视觉上"等于没做"；
+  现改为 `RuntimeShader`（AGSL）实现 6 点环形多重采样模糊 + 波纹折射扭曲
+- **搜索结果卡片增加一键安装按钮**（此前只加在版本列表，用户实际浏览的是搜索结果）
+- **模组加载器按实例自动选中**
+- **主页改为以「版本」为模块**，模块内直接展示该版本自己的世界与服务器
+- **新增「所有平台」聚合搜索**（CurseForge + Modrinth 合并，默认）
+- **排序默认改为「总下载量」**
 
 ### 26.2.0 修复与新增 ✅
 
@@ -307,7 +317,18 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - NavKey 是 `@Serializable`，Navigation3 的 saveable 机制会序列化 / 反序列化 key
    - 因此 `@Transient` 字段在导航过程中会**静默丢失**（不报错，但读到 null）
    - 正确做法：把这类跨页面上下文放在 **ViewModel**（如 `ScreenBackStackViewModel`）上
-9. **Compose 滚动容器不可嵌套**（26.1.1 实际踩到并修复）：
+9. **聚合搜索要处理「平台特有」的过滤条件**（26.2.1 实际踩到）：
+   - `PlatformFilterCode`（资源类别）与加载器过滤器都是**来源特有**的，
+     CurseForge 的类别 ID 传给 Modrinth 会匹配失败
+   - 聚合多个来源时，必须为每个来源**重新解析**加载器，并**清空**平台特有的类别条件
+10. **新增函数参数不要加在 lambda 参数之后**（26.2.1 实际踩到）：
+   - 若函数的最后一个参数是 lambda，调用方常用尾随 lambda 语法，
+     把新参数追加到末尾会导致尾随 lambda 被解析成新参数，报 `Too many arguments`
+   - 正确做法：把新参数插在 lambda 参数**之前**
+11. **XML 中 `&` 必须转义为 `&amp;`**（26.2.1 实际踩到，会导致资源打包失败）：
+   - 报错：`The entity name must immediately follow the '&' in the entity reference`
+   - 新增字符串后建议用 XML 解析器批量校验全部资源文件
+12. **Compose 滚动容器不可嵌套**（26.1.1 实际踩到并修复）：
    - `LazyColumn` 的 `item` 中**不能**再放 `Column(Modifier.verticalScroll(...))`
    - 会触发 `IllegalStateException: Vertically scrollable component was measured with an infinity maximum height constraints`
    - 放进 `LazyColumn` item 的组件应让外层负责滚动，自身只做 `fillMaxWidth()`；

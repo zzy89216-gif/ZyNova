@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.0)
+[![Release](https://img.shields.io/badge/Release-26.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.1)
 
 [简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
@@ -27,7 +27,17 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 26.2.0
+## ✨ Highlights of 26.2.1
+
+- **Reworked**: the *⚠️ Extreme* glass level now uses a real GPU shader
+  (multi-sample blur + wave-based refraction/distortion) instead of barely visible gradients
+- **Fixed**: search-result cards now provide a one-tap install button
+- **Fixed**: the mod loader is now selected automatically from the current instance
+- **Home screen**: reorganized into **per-version modules**, each listing its own worlds and servers
+- **New**: an **All** platform option that merges CurseForge and Modrinth results into one list
+- **Changed**: default sort order is now **Total Downloads**
+
+### Highlights of 26.2.0
 
 - **Fixed**: resource installation context being lost when entering the download center
   from *Version Settings → resource management* (the `@Transient` field on a NavKey was
@@ -50,7 +60,7 @@ and to establish ZyNova's own resource management, download, home screen and UI 
 | Resource Providers (Modrinth / CurseForge) | ✅ |
 | Unified Download Manager (queue / concurrency / resume / retry / verification) | ✅ |
 | Minimal resource installation (context-aware) | ✅ |
-| Glass UI with four levels (Off / Standard / Enhanced / ⚠️ Extreme) | ✅ |
+| Glass UI with four levels (Off / Standard / Enhanced / ⚠️ Extreme, GPU shader) | ✅ |
 | Vulkan detection and compatibility for Minecraft 26.4 Snapshot 1 | ✅ |
 | Launcher updates via ZyNova's own GitHub Releases | ✅ |
 | On-demand loading and performance strategy | ✅ |
