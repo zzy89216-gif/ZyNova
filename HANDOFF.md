@@ -251,8 +251,13 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 保留上游版权声明（文件头的 `Copyright (C) 2025 MovTery`）
    - 新增文件使用 ZyNova 版权头
    - 分发时附 GPL-3.0 文本（`res/raw/gpl_3_license.txt`）
-6. **签名**：release 使用官方公开的 debug 密钥 `zalith_launcher_debug.jks`（密码在 gradle.properties，官方本来就公开），不要生成新密钥硬编码密码。
-7. **不要恢复**：正版登录入口、ZL2 更新链、资源中心的一键安装入口、BBSMC。
+6. **签名**：release 与 debug 都使用官方公开的 `zalith_launcher_debug.jks`（密码在 gradle.properties，官方本来就公开），不要生成新密钥硬编码密码。
+7. **⛔ 绝对不要删除或修改仓库中的签名密钥文件**（维护者刻意保留的项目资产）：
+   - `ZalithLauncher/zalith_launcher_debug.jks`
+   - `ZalithLauncher/zalith_launcher.jks`
+   - 后者虽然当前构建配置未引用，但**维护者是刻意保留它的**，
+     **不要因为「未被引用」就把它当作无用文件清理掉**。
+8. **不要恢复**：正版登录入口、ZL2 更新链、资源中心的一键安装入口、BBSMC。
 
 ---
 
