@@ -31,7 +31,7 @@
 
 - **极致玻璃效果重做**：此前用 `drawBehind` 画渐变，视觉上"等于没做"；
   现改为 `RuntimeShader`（AGSL）实现 6 点环形多重采样模糊 + 波纹折射扭曲
-- **搜索结果卡片增加一键安装按钮**（此前只加在版本列表，用户实际浏览的是搜索结果）
+- **搜索结果卡片增加快捷安装按钮**（此前只加在版本列表，用户实际浏览的是搜索结果）
 - **模组加载器按实例自动选中**
 - **主页改为以「版本」为模块**，模块内直接展示该版本自己的世界与服务器
 - **新增「所有平台」聚合搜索**（CurseForge + Modrinth 合并，默认）
@@ -199,9 +199,9 @@
 | `game/download/assets/platform/SearchPlatform.kt` | 新增「所有」平台选项（聚合搜索） |
 | `game/download/assets/platform/AggregatedSearchResult.kt` | 新增聚合搜索结果（合并多个来源） |
 | `ui/screens/content/elements/LauncherElements.kt` | 极致档效果：`extremeGlassEffects()`、动态模糊半径，并使用 `RuntimeShader` 实现多重采样模糊与折射扭曲 |
-| `ui/screens/content/download/assets/elements/_Search.Result.kt` | 搜索结果卡片增加一键安装按钮 |
+| `ui/screens/content/download/assets/elements/_Search.Result.kt` | 搜索结果卡片增加快捷安装按钮 |
 | `ui/screens/content/download/assets/elements/_Search.Filter.kt` | 平台选择支持「所有」 |
-| `game/download/assets/_Download.QuickInstall.kt` | 新增 `quickInstallResource()`（从搜索结果一键安装） |
+| `game/download/assets/_Download.QuickInstall.kt` | 新增 `quickInstallResource()`（从搜索结果快捷安装） |
 | `game/home/HomeDataProvider.kt` | 改为按「版本模块」组织主页数据（`instances()`） |
 ### 已删除文件
 
