@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.1)
+[![Release](https://img.shields.io/badge/Release-26.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.2)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -23,7 +23,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.2.1**。这一阶段的核心目标是：
+当前版本 **26.2.2**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -34,7 +34,7 @@
 - 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
 - 极简资源安装流程（上下文直装）
 - 卡片式主页（以版本为模块，模块内展示世界与服务器）
-- 玻璃效果（Glass UI）四档
+- 玻璃效果（Glass UI）两档
 - 启动器自有更新体系（GitHub Releases）
 - Minecraft 26.4 Snapshot 1 的 Vulkan 检测
 
@@ -76,7 +76,7 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 | **资源来源 Provider**（Modrinth / CurseForge） | ✅ |
 | **统一下载管理器**（队列 / 并发 / 续传 / 重试 / 校验 / 清理） | ✅ |
 | **极简资源安装**（上下文直装，不再重复选择） | ✅ |
-| **玻璃效果三档**（关闭 / 标准 / 增强） | ✅ |
+| **玻璃效果两档**（关闭 / 启用动态玻璃） | ✅ |
 | **Minecraft 26.4 Snapshot 1 Vulkan 检测与兼容判断** | ✅ |
 | **按需加载与性能策略** | ✅ |
 | **启动器自有更新体系**（GitHub Releases） | ✅ |
@@ -203,12 +203,13 @@ ZyNova 提供面向 Minecraft 26.4 Snapshot 1 的 Vulkan 检测：
 
 ### 🎨 界面与视觉效果
 
-- 玻璃效果（Glass UI）提供四档：**关闭 / 标准 / 增强 / ⚠️极致**，默认关闭
-  - 标准档为静态高光，不启动持续动画
-  - 增强档才启用高光流动效果
-  - 极致档会一次性开启多层实时模糊、动态模糊半径、折射扭曲、动态光照、
-    景深视差、卡片吸附、动态阴影与噪点纹理等全部效果（使用真实 GPU 着色器实现），
-    切换前会弹出性能警告（GPU 负载很高，仅建议高性能设备使用）
+- 玻璃效果（Glass UI）提供两档：**关闭 / 启用动态玻璃**，默认关闭
+  - 关闭档不叠加任何玻璃高光层，性能优先
+  - 启用动态玻璃会在毛玻璃之上叠加缓慢流动的高光与折射光晕
+  - ⚠️ 此前的「标准 / 增强 / ⚠️极致」三档已在 26.2.2 移除：
+    「极致」档使用 GPU 着色器对整个元素做多重采样模糊与折射扭曲，
+    会连带把承载文字的图层一起模糊，导致**字体明显模糊、文字渲染异常**，
+    因此在 26.2.2 中简化掉
 - 在性能与视觉效果之间优先保证移动设备的流畅度，
   避免高开销实时模糊、大量透明层叠加与持续动画
 
@@ -305,10 +306,18 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.1**
+**ZyNova 26.2.2**
 
-26.2.1 重做了「⚠️极致」玻璃效果（改用真实 GPU 着色器实现多层模糊与折射扭曲）、
-修复了搜索结果缺少快捷安装按钮与模组加载器未自动选中的问题，
+26.2.2 是一次以「修复实际反馈」为主的版本：
+
+- 移除了会让字体模糊的「⚠️极致」玻璃档，玻璃效果简化为 **关闭 / 启用动态玻璃** 两档
+- 修复了一键安装偶尔报 `No compatible version found for this instance` 的问题
+  （搜索在切换平台后丢失加载器过滤条件，导致结果里混进其他加载器的资源）
+- 失败提示改为本地化，并带上目标实例的 Minecraft 版本与模组加载器
+- 前置依赖解析失败不再被静默丢弃
+- 修复 Discord 服务器邀请链接全部失效的问题（更换为永久邀请）
+
+26.2.1 重做了「⚠️极致」玻璃效果、修复了搜索结果缺少快捷安装按钮与模组加载器未自动选中的问题，
 并把主页改为以「版本」为模块、新增「所有平台」聚合搜索。
 
 26.1.0 版本的核心目标是：进一步脱离 ZalithLauncher2 的遗留逻辑，
@@ -318,7 +327,7 @@ Release 中还可能包含：
 
 - 统一资源管理核心与资源来源 Provider
 - 统一下载管理器与极简资源安装
-- 卡片式主页与玻璃效果三档
+- 卡片式主页与玻璃效果两档
 - Minecraft 26.4 Snapshot 1 的 Vulkan 检测与兼容判断
 - 移除 ZalithLauncher2 更新链与添加账号界面的正版登录入口
 
@@ -534,7 +543,15 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.1（当前版本）
+### 26.2.2（当前版本）
+
+- [x] 移除「⚠️极致」玻璃档，简化为「关闭 / 启用动态玻璃」两档（修复字体模糊）
+- [x] 修复一键安装偶发 `No compatible version found for this instance`
+- [x] 安装失败提示本地化，并显示目标实例的版本与加载器
+- [x] 前置依赖解析失败不再静默丢弃，改为记录日志与告警
+- [x] 修复 Discord 邀请链接失效（更换为永久邀请）
+
+### 26.2.1
 
 - [x] 极致玻璃效果重做（真实 GPU 多重采样模糊 + 波纹折射扭曲）
 - [x] 搜索结果卡片增加快捷安装按钮
@@ -556,7 +573,7 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 - [x] 统一下载管理器
 - [x] 极简资源安装（上下文直装）
 - [x] 卡片式主页
-- [x] 玻璃效果四档（关闭 / 标准 / 增强 / ⚠️极致）
+- [x] 玻璃效果（关闭 / 标准 / 增强 / ⚠️极致，26.2.2 已简化为两档）
 - [x] Minecraft 26.4 Snapshot 1 Vulkan 检测适配
 - [x] 移除 ZalithLauncher2 更新链
 - [x] 移除添加账号界面的正版登录入口
@@ -569,6 +586,20 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 - [ ] 让统一资源管理核心覆盖更多资源来源
 - [ ] 继续收敛 ZalithLauncher2 的遗留逻辑
 - [ ] 渲染与键位相关的进一步优化
+
+---
+
+## 💬 社区与反馈
+
+| 渠道 | 地址 |
+|---|---|
+| GitHub 仓库 | <https://github.com/zzy89216-gif/ZyNova> |
+| GitHub Issues（Bug / 建议） | <https://github.com/zzy89216-gif/ZyNova/issues> |
+| Discord 服务器 | <https://discord.gg/QwPpZQHrTa> |
+| Releases（下载） | <https://github.com/zzy89216-gif/ZyNova/releases> |
+
+> ⚠️ Discord 使用的是**永久邀请链接**。如果该链接失效，说明服务器更换了邀请，
+> 请以 GitHub 仓库首页与启动器「关于」页面中的链接为准，并到 Issues 反馈。
 
 ---
 

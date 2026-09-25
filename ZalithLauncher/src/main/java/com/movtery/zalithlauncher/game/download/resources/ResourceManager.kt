@@ -22,6 +22,9 @@ import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchResult
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.utils.logging.Logger
+
+private const val TAG = "ResourceManager"
 
 /**
  * ZyNova 资源管理核心（Resource Management Core）
@@ -75,13 +78,15 @@ object ResourceManager {
      *
      * 自动挑选与目标实例的游戏版本、加载器都兼容的最新版本，
      * 并要求该版本具备可安装文件。
+     *
+     * @throws ResourceMatchException 匹配失败时抛出，携带具体原因（实例信息不可用 / 查询失败 / 无兼容版本）
      */
     suspend fun matchVersion(
         platform: Platform,
         projectId: String,
         type: ResourceType,
         instance: Version
-    ): ResourceVersion? {
+    ): ResourceVersion {
         return ResourceInstallManager.resolveCompatibleVersion(
             provider = ResourceProviders.of(platform),
             projectId = projectId,
@@ -103,10 +108,23 @@ object ResourceManager {
     ): Int {
         val plan = ResourceInstallManager.buildInstallPlan(
             version = version,
+            type = type,
             instance = instance
         )
+
+        //前置依赖缺失不会让安装失败，但必须留下痕迹，
+        //否则用户只会看到「装好了」，进游戏却因为缺少前置而崩溃
+        if (plan.hasUnresolvedRequiredDependencies) {
+            Logger.warning(
+                TAG,
+                "Installed ${version.projectId} but ${plan.unresolvedRequiredDependencies.size} " +
+                        "required dependencies could not be resolved: " +
+                        plan.unresolvedRequiredDependencies.joinToString { "${it.provider}:${it.projectId}" }
+            )
+        }
+
         return ResourceInstallManager.install(
-            plan = plan,
+            plan = plan.entries,
             type = type,
             instance = instance,
             onProgress = onProgress
@@ -119,7 +137,8 @@ object ResourceManager {
      * 调用方只需要提供来源、资源 ID 与目标实例，
      * 版本匹配、文件选择、下载、校验、安装全部由核心完成。
      *
-     * @return 安装的版本；若没有兼容版本则返回 null
+     * @return 实际安装的资源版本
+     * @throws ResourceMatchException 匹配失败时抛出，携带具体原因
      */
     suspend fun installToInstance(
         platform: Platform,
@@ -127,8 +146,8 @@ object ResourceManager {
         type: ResourceType,
         instance: Version,
         onProgress: (ResourceDownloadProgress) -> Unit = {}
-    ): ResourceVersion? {
-        val matched = matchVersion(platform, projectId, type, instance) ?: return null
+    ): ResourceVersion {
+        val matched = matchVersion(platform, projectId, type, instance)
         installVersion(
             version = matched,
             type = type,

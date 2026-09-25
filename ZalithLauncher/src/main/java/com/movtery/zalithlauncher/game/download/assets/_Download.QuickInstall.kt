@@ -25,9 +25,12 @@ import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.resources.ResourceManager
+import com.movtery.zalithlauncher.game.download.resources.ResourceMatchException
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.download.resources.toResourceVersion
+import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
+import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
@@ -171,23 +174,53 @@ fun quickInstallResource(
                         )
                     }
                 )
-
-                //没有找到与该实例兼容的版本
-                if (installed == null) {
-                    throw IllegalStateException(
-                        "No compatible version found for this instance"
+                task.updateMessage(
+                    androidText(
+                        R.string.download_assets_quick_install_done,
+                        installed.displayName
                     )
-                }
+                )
             },
             onError = { e ->
                 Logger.warning(TAG, "Quick install from search result failed.", e)
                 submitError(
                     ErrorViewModel.ThrowableMessage(
                         title = androidText(R.string.download_assets_install_failed),
-                        message = mapExceptionToMessage(e)
+                        message = e.toInstallMessage(instance)
                     )
                 )
             }
         )
     )
+}
+
+/**
+ * 把安装过程中的异常转换为用户可以理解的提示
+ *
+ * 版本匹配失败会被拆成「实例信息读不出来 / 查询失败 / 确实没有兼容版本」三种，
+ * 并带上本次安装的目标实例信息（Minecraft 版本 + 模组加载器），
+ * 用户才能判断是资源本身不兼容，还是网络/来源出了问题。
+ */
+private fun Throwable.toInstallMessage(instance: Version): AndroidStringText {
+    if (this !is ResourceMatchException) return mapExceptionToMessage(this)
+
+    val info = instance.getVersionInfo()
+    val target = listOfNotNull(
+        info?.minecraftVersion ?: instance.getVersionName(),
+        info?.loaderInfo?.loader?.displayName
+    ).joinToString(" · ")
+
+    return when (this) {
+        is ResourceMatchException.InstanceInfoUnavailable ->
+            androidText(R.string.download_assets_install_instance_unavailable, instance.getVersionName())
+
+        is ResourceMatchException.QueryFailed ->
+            androidText(
+                R.string.download_assets_install_query_failed,
+                cause?.localizedMessage ?: message.orEmpty()
+            )
+
+        is ResourceMatchException.NoCompatibleVersion ->
+            androidText(R.string.download_assets_install_no_compatible_version, target)
+    }
 }

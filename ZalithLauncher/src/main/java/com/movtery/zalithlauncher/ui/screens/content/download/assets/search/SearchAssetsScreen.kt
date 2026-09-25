@@ -100,17 +100,55 @@ private class SearchScreenViewModel(
 
     /** 目标实例的加载器名称，用于为每个来源分别解析对应的加载器过滤器 */
     private val instanceLoaderName: String? = initialLoaderName
-    
+
+    /**
+     * 用户手动选择的加载器名称；为 null 表示跟随目标实例（Context First）
+     *
+     * 这里存的是**名称**而不是某个来源的过滤器对象：
+     * 加载器过滤器是来源特有的类型，CurseForge 的过滤器不能直接传给 Modrinth，
+     * 所以每次搜索前都按目标来源重新解析。
+     */
+    private var selectedLoaderName: String? = null
+
     /** 为指定来源解析加载器过滤器（不同来源的过滤器类型不同） */
     private fun loaderFor(platform: Platform): PlatformDisplayLabel? =
         resolveModloader(SearchPlatform.of(platform), instanceLoaderName)
+
+    /** 界面参照来源：「所有」时以 CurseForge 作为类别与加载器列表的参照 */
+    val referencePlatform: Platform
+        get() = searchPlatform.platform ?: Platform.CURSEFORGE
+
+    /** 界面应展示的加载器过滤条件（按参照来源解析） */
+    val currentModloader: PlatformDisplayLabel?
+        get() = selectedLoaderName
+            ?.let { name -> resolveModloader(SearchPlatform.of(referencePlatform), name) }
+            ?: loaderFor(referencePlatform)
+
+    /**
+     * 为指定来源构建搜索过滤条件
+     *
+     * ⚠️ 加载器与类别都是**来源特有**的过滤条件：
+     * 之前这里只在「所有」聚合搜索时重新解析，单一来源搜索直接使用原始过滤条件；
+     * 而切换平台时又会把加载器清空，于是搜索退化成「完全不按加载器过滤」，
+     * 结果里混进其他加载器的资源，点一键安装时才报「没有兼容版本」。
+     * 现在两种搜索路径都统一走这里。
+     */
+    private fun buildFilter(
+        platform: Platform,
+        filter: PlatformSearchFilter = searchFilter
+    ): PlatformSearchFilter = filter.copy(
+        modloader = selectedLoaderName
+            ?.let { name -> resolveModloader(SearchPlatform.of(platform), name) }
+            ?: loaderFor(platform),
+        categories = if (searchPlatform.isAll) emptyList() else filter.categories
+    )
+
     //上下文优先：若已知目标实例的 Minecraft 版本与模组加载器，直接作为初始过滤条件
     var searchFilter by mutableStateOf(
         PlatformSearchFilter(
             gameVersion = initialGameVersion.orEmpty(),
             //默认按总下载量排序
-            sortField = PlatformSortField.DOWNLOADS,
-            modloader = resolveModloader(initialPlatform, initialLoaderName)
+            sortField = PlatformSortField.DOWNLOADS
         )
     )
 
@@ -159,10 +197,7 @@ private class SearchScreenViewModel(
         //- 加载器：不同来源的过滤器类型不同，按来源重新解析
         //- 类别：不同来源的类别 ID 不通用，「所有」模式下选择的类别属于参照来源，
         //        直接传给其他来源会匹配失败，因此聚合时清空
-        val platformFilter = filter.copy(
-            modloader = loaderFor(platform),
-            categories = if (searchPlatform.isAll) emptyList() else filter.categories
-        )
+        val platformFilter = buildFilter(platform, filter)
         var result: PlatformSearchResult? = null
         searchAssets(
             searchPlatform = platform,
@@ -243,6 +278,28 @@ private class SearchScreenViewModel(
         search()
     }
 
+    /**
+     * 切换目标平台
+     *
+     * 加载器选择回归「跟随目标实例」，并按新来源重新解析对应的加载器过滤器，
+     * 避免切平台后丢失加载器条件。
+     */
+    fun updatePlatform(platform: SearchPlatform) {
+        searchPlatform = platform
+        selectedLoaderName = null
+        researchWithFilter(searchFilter.copy(categories = emptyList()))
+    }
+
+    /**
+     * 手动选择加载器
+     *
+     * @param modloader 传入 null 表示重新跟随目标实例的加载器
+     */
+    fun updateModloader(modloader: PlatformDisplayLabel?) {
+        selectedLoaderName = modloader?.getDisplayName()
+        researchWithFilter(searchFilter)
+    }
+
     private fun putResult(result: PlatformSearchResult) {
         result.getAssetsPage(platformClasses).also { page ->
             Logger.info(TAG, "Searched page info: {pageNumber: ${page.pageNumber}, pageIndex: ${page.pageIndex}, totalPage: ${page.totalPage}, isLastPage: ${page.isLastPage}}")
@@ -270,10 +327,10 @@ private class SearchScreenViewModel(
 
             val single = searchPlatform.platform
             if (single != null) {
-                //单一来源
+                //单一来源：同样要按该来源重新解析加载器过滤器
                 searchAssets(
                     searchPlatform = single,
-                    searchFilter = searchFilter,
+                    searchFilter = buildFilter(single),
                     platformClasses = platformClasses,
                     onSuccess = { result ->
                         putResult(result)
@@ -402,7 +459,7 @@ fun SearchAssetsScreen(
 
     //跟随平台自动变更的内容
     //「所有」时以 CurseForge 作为类别/加载器列表的参照来源
-    val concretePlatform = viewModel.searchPlatform.platform ?: Platform.CURSEFORGE
+    val concretePlatform = viewModel.referencePlatform
     val categories = remember(concretePlatform) {
         getCategories(concretePlatform)
     }
@@ -494,10 +551,8 @@ fun SearchAssetsScreen(
                 enablePlatform = enablePlatform,
                 searchPlatform = viewModel.searchPlatform,
                 onPlatformChange = {
-                    viewModel.searchPlatform = it
-                    viewModel.researchWithFilter(
-                        viewModel.searchFilter.copy(categories = emptyList(), modloader = null)
-                    )
+                    //切换平台时按新来源重新解析加载器，避免加载器条件被丢掉
+                    viewModel.updatePlatform(it)
                     onPlatformChange(it)
                 },
                 searchName = viewModel.searchFilter.searchName,
@@ -528,11 +583,10 @@ fun SearchAssetsScreen(
                 },
                 enableModLoader = enableModLoader,
                 modloaders = modloaders,
-                modloader = viewModel.searchFilter.modloader,
+                //加载器过滤器是来源特有的，这里展示的是按当前来源解析后的结果
+                modloader = viewModel.currentModloader,
                 onModLoaderChange = {
-                    viewModel.researchWithFilter(
-                        viewModel.searchFilter.copy(modloader = it)
-                    )
+                    viewModel.updateModloader(it)
                 },
                 extraFilter = extraFilter
             )

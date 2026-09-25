@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.1)
+[![Release](https://img.shields.io/badge/Release-26.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.2)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -23,9 +23,22 @@
 > ZyNova 是基於 ZalithLauncher2 開源程式碼進行開發的非官方修改專案。
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
-- Discord：<https://discord.gg/Tbn8Bqg2Yp>
+- Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.2.2 主要內容
+
+本版本以修復使用者回報的問題為主：
+
+- **移除** **⚠️極致** 玻璃檔，玻璃效果簡化為 **關閉 / 啟用動態玻璃** 兩檔
+  ——「極致」檔會連同承載文字的圖層一起模糊，導致字體明顯模糊
+- **修復** 一鍵安裝偶發 `No compatible version found for this instance`：
+  切換搜尋平台後模組載入器過濾條件被丟棄，結果中混入其他載入器的資源
+- **改進** 安裝失敗提示：改為本地化，並顯示目標實例的 Minecraft 版本與模組載入器
+- **修復** 前置依賴解析失敗不再被靜默丟棄，會記錄日誌並回報
+- **修復** Discord 邀請連結全部失效（舊臨時邀請已過期，改為永久邀請）
 
 ## ✨ 26.2.1 主要內容
 
@@ -58,7 +71,7 @@
 | 資源來源 Provider（Modrinth / CurseForge） | ✅ |
 | 統一下載管理器（佇列 / 併發 / 續傳 / 重試 / 校驗） | ✅ |
 | 極簡資源安裝（帶上下文直接安裝） | ✅ |
-| 玻璃效果四檔（關閉 / 標準 / 增強 / ⚠️極致，GPU 著色器） | ✅ |
+| 玻璃效果兩檔（關閉 / 啟用動態玻璃；原本的標準 / 增強 / 極致已於 26.2.2 移除） | ✅ |
 | Minecraft 26.4 Snapshot 1 Vulkan 偵測與相容性判斷 | ✅ |
 | 啟動器自有更新體系（GitHub Releases） | ✅ |
 | 按需載入與效能策略 | ✅ |

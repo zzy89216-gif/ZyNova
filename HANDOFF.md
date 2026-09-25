@@ -10,7 +10,7 @@
 - **性质**：基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码开发的 **非官方修改版** Minecraft: Java Edition Android 启动器
 - **许可证**：GPL-3.0（上游也是 GPL-3.0，ZyNova 必须保持开源）
 - **GitHub 仓库**：<https://github.com/zzy89216-gif/ZyNova>（分支 `main`）
-- **Discord**：<https://discord.gg/Tbn8Bqg2Yp>
+- **Discord**：<https://discord.gg/QwPpZQHrTa>（**永久邀请**，Discord API 校验 `expires_at = null`）
 - **包名**：`com.zynova.launcher`
 - **namespace**：仍为 `com.movtery.zalithlauncher`，**不要改 namespace**，否则要改几百个文件的 package 声明
 - **核心原则**：**Context First. Less Steps.**
@@ -23,9 +23,31 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.1**（`launcher_version_code=260210`）
+**当前版本：26.2.2**（`launcher_version_code=260220`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.2.2 修复 ✅（对应仓库中 3 个 Issue）
+
+1. **移除「⚠️极致」玻璃档，玻璃效果简化为两档：关闭 / 启用动态玻璃**（Issue #2）
+   - 「极致」档用 `RuntimeShader`（`RenderEffect`）对整个元素做多重采样模糊 + 波纹折射扭曲，
+     而 Compose 的 `renderEffect` 作用在**整个图层**上，会把承载文字的图层一起模糊，
+     导致字体明显模糊、文字渲染异常 → 直接移除该档位及全部与之绑定的高开销效果
+     （动态模糊半径、动态光照、多层视差、卡片吸附与动态阴影、噪点纹理、折射着色器）
+   - 旧配置 `Standard` / `Enhanced` / `Extreme` 在 `loadAllSettings` 中**一次性迁移为「启用动态玻璃」**
+2. **修复一键安装偶发 `安装资源失败！No compatible version found for this instance`**（Issue #3）
+   - 主因：加载器过滤条件是**来源特有**的，但此前只有「所有平台」聚合搜索会按来源重新解析；
+     切换搜索平台时又把加载器清空，导致单一来源搜索**完全不按加载器过滤**，
+     结果里混进其他加载器的资源，点安装才在版本匹配阶段失败
+   - 现在单一来源与聚合搜索统一走 `buildFilter(platform)`，每次都按目标来源重新解析加载器
+   - 版本匹配失败拆成 **实例信息不可用 / 查询失败 / 确实没有兼容版本** 三种并本地化提示
+     （提示中带目标实例的 MC 版本 + 加载器）；查询异常不再被吞成「没有兼容版本」
+   - 必需前置依赖解析失败不再静默丢弃，会记录日志并收集进安装计划
+   - 加载器名称改为归一化比较；只有 Mod / 整合包强制校验加载器
+3. **修复 Discord 邀请链接全部失效**（Issue #1）
+   - 旧链接是**临时邀请**（`Tbn8Bqg2Yp`，Discord API 返回 `50270 Invite is expired`）
+   - 已换成**永久邀请** `QwPpZQHrTa`，并同步到 README / README_EN_US / README_ZH_TW /
+     HANDOFF / 应用内 `UrlManager`（`URL_COMMUNITY`、`URL_DISCORD`）
 
 ### 26.2.1 修复与新增 ✅
 
@@ -91,8 +113,10 @@
    - 设置中可选：默认主页 / 卡片主页 / 自定义主页
    - `HomeDataProvider` 作为主页统一数据访问接口，按需加载
 
-8. **玻璃效果（Glass UI）三档**
-   - `GlassLevel`：关闭 / 标准 / 增强，**默认关闭**
+8. **玻璃效果（Glass UI）两档**（26.2.2 起）
+   - `GlassLevel`：关闭 / 启用动态玻璃，**默认关闭**
+   - 关闭档不叠加任何玻璃高光层；启用档在毛玻璃之上叠加缓慢流动的高光与折射光晕
+   - 历史上曾有「标准 / 增强 / ⚠️极致」，26.2.2 因「极致」导致字体模糊而整体简化为两档
    - 标准档为静态高光（零持续动画），增强档才启用流动动画
 
 9. **Minecraft 26.4 Snapshot 1 Vulkan 适配**
@@ -148,7 +172,7 @@
 | `game/download/resources/ResourceManager.kt` | 资源管理核心统一流程入口 |
 | `game/home/HomeDataProvider.kt` | 主页统一数据访问接口 |
 | `ui/screens/main/card_home/CardHomePage.kt` | 卡片式主页 |
-| `setting/enums/GlassLevel.kt` | 玻璃效果三档枚举 |
+| `setting/enums/GlassLevel.kt` | 玻璃效果两档枚举（26.2.2 由三档简化） |
 | `upgrade/ZyNovaRelease.kt` | ZyNova 自有更新体系数据模型 + ABI 自动挑选 |
 | `utils/device/VulkanRequirement.kt` | Minecraft 的 Vulkan 要求档案 |
 | `utils/device/VulkanCheckResult.kt` | Vulkan 三态检测结果模型 |
@@ -171,7 +195,7 @@
 | `ui/screens/content/LauncherScreen.kt` | 渲染卡片主页 + 事件接线 |
 | `ui/screens/main/MainScreen.kt` | 卡片主页事件接线 |
 | `ui/screens/content/elements/LauncherElements.kt` | 玻璃效果按档位应用（静态/动态绘制分离） |
-| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 玻璃效果改为三档单选 |
+| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 玻璃效果改为两档单选（26.2.2 移除极致档的性能警告弹窗） |
 | `ui/screens/content/settings/AboutInfoScreen.kt` | 署名 / GitHub / Discord / 上游作者下移 |
 | `ui/screens/content/settings/RendererSettingsScreen.kt` | 移除基于设备声明的 Vulkan 判断 |
 | `utils/device/VulkanCapabilities.kt` | 检测结果改为三态，按档案判定 |
@@ -203,6 +227,23 @@
 | `ui/screens/content/download/assets/elements/_Search.Filter.kt` | 平台选择支持「所有」 |
 | `game/download/assets/_Download.QuickInstall.kt` | 新增 `quickInstallResource()`（从搜索结果快捷安装） |
 | `game/home/HomeDataProvider.kt` | 改为按「版本模块」组织主页数据（`instances()`） |
+
+### 26.2.2 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `setting/enums/GlassLevel.kt` | 由 `Off/Standard/Enhanced/Extreme` 简化为 `Off/On`，新增 `fromLegacyName()` |
+| `setting/SettingsInitializer.kt` | 新增 `migrateLegacyGlassLevel()`：直接读原始字符串并把旧档位迁移为 `On` |
+| `ui/screens/content/elements/LauncherElements.kt` | 删除 `extremeGlassEffects()` / `EXTREME_GLASS_SHADER` / 动态模糊半径 / 静态高光常量，只保留动态玻璃 |
+| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 移除极致档的性能警告弹窗 |
+| `ui/screens/main/card_home/CardHomePage.kt` | 卡片吸附与阴影不再与「极致档」绑定，统一为轻量按压反馈 |
+| `game/download/resources/ResourceInstallManager.kt` | 新增 `ResourceMatchException`（三态原因）与 `ResourceInstallPlan`；匹配失败改为抛异常；前置依赖解析失败会记录并收集 |
+| `game/download/resources/ResourceManager.kt` | `matchVersion` / `installToInstance` 返回非空；安装前记录未解析的必需前置 |
+| `game/download/resources/Resource.kt` | `supportsLoader` 归一化比较；`supportsGameVersion` 忽略空白与大小写；新增 `ResourceType.requiresLoader`、`normalizeLoaderName()` |
+| `ui/screens/content/download/assets/search/SearchAssetsScreen.kt` | 新增 `buildFilter()`：单一来源与聚合搜索都按来源重新解析加载器；新增 `updatePlatform()` / `updateModloader()` / `currentModloader` |
+| `game/download/assets/_Download.QuickInstall.kt` | 移除裸 `IllegalStateException`，改为本地化的 `toInstallMessage()`；成功后提示已安装的资源名 |
+| `path/UrlManager.kt` | Discord 链接换成永久邀请，并补充维护说明 |
+
 ### 已删除文件
 
 | 文件 | 原因 |
@@ -295,6 +336,14 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 
 1. **不要改 Pojav 后端、SDL、LWJGL 等核心渲染 / 运行库**（用户明确说过，改了启动器就废了）。
 2. **不要硬编码任何隐私信息**：GitHub Token、签名密码、OAuth client id、CurseForge API key 等，**一律不能进代码或 git 历史**。
+   - Token 只通过环境变量 / 凭据助手 / GitHub Secrets 传入，**不要写进 `git remote` 以外的任何文件**，
+     更不要写进源码、文档、workflow（workflow 里必须用 `${{ secrets.XXX }}`）
+   - 克隆 / 推送时即使把 Token 放进 `git remote` 的 URL，也只会留在本地 `.git/config`（不会被提交），
+     但收尾时应当把它清掉：`git remote set-url origin https://github.com/zzy89216-gif/ZyNova.git`
+   - `ZalithLauncher/gradle.properties` 里的 `default_store_password` / `default_key_password`
+     是**上游公开**的默认签名口令（官方 debug 密钥本来就公开），属于刻意保留的项目资产，不要删；
+     CI 会用 `KEY_PASSWORD` / `STORE_PASSWORD` Secrets 覆盖它们
+   - 推送前做一次隐私扫描（见第十节）
 3. **不要加阿里云镜像到 `settings.gradle.kts`**（会导致 GitHub 海外服务器编译失败，必须使用官方源）。
 4. **不要改 namespace**（`com.movtery.zalithlauncher`），只改 `applicationId`（`com.zynova.launcher`）。
 5. **GPL-3.0 合规**：
@@ -345,6 +394,28 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 会触发 `IllegalStateException: Vertically scrollable component was measured with an infinity maximum height constraints`
    - 放进 `LazyColumn` item 的组件应让外层负责滚动，自身只做 `fillMaxWidth()`；
      若确实需要滚动，应把滚动放在 `Dialog` / 固定高度容器等**有界约束**中
+13. **`Modifier.graphicsLayer { renderEffect = ... }` 会把子节点（文字）一起模糊**（26.2.2 实际踩到并修复）：
+   - 「⚠️极致」玻璃档用 `RenderEffect.createRuntimeShaderEffect(...)` 做多重采样模糊 + 折射，
+     但 `renderEffect` 作用在整个图层上，**承载文字的图层被一起模糊**，
+     用户看到的就是「字体明显模糊、文字渲染异常」
+   - 结论：**不要在包含文字的容器上挂 `renderEffect`**；需要模糊背景时用 Haze 的
+     `hazeBlur`（作用于背景源）或把模糊层单独放在文字下方
+14. **过滤条件要区分「来源特有」**（26.2.2 实际踩到并修复）：
+   - 加载器（`PlatformDisplayLabel`）与类别（`PlatformFilterCode`）是**来源特有**的类型，
+     CurseForge 的枚举不能直接传给 Modrinth
+   - 保存到 `PlatformSearchFilter` 里的加载器，必须在**每次搜索前**按目标来源重新解析；
+     只在聚合搜索里解析、单一来源直接用原值，会让过滤条件退化成「不过滤」
+   - 更稳的做法：**只保存加载器的名称**（String），需要时再按来源解析成对应的过滤器对象
+15. **不要把「失败」统一收敛成 null**（26.2.2 实际踩到并修复）：
+   - 版本匹配曾经把「网络查询失败 / 来源不支持该类型 / 实例信息读不出来 / 确实无兼容版本」
+     全部变成 `null`，界面只能显示同一句未本地化的英文，无法定位问题
+   - 应当用 `sealed class` 把失败原因拆开并抛出，UI 再按类型给出本地化提示
+16. **Discord 必须使用永久邀请**（26.2.2 实际踩到并修复）：
+   - 临时邀请会过期，Discord API 会返回 `{"message": "Invite is expired.", "code": 50270}`
+   - 校验方式：`curl https://discord.com/api/v10/invites/<code>?with_counts=true`，
+     返回中 `expires_at` 为 `null` 才是永久邀请
+   - 更换链接时必须同步：`path/UrlManager.kt`、`README.md`、`README_EN_US.md`、
+     `README_ZH_TW.md`、`HANDOFF.md`
 
 ---
 
@@ -364,7 +435,29 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 - **字符串引用完整性**：`R.string.xxx` 是否都在 XML 中定义
 - **未使用的 import**：清理
 - **残留引用搜索**：搜索已删除功能的符号名
-- **隐私扫描**：确认没有 Token / 密钥
+- **XML 良构性**：用 XML 解析器批量校验 `res/**/*.xml`（能提前发现漏转义的 `&`）
+- **花括号平衡**：改大段代码后粗略核对 `{` / `}` 数量
+- **隐私扫描**：确认没有 Token / 密钥（见下）
+
+可直接复用的隐私扫描（在仓库根目录执行，排除 `.git`）：
+
+```bash
+# 常见密钥 / Token 模式
+grep -rInE "ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|xox[baprs]-|AIza[0-9A-Za-z_-]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----" . --exclude-dir=.git
+
+# 明文口令赋值
+grep -rInE "(token|api[_-]?key|secret|password|passwd)\s*[:=]\s*[\"'][^\"']{8,}[\"']" . --exclude-dir=.git
+
+# 手机号 / QQ 等个人信息
+grep -rInE "\b1[3-9][0-9]{9}\b|\bQQ[:：]\s*[0-9]{5,12}\b" . --exclude-dir=.git
+
+# 确认 workflow 只用 Secrets，没有明文
+grep -rnE "secrets\.|password|api_key" .github/workflows/*.yml
+```
+
+**共享前必须确认**：仓库中没有 GitHub Token / 签名口令明文 /
+OAuth client id / CurseForge API key / 个人联系方式；
+发布 Release 前同样要对**产物清单**再核对一次（不要把日志、临时文件、凭据一起传上去）。
 
 ---
 
@@ -372,8 +465,8 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.2.1**
-- 历史版本：26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.2.2**
+- 历史版本：26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 编译 workflow：
   - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
@@ -431,6 +524,16 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 > ⚠️ 大文件上传 / 下载可能中断，APK 下载可用 `curl -C -` 断点续传。
 
+### ⚠️ 发布前的隐私复检（每次发布都要做）
+
+1. **仓库侧**：按第十节的扫描命令过一遍工作副本，确认没有 Token / 密钥 / 个人信息。
+2. **产物侧**：上传前先列出待上传清单 `ls -l`，确认里面**只有** APK 与 mapping，
+   不要把编译日志、`.env`、凭据文件、临时脚本一起传上去。
+3. **Token 侧**：Token 只在 shell 变量或环境变量里用，**不要写进任何文件**；
+   收尾时把本地工作副本删掉即可让 `.git/config` 里的带 Token 的 remote URL 一并消失，
+   也可以用 `git remote set-url origin https://github.com/zzy89216-gif/ZyNova.git` 清掉。
+4. **Release 说明**：更新日志可以详细，但不要写入任何仅内部可见的信息（内网地址、密钥提示等）。
+
 ---
 
-**最后更新**：2026-09-25（26.2.1 已发布）
+**最后更新**：2026-09-25（26.2.2 已发布）

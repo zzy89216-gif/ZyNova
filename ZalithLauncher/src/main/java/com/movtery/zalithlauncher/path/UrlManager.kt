@@ -53,8 +53,17 @@ const val URL_MINECRAFT_VERSION_REPOS: String = "https://piston-meta.mojang.com/
 const val URL_MINECRAFT_ASSETS_INDEX: String = "https://launchermeta.mojang.com/v1/packages"
 const val URL_MINECRAFT_PURCHASE = "https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj"
 const val URL_PROJECT: String = "https://github.com/zzy89216-gif/ZyNova"
-const val URL_COMMUNITY: String = "https://discord.gg/Tbn8Bqg2Yp"
-const val URL_DISCORD: String = "https://discord.gg/Tbn8Bqg2Yp"
+/**
+ * ZyNova 社区 Discord 服务器
+ *
+ * ⚠️ 必须使用**永久**邀请链接（不过期、无使用次数上限）。
+ * 旧的 `discord.gg/Tbn8Bqg2Yp` 是临时邀请，已经失效
+ * （Discord API 返回 `50270 Invite is expired`），26.2.2 起更换为永久邀请。
+ * 若以后再次失效，请到「服务器设置 → 邀请」重新生成永久邀请，
+ * 并同步更新 README / README_EN_US / README_ZH_TW / HANDOFF 中的同一链接。
+ */
+const val URL_COMMUNITY: String = "https://discord.gg/QwPpZQHrTa"
+const val URL_DISCORD: String = "https://discord.gg/QwPpZQHrTa"
 
 /**
  * ZyNova 自己的更新体系：版本信息与安装包全部来自本项目的 GitHub Releases

@@ -47,6 +47,17 @@ enum class ResourceType(
     SAVE(PlatformClasses.SAVES, R.string.download_category_saves),
     MOD_PACK(PlatformClasses.MOD_PACK, R.string.download_category_modpack);
 
+    /**
+     * 是否强制校验模组加载器
+     *
+     * 只有 Mod 与整合包对加载器敏感：
+     * 资源包 / 光影 / 存档在来源上的加载器标注并不统一
+     * （例如 CurseForge 会给资源包同时打上 Forge / Fabric 标签），
+     * 强制匹配会把本来可以正常使用的资源挡在外面。
+     */
+    val requiresLoader: Boolean
+        get() = this == MOD || this == MOD_PACK
+
     companion object {
         private val BY_CLASSES = entries.associateBy { it.classes }
 
@@ -142,19 +153,37 @@ data class ResourceVersion(
     val dependencies: List<ResourceDependency>
 ) {
     /** 适配的 Minecraft 版本是否包含指定版本 */
-    fun supportsGameVersion(minecraftVersion: String): Boolean =
-        gameVersions.isEmpty() || gameVersions.contains(minecraftVersion)
+    fun supportsGameVersion(minecraftVersion: String): Boolean {
+        if (gameVersions.isEmpty()) return true
+        val target = minecraftVersion.trim()
+        return gameVersions.any { it.trim().equals(target, ignoreCase = true) }
+    }
 
     /**
      * 是否适配指定加载器
-     * 资源未标注加载器时视为通用资源
+     *
+     * 资源未标注加载器时视为通用资源；
+     * 目标实例没有模组加载器（原版）时，只有本身不限定加载器的资源才兼容。
+     *
+     * 不同来源对同一个加载器的写法并不统一（`NeoForge` / `neoforge`、
+     * `Legacy Fabric` / `legacy-fabric`、`LiteLoader` / `liteloader`），
+     * 因此比较前会先归一化，避免因为写法差异被误判为「不兼容」。
      */
     fun supportsLoader(loaderName: String?): Boolean {
         if (loaders.isEmpty()) return true
         if (loaderName.isNullOrBlank()) return false
-        return loaders.any { it.equals(loaderName, ignoreCase = true) }
+        val target = normalizeLoaderName(loaderName)
+        return loaders.any { normalizeLoaderName(it) == target }
     }
 }
+
+/**
+ * 归一化模组加载器名称：忽略大小写、空格、连字符与下划线
+ *
+ * 例如 `NeoForge`、`neoforge`、`neo-forge` 会得到同一个结果。
+ */
+fun normalizeLoaderName(name: String): String =
+    name.filter { it.isLetterOrDigit() }.lowercase()
 
 /**
  * 把平台项目转换为统一资源
