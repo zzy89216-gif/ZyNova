@@ -112,11 +112,13 @@ on the capabilities actually enumerated from the device, not on what the device 
 
 ### Requirements
 
-* Android Studio **Bumblebee** or newer
+* Android Studio that supports **AGP 9.3.0** (recent stable release) —— older versions cannot open this project
 * Android SDK:
   * **Minimum API level**: 26
-  * **Target API level**: 35
+  * **Target API level**: 34
+  * **Compile SDK**: 37
 * JDK 17
+* Gradle **9.5.0** (the wrapper handles this automatically)
 
 ### Build Steps
 
