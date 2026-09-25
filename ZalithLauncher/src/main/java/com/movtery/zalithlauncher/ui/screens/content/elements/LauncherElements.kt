@@ -21,6 +21,7 @@ package com.movtery.zalithlauncher.ui.screens.content.elements
 import android.app.Activity
 import android.net.Uri
 import android.os.Parcelable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat

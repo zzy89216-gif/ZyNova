@@ -276,14 +276,14 @@ fun SearchAssetsScreen(
     getModloaders: (Platform) -> List<PlatformDisplayLabel> = { emptyList() },
     mapCategories: (Platform, String) -> PlatformFilterCode?,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> },
-    extraFilter: (LazyListScope.() -> Unit)? = null,
     /**
      * 资源安装上下文（目标游戏实例名称）
      *
      * 从「版本设置 → 资源管理」进入时，自动使用该实例的 Minecraft 版本作为过滤条件，
      * 不需要用户再手动选择版本。
      */
-    installTargetVersion: String? = null
+    installTargetVersion: String? = null,
+    extraFilter: (LazyListScope.() -> Unit)? = null
 ) {
     //上下文优先：解析目标实例的 Minecraft 版本
     val initialGameVersion = remember(installTargetVersion) {
