@@ -15,7 +15,9 @@
 
 ## ✦ 项目简介
 
-**ZyNova** 是一个基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码开发的 **Minecraft: Java Edition Android 启动器**，由 ZyNova 项目维护者独立开发与维护。
+**ZyNova** 是一个基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码深度开发的 **Minecraft: Java Edition Android 启动器**，由 ZyNova 项目维护者独立开发与维护。
+
+> **目标很简单：打爆同行 100 年。（玩梗）**
 
 > **ZyNova 并非 ZalithLauncher2 官方版本。**
 >
