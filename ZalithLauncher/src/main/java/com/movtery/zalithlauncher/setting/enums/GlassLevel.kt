@@ -22,10 +22,21 @@ import androidx.annotation.StringRes
 import com.movtery.zalithlauncher.R
 
 /**
- * 液态玻璃（Liquid Glass / Glass UI）效果档位
+ * 液态玻璃（Liquid Glass / Glass UI）效果
  *
- * Android 设备的 GPU 性能差异很大，因此默认关闭；
- * 并且只有最高档位才会启用持续动画，避免不必要的 GPU 负载。
+ * 26.2.2 起简化为**两档**：
+ *
+ * - [Off]：关闭，不叠加任何玻璃高光层（默认，性能优先）
+ * - [On]：启用动态玻璃，在毛玻璃之上叠加缓慢流动的高光与折射光晕
+ *
+ * 原先的「标准 / 增强 / ⚠️极致」三档已移除。
+ * 移除原因：「极致」档使用 `RuntimeShader` 对整个元素做多重采样模糊与折射扭曲，
+ * 它作用在承载文字的图层上，会导致**字体明显模糊、文字渲染异常**（见 issue #2）；
+ * 同时该档位的动态模糊半径、动态光照、多层视差、噪点纹理等效果开销极高。
+ *
+ * 旧配置兼容：升级前保存的 `Standard` / `Enhanced` / `Extreme` 会在
+ * [com.movtery.zalithlauncher.setting.loadAllSettings] 中一次性迁移为 [On]，
+ * 旧用户升级后依旧保持「玻璃效果开启」，不会因为枚举名变化而回退成关闭。
  */
 enum class GlassLevel(
     @field:StringRes
@@ -37,22 +48,27 @@ enum class GlassLevel(
     Off(R.string.settings_launcher_glass_level_off),
 
     /**
-     * 标准：叠加静态高光，不启动任何持续动画，开销很低
+     * 启用动态玻璃：高光缓慢流动，效果最好，但会产生持续动画开销
      */
-    Standard(R.string.settings_launcher_glass_level_standard),
+    On(R.string.settings_launcher_glass_level_on);
 
-    /**
-     * 增强：高光缓慢流动，效果最好，但会产生持续动画开销
-     */
-    Enhanced(R.string.settings_launcher_glass_level_enhanced),
+    companion object {
+        /**
+         * 旧版本使用过的档位名称，全部迁移为 [On]
+         */
+        val LEGACY_ENABLED_NAMES: Set<String> = setOf("Standard", "Enhanced", "Extreme")
 
-    /**
-     * ⚠️ 极致：开启全部视觉效果
-     *
-     * 包含多层实时模糊、动态高斯模糊、玻璃折射与背景扭曲、高光随位置变化、
-     * 动态光照、景深视差、卡片吸附、动态阴影、玻璃噪点纹理等。
-     *
-     * 该档位开销很高，仅建议高性能设备使用，因此切换前会向用户显示性能警告。
-     */
-    Extreme(R.string.settings_launcher_glass_level_extreme)
+        /**
+         * 把旧配置中的档位名称解析为当前档位
+         *
+         * @return 无法识别时返回 null，由调用方决定是否写回默认值
+         */
+        fun fromLegacyName(name: String?): GlassLevel? = when (name) {
+            null -> null
+            Off.name -> Off
+            On.name -> On
+            in LEGACY_ENABLED_NAMES -> On
+            else -> null
+        }
+    }
 }

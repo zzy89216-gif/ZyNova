@@ -23,6 +23,7 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.saves.unpackSaveZip
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.CancellationException
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
@@ -44,6 +45,42 @@ enum class ResourceInstallState {
 }
 
 /**
+ * 版本匹配失败
+ *
+ * 26.2.2 之前，匹配失败只会返回 `null`，界面上不管是「网络查询失败」
+ * 还是「实例信息读不出来」，都统一显示成一句
+ * `No compatible version found for this instance`（未本地化的英文），
+ * 导致用户无法判断到底是自己的实例不兼容，还是网络出了问题。
+ *
+ * 现在把失败原因拆开：调用方可以据此给出明确的、本地化的提示。
+ */
+sealed class ResourceMatchException(
+    message: String,
+    cause: Throwable? = null
+) : Exception(message, cause) {
+    /** 目标实例的版本信息不可用（版本 JSON 解析失败或实例不完整） */
+    class InstanceInfoUnavailable :
+        ResourceMatchException("The target instance has no readable version information")
+
+    /** 查询资源版本时失败（网络异常、来源不可用、来源不支持该资源类型等） */
+    class QueryFailed(cause: Throwable) :
+        ResourceMatchException("Failed to query the resource versions: ${cause.message}", cause)
+
+    /**
+     * 没有任何与目标实例兼容的资源版本
+     *
+     * @param minecraftVersion 目标实例的 Minecraft 版本
+     * @param loaderName 目标实例的模组加载器名称；原版实例为 null
+     */
+    class NoCompatibleVersion(
+        val minecraftVersion: String,
+        val loaderName: String?
+    ) : ResourceMatchException(
+        "No compatible version for $minecraftVersion / ${loaderName ?: "vanilla"}"
+    )
+}
+
+/**
  * 待安装的一个资源版本
  */
 data class ResourceInstallEntry(
@@ -52,6 +89,24 @@ data class ResourceInstallEntry(
     val isDependency: Boolean
 ) {
     val fileName: String? get() = version.file?.fileName
+}
+
+/**
+ * 一次安装的完整计划
+ *
+ * @param entries 需要下载并安装的条目（主资源 + 已解析出的前置依赖）
+ * @param unresolvedRequiredDependencies 无法解析的**必需**前置依赖
+ *
+ * 前置依赖解析失败时不会让整次安装失败（主资源依旧可用），
+ * 但也不能像以前那样静默丢弃：这里会把它记下来，由调用方提示用户，
+ * 避免出现「装上了模组，进游戏却因为缺少前置而崩溃」的情况。
+ */
+data class ResourceInstallPlan(
+    val entries: List<ResourceInstallEntry>,
+    val unresolvedRequiredDependencies: List<ResourceDependency> = emptyList()
+) {
+    val hasUnresolvedRequiredDependencies: Boolean
+        get() = unresolvedRequiredDependencies.isNotEmpty()
 }
 
 /**
@@ -131,41 +186,55 @@ object ResourceInstallManager {
      *
      * 能自动判断，就不让用户选择。
      *
-     * @param instance 目标游戏实例
-     * @return 适配的版本；若没有兼容版本则返回 null
+     * - 只有 Mod / 整合包才强制要求加载器匹配；
+     *   资源包、光影、存档的加载器标注在来源之间并不统一，
+     *   强制匹配会把本来可用的资源挡在外面。
+     * - 查询失败与「确实没有兼容版本」会被区分开，不再都当成同一件事。
+     *
+     * @throws ResourceMatchException 匹配失败时抛出，携带具体原因
      */
     suspend fun resolveCompatibleVersion(
         provider: ResourceProvider,
         projectId: String,
         type: ResourceType,
         instance: Version
-    ): ResourceVersion? {
-        val info = instance.getVersionInfo() ?: return null
-        return runCatching {
+    ): ResourceVersion {
+        val info = instance.getVersionInfo()
+            ?: throw ResourceMatchException.InstanceInfoUnavailable()
+        val loaderName = info.loaderInfo?.loader?.displayName
+
+        val versions = try {
             provider.getVersions(projectId, type)
-                .sortedByDescending { it.publishedAt }
-                .firstOrNull { version ->
-                    version.file != null &&
-                        version.supportsGameVersion(info.minecraftVersion) &&
-                        version.supportsLoader(info.loaderInfo?.loader?.displayName)
-                }
-        }.getOrElse { e ->
-            Logger.warning(TAG, "Failed to resolve a compatible version for $projectId: ${e.message}")
-            null
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            throw ResourceMatchException.QueryFailed(e)
         }
+
+        return versions
+            .sortedByDescending { it.publishedAt }
+            .firstOrNull { version ->
+                version.file != null &&
+                        version.supportsGameVersion(info.minecraftVersion) &&
+                        (!type.requiresLoader || version.supportsLoader(loaderName))
+            }
+            ?: throw ResourceMatchException.NoCompatibleVersion(info.minecraftVersion, loaderName)
     }
 
     /**
      * 构建安装计划：主资源 + 必需的（递归）前置依赖
      *
+     * @param type 资源类别；同时决定前置依赖按哪种资源去查询
      * @param includeOptionalDependencies 是否同时安装可选依赖
      */
     suspend fun buildInstallPlan(
         version: ResourceVersion,
+        type: ResourceType,
         instance: Version,
         includeOptionalDependencies: Boolean = false
-    ): List<ResourceInstallEntry> {
+    ): ResourceInstallPlan {
         val plan = mutableListOf<ResourceInstallEntry>()
+        val unresolvedRequired = mutableListOf<ResourceDependency>()
         val visited = mutableSetOf<String>()
 
         suspend fun collect(current: ResourceVersion, isDependency: Boolean) {
@@ -178,13 +247,27 @@ object ResourceInstallManager {
             current.dependencies
                 .filter { it.isRequired || includeOptionalDependencies }
                 .forEach { dependency ->
-                    val resolved = resolveDependency(dependency, instance) ?: return@forEach
-                    collect(resolved, true)
+                    val resolved = resolveDependency(dependency, type, instance)
+                    if (resolved == null) {
+                        //前置依赖解析失败不能静默丢弃：
+                        //主资源会被装上，但游戏内会因为缺少前置而崩溃，用户却不知道原因
+                        Logger.warning(
+                            TAG,
+                            "Unresolved dependency ${dependency.provider}:${dependency.projectId} " +
+                                    "(required=${dependency.isRequired}) for ${current.projectId}"
+                        )
+                        if (dependency.isRequired) unresolvedRequired.add(dependency)
+                    } else {
+                        collect(resolved, true)
+                    }
                 }
         }
 
         collect(version, false)
-        return plan
+        return ResourceInstallPlan(
+            entries = plan,
+            unresolvedRequiredDependencies = unresolvedRequired
+        )
     }
 
     /**
@@ -194,18 +277,33 @@ object ResourceInstallManager {
      */
     private suspend fun resolveDependency(
         dependency: ResourceDependency,
+        type: ResourceType,
         instance: Version
     ): ResourceVersion? {
-        val provider = runCatching { ResourceProviders.of(dependency.provider) }.getOrNull() ?: return null
-        val type = ResourceType.MOD
+        val provider = runCatching { ResourceProviders.of(dependency.provider) }.getOrElse { e ->
+            Logger.warning(TAG, "Unknown resource provider: ${dependency.provider} (${e.message})")
+            return null
+        }
 
         dependency.versionId?.let { versionId ->
             runCatching {
                 provider.getVersionById(versionId, dependency.projectId, type)
+            }.onFailure { e ->
+                Logger.warning(
+                    TAG,
+                    "Failed to load the dependency version $versionId of ${dependency.projectId}: ${e.message}"
+                )
             }.getOrNull()?.let { return it }
         }
 
-        return resolveCompatibleVersion(provider, dependency.projectId, type, instance)
+        return runCatching {
+            resolveCompatibleVersion(provider, dependency.projectId, type, instance)
+        }.onFailure { e ->
+            Logger.warning(
+                TAG,
+                "Failed to resolve a compatible version for the dependency ${dependency.projectId}: ${e.message}"
+            )
+        }.getOrNull()
     }
 
     /**

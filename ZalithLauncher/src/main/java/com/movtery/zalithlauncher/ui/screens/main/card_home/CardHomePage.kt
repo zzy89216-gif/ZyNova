@@ -57,8 +57,6 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.home.HomeDataProvider
 import com.movtery.zalithlauncher.game.home.HomeInstance
 import com.movtery.zalithlauncher.game.version.installed.Version
-import com.movtery.zalithlauncher.setting.AllSettings
-import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 
@@ -138,13 +136,11 @@ private fun InstanceModule(
     onPlayWorld: (Version, String) -> Unit,
     onJoinServer: (Version, String) -> Unit,
 ) {
-    val extremeGlass = AllSettings.glassLevel.state == GlassLevel.Extreme
-
-    //【Magnetic / Snap Interaction】按下时的吸附回弹（仅极致档）
+    //卡片按下时的轻微吸附回弹（26.2.2 起不再区分玻璃档位，效果保持轻量）
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val snapScale by animateFloatAsState(
-        targetValue = if (extremeGlass && pressed) 0.985f else 1f,
+        targetValue = if (pressed) 0.99f else 1f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMediumLow
@@ -152,13 +148,9 @@ private fun InstanceModule(
         label = "instanceModuleSnapScale"
     )
 
-    //【Dynamic Shadow】阴影随交互状态变化（仅极致档）
+    //阴影随交互状态变化（同样保持轻量）
     val shadowElevation by animateDpAsState(
-        targetValue = when {
-            extremeGlass && pressed -> 12.dp
-            extremeGlass -> 5.dp
-            else -> 1.dp
-        },
+        targetValue = if (pressed) 4.dp else 1.dp,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioLowBouncy,
             stiffness = Spring.StiffnessLow

@@ -269,6 +269,10 @@
     <string name="download_assets_install_failed">Failed to install assets!</string>
     <string name="download_assets_quick_install_resolving">Resolving asset and dependencies…</string>
     <string name="download_assets_quick_install_progress">One-click install (%1$d/%2$d): %3$s</string>
+    <string name="download_assets_quick_install_done">%1$s has been installed</string>
+    <string name="download_assets_install_instance_unavailable">Could not read the version information of the instance \"%1$s\". Please make sure the instance is complete, then try again.</string>
+    <string name="download_assets_install_query_failed">Failed to query the available versions of this asset: %1$s. Please check the network or the asset source, then try again.</string>
+    <string name="download_assets_install_no_compatible_version">No version compatible with the current instance (%1$s) was found. Please make sure the asset supports this Minecraft version and mod loader.</string>
     <string name="download_assets_installed">Installed</string>
     <string name="download_assets_quick_install">One-click install</string>
     <string name="download_assets_id_holder">Project ID</string>
@@ -1077,13 +1081,7 @@
     <string name="settings_launcher_background_blur_summary">Adjust the background blur effect. This option consumes significant performance.</string>
     <string name="settings_launcher_liquid_glass_title">Liquid Glass Effect</string>
     <string name="settings_launcher_glass_level_off">Off</string>
-    <string name="settings_launcher_glass_level_standard">Standard</string>
-    <string name="settings_launcher_glass_level_extreme">⚠️ Extreme</string>
-    <string name="settings_launcher_glass_level_enhanced">Enhanced</string>
-    <string name="settings_launcher_glass_extreme_warning_title">Performance Warning</string>
-    <string name="settings_launcher_glass_extreme_warning_text">The «Extreme» level enables all glass effects at once: multi-layer real-time blur, dynamic blur radius, refraction / distortion, position-dependent specular highlights, dynamic lighting, depth &amp; parallax, card snapping, dynamic shadows and glass grain.
-
-This is very GPU-intensive and may cause lag, overheating or battery drain on low-end devices. It is recommended only for high-performance devices.</string>
+    <string name="settings_launcher_glass_level_on">Enable Dynamic Glass</string>
     <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look</string>
     <string name="settings_launcher_festivals_effects_title">Festival Easter Eggs</string>
     <string name="settings_launcher_festivals_effects_summary">Display persistent easter egg effects during specific time periods</string>

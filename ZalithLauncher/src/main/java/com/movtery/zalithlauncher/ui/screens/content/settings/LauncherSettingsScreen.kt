@@ -330,9 +330,7 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        //玻璃效果档位：关闭 / 标准 / 增强 / ⚠️极致
-                        var pendingExtremeGlass by remember { mutableStateOf(false) }
-
+                        //玻璃效果：关闭 / 启用动态玻璃
                         EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Bottom,
@@ -343,29 +341,9 @@ fun LauncherSettingsScreen(
                             getRadioText = { stringResource(it.textRes) },
                             getRadioEnable = { backgroundViewModel.isValid },
                             onRadioClick = { level ->
-                                if (level == GlassLevel.Extreme) {
-                                    //极致档开销很高，先向用户提示性能影响，确认后再启用
-                                    pendingExtremeGlass = true
-                                } else {
-                                    AllSettings.glassLevel.save(level)
-                                }
+                                AllSettings.glassLevel.save(level)
                             }
                         )
-
-                        if (pendingExtremeGlass) {
-                            SimpleAlertDialog(
-                                title = stringResource(R.string.settings_launcher_glass_extreme_warning_title),
-                                text = stringResource(R.string.settings_launcher_glass_extreme_warning_text),
-                                confirmText = stringResource(R.string.generic_confirm),
-                                onConfirm = {
-                                    AllSettings.glassLevel.save(GlassLevel.Extreme)
-                                    pendingExtremeGlass = false
-                                },
-                                onDismiss = {
-                                    pendingExtremeGlass = false
-                                }
-                            )
-                        }
                     }
                 }
             }

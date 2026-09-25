@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.1)
+[![Release](https://img.shields.io/badge/Release-26.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.2)
 
 [简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
@@ -23,9 +23,27 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 > ZyNova is an unofficial modified project based on ZalithLauncher2's open-source code.
 
 - GitHub: <https://github.com/zzy89216-gif/ZyNova>
-- Discord: <https://discord.gg/Tbn8Bqg2Yp>
+- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 26.2.2
+
+This release focuses on fixing issues reported by users:
+
+- **Removed** the *⚠️ Extreme* glass level and simplified the glass effect into
+  **Off / Enable Dynamic Glass** — the extreme level blurred the text layer along with the
+  background, making the UI font look blurry
+- **Fixed** the one-tap install occasionally failing with
+  `No compatible version found for this instance`: after switching the search platform, the
+  mod-loader filter was silently dropped, so results included assets for other loaders
+- **Improved** install failures: messages are now localized and include the target instance's
+  Minecraft version and mod loader
+- **Fixed** required dependencies no longer being dropped silently — unresolved prerequisites
+  are logged and reported
+- **Fixed** the Discord invite links: the old temporary invite expired and was replaced with a
+  permanent one
 
 ## ✨ Highlights of 26.2.1
 
@@ -60,7 +78,7 @@ and to establish ZyNova's own resource management, download, home screen and UI 
 | Resource Providers (Modrinth / CurseForge) | ✅ |
 | Unified Download Manager (queue / concurrency / resume / retry / verification) | ✅ |
 | Minimal resource installation (context-aware) | ✅ |
-| Glass UI with four levels (Off / Standard / Enhanced / ⚠️ Extreme, GPU shader) | ✅ |
+| Glass UI with two levels (Off / Enable Dynamic Glass; the former Standard / Enhanced / Extreme levels were removed in 26.2.2) | ✅ |
 | Vulkan detection and compatibility for Minecraft 26.4 Snapshot 1 | ✅ |
 | Launcher updates via ZyNova's own GitHub Releases | ✅ |
 | On-demand loading and performance strategy | ✅ |

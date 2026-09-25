@@ -27,6 +27,9 @@ import com.movtery.zalithlauncher.utils.string.splitPreservingQuotes
 
 private const val LWJGL_LIB_NAME_ARG = "-Dorg.lwjgl.opengl.libname="
 
+/** 玻璃效果档位在配置中的键名，需要与 [AllSettings.glassLevel] 保持一致 */
+private const val GLASS_LEVEL_KEY = "glassLevel"
+
 /**
  * 初始化处理所有设置项
  * @param reloadAll 是否重新加载全部设置项
@@ -34,11 +37,18 @@ private const val LWJGL_LIB_NAME_ARG = "-Dorg.lwjgl.opengl.libname="
 fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     if (reloadAll) AllSettings.reloadAll()
 
-    //旧配置兼容：把旧版「液态玻璃」布尔开关迁移为新的玻璃效果档位
+    //旧配置兼容：把旧版「液态玻璃」布尔开关迁移为新的玻璃效果
     if (AllSettings.liquidGlass.getValue()) {
-        AllSettings.glassLevel.save(GlassLevel.Standard)
+        AllSettings.glassLevel.save(GlassLevel.On)
         AllSettings.liquidGlass.save(false)
     }
+
+    //旧配置兼容：26.2.2 起玻璃效果只保留「关闭 / 启用动态玻璃」两档，
+    //升级前保存的 Standard / Enhanced / Extreme 统一迁移为「启用动态玻璃」。
+    //必须直接读取原始字符串：旧档位名称已经不在枚举里，
+    //经过 [AllSettings.glassLevel] 读取会直接回退成默认值，从而丢失用户原本的选择。
+    migrateLegacyGlassLevel()
+
     if (AllSettings.ramAllocation.getValue() == null) {
         val ram = findBestRAMAllocation(context)
         AllSettings.ramAllocation.save(ram)
@@ -46,6 +56,19 @@ fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     val jvmArgs = AllSettings.jvmArgs.getValue()
     jvmArgs.splitPreservingQuotes().find { it.startsWith(LWJGL_LIB_NAME_ARG) }?.let { arg ->
         AllSettings.jvmArgs.save(jvmArgs.replace(arg, ""))
+    }
+}
+
+/**
+ * 把旧版玻璃效果档位迁移为当前的「关闭 / 启用动态玻璃」
+ *
+ * 幂等：当前档位名称（Off / On）会被解析为自身，重复执行不会改变配置。
+ */
+private fun migrateLegacyGlassLevel() {
+    val raw = launcherMMKV().getString(GLASS_LEVEL_KEY, null) ?: return
+    val migrated = GlassLevel.fromLegacyName(raw) ?: return
+    if (migrated.name != raw) {
+        AllSettings.glassLevel.save(migrated)
     }
 }
 

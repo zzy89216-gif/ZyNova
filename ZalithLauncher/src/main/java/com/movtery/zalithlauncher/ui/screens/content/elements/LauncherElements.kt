@@ -18,12 +18,9 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.elements
 
-import android.graphics.RenderEffect
 import android.app.Activity
 import android.net.Uri
-import android.os.Build
 import android.os.Parcelable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -58,12 +55,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import android.graphics.RuntimeShader
-import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -127,7 +121,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.io.File
-import kotlin.random.Random
 import kotlin.math.sqrt
 
 @Parcelize
@@ -657,238 +650,31 @@ private fun Modifier.glass(
 
     val glassLevel = AllSettings.glassLevel.state
 
-    //【Variable Gaussian Blur】极致档下让模糊半径随时间缓慢变化
-    val blurScale = if (glassLevel == GlassLevel.Extreme) {
-        val blurTransition = rememberInfiniteTransition(label = "extremeBlurRadius")
-        val scale by blurTransition.animateFloat(
-            initialValue = 0.85f,
-            targetValue = 1.25f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 7000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "extremeBlurScale"
-        )
-        scale
-    } else {
-        1f
-    }
-
     val blurred = this.hazeBlur(
         input = input,
         style = HazeBlurStyle {
             blurEnabled(true)
-            blurRadius((blur * blurScale).dp)
+            blurRadius(blur.dp)
             noiseFactor(noiseFactor)
             colorEffects(colorEffects)
         }
     )
 
-    //玻璃效果档位：默认关闭，避免高开销实时模糊与持续动画
+    //玻璃效果：默认关闭；开启后叠加缓慢流动的动态高光（26.2.2 起仅「关闭 / 启用动态玻璃」两档）
     return when (glassLevel) {
         GlassLevel.Off -> blurred
-        GlassLevel.Standard -> blurred.drawGlassHighlights(
-            primaryShift = STATIC_PRIMARY_SHIFT,
-            secondaryShift = STATIC_SECONDARY_SHIFT
-        )
-        GlassLevel.Enhanced -> blurred.liquidGlassHighlights()
-        GlassLevel.Extreme -> blurred.extremeGlassEffects(blur)
+        GlassLevel.On -> blurred.liquidGlassHighlights()
     }
 }
 
 /**
- * 极致档玻璃效果（真实 GPU 效果）
- *
- * 通过 RuntimeShader 在背景上执行真实的多层采样模糊与波纹折射，
- * 并叠加随位置变化的高光、动态光照、噪点纹理与多层视差。
- *
- * 需要 API 33+ 才支持 RuntimeShader；更低版本会自动降级为
- * Haze 实时模糊 + 绘制高光（不会崩溃）。
- *
- * @param blurRadius 当前设置的基础模糊半径
- */
-@Composable
-private fun Modifier.extremeGlassEffects(blurRadius: Int): Modifier {
-    val transition = rememberInfiniteTransition(label = "extremeGlass")
-
-    //【Variable Gaussian Blur】动态模糊半径系数
-    val blurScale by transition.animateFloat(
-        initialValue = 0.75f,
-        targetValue = 1.9f,
-        animationSpec = infiniteRepeatable(tween(7000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "extremeBlurScale"
-    )
-    //【Refraction / Distortion】折射强度
-    val refractStrength by transition.animateFloat(
-        initialValue = 0.8f,
-        targetValue = 3.4f,
-        animationSpec = infiniteRepeatable(tween(9000, easing = LinearEasing), RepeatMode.Reverse),
-        label = "extremeRefract"
-    )
-    //【Dynamic Lighting】光照强度
-    val lighting by transition.animateFloat(
-        initialValue = 0.85f,
-        targetValue = 1.35f,
-        animationSpec = infiniteRepeatable(tween(5200, easing = LinearEasing), RepeatMode.Reverse),
-        label = "extremeLighting"
-    )
-    //【Depth / Parallax】两层反向流动，形成景深
-    val parallaxA by transition.animateFloat(
-        initialValue = -0.6f,
-        targetValue = 1.6f,
-        animationSpec = infiniteRepeatable(tween(11000, easing = LinearEasing), RepeatMode.Restart),
-        label = "extremeParallaxA"
-    )
-    val parallaxB by transition.animateFloat(
-        initialValue = 1.6f,
-        targetValue = -0.6f,
-        animationSpec = infiniteRepeatable(tween(16000, easing = LinearEasing), RepeatMode.Restart),
-        label = "extremeParallaxB"
-    )
-    // shader 时间轴
-    val shaderTime by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(tween(60000, easing = LinearEasing), RepeatMode.Restart),
-        label = "extremeShaderTime"
-    )
-
-    //【Noise / Grain】固定分布噪点，避免逐帧闪烁
-    val grain = remember {
-        val random = Random(20_260_925L)
-        List(130) { Offset(random.nextFloat(), random.nextFloat()) }
-    }
-
-    var modifier: Modifier = this
-
-    //【Multi-layer Blur + Refraction】真实 GPU 效果（API 33+）
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        modifier = modifier.graphicsLayer {
-            val effect = runCatching {
-                val shader = RuntimeShader(EXTREME_GLASS_SHADER)
-                shader.setFloatUniform("uTime", shaderTime)
-                shader.setFloatUniform("uStrength", refractStrength)
-                shader.setFloatUniform("uSize", floatArrayOf(size.width, size.height))
-                RenderEffect.createRuntimeShaderEffect(shader, "content").asComposeRenderEffect()
-            }.getOrNull()
-            if (effect != null) renderEffect = effect
-        }
-    }
-
-    //【Specular Highlight + Dynamic Lighting + Parallax + Noise】叠加高光层
-    return modifier.drawBehind {
-        val w = size.width
-        val h = size.height
-        val diagonal = w + h
-        val span = w.coerceAtLeast(h)
-
-        //【Depth / Parallax】外层柔光带（最宽最柔）
-        drawRect(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color.Transparent,
-                    Color.White.copy(alpha = 0.13f * lighting),
-                    Color.Transparent
-                ),
-                start = Offset(parallaxB * diagonal - w * 1.4f, -h),
-                end = Offset(parallaxB * diagonal + w * 0.6f, h)
-            )
-        )
-
-        //【Specular Highlight】主高光带
-        drawRect(
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color.Transparent,
-                    Color.White.copy(alpha = 0.42f * lighting),
-                    Color.White.copy(alpha = 0.14f * lighting),
-                    Color.Transparent
-                ),
-                start = Offset(parallaxA * diagonal - w, -h),
-                end = Offset(parallaxA * diagonal + w, h)
-            )
-        )
-
-        //【Dynamic Lighting】随位置移动的高光光晕
-        val specularRadius = span * 0.42f
-        val specularCenter = Offset(
-            x = (0.5f + parallaxA * 0.30f) * w,
-            y = (0.5f + parallaxB * 0.22f) * h
-        )
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color.White.copy(alpha = 0.24f * lighting),
-                    Color.Transparent
-                ),
-                center = specularCenter,
-                radius = specularRadius
-            ),
-            radius = specularRadius,
-            center = specularCenter
-        )
-
-        //【Noise / Grain】玻璃噪点纹理
-        grain.forEach { point ->
-            drawCircle(
-                color = Color.White.copy(alpha = 0.022f),
-                radius = 1.4f,
-                center = Offset(point.x * w, point.y * h)
-            )
-        }
-    }
-}
-
-/**
- * 极致档折射与多层模糊着色器（AGSL，API 33+）
- *
- * - 波形偏移：制造玻璃折射与背景扭曲
- * - 四点环形采样平均：模拟多层不同半径的模糊叠加
- * - 对角高光：模拟玻璃表面的镜面反射
- */
-private const val EXTREME_GLASS_SHADER = """
-uniform shader content;
-uniform float uTime;
-uniform float uStrength;
-uniform float2 uSize;
-
-half4 main(float2 coord) {
-    float2 uv = coord / uSize;
-
-    // 折射：两组正弦波叠加，产生不规则的玻璃扭曲
-    float wave = sin(uv.y * 13.0 + uTime * 0.11) * cos(uv.x * 9.0 - uTime * 0.08);
-    float2 warp = float2(wave, wave * 0.72) * uStrength;
-
-    // 多层模糊：环形多点采样后平均
-    half4 sum = half4(0.0);
-    float radius = 1.6 + uStrength * 0.6;
-    for (int i = 0; i < 6; i++) {
-        float angle = 6.2831853 * float(i) / 6.0;
-        float2 dir = float2(cos(angle), sin(angle));
-        sum += content.eval(coord + warp + dir * radius);
-    }
-    half4 result = sum / 6.0;
-
-    // 镜面高光：沿对角线的高光带
-    float spec = pow(max(0.0, 1.0 - abs(uv.x + uv.y - 1.0 - wave * 0.3)), 6.0);
-    result.rgb += half3(spec * 0.12);
-
-    return result;
-}
-"""
-
-/** 标准档位下固定的高光位置，不随任何动画变化 */
-private const val STATIC_PRIMARY_SHIFT = 0.36f
-private const val STATIC_SECONDARY_SHIFT = 0.64f
-
-/**
- * 液态玻璃增强档：动态高光效果
+ * 液态玻璃动态高光效果
  *
  * 在毛玻璃模糊的基础上，叠加缓慢流动的高光与折射光晕，
  * 模拟 iOS 26 风格的液态玻璃质感。
  *
- * 只有「增强」档位才会启动持续动画；标准档位使用静态高光，
- * 关闭档位完全不叠加这一层，从而避免持续的高 GPU 负载。
+ * 只有「启用动态玻璃」档位才会叠加这一层；「关闭」档位完全不叠加，
+ * 从而避免持续的高 GPU 负载。
  */
 @Composable
 private fun Modifier.liquidGlassHighlights(): Modifier {
@@ -920,7 +706,7 @@ private fun Modifier.liquidGlassHighlights(): Modifier {
 }
 
 /**
- * 绘制玻璃高光带（标准档与增强档共用同一套绘制逻辑）
+ * 绘制玻璃高光带（「启用动态玻璃」档位使用）
  */
 private fun Modifier.drawGlassHighlights(
     primaryShift: Float,
