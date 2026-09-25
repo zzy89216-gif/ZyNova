@@ -62,6 +62,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.mapExceptionToMessage
+import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
@@ -213,8 +214,10 @@ fun SearchIdScreen(
             defaultClasses = viewModel.defaultClasses,
             projectId = viewModel.projectId,
             onProjectIdChange = { viewModel.projectId = it },
-            searchPlatform = viewModel.platform,
-            onPlatformChange = { viewModel.platform = it }
+            //按 ID 搜索必须使用具体来源，「所有」在这里没有意义
+            searchPlatform = SearchPlatform.of(viewModel.platform),
+            onPlatformChange = { new -> new.platform?.let { viewModel.platform = it } },
+            includeAllPlatform = false
         )
     }
 }
@@ -229,8 +232,8 @@ private fun Content(
     openLink: (String) -> Unit,
     projectId: String,
     onProjectIdChange: (String) -> Unit,
-    searchPlatform: Platform,
-    onPlatformChange: (Platform) -> Unit,
+    searchPlatform: SearchPlatform,
+    onPlatformChange: (SearchPlatform) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -474,8 +477,8 @@ private fun ContentFilter(
     onSearch: () -> Unit,
     projectId: String,
     onProjectIdChange: (String) -> Unit,
-    searchPlatform: Platform,
-    onPlatformChange: (Platform) -> Unit,
+    searchPlatform: SearchPlatform,
+    onPlatformChange: (SearchPlatform) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val xOffset by swapAnimateDpAsState(
