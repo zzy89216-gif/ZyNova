@@ -3,7 +3,7 @@
 > **Minecraft: Java Edition · Android Launcher**
 >
 > 基于 ZalithLauncher2 开源代码开发的独立非官方项目  
-> **全流程使用 Android 手机开发、构建、测试与发布**
+> **只用一部 Android 手机完成开发、测试与发布（编译交由 GitHub Actions 云端完成）**
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
@@ -15,33 +15,48 @@
 
 ## ✦ 项目简介
 
-**ZyNova** 是一个基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码开发的 Minecraft: Java Edition Android 启动器。
-
-本项目在上游项目代码的基础上进行了大量修改、重构、功能开发、界面调整以及 Android 平台相关适配，并由 ZyNova 项目维护者独立进行后续开发与维护。
+**ZyNova** 是一个基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码开发的 **Minecraft: Java Edition Android 启动器**，由 ZyNova 项目维护者独立开发与维护。
 
 > **ZyNova 并非 ZalithLauncher2 官方版本。**
 >
-> ZyNova 是一个基于 ZalithLauncher2 开源代码进行开发的非官方修改项目。
+> 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
+
+当前版本 **26.2.0**。这一阶段的核心目标是：
+
+> **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+围绕这一目标，项目已经建立了自己的：
+
+- 统一资源管理核心（Resource Management Core）
+- 资源来源 Provider 体系（Modrinth / CurseForge）
+- 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
+- 极简资源安装流程（上下文直装）
+- 卡片式主页（最近版本 / 本地世界 / 服务器）
+- 玻璃效果（Glass UI）四档
+- 启动器自有更新体系（GitHub Releases）
+- Minecraft 26.4 Snapshot 1 的 Vulkan 检测
+
+设计上遵循一条原则：
+
+> **Context First. Less Steps.**
+>
+> 能自动判断，就不要让用户选择；能一步完成，就不要拆成两步；
+> 已有上下文，就直接使用上下文；没有必要的按钮直接删除。
 
 ---
 
 ## 🌟 项目定位
 
-ZyNova 是一个面向 Android 平台的 Minecraft: Java Edition 启动器项目。
+ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而是在上游优秀开源项目的基础上，根据实际使用需求逐步形成属于 ZyNova 自身的功能、界面与使用体验。
 
-项目最初源于对启动器界面与使用体验的进一步探索，随后逐渐扩展到功能开发、代码重构、安装管理、依赖处理、兼容性调整以及 Android 平台相关功能。
+随着开发推进，项目已经形成了独立的：
 
-随着开发不断进行，项目逐渐形成了独立的：
-
-- 项目名称
-- 应用身份
-- GitHub 仓库
-- Release
-- 开发流程
-- 项目文档
-- 维护体系
-
-ZyNova 不以简单复制上游项目为目标，而是在已有开源代码基础上，根据实际需求进行进一步开发。
+- 项目名称与应用身份
+- 独立源码仓库与 Release
+- 独立的资源管理与下载体系
+- 独立的启动器更新体系
+- 完整的 Android 工程与多 ABI 构建
+- 开发流程、项目文档与交接体系
 
 ---
 
@@ -329,15 +344,11 @@ ZyNova 的开发并不是只在源码层面完成。
 
 ↓
 
-**代码修改 / 功能开发**
+**代码修改 / 功能开发**（在 Android 手机上）
 
 ↓
 
-**工程构建**
-
-↓
-
-**APK 打包**
+**工程构建 / APK 打包**（GitHub Actions 云端）
 
 ↓
 
@@ -357,7 +368,7 @@ ZyNova 的开发并不是只在源码层面完成。
 
 ↓
 
-**重新构建**
+**重新构建**（云端）
 
 ↓
 
@@ -365,17 +376,39 @@ ZyNova 的开发并不是只在源码层面完成。
 
 ↓
 
-**Release 发布**
+**Release 发布**（通过 GitHub）
 
 项目中的部分功能是在实际 Android 设备使用过程中进行测试和调整的。
 
 ---
 
-## 📱 全流程手机开发
+## 📱 用手机开发的项目
 
-ZyNova 项目具有一个非常特殊的开发特点：
+ZyNova 项目有一个比较特殊的工作方式：
 
-> **本项目从开发开始到目前的整个开发流程均使用 Android 手机完成，没有使用电脑进行开发。**
+> **从写代码、测试到发布，全部只使用一部 Android 手机操作，没有使用电脑。**
+
+不过有一点需要说明清楚：**APK 的编译并不在手机上完成，而是在 GitHub Actions 的云端服务器上完成。**
+
+| 环节 | 在哪里完成 |
+|---|---|
+| 源代码编写 / 修改 | Android 手机 |
+| 项目文件管理 | Android 手机 |
+| Gradle / 工程配置处理 | Android 手机 |
+| Git 操作、GitHub 仓库管理 | Android 手机 |
+| 查阅编译日志、修复编译错误 | Android 手机 |
+| **APK 编译（含多架构构建）** | **GitHub Actions 云端服务器** |
+| Android 真机安装测试 | Android 手机 |
+| Release 发布 | Android 手机（通过 GitHub API） |
+| 文档编写与维护 | Android 手机 |
+
+原因很直接：Android 手机环境缺少完整的 Android SDK / NDK 工具链
+（NDK 的 clang 只有 x86_64 版本，Google 不提供 arm64 Linux 版），
+无法在手机本地完成 APK 编译，因此编译环节交由 GitHub Actions 的云端服务器执行。
+
+所以更准确的说法是：
+
+> **整个项目的开发、测试与发布流程只用一部 Android 手机操作完成，编译则借助 GitHub Actions 在云端完成。**
 
 本项目不是：
 
@@ -383,32 +416,7 @@ ZyNova 项目具有一个非常特殊的开发特点：
 
 而是：
 
-> **Android 手机 → 开发 → 构建 → 测试 → 修复 → 发布**
-
-整个项目从开发、构建、测试到 Release 发布，均直接在 Android 手机上完成。
-
-包括：
-
-| 工作内容 | Android 手机完成 |
-|---|:---:|
-| 源代码编写 | ✅ |
-| 源码修改 | ✅ |
-| 项目文件管理 | ✅ |
-| Gradle 工程处理 | ✅ |
-| Android 工程构建 | ✅ |
-| Native / C 相关处理 | ✅ |
-| APK 编译 | ✅ |
-| 多架构构建 | ✅ |
-| Android 真机测试 | ✅ |
-| Bug 修复 | ✅ |
-| Git 操作 | ✅ |
-| GitHub 仓库管理 | ✅ |
-| Release 发布 | ✅ |
-| 文档编写与维护 | ✅ |
-
-因此：
-
-**ZyNova 是一个从开发到发布全流程直接在 Android 手机上完成的项目。**
+> **手机开发 → 云端构建 → 手机测试 → 手机发布**
 
 ---
 
@@ -549,28 +557,6 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ---
 
-## 🎯 项目定位
-
-ZyNova 定位为：
-
-> **一个基于 ZalithLauncher2 开源代码进行深度修改、独立维护和独立发布的 Minecraft: Java Edition Android 启动器。**
-
-ZyNova 不以简单复制上游项目为目标。
-
-项目希望在已有优秀开源项目提供的基础上，根据实际使用需求继续进行：
-
-- 功能开发
-- UI 调整
-- 代码重构
-- Android 平台适配
-- 兼容性调整
-- 性能优化
-- 使用体验改进
-
-并逐渐形成属于 ZyNova 自身的功能、界面和使用体验。
-
----
-
 ## 🔗 上游项目
 
 ZyNova 基于：
@@ -666,7 +652,7 @@ ZyNova 从一个最初的界面与功能需求开始，逐渐发展成为一个�
 - Bug 修复与版本迭代
 - 项目维护与交接文档
 
-并且整个项目从开发、构建、测试到发布，均使用 **Android 手机完成，没有使用电脑进行开发**。
+并且整个项目的开发、测试与发布流程，均**只使用一部 Android 手机操作完成**（APK 编译交由 GitHub Actions 在云端执行）。
 
 ZyNova 不追求一次完成所有事情，也不会为了更新而强行加入功能。
 
@@ -688,4 +674,4 @@ ZyNova 不追求一次完成所有事情，也不会为了更新而强行加入�
 
 **基于开源，持续开发，独立维护。**
 
-**一个完全使用 Android 手机进行开发、构建、测试和发布的独立项目。**
+**一个只用一部 Android 手机操作完成开发、测试与发布的独立项目（编译借助云端 CI）。**
