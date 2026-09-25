@@ -67,9 +67,12 @@ and to establish ZyNova's own resource management, download, home screen and UI 
 
 ### Card-style home screen
 
-Automatically detects and displays recently used Minecraft versions, local worlds and saved
-servers. Tap to launch, enter or join directly. Data is loaded on demand — the launcher does
-not scan everything at startup. The default / card / custom home screen can be selected in settings.
+The home screen is organized into **per-version modules**: each installed version is a module
+card that directly lists that version's own local worlds and saved servers.
+Tapping the module card itself launches that version.
+
+Data is loaded on demand — the launcher does not scan everything at startup.
+The default / card / custom home screen can be selected in settings.
 
 ### Unified Resource Management Core
 
