@@ -1086,6 +1086,8 @@
     <string name="settings_launcher_festivals_effects_title">Festival Easter Eggs</string>
     <string name="settings_launcher_festivals_effects_summary">Display persistent easter egg effects during specific time periods</string>
     <string name="settings_launcher_home_page_title">Home Page</string>
+    <string name="settings_launcher_home_card_size_title">Card Size</string>
+    <string name="settings_launcher_home_card_size_summary">Adjust the card size on the card home page. Smaller cards fit more instances on one screen, larger cards are easier to tap. 100% keeps the original look.</string>
     <string name="settings_launcher_home_page_type_blank">Blank</string>
     <string name="settings_launcher_home_page_type_cards">Card Home</string>
     <string name="home_card_versions_title">Recent Versions</string>

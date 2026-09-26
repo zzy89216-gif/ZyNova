@@ -23,9 +23,22 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.3**（`launcher_version_code=260230`）
+**当前版本：26.2.4**（`launcher_version_code=260240`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.2.4 修复与新增 ✅（2 个新议题）
+
+1. **修复卡片式主页的卡片不透明度不跟随「背景元素不透明度」**（Issue #4）
+   - 根因：卡片颜色写死成 `cardColor(false)`，即显式关闭「颜色受背景内容影响」；
+     自定义主页卡片（`CustomHomeCard`）默认是 `cardColor(true)`，只有卡片式主页漏了
+   - 修复：改为 `cardColor()`；未设置自定义背景时行为不变
+     （`influencedByBackground` 在背景无效时本来就返回原色）
+2. **卡片式主页支持调整卡片大小**（Issue #5，新功能）
+   - 新增设置 `homeCardSize`（70~140%，默认 100%）
+   - 位置：设置 → 启动器 → 主页 → 卡片大小，**仅在主页类型为「卡片主页」时显示**
+   - 作用于卡片内边距、卡片间距、标题/副标题字号、分组间距与条目宽度
+   - 默认 100% 与既有外观一致，老用户升级观感不变
 
 ### 26.2.3 修复 ✅（模组以外的资源下载链路）
 
@@ -301,6 +314,15 @@
 | `game/download/resources/ResourceInstallManager.kt` | 存档解压后兜底清理残留的 `.zip` |
 | `ZalithLauncher/build.gradle.kts` | `getKeyFromLocal` 把空字符串环境变量视为未配置，可回退到本地文件 / gradle 属性 |
 
+### 26.2.4 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `ui/screens/main/card_home/CardHomePage.kt` | 卡片颜色 `cardColor(false)` → `cardColor()`（跟随「背景元素不透明度」）；新增 `scale` 参数链路（`InstanceModule` / `HomeGroup` / `HomeEntryChip`），按卡片大小缩放内边距、间距、字号与条目宽度 |
+| `setting/AllSettings.kt` | 新增 `homeCardSize = intSetting("homeCardSize", 100, 70..140)` |
+| `ui/screens/content/settings/LauncherSettingsScreen.kt` | 主页设置区新增「卡片大小」滑条，仅在主页类型为「卡片主页」时显示 |
+| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 新增 `settings_launcher_home_card_size_title` / `_summary` |
+
 ### 已删除文件
 
 | 文件 | 原因 |
@@ -528,6 +550,18 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
      一旦不在大陆且没有 Key，CurseForge 侧**永远搜不到任何资源**，
      而「存档」只有 CurseForge 提供 → 固定空白
    - 现在没有 Key 时始终保留镜像源；排查这类问题时先确认 Key 是否真的被打进包里
+21. **想让 UI 跟随「背景元素不透明度」时，不要写死 `cardColor(false)`**（26.2.4 实际踩到并修复）：
+   - `cardColor(influencedByBackground = true)`（默认）会在**设置了自定义背景**时把颜色替换成
+     按「背景元素不透明度」降低 alpha 的版本；`false` 则永远返回原色
+   - 卡片式主页当时写的是 `cardColor(false)`，于是自定义背景下卡片完全不透明，
+     与其它页面（自定义主页卡片默认 `true`）表现不一致
+   - 注意 `influencedByBackground(...)` 在**背景无效时会自动返回原色**，
+     所以直接用默认值不会影响没有设置背景的用户
+22. **新增 UI 缩放类设置时，默认值必须是「原样」**（26.2.4 的做法）：
+   - 卡片大小用百分比（70~140，默认 100），100% 时所有 `dp` / 字号乘以 1f，
+     观感与升级前完全一致，老用户不会被强制改变界面
+   - 缩放要同时作用于**内边距、间距、字号、条目宽度**，
+     只改其中一个会得到「卡片变大了但文字没变」的割裂效果
 
 ---
 
@@ -577,8 +611,8 @@ OAuth client id / CurseForge API key / 个人联系方式；
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.2.3**
-- 历史版本：26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.2.4**
+- 历史版本：26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 编译 workflow：
   - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
@@ -679,4 +713,4 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-09-26（26.2.3 已发布）
+**最后更新**：2026-09-26（26.2.4 已发布）

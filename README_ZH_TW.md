@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.3)
+[![Release](https://img.shields.io/badge/Release-26.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.4)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -27,6 +27,15 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.2.4 主要內容
+
+本版本處理兩個新回報：
+
+- **修復** 卡片式首頁的卡片不透明度未跟隨「背景元素不透明度」設定
+  （卡片顏色被寫死為 `cardColor(false)`，等於關閉了「受背景內容影響」）
+- **新增** 卡片式首頁的**卡片大小**設定
+  （設定 → 啟動器 → 首頁 → 卡片大小，70% ~ 140%，預設 100% 維持原有外觀）
 
 ## ✨ 26.2.3 主要內容
 

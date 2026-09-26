@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.3)
+[![Release](https://img.shields.io/badge/Release-26.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.4)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -23,7 +23,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.2.3**。这一阶段的核心目标是：
+当前版本 **26.2.4**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -306,7 +306,12 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.3**
+**ZyNova 26.2.4**
+
+26.2.4 处理两个新反馈：一个卡片式主页的 Bug 与一个卡片大小的功能请求：
+
+- 修复卡片式主页的卡片不透明度不跟随「背景元素不透明度」设置
+- 卡片式主页新增「卡片大小」设置（70% ~ 140%，默认 100% 保持原有外观）
 
 26.2.3 集中修复**模组以外**的资源下载链路（整合包 / 资源包 / 存档 / 光影包）：
 
@@ -552,7 +557,12 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.3（当前版本）
+### 26.2.4（当前版本）
+
+- [x] 修复卡片式主页的卡片不透明度不跟随「背景元素不透明度」设置
+- [x] 卡片式主页新增「卡片大小」设置（70% ~ 140%，默认 100%）
+
+### 26.2.3
 
 - [x] 修复资源包 / 光影包 / 存档搜索结果几乎为空（加载器过滤用错了资源类型）
 - [x] 修复聚合搜索总页数变成 0（界面 1 / 0、无法翻页）
