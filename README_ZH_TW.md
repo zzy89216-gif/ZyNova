@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.5-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.5)
+[![Release](https://img.shields.io/badge/Release-26.2.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.6)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -27,6 +27,14 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.2.6 主要內容
+
+- **修復** 拖動排序後卡片內容被推到錯誤位置
+  （位移修飾符套在 `clip` / `background` 內側；讓位動畫被中斷後也會殘留偏移）
+- **變更**：操作選單現在可以**長按整塊拖到螢幕左側或右側**
+  （移植自上游 ZalithLauncher2：提起跟手、預覽停泊側、平滑停泊，內容區一起讓位，停泊側會被記住）
+- **修復** 右側選單恢復上游的排版
 
 ## ✨ 26.2.5 主要內容
 

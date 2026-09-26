@@ -28,6 +28,7 @@ import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
 import com.movtery.zalithlauncher.game.path.GamePathManager
 import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
+import com.movtery.zalithlauncher.setting.enums.ActionMenuSide
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
@@ -427,6 +428,11 @@ object AllSettings : SettingsRegistry() {
      * 实际效果已完全由 [glassLevel] 接管，不再写入。
      */
     val liquidGlass = boolSetting("liquidGlass", false)
+
+    /**
+     * 主界面操作菜单的停泊侧（长按操作菜单可拖动换边）
+     */
+    val launcherActionMenuSide = enumSetting("launcherActionMenuSide", ActionMenuSide.END)
 
     /**
      * 启动器主页类型

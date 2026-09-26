@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.5-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.5)
+[![Release](https://img.shields.io/badge/Release-26.2.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.6)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -23,7 +23,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.2.5**。这一阶段的核心目标是：
+当前版本 **26.2.6**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -315,7 +315,13 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.5**
+**ZyNova 26.2.6**
+
+26.2.6 修复拖动排序引入的两个显示问题，并把「操作菜单长按拖动换边」从上游搬了过来：
+
+- 修复拖动后卡片内容被顶到错误位置（位移修饰符层级 + 让位动画残留）
+- 操作菜单：**长按整块可以拖到屏幕左侧或右侧**，内容区一起让位，停泊侧会被记住
+- 右侧菜单恢复上游的排布
 
 26.2.5 处理卡片式主页的边框显示问题，并加入长按拖动排序：
 
@@ -572,7 +578,12 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.5（当前版本）
+### 26.2.6（当前版本）
+
+- [x] 修复拖动排序后卡片内容被顶到错误位置
+- [x] 操作菜单支持长按拖动换边（搬自上游 ZalithLauncher2）
+
+### 26.2.5
 
 - [x] 彻底移除卡片式主页的卡片边框
 - [x] 版本卡片、世界、服务器支持长按拖动排序（顺序自动记住）

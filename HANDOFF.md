@@ -23,9 +23,22 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.5**（`launcher_version_code=260250`）
+**当前版本：26.2.6**（`launcher_version_code=260260`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.2.6 修复与变更 ✅
+
+1. **修复拖动排序后卡片内容被顶到错误位置**
+   - 位移修饰符原本在 `clip` / `background` 内侧 → 只有内容动、背景不动
+   - 让位动画被后续布局变化打断时 `Animatable` 停在中间值 → 残留偏移一直留着
+   - 修复：位移修饰符放到**最外层**；无新位移时归零、拖动结束也归零
+2. **右侧菜单恢复上游排布**（26.2.5 改成 Column 后版本行跑到中间）
+3. **操作菜单改为长按拖动换边**：直接采用上游 ZalithLauncher2 的
+   `ui/screens/content/home/ActionMenuDrag.kt` + `setting/enums/ActionMenuSide.kt`
+   - 长按整块提起并跟手，越过中线预览停泊侧，松手平滑停泊到左/右，内容区一起让位
+   - 停泊侧持久化到 `AllSettings.launcherActionMenuSide`
+   - 26.2.5 给右侧菜单内部三块做的排序已移除
 
 ### 26.2.5 修复与新增 ✅
 
@@ -349,6 +362,17 @@
 | `ui/screens/content/LauncherScreen.kt` | 右侧菜单由 `ConstraintLayout` 改为可拖动的 `Column`（`Arrangement.SpaceBetween` 保持原观感），三块各自接入拖动排序；版本下拉菜单的锚点逻辑保持不变 |
 | `ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
 
+### 26.2.6 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `setting/enums/ActionMenuSide.kt` | **新增**（搬自上游）：操作菜单停泊侧枚举 |
+| `ui/screens/content/home/ActionMenuDrag.kt` | **新增**（搬自上游）：操作菜单长按拖动换边的状态与修饰符（动画规格改为显式 spring/tween） |
+| `setting/AllSettings.kt` | 新增 `launcherActionMenuSide` |
+| `ui/screens/content/LauncherScreen.kt` | 内容区与操作菜单改用 `BoxWithConstraints` 布局（停泊槽 + 绝对定位的操作菜单 + 让位位移）；右侧菜单恢复 `ConstraintLayout` 并加拖拽锚点 / 版本行排除区；移除内部三块排序 |
+| `ui/screens/main/card_home/CardHomePage.kt` | 位移修饰符移到最外层（与背景一起移动） |
+| `ui/components/Reorder.kt` | 让位动画自愈：无新位移时归零、拖动结束归零 |
+
 ### 已删除文件
 
 | 文件 | 原因 |
@@ -599,6 +623,19 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
      如果无条件写入 `SnapshotStateMap`，会反复触发重组甚至形成布局循环
    - 正确写法：`if (old == rect) return` 再写入
 
+25. **位移类修饰符必须放在最外层**（26.2.6 实际踩到并修复）：
+   - `Modifier.clip().background().offset{}` 时，位移只作用于**内容**，背景留在原地，
+     表现为「卡片背景不动、里面文字被顶下去」
+   - 正确写法：`Modifier.offset{}`（或自定义的位移修饰符）放在 `clip` / `background` **之前**
+26. **Animatable 的让位动画被打断会残留偏移**（26.2.6 实际踩到并修复）：
+   - `LaunchedEffect(version)` 里 `snapTo(位移); animateTo(0f)`，一旦被新的布局变化取消，
+     值会停在中间，并且不会再回到 0 → 界面永久错位
+   - 解法：每次布局变化在「没有新位移」时强制 `snapTo(0f)`，动画结束与拖动结束也各归零一次
+27. **上游已有的能力优先「搬」而不是自研**（26.2.6）：
+   - 「操作菜单长按拖动换边」上游 ZalithLauncher2 已经实现得很完整
+     （`ui/screens/content/home/ActionMenuDrag.kt`：提起跟手 + 中线预览 + 停泊让位 + 持久化）
+   - 自研一套不仅费时，还容易像 26.2.5 那样引入新问题；确认上游有对应实现时直接搬过来适配
+
 ---
 
 ## 十、给接手者的建议操作顺序
@@ -647,8 +684,8 @@ OAuth client id / CurseForge API key / 个人联系方式；
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.2.5**
-- 历史版本：26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.2.6**
+- 历史版本：26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 编译 workflow：
   - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
@@ -749,4 +786,4 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-09-26（26.2.5 已发布）
+**最后更新**：2026-09-26（26.2.6 已发布）

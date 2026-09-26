@@ -234,10 +234,12 @@ private fun InstanceModule(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            //⚠️ 顺序很重要：位移（拖动/让位）必须作用在**最外层**，
+            //否则 clip/background 不会跟着移动，卡片背景留在原地、内容被顶下去
+            .reorderItem(key = reorderKey, state = reorderState)
             .clip(MaterialTheme.shapes.large)
             .background(cardColor())
             .clickable(onClick = onLaunch)
-            .reorderItem(key = reorderKey, state = reorderState)
     ) {
         Column(
             modifier = Modifier.padding(
