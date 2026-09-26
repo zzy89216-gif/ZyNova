@@ -41,8 +41,10 @@ class AggregatedSearchResult(
         return AssetsPage(
             pageNumber = pages.minOfOrNull { it.pageNumber } ?: 1,
             pageIndex = pages.minOfOrNull { it.pageIndex } ?: 0,
-            //取各来源中较小的总页数，避免翻到某一来源已经结束的页码
-            totalPage = pages.minOfOrNull { it.totalPage } ?: 1,
+            //取各来源中**较大**的总页数：
+            //之前取的是最小值，只要有一个来源没有结果（或结果很少），
+            //总页数就会变成 0 —— 界面上显示「1 / 0」并且完全无法翻页。
+            totalPage = (pages.maxOfOrNull { it.totalPage } ?: 1).coerceAtLeast(1),
             isLastPage = pages.all { it.isLastPage },
             data = mergedData
         )

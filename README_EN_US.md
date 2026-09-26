@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.2)
+[![Release](https://img.shields.io/badge/Release-26.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.3)
 
 [简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
@@ -27,6 +27,20 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 26.2.3
+
+This release fixes the resource download flow for **everything except mods**
+(modpacks, resource packs, worlds and shaders):
+
+- **Fixed** resource pack / shader / world searches returning almost nothing:
+  the mod-loader filter was being applied to resource types that are not categorised by loader
+- **Fixed** the aggregated search total page count collapsing to 0 (the UI showed "1 / 0" and could not page)
+- **Fixed** the *All* platform option querying sources that do not support the selected resource type
+  (worlds do not exist on Modrinth)
+- **Fixed** CurseForge being completely unreachable when no API key is configured
+  (the MCIM mirror is now kept as a source in that case)
+- **Fixed** the dead category filter on worlds, and leftover `.zip` files when unpacking a world fails
 
 ## ✨ Highlights of 26.2.2
 

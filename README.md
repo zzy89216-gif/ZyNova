@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.2)
+[![Release](https://img.shields.io/badge/Release-26.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.3)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -23,7 +23,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.2.2**。这一阶段的核心目标是：
+当前版本 **26.2.3**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -306,7 +306,16 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.2**
+**ZyNova 26.2.3**
+
+26.2.3 集中修复**模组以外**的资源下载链路（整合包 / 资源包 / 存档 / 光影包）：
+
+- 修复资源包 / 光影包 / 存档的搜索结果几乎为空
+  （加载器过滤条件被错误地用在了并不按加载器分类的资源类型上）
+- 修复聚合搜索的总页数会变成 0（界面显示「1 / 0」并且完全无法翻页）
+- 修复「所有平台」会去请求并不支持该资源类型的来源（例如存档在 Modrinth 上并不存在）
+- 修复未配置 CurseForge API Key 时 CurseForge 侧完全搜不到资源（无 Key 时保留 MCIM 镜像源）
+- 修复存档「类别」过滤器永久不可用、存档解压失败后残留 `.zip`
 
 26.2.2 是一次以「修复实际反馈」为主的版本：
 
@@ -543,7 +552,16 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.2（当前版本）
+### 26.2.3（当前版本）
+
+- [x] 修复资源包 / 光影包 / 存档搜索结果几乎为空（加载器过滤用错了资源类型）
+- [x] 修复聚合搜索总页数变成 0（界面 1 / 0、无法翻页）
+- [x] 「所有平台」只请求真正支持该资源类型的来源
+- [x] 无 CurseForge API Key 时保留 MCIM 镜像源，CurseForge 侧恢复可用
+- [x] 修复存档「类别」过滤器永久不可用
+- [x] 修复存档解压失败残留 `.zip`
+
+### 26.2.2
 
 - [x] 移除「⚠️极致」玻璃档，简化为「关闭 / 启用动态玻璃」两档（修复字体模糊）
 - [x] 修复一键安装偶发 `No compatible version found for this instance`

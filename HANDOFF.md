@@ -23,9 +23,34 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.2**（`launcher_version_code=260220`）
+**当前版本：26.2.3**（`launcher_version_code=260230`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.2.3 修复 ✅（模组以外的资源下载链路）
+
+1. **资源包 / 光影包 / 存档搜索结果几乎为空**
+   - 根因：加载器过滤器是**来源特有**的，却被当成了所有资源类型的通用条件。
+     只要实例装了加载器（如 Fabric），就会把该加载器作为搜索条件下发，
+     而资源包 / 光影 / 存档**不按加载器分类**：
+     Modrinth 光影 `categories:fabric` → **0 条**；
+     Modrinth 资源包 `categories:fabric` → 只剩 4 条（不带过滤是 19275 条）
+   - 修复：加载器过滤**只在启用它的资源类型（Mod / 整合包）上附加**
+     （`SearchScreenViewModel.buildFilter()` 按 `enableModLoader` 判断）
+2. **聚合搜索总页数变 0（界面 1 / 0 且无法翻页）**
+   - `AggregatedSearchResult` 原来取各来源总页数的 **min**，任一来源为空就变 0
+   - 改为 **max 且至少为 1**
+3. **「所有平台」会请求不支持该类型的来源**
+   - 存档在 Modrinth 无对应项目类型，却仍发请求并在 `platformClasses.modrinth!!` 处空指针
+   - 现在只并发请求**真正支持该类型**的来源（`ResourceProviders.of(p).supports(type)`），
+     并把 `!!` 换成 `UnsupportedClassesException`
+4. **未配置 CurseForge API Key 时 CurseForge 侧完全不可用**
+   - 未配置的 CI Secrets 会以**空字符串**注入，`getKeyFromLocal` 只判断 `null` →
+     本地 `curseforge_api.txt` / gradle 属性里的兜底 Key 永远不生效
+   - CurseForge 官方接口缺 Key 必然 403，而 MCIM 镜像此前**只在大陆启用**
+   - 修复：空字符串视为未配置；**无 Key 时始终保留 MCIM 镜像源**
+5. **存档「类别」过滤器永久不可用**：判断依据从「是否选了所有平台」改为**实际请求的来源数量**
+6. **存档解压失败残留 `.zip`**：无论成功失败都兜底清理解压包
 
 ### 26.2.2 修复 ✅（对应仓库中 3 个 Issue）
 
@@ -244,6 +269,17 @@
 | `game/download/assets/_Download.QuickInstall.kt` | 移除裸 `IllegalStateException`，改为本地化的 `toInstallMessage()`；成功后提示已安装的资源名 |
 | `path/UrlManager.kt` | Discord 链接换成永久邀请，并补充维护说明 |
 
+### 26.2.3 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `ui/screens/content/download/assets/search/SearchAssetsScreen.kt` | VM 新增 `enableModLoader` 参数（非模组类型不再附加加载器过滤）；新增 `supportedPlatforms` / `effectivePlatforms` / `categoryFilterAvailable`；「所有平台」只查询支持该类型的来源 |
+| `game/download/assets/platform/AggregatedSearchResult.kt` | `totalPage` 由 `min` 改为 `max` 且至少为 1 |
+| `game/download/assets/platform/modrinth/ModrinthAPI.kt` | `platformClasses.modrinth!!` 改为明确的 `UnsupportedClassesException` |
+| `game/download/assets/platform/_PlatformSearch.kt` | 无 CurseForge API Key 时也启用 MCIM 镜像源（否则官方接口必然 403） |
+| `game/download/resources/ResourceInstallManager.kt` | 存档解压后兜底清理残留的 `.zip` |
+| `ZalithLauncher/build.gradle.kts` | `getKeyFromLocal` 把空字符串环境变量视为未配置，可回退到本地文件 / gradle 属性 |
+
 ### 已删除文件
 
 | 文件 | 原因 |
@@ -416,6 +452,23 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
      返回中 `expires_at` 为 `null` 才是永久邀请
    - 更换链接时必须同步：`path/UrlManager.kt`、`README.md`、`README_EN_US.md`、
      `README_ZH_TW.md`、`HANDOFF.md`
+17. **过滤条件还要区分「资源类型」**（26.2.3 实际踩到并修复）：
+   - 加载器过滤器只对 **Mod / 整合包**有意义，资源包 / 光影 / 存档**不按加载器分类**
+   - 把实例的加载器（如 Fabric）当作搜索条件下发，会让 Modrinth 光影变成 **0 条**、
+     资源包只剩极少数被作者打了加载器标签的项目（实测 19275 → 4）
+   - 结论：过滤条件要同时判断「来源是否支持该类型」与「该类型是否需要这个过滤条件」
+18. **聚合分页不能取各来源的较小值**（26.2.3 实际踩到并修复）：
+   - `totalPage` 取 `min` 时，只要有一个来源没有结果就会变成 0，
+     界面显示「1 / 0」且**完全无法翻页**；应取 `max` 并至少为 1
+19. **CI 未配置的 Secrets 是空字符串，不是 null**（26.2.3 实际踩到并修复）：
+   - `System.getenv(KEY)` 会返回 `""`，只判断 `null` 会把它当成有效值，
+     本地密钥文件 / gradle 属性里的兜底配置永远不会生效
+   - 判断应写成 `System.getenv(KEY)?.takeIf { it.isNotBlank() }`
+20. **CurseForge 官方接口缺 API Key 必然 403**（26.2.3 实际踩到并修复）：
+   - MCIM 镜像（`mod.mcimirror.top`）不需要 Key，但此前只在中国大陆启用；
+     一旦不在大陆且没有 Key，CurseForge 侧**永远搜不到任何资源**，
+     而「存档」只有 CurseForge 提供 → 固定空白
+   - 现在没有 Key 时始终保留镜像源；排查这类问题时先确认 Key 是否真的被打进包里
 
 ---
 
@@ -465,8 +518,8 @@ OAuth client id / CurseForge API key / 个人联系方式；
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.2.2**
-- 历史版本：26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.2.3**
+- 历史版本：26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 编译 workflow：
   - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
@@ -536,4 +589,4 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-09-25（26.2.2 已发布）
+**最后更新**：2026-09-26（26.2.3 已发布）

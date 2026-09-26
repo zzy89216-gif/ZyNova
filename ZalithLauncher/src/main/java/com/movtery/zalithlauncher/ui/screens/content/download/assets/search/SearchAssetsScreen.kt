@@ -55,6 +55,8 @@ import com.movtery.zalithlauncher.game.download.assets.platform.previousPage
 import com.movtery.zalithlauncher.game.download.assets.platform.searchAssets
 import com.movtery.zalithlauncher.game.download.assets.utils.ModTranslations
 import com.movtery.zalithlauncher.game.download.assets.utils.searchMcMods
+import com.movtery.zalithlauncher.game.download.resources.ResourceProviders
+import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersion
 import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersions
 import com.movtery.zalithlauncher.game.versioninfo.popularVersions
@@ -85,10 +87,13 @@ private const val TAG = "SearchAssetsScreen"
  * 资源搜索屏幕的 view model
  * @param initialPlatform 初始设定的平台
  * @param platformClasses 资源搜索的类型
+ * @param enableModLoader 该资源类型是否使用模组加载器过滤器
+ *   （只有 Mod 与整合包对加载器敏感，资源包 / 光影 / 存档不该被加载器过滤）
  */
 private class SearchScreenViewModel(
     initialPlatform: SearchPlatform,
     private val platformClasses: PlatformClasses,
+    private val enableModLoader: Boolean,
     initialGameVersion: String? = null,
     initialLoaderName: String? = null
 ): ViewModel() {
@@ -118,11 +123,17 @@ private class SearchScreenViewModel(
     val referencePlatform: Platform
         get() = searchPlatform.platform ?: Platform.CURSEFORGE
 
-    /** 界面应展示的加载器过滤条件（按参照来源解析） */
+    /**
+     * 界面应展示的加载器过滤条件（按参照来源解析）
+     *
+     * 该资源类型不使用加载器过滤器时返回 null，避免界面显示一个并不生效的条件。
+     */
     val currentModloader: PlatformDisplayLabel?
-        get() = selectedLoaderName
-            ?.let { name -> resolveModloader(SearchPlatform.of(referencePlatform), name) }
-            ?: loaderFor(referencePlatform)
+        get() = if (!enableModLoader) null else {
+            selectedLoaderName
+                ?.let { name -> resolveModloader(SearchPlatform.of(referencePlatform), name) }
+                ?: loaderFor(referencePlatform)
+        }
 
     /**
      * 为指定来源构建搜索过滤条件
@@ -132,16 +143,48 @@ private class SearchScreenViewModel(
      * 而切换平台时又会把加载器清空，于是搜索退化成「完全不按加载器过滤」，
      * 结果里混进其他加载器的资源，点一键安装时才报「没有兼容版本」。
      * 现在两种搜索路径都统一走这里。
+     *
+     * ⚠️ 同时，**加载器过滤器只在 [enableModLoader] 为真时才会附加**：
+     * 资源包 / 光影 / 存档并不按模组加载器分类，
+     * 把实例的加载器（例如 Fabric）当成过滤条件传下去会让结果几乎为空
+     * （Modrinth 的光影会被过滤成 0 条，资源包只剩极少数被作者打了加载器标签的项目）。
      */
     private fun buildFilter(
         platform: Platform,
         filter: PlatformSearchFilter = searchFilter
     ): PlatformSearchFilter = filter.copy(
-        modloader = selectedLoaderName
-            ?.let { name -> resolveModloader(SearchPlatform.of(platform), name) }
-            ?: loaderFor(platform),
-        categories = if (searchPlatform.isAll) emptyList() else filter.categories
+        modloader = if (enableModLoader) {
+            selectedLoaderName
+                ?.let { name -> resolveModloader(SearchPlatform.of(platform), name) }
+                ?: loaderFor(platform)
+        } else null,
+        //类别 ID 在不同来源之间不通用：只有实际只查一个来源时才带上类别条件
+        categories = if (effectivePlatforms.size > 1) emptyList() else filter.categories
     )
+
+    /** 当前资源类型可用的来源（例如存档只有 CurseForge 提供） */
+    private val supportedPlatforms: List<Platform> = SearchPlatform.ALL_PLATFORMS.filter { platform ->
+        ResourceProviders.of(platform).supports(ResourceType.of(platformClasses))
+    }
+
+    /**
+     * 本次搜索实际会请求的来源
+     *
+     * 指定了单一平台时就是它自己；选择「所有」时是所有支持该资源类型的来源。
+     */
+    private val effectivePlatforms: List<Platform>
+        get() = searchPlatform.platform?.let { listOf(it) } ?: supportedPlatforms
+
+    /**
+     * 是否可以使用「类别」过滤器
+     *
+     * 类别 ID 是**来源特有**的，只有在实际只查一个来源时选择才有意义。
+     * 之前判断依据是「是否选了所有平台」，
+     * 导致存档这种「只有 CurseForge 提供、又固定使用所有平台」的类型
+     * 永远看不到也选不了类别。
+     */
+    val categoryFilterAvailable: Boolean
+        get() = effectivePlatforms.size == 1
 
     //上下文优先：若已知目标实例的 Minecraft 版本与模组加载器，直接作为初始过滤条件
     var searchFilter by mutableStateOf(
@@ -342,8 +385,9 @@ private class SearchScreenViewModel(
                 return@launch
             }
 
-            //「所有」：并发搜索全部来源，把结果合并到同一个列表
-            val results = SearchPlatform.ALL_PLATFORMS
+            //「所有」：并发搜索**该资源类型真正支持的**全部来源，把结果合并到同一个列表
+            //（例如存档只有 CurseForge 提供，就不该再去请求 Modrinth）
+            val results = supportedPlatforms
                 .map { platform -> async { searchSingle(platform, searchFilter) } }
                 .awaitAll()
                 .filterNotNull()
@@ -382,6 +426,7 @@ private fun rememberSearchAssetsViewModel(
     navKey: TitledNavKey,
     initialPlatform: SearchPlatform,
     platformClasses: PlatformClasses,
+    enableModLoader: Boolean,
     initialGameVersion: String? = null,
     initialLoaderName: String? = null
 ): SearchScreenViewModel {
@@ -390,7 +435,13 @@ private fun rememberSearchAssetsViewModel(
         //把初始上下文纳入 key：切换目标实例时使用独立的搜索状态
         key = "${screenKey}_search_${initialGameVersion.orEmpty()}_${initialLoaderName.orEmpty()}"
     ) {
-        SearchScreenViewModel(initialPlatform, platformClasses, initialGameVersion, initialLoaderName)
+        SearchScreenViewModel(
+            initialPlatform = initialPlatform,
+            platformClasses = platformClasses,
+            enableModLoader = enableModLoader,
+            initialGameVersion = initialGameVersion,
+            initialLoaderName = initialLoaderName
+        )
     }
 }
 
@@ -453,6 +504,8 @@ fun SearchAssetsScreen(
         navKey = screenKey,
         initialPlatform = initialPlatform,
         platformClasses = platformClasses,
+        //只有启用了加载器过滤的资源类型才会把实例的加载器带进搜索条件
+        enableModLoader = enableModLoader,
         initialGameVersion = initialGameVersion,
         initialLoaderName = initialLoaderName
     )
@@ -574,7 +627,9 @@ fun SearchAssetsScreen(
                         viewModel.searchFilter.copy(sortField = it)
                     )
                 },
-                allCategories = if (viewModel.searchPlatform.isAll) emptyList() else categories,
+                //类别是来源特有的：只有实际只查一个来源时才提供选择
+                //（例如存档固定使用「所有」，但它只有 CurseForge 一个来源）
+                allCategories = if (viewModel.categoryFilterAvailable) categories else emptyList(),
                 categories = viewModel.searchFilter.categories,
                 onCategoryChanged = { categories ->
                     viewModel.researchWithFilter(

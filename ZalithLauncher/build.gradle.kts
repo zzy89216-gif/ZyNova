@@ -31,11 +31,16 @@ val defaultCurseForgeApiKey = project.findProperty("curseforge_api_key") as? Str
 val projectArch: String = System.getProperty("arch", "all")
 
 fun getKeyFromLocal(envKey: String, fileName: String? = null, default: String? = null): String {
-    val key = System.getenv(envKey)
+    //⚠️ CI 中**未配置**的 Secrets 会以空字符串注入环境变量。
+    //如果把空字符串当成有效值，本地密钥文件与 gradle.properties 里的兜底配置
+    //就永远不会生效（例如 CurseForge API Key 缺失会让官方接口固定 403）。
+    val key = System.getenv(envKey)?.takeIf { it.isNotBlank() }
     return key ?: fileName?.let {
         val file = File(rootDir, fileName)
-        if (file.canRead() && file.isFile) file.readText() else null
-    } ?: default ?: run {
+        if (file.canRead() && file.isFile) {
+            file.readText().trim().takeIf { text -> text.isNotEmpty() }
+        } else null
+    } ?: default?.takeIf { it.isNotBlank() } ?: run {
         logger.warn("BUILD: $envKey not set; related features may throw exceptions.")
         ""
     }
