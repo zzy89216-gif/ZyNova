@@ -23,9 +23,24 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.4**（`launcher_version_code=260240`）
+**当前版本：26.2.5**（`launcher_version_code=260250`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.2.5 修复与新增 ✅
+
+1. **彻底移除卡片式主页的卡片边框**
+   - 根因：卡片由多层叠加（`Surface` 圆角填充 + `graphicsLayer` 缩放层 + `shadowElevation`），
+     内边距区与内容区的叠加层数不同 → 内容区偏亮、边缘一圈偏暗 = 视觉上的「边框」
+   - 修复：卡片只有**一层**背景 `clip(shape).background(cardColor())`，
+     去掉阴影与缩放图层，点击反馈用默认按压动画
+2. **卡片式主页支持长按拖动排序**
+   - 版本卡片之间、以及卡片内的世界 / 服务器各自可拖动排序，顺序自动记住
+   - 新增基础设施：`ui/components/Reorder.kt`（`ReorderState` / `rememberReorderState` / `Modifier.reorderItem`）
+     与 `game/home/HomeLayoutStore.kt`（MMKV 顺序持久化）
+   - 实现要点：用**项的屏幕范围 + 指针位置**判断落点，因此纵向列表、横向列表、
+     `FlowRow` 都能用，不依赖 `LazyColumn`（卡片式主页本身不能嵌套滚动容器）
+   - 顺序按**标识符**保存而不是下标，增删条目后不会错位
 
 ### 26.2.4 修复与新增 ✅（2 个新议题）
 
@@ -323,6 +338,15 @@
 | `ui/screens/content/settings/LauncherSettingsScreen.kt` | 主页设置区新增「卡片大小」滑条，仅在主页类型为「卡片主页」时显示 |
 | `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 新增 `settings_launcher_home_card_size_title` / `_summary` |
 
+### 26.2.5 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `ui/components/Reorder.kt` | **新增**：拖动排序基础设施（`ReorderState` / `rememberReorderState` / `Modifier.reorderItem`），基于「项屏幕范围 + 指针位置」，不依赖 LazyColumn |
+| `game/home/HomeLayoutStore.kt` | **新增**：拖动后的顺序持久化（MMKV，按标识符保存） |
+| `ui/screens/main/card_home/CardHomePage.kt` | 卡片重建为单层背景（去阴影 / 去缩放图层，点击用默认按压动画）；版本卡片与卡片内世界 / 服务器接入拖动排序 |
+| `ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
+
 ### 已删除文件
 
 | 文件 | 原因 |
@@ -563,6 +587,16 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 缩放要同时作用于**内边距、间距、字号、条目宽度**，
      只改其中一个会得到「卡片变大了但文字没变」的割裂效果
 
+23. **卡片的多层叠加会被看成「边框」**（26.2.5 实际踩到并修复）：
+   - 卡片同时使用 `Surface` 圆角填充 + `Modifier.graphicsLayer{scale}` + `shadowElevation` 时，
+     内边距区与内容区叠加的层数不同，会出现「内容区偏亮、边缘一圈偏暗」的假边框
+   - 想做出干净的卡片：**只保留一层** `clip(shape).background(color)`，
+     不要叠加阴影/缩放图层；需要点击反馈就用默认的 `clickable` 指示
+24. **在 `onGloballyPositioned` 里写 state 要判等**（26.2.5 实际踩到）：
+   - 拖动排序需要在布局回调里记录每项的屏幕范围；
+     如果无条件写入 `SnapshotStateMap`，会反复触发重组甚至形成布局循环
+   - 正确写法：`if (old == rect) return` 再写入
+
 ---
 
 ## 十、给接手者的建议操作顺序
@@ -611,8 +645,8 @@ OAuth client id / CurseForge API key / 个人联系方式；
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.2.4**
-- 历史版本：26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.2.5**
+- 历史版本：26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 编译 workflow：
   - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
@@ -713,4 +747,4 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-09-26（26.2.4 已发布）
+**最后更新**：2026-09-26（26.2.5 已发布）

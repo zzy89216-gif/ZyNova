@@ -18,12 +18,8 @@
 
 package com.movtery.zalithlauncher.ui.screens.main.card_home
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +35,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,23 +44,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.home.HomeDataProvider
 import com.movtery.zalithlauncher.game.home.HomeInstance
+import com.movtery.zalithlauncher.game.home.HomeLayoutStore
+import com.movtery.zalithlauncher.game.home.HomeServer
+import com.movtery.zalithlauncher.game.home.HomeWorld
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.components.ReorderState
+import com.movtery.zalithlauncher.ui.components.reorderItem
+import com.movtery.zalithlauncher.ui.components.rememberReorderState
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
+
+/** 实例卡片在排序中的稳定标识 */
+private fun HomeInstance.orderKey(): String = instance.getVersionName()
+
+/** 世界条目在排序中的稳定标识（同一个实例内唯一） */
+private fun HomeWorld.orderKey(): String = name
+
+/** 服务器条目在排序中的稳定标识 */
+private fun HomeServer.orderKey(): String =
+    "${server.name}#${server.originIp}"
 
 /**
  * 卡片式主页
  *
  * 以「游戏版本」为模块组织内容：每个已安装的实例是一个模块，
  * 模块内部直接展示该实例自己的本地世界与已保存服务器。
+ *
+ * 26.2.5 起支持**长按拖动排序**：版本卡片之间、以及同一张卡片内的
+ * 世界 / 服务器都可以拖动调整顺序，顺序会被记住。
  *
  * 数据按需加载：只有真正进入主页时才读取，且限量扫描，
  * 启动器启动时不会进行一次性的全盘扫描。
@@ -86,8 +100,37 @@ fun cardHomePage(
     val cardScale = AllSettings.homeCardSize.state.toFloat() / 100f
 
     LaunchedEffect(Unit) {
-        instances = HomeDataProvider.instances()
+        //按用户上次拖动后的顺序恢复；没有记录过就保持默认顺序
+        instances = HomeLayoutStore.sort(
+            items = HomeDataProvider.instances(),
+            order = HomeLayoutStore.load(HomeLayoutStore.KEY_CARDS),
+            keyOf = { it.orderKey() }
+        ).map { instance ->
+            val name = instance.orderKey()
+            instance.copy(
+                worlds = HomeLayoutStore.sort(
+                    items = instance.worlds,
+                    order = HomeLayoutStore.load(HomeLayoutStore.keyWorlds(name)),
+                    keyOf = { it.orderKey() }
+                ),
+                servers = HomeLayoutStore.sort(
+                    items = instance.servers,
+                    order = HomeLayoutStore.load(HomeLayoutStore.keyServers(name)),
+                    keyOf = { it.orderKey() }
+                )
+            )
+        }
         loaded = true
+    }
+
+    //版本卡片之间的拖动排序
+    val cardReorder = rememberReorderState { dragged, target ->
+        val from = instances.indexOfFirst { it.orderKey() == dragged }
+        val to = instances.indexOfFirst { it.orderKey() == target }
+        if (from >= 0 && to >= 0) {
+            instances = HomeLayoutStore.move(instances, from, to)
+            HomeLayoutStore.save(HomeLayoutStore.KEY_CARDS, instances.map { it.orderKey() })
+        }
     }
 
     if (!loaded) {
@@ -116,9 +159,30 @@ fun cardHomePage(
             )
         } else {
             instances.forEach { instance ->
+                val instanceKey = instance.orderKey()
                 InstanceModule(
                     instance = instance,
                     scale = cardScale,
+                    reorderState = cardReorder,
+                    reorderKey = instanceKey,
+                    onWorldsReordered = { worlds ->
+                        instances = instances.map { current ->
+                            if (current.orderKey() == instanceKey) current.copy(worlds = worlds) else current
+                        }
+                        HomeLayoutStore.save(
+                            HomeLayoutStore.keyWorlds(instanceKey),
+                            worlds.map { it.orderKey() }
+                        )
+                    },
+                    onServersReordered = { servers ->
+                        instances = instances.map { current ->
+                            if (current.orderKey() == instanceKey) current.copy(servers = servers) else current
+                        }
+                        HomeLayoutStore.save(
+                            HomeLayoutStore.keyServers(instanceKey),
+                            servers.map { it.orderKey() }
+                        )
+                    },
                     onLaunch = { onLaunchVersion(instance.instance) },
                     onPlayWorld = onPlayWorld,
                     onJoinServer = onJoinServer
@@ -140,48 +204,40 @@ private fun InstanceModule(
     instance: HomeInstance,
     /** 卡片大小比例（1f = 100%） */
     scale: Float,
+    reorderState: ReorderState,
+    reorderKey: String,
+    onWorldsReordered: (List<HomeWorld>) -> Unit,
+    onServersReordered: (List<HomeServer>) -> Unit,
     onLaunch: () -> Unit,
     onPlayWorld: (Version, String) -> Unit,
     onJoinServer: (Version, String) -> Unit,
 ) {
-    //卡片按下时的轻微吸附回弹（26.2.2 起不再区分玻璃档位，效果保持轻量）
-    val interactionSource = remember { MutableInteractionSource() }
-    val pressed by interactionSource.collectIsPressedAsState()
-    val snapScale by animateFloatAsState(
-        targetValue = if (pressed) 0.99f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMediumLow
-        ),
-        label = "instanceModuleSnapScale"
-    )
+    //该实例内部的世界 / 服务器各自的拖动排序
+    val worldReorder = rememberReorderState { dragged, target ->
+        val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
+        val to = instance.worlds.indexOfFirst { it.orderKey() == target }
+        if (from >= 0 && to >= 0) {
+            onWorldsReordered(HomeLayoutStore.move(instance.worlds, from, to))
+        }
+    }
+    val serverReorder = rememberReorderState { dragged, target ->
+        val from = instance.servers.indexOfFirst { it.orderKey() == dragged }
+        val to = instance.servers.indexOfFirst { it.orderKey() == target }
+        if (from >= 0 && to >= 0) {
+            onServersReordered(HomeLayoutStore.move(instance.servers, from, to))
+        }
+    }
 
-    //阴影随交互状态变化（同样保持轻量）
-    val shadowElevation by animateDpAsState(
-        targetValue = if (pressed) 4.dp else 1.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioLowBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "instanceModuleShadow"
-    )
-
-    Surface(
+    //⚠️ 卡片只有**一层**背景：圆角裁剪 + 卡片色，不叠加描边、不使用阴影。
+    //之前用 Surface + shadowElevation + graphicsLayer 缩放时，
+    //会在卡片边缘形成一圈可见的「边框」（内边距环与内容区明暗不一致），见反馈。
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .graphicsLayer {
-                scaleX = snapScale
-                scaleY = snapScale
-            },
-        shape = MaterialTheme.shapes.large,
-        //⚠️ 必须使用受背景影响的卡片颜色（默认 true）：
-        //之前写死 `cardColor(false)`，导致设置了自定义背景后，
-        //卡片不透明度完全不跟随「背景元素不透明度」设置（issue #4）
-        color = cardColor(),
-        contentColor = onCardColor(),
-        shadowElevation = shadowElevation,
-        interactionSource = interactionSource,
-        onClick = onLaunch
+            .clip(MaterialTheme.shapes.large)
+            .background(cardColor())
+            .clickable(onClick = onLaunch)
+            .reorderItem(key = reorderKey, state = reorderState)
     ) {
         Column(
             modifier = Modifier.padding(
@@ -204,6 +260,7 @@ private fun InstanceModule(
                         text = instance.instance.getVersionName(),
                         style = MaterialTheme.typography.titleMedium,
                         fontSize = MaterialTheme.typography.titleMedium.fontSize * scale,
+                        color = onCardColor(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -245,6 +302,10 @@ private fun InstanceModule(
                             title = world.name,
                             subtitle = world.save.levelMCVersion,
                             scale = scale,
+                            reorderModifier = Modifier.reorderItem(
+                                key = world.orderKey(),
+                                state = worldReorder
+                            ),
                             onClick = { onPlayWorld(world.instance, world.name) }
                         )
                     }
@@ -259,6 +320,10 @@ private fun InstanceModule(
                             title = server.server.name.ifBlank { server.server.originIp },
                             subtitle = server.server.originIp,
                             scale = scale,
+                            reorderModifier = Modifier.reorderItem(
+                                key = server.orderKey(),
+                                state = serverReorder
+                            ),
                             onClick = { onJoinServer(server.instance, server.server.originIp) }
                         )
                     }
@@ -285,7 +350,8 @@ private fun HomeGroup(
         Text(
             text = stringResource(titleRes),
             style = MaterialTheme.typography.labelLarge,
-            fontSize = MaterialTheme.typography.labelLarge.fontSize * scale
+            fontSize = MaterialTheme.typography.labelLarge.fontSize * scale,
+            color = onCardColor()
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -299,16 +365,21 @@ private fun HomeGroup(
 
 /**
  * 世界 / 服务器条目
+ *
+ * 长按可以拖动排序（关键字见 [reorderModifier]）。
  */
 @Composable
 private fun HomeEntryChip(
     title: String,
     subtitle: String?,
     scale: Float,
+    reorderModifier: Modifier,
     onClick: () -> Unit
 ) {
     FilledTonalButton(
-        modifier = Modifier.widthIn(min = (120 * scale).dp, max = (240 * scale).dp),
+        modifier = Modifier
+            .widthIn(min = (120 * scale).dp, max = (240 * scale).dp)
+            .then(reorderModifier),
         onClick = onClick
     ) {
         Column(

@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.4)
+[![Release](https://img.shields.io/badge/Release-26.2.5-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.5)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -27,6 +27,14 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.2.5 主要內容
+
+- **修復** 卡片式首頁卡片外圈的「邊框」：卡片原本疊了多層
+  （圓角填充 + 縮放圖層 + 陰影），導致內邊距一圈比內容區暗；
+  現在卡片只保留**一層**背景，並移除陰影
+- **新增** 卡片式首頁支援**長按拖動排序**：版本卡片之間、
+  以及卡片內的世界 / 伺服器都可以拖動調整順序，且順序會被記住
 
 ## ✨ 26.2.4 主要內容
 

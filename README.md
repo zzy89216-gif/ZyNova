@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.4)
+[![Release](https://img.shields.io/badge/Release-26.2.5-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.5)
 [![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -23,7 +23,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.2.4**。这一阶段的核心目标是：
+当前版本 **26.2.5**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -306,7 +306,13 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.4**
+**ZyNova 26.2.5**
+
+26.2.5 处理卡片式主页的边框显示问题，并加入长按拖动排序：
+
+- 彻底移除卡片式主页卡片的边框（卡片只保留一层背景，去掉阴影与缩放图层）
+- 卡片式主页支持**长按拖动排序**：版本卡片之间、卡片内的世界 / 服务器都可以拖动调整顺序，
+  顺序会自动记住
 
 26.2.4 处理两个新反馈：一个卡片式主页的 Bug 与一个卡片大小的功能请求：
 
@@ -557,7 +563,12 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.4（当前版本）
+### 26.2.5（当前版本）
+
+- [x] 彻底移除卡片式主页的卡片边框
+- [x] 版本卡片、世界、服务器支持长按拖动排序（顺序自动记住）
+
+### 26.2.4
 
 - [x] 修复卡片式主页的卡片不透明度不跟随「背景元素不透明度」设置
 - [x] 卡片式主页新增「卡片大小」设置（70% ~ 140%，默认 100%）
