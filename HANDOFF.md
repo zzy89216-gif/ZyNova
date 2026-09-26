@@ -169,6 +169,22 @@
 3. **自定义主页数据接口**：`HomeDataProvider` 已可作为统一数据入口，可继续开放给自定义主页。
 4. **键位优化、渲染优化**：用户提过，未深入做。
 5. **继续收敛 ZL2 遗留逻辑**：资源系统已统一，其他模块仍可能残留上游耦合。
+6. **配置 `CURSEFORGE_API_KEY`（已知遗留，26.2.3 起已有兜底，维护者决定暂不处理）**：
+   - 仓库的 Actions Secrets 里**没有配置** `CURSEFORGE_API_KEY`，
+     所以打包出来的 APK 调 CurseForge 官方接口**必然返回 403**；
+     26.2.3 之前，「所有平台」聚合搜索里的 CurseForge 侧实际上一直是**空的**
+     （当时没人注意到，因为 Mod/整合包/资源包/光影在 Modrinth 上也有，
+     唯独「存档」只有 CurseForge 提供，于是固定显示空列表）
+   - **26.2.3 的兜底**：没有 API Key 时**始终保留 MCIM 镜像源**
+     （`mod.mcimirror.top`，不需要 Key），CurseForge 侧恢复可用；
+     不需要等 Secret 配置好
+   - 如果以后想让官方接口也生效，到
+     `Settings → Secrets and variables → Actions` 添加同名 Secret 即可，
+     **不需要改代码**
+   - ⚠️ **密钥值只存在于 GitHub Secrets / 本地密钥文件**（`.curseforge_api.txt` 已被 `.gitignore` 忽略）。
+     **绝对不要写进本文件、CHANGELOG、README、Issue、Release 说明或任何提交**
+   - 另需知道：CurseForge API Key 会被**打进 APK**（上游设计如此，客户端必须自带），
+     但这**不是**可以在文档里公开它的理由
 
 ---
 
@@ -181,6 +197,11 @@
 
 ⚠️ **重要**：若在 `/sdcard`（fuse 分区）上执行 `git add` 或编译，会出现 SIGSEGV 崩溃。
 **所有 git 操作与编译请在 ext4 分区的工作副本中进行。**
+
+> 📌 **当前状态（2026-09-26 维护结束后）**：设备上**已不存在**本地工作副本
+> （`/root/work/ZyNova`、`/root/ZyNova`、`/sdcard/Download/dsha工作区/ZyNova` 均已清理），
+> 这是刻意的：本地副本只是临时工作区，权威源码只有 GitHub。
+> 继续开发时重新 `git clone` 到 ext4 分区即可，收尾时再删掉。
 
 ---
 
@@ -294,16 +315,22 @@
 
 ## 五、旧配置兼容（重要）
 
-改动涉及用户配置时，必须保证**旧用户升级后仍能正常启动**。26.1.0 的处理方式：
+改动涉及用户配置时，必须保证**旧用户升级后仍能正常启动**。目前累计的处理方式：
 
 | 旧配置 | 处理方式 |
 |---|---|
 | 数据库中已有的微软账号 | **保留** `AccountType.MICROSOFT` 与 `microsoftLogin`，仅移除「添加账号」入口 |
-| `liquidGlass`（布尔开关） | 保留定义，并在 `loadAllSettings` 中一次性迁移为 `glassLevel = Standard` |
+| `liquidGlass`（布尔开关） | 保留定义，并在 `loadAllSettings` 中一次性迁移为 `glassLevel = On` |
+| `glassLevel` 旧档位名（`Standard` / `Enhanced` / `Extreme`） | 26.2.2 起枚举只剩 `Off` / `On`；`loadAllSettings` 里的 `migrateLegacyGlassLevel()` **直接读原始字符串**并迁移为 `On`（**不能**先经过 `AllSettings.glassLevel` 读取，那样只会拿到默认值，用户原本的选择会丢失） |
 | `lastIgnoredVersion`（整数） | 保留定义不再写入，新逻辑使用 `lastIgnoredVersionName`（字符串），避免存储类型冲突 |
 | `homePageType` | 新增 `Cards` 枚举值，旧值 `Blank / FromLocal / FromURL` 语义不变 |
+| `searchModPlatform` 等搜索平台 | 26.2.1 起新增 `SearchPlatform.ALL`，枚举名与旧 `Platform` 保持一致，旧值可直接反序列化 |
 
 > **原则**：删除功能时可以不再写入旧配置，但要保留其定义，避免 MMKV 读取类型不匹配导致启动异常。
+>
+> **迁移枚举值时**：一定要**直接读底层存储的原始字符串**再做映射
+> （`launcherMMKV().getString(key, null)`），不要用已经改过的枚举去读——
+> 旧名字在新枚举里不存在，读取会静默回退成默认值，用户会以为自己的设置被重置了。
 
 ---
 
@@ -320,7 +347,7 @@
 - 静态检查（import 解析、字符串引用、残留引用、隐私扫描等）
 - `git add` + `git commit` + `git push`
 
-### 本地 git 推送命令（低内存配置，防止崩溃）
+### 本地 git 推送命令（低内存配置 + 不落盘 Token）
 
 ```bash
 cd <ext4 工作副本>
@@ -328,10 +355,19 @@ git config pack.windowMemory 128m
 git config pack.deltaCacheSize 64m
 git config pack.threads 1
 git config core.bigFileThreshold 1m
-git push origin main
+
+# 用一次性凭据助手推送：Token 只存在于当前这一条命令的环境变量里，
+# 既不会进 .git/config，也不会出现在 remote URL 中
+export GH_TOKEN="<TOKEN>"
+git -c credential.helper='!f(){ echo username=<用户名>; echo password="$GH_TOKEN"; };f' push origin main
+unset GH_TOKEN
 ```
 
-> 推送凭据请通过环境变量或凭据助手传入，**不要把 Token 写进任何文件或提交**。
+> - **推荐上面的方式**：它不会把 Token 写进 `.git/config`，收尾无需额外清理。
+> - 另一种常见做法是把 Token 拼进 remote URL（`https://<user>:<token>@github.com/...`），
+>   虽然**只会留在本地 `.git/config`、不会被提交**，但收尾时必须手动清掉：
+>   `git remote set-url origin https://github.com/zzy89216-gif/ZyNova.git`
+> - 无论用哪种方式，**Token 都不要写进任何文件或提交**。
 
 ---
 
@@ -347,6 +383,22 @@ git push origin main
 
 - 编译命令：`./gradlew ZalithLauncher:assembleRelease -Darch=<架构>`
 - 产物：Release APK（按 `-Darch` 决定架构）+ 对应 `mapping.<架构>.zip`
+
+### CI 需要的 Secrets
+
+都在 `Settings → Secrets and variables → Actions` 配置，workflow 里通过 `${{ secrets.XXX }}` 读取：
+
+| Secret | 缺失后的影响 |
+|---|---|
+| `KEY_PASSWORD` / `STORE_PASSWORD` | 签名口令，缺失会回退到 `gradle.properties` 里的上游公开默认值 |
+| `OAUTH_CLIENT_ID` | 微软登录相关（本项目已移除正版登录入口，基本不影响） |
+| `CURSEFORGE_API_KEY` | **CurseForge 官方接口固定 403**，见第二节「后续待办 6」；26.2.3 起由 MCIM 镜像兜底 |
+
+> ⚠️ 三个注意点：
+> 1. **未配置的 Secret 会以空字符串注入环境变量**（不是 null），
+>    构建脚本 `getKeyFromLocal` 必须把空字符串当作「未配置」处理，否则本地密钥文件不会生效；
+> 2. **密钥值绝不能写进仓库里的任何文件**（包括本文档）；
+> 3. 缺失 Secret **不会**让编译失败，只会让对应功能不可用 —— 排查功能问题时先确认这一点。
 
 ### 查看编译结果（需要 Token）
 
@@ -379,6 +431,13 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - `ZalithLauncher/gradle.properties` 里的 `default_store_password` / `default_key_password`
      是**上游公开**的默认签名口令（官方 debug 密钥本来就公开），属于刻意保留的项目资产，不要删；
      CI 会用 `KEY_PASSWORD` / `STORE_PASSWORD` Secrets 覆盖它们
+   - **文档同样不能写密钥**：HANDOFF（本文）、CHANGELOG、README、Issue、Release 说明里
+     只能描述「哪个 Secret 没配置」「应该去哪里配置」，
+     **不能出现任何真实的 Token / API Key / 口令值** —— 即使是已经过期的也不行，
+     因为对方很可能忘了吊销
+   - **不要把 Token 直接发在对话 / Issue / 聊天记录里**：一旦发出就应当视为已经泄露。
+     正确的做法是——只在本地用环境变量或凭据助手传一次，用完把本地副本删掉；
+     如果确实发出去过，处理完请到 GitHub **吊销并重新生成**，不要继续沿用
    - 推送前做一次隐私扫描（见第十节）
 3. **不要加阿里云镜像到 `settings.gradle.kts`**（会导致 GitHub 海外服务器编译失败，必须使用官方源）。
 4. **不要改 namespace**（`com.movtery.zalithlauncher`），只改 `applicationId`（`com.zynova.launcher`）。
@@ -477,7 +536,7 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 1. 读本文件 + `README.md` + `CHANGELOG.md` + `LICENSE`。
 2. 确认 GitHub 仓库状态（看 Actions 最新编译结果）。
 3. 在 ext4 工作副本中改代码 → 静态检查 → commit → push。
-4. 等 GitHub Actions 编译 → 下载 APK → 创建 Release。
+4. 等 `build_apk.yml`（arm64）验证编译通过 → 按第十二节发布 Release。
 5. 开发新功能前，先读第八节「红线」和第二节「后续待办」。
 
 ### 推荐的静态检查（无本地编译时）
@@ -530,36 +589,67 @@ OAuth client id / CurseForge API key / 个人联系方式；
 
 ## 十二、发布 Release 的完整步骤
 
-APK 编译由 GitHub Actions 自动完成，发布 Release 使用 GitHub API。
-（`<TOKEN>` 需用户提供、`<VERSION>` 替换为实际版本号，**都不要写入任何文件**）
+APK 编译与产物上传全部由 GitHub Actions 自动完成，**不需要手工下载 artifact 再上传**。
+
+⚠️ **`<TOKEN>` 由用户临时提供、`<VERSION>` 替换为实际版本号，二者都不要写入任何文件**。
+Token 只放在环境变量或临时凭据助手里，用完即弃（见第八节红线 2）。
+
+### 推荐流程（26.2.2 / 26.2.3 都是这么发的）
 
 ```bash
 TOKEN="<TOKEN>"
 REPO="zzy89216-gif/ZyNova"
 
-# 1. 等编译完成后，找最新成功的 run id
-curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://api.github.com/repos/$REPO/actions/runs?status=success&per_page=5" \
-  | python3 -c "import sys,json;d=json.load(sys.stdin);[print(r['id'],r['name']) for r in d['workflow_runs']]"
+# 1. 改代码 + 版本号（ZalithLauncher/gradle.properties 的 launcher_version_name / _code）
+#    并同步文档（CHANGELOG / HANDOFF / README），然后 push 到 main
 
-# 2. 下载 APK artifact（zip 格式，需解压得到 .apk）
-RUN_ID="<上面的 run id>"
+# 2. 等 push 触发的 arm64 验证编译跑完（这是最快的编译闸门，约 10~25 分钟）
+curl -s -H "Authorization: Bearer $TOKEN" \
+  "https://api.github.com/repos/$REPO/actions/runs?per_page=5" \
+  | python3 -c "import sys,json;d=json.load(sys.stdin);[print(r['id'],r['name'],r['status'],r['conclusion'],r['head_sha'][:8]) for r in d['workflow_runs']]"
+
+# 3. 用 Python 生成发布说明的 JSON（正文里有换行/引号/中文，必须走文件，不要塞进 -d）
+python3 - <<'PY'
+import json
+body = open("release_notes.md", encoding="utf-8").read()   # 发布说明写在仓库外的临时文件
+json.dump({"tag_name":"v<VERSION>","name":"ZyNova <VERSION>","body":body,
+           "draft":False,"prerelease":False,"target_commitish":"main"},
+          open("rel_payload.json","w",encoding="utf-8"))
+PY
+
+# 4. 创建 Release（published，非 draft）——这一步就会触发 release_ci.yml
+curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  --data @rel_payload.json \
+  "https://api.github.com/repos/$REPO/releases" \
+  | python3 -c "import sys,json;d=json.load(sys.stdin);print(d['id'],d['html_url'])"
+
+# 5. 等 release_ci：会跑 5 个架构 + 一个 Upload-to-Release，约 15~30 分钟
+#    完成后确认 Release 资产是 10 个（5 个 APK + 5 个 mapping.<架构>.zip）
+curl -s -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO/releases/tags/v<VERSION>" \
+  | python3 -c "import sys,json;d=json.load(sys.stdin);a=d['assets'];print(len(a));[print(' -',x['name']) for x in sorted(a,key=lambda y:y['name'])]"
+
+# 6. 收尾：删除本地工作副本（`.git/config` 里若有过带 Token 的 URL 也会一并消失）
+```
+
+> 之所以能自动上传：`release_ci.yml` 由 `release: published` 触发 →
+> 调用 `build.yml` 跑 5 个架构 → `Upload-to-Release` 用 `softprops/action-gh-release`
+> 把 `./apks/*.apk` 与 `./mappings/*.zip` 一并附到该 Release 上。
+
+### 备用流程（只在自动上传失败时用）
+
+```bash
+# 找最近一次成功的多架构 run → 下载 artifact（zip）→ 解压得到 .apk
+RUN_ID="<run id>"
 curl -s -H "Authorization: Bearer $TOKEN" \
   "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts" \
   | python3 -c "import sys,json;d=json.load(sys.stdin);[print(a['id'],a['name']) for a in d['artifacts']]"
-ARTIFACT_ID="<上面的 artifact id>"
+ARTIFACT_ID="<artifact id>"
 curl -sL -H "Authorization: Bearer $TOKEN" \
   "https://api.github.com/repos/$REPO/actions/artifacts/$ARTIFACT_ID/zip" -o apk.zip
 unzip apk.zip -d apk_dir/
 
-# 3. 创建 Release（更新日志要写详细）
-curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  "https://api.github.com/repos/$REPO/releases" \
-  -d '{"tag_name":"v<VERSION>","name":"ZyNova <VERSION>","body":"<发布说明>","draft":false,"prerelease":false}' \
-  | python3 -c "import sys,json;d=json.load(sys.stdin);print(d['id'],d['upload_url'])"
-
-# 4. 上传产物（去掉 upload_url 里的 {?name,label}，加 ?name=xxx）
-RELEASE_ID="<上面的 release id>"
+# 手工上传到已有 Release（去掉 upload_url 里的 {?name,label}，加 ?name=xxx）
+RELEASE_ID="<release id>"
 curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/vnd.android.package-archive" \
   --data-binary @apk_dir/ZyNova-<VERSION>-arm64-v8a.apk \
