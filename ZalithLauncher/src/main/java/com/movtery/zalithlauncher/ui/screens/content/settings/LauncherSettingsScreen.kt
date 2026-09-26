@@ -519,6 +519,19 @@ fun LauncherSettingsScreen(
                                 }
                             }
                         }
+
+                        //卡片式主页专属：卡片大小
+                        AnimatedVisibility(visible = typeUnit.state == HomePageType.Cards) {
+                            IntSliderSettingsCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                position = CardPosition.Single,
+                                unit = AllSettings.homeCardSize,
+                                title = stringResource(R.string.settings_launcher_home_card_size_title),
+                                summary = stringResource(R.string.settings_launcher_home_card_size_summary),
+                                valueRange = AllSettings.homeCardSize.floatRange,
+                                suffix = "%"
+                            )
+                        }
                     }
                 }
             }

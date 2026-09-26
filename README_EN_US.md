@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.3)
+[![Release](https://img.shields.io/badge/Release-26.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.4)
 
 [简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
@@ -27,6 +27,16 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 26.2.4
+
+Two new reports were handled in this release:
+
+- **Fixed** the card home page ignoring the *Background Element Opacity* setting:
+  the card colour was hard-coded with `cardColor(false)`, which opts out of being influenced
+  by the custom background, so the cards stayed fully opaque while every other page followed the setting
+- **New**: an adjustable **Card Size** for the card home page
+  (Settings → Launcher → Home Page → Card Size, 70%–140%, default 100% which keeps the original look)
 
 ## ✨ Highlights of 26.2.3
 

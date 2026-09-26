@@ -439,6 +439,14 @@ object AllSettings : SettingsRegistry() {
     val homePageURL = stringSetting("homePageURL", "")
 
     /**
+     * 卡片式主页的卡片大小（百分比）
+     *
+     * 100% 表示与既有外观完全一致；
+     * 调小可以让更多实例卡片同时显示在一屏内，调大则更易点击。
+     */
+    val homeCardSize = intSetting("homeCardSize", 100, 70..140)
+
+    /**
      * 启动器上次检查更新时，用户选择忽略的版本号（整数版本号）
      *
      * 旧的 ZL2 更新链路遗留配置项。

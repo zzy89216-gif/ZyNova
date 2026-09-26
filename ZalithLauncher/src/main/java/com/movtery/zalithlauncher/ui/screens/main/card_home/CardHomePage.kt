@@ -57,6 +57,7 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.home.HomeDataProvider
 import com.movtery.zalithlauncher.game.home.HomeInstance
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 
@@ -80,6 +81,10 @@ fun cardHomePage(
     var instances by remember { mutableStateOf<List<HomeInstance>>(emptyList()) }
     var loaded by remember { mutableStateOf(false) }
 
+    //卡片大小（百分比）：100% 与既有外观完全一致，
+    //调小可以让更多实例卡片同屏显示，调大则更易点击
+    val cardScale = AllSettings.homeCardSize.state.toFloat() / 100f
+
     LaunchedEffect(Unit) {
         instances = HomeDataProvider.instances()
         loaded = true
@@ -101,7 +106,7 @@ fun cardHomePage(
         modifier = modifier
             .fillMaxWidth()
             .padding(all = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp * cardScale)
     ) {
         if (instances.isEmpty()) {
             Text(
@@ -113,6 +118,7 @@ fun cardHomePage(
             instances.forEach { instance ->
                 InstanceModule(
                     instance = instance,
+                    scale = cardScale,
                     onLaunch = { onLaunchVersion(instance.instance) },
                     onPlayWorld = onPlayWorld,
                     onJoinServer = onJoinServer
@@ -132,6 +138,8 @@ fun cardHomePage(
 @Composable
 private fun InstanceModule(
     instance: HomeInstance,
+    /** 卡片大小比例（1f = 100%） */
+    scale: Float,
     onLaunch: () -> Unit,
     onPlayWorld: (Version, String) -> Unit,
     onJoinServer: (Version, String) -> Unit,
@@ -166,20 +174,26 @@ private fun InstanceModule(
                 scaleY = snapScale
             },
         shape = MaterialTheme.shapes.large,
-        color = cardColor(false),
+        //⚠️ 必须使用受背景影响的卡片颜色（默认 true）：
+        //之前写死 `cardColor(false)`，导致设置了自定义背景后，
+        //卡片不透明度完全不跟随「背景元素不透明度」设置（issue #4）
+        color = cardColor(),
         contentColor = onCardColor(),
         shadowElevation = shadowElevation,
         interactionSource = interactionSource,
         onClick = onLaunch
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(
+                horizontal = (14 * scale).dp,
+                vertical = (12 * scale).dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(10.dp * scale)
         ) {
             //版本标题行
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp * scale),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
@@ -189,6 +203,7 @@ private fun InstanceModule(
                     Text(
                         text = instance.instance.getVersionName(),
                         style = MaterialTheme.typography.titleMedium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize * scale,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -201,6 +216,7 @@ private fun InstanceModule(
                             }
                         },
                         style = MaterialTheme.typography.labelSmall,
+                        fontSize = MaterialTheme.typography.labelSmall.fontSize * scale,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -216,17 +232,19 @@ private fun InstanceModule(
                 Text(
                     text = stringResource(R.string.home_instance_empty),
                     style = MaterialTheme.typography.bodySmall,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize * scale,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             //该实例的本地世界
             if (instance.worlds.isNotEmpty()) {
-                HomeGroup(titleRes = R.string.home_card_worlds_title) {
+                HomeGroup(titleRes = R.string.home_card_worlds_title, scale = scale) {
                     instance.worlds.forEach { world ->
                         HomeEntryChip(
                             title = world.name,
                             subtitle = world.save.levelMCVersion,
+                            scale = scale,
                             onClick = { onPlayWorld(world.instance, world.name) }
                         )
                     }
@@ -235,11 +253,12 @@ private fun InstanceModule(
 
             //该实例的服务器
             if (instance.servers.isNotEmpty()) {
-                HomeGroup(titleRes = R.string.home_card_servers_title) {
+                HomeGroup(titleRes = R.string.home_card_servers_title, scale = scale) {
                     instance.servers.forEach { server ->
                         HomeEntryChip(
                             title = server.server.name.ifBlank { server.server.originIp },
                             subtitle = server.server.originIp,
+                            scale = scale,
                             onClick = { onJoinServer(server.instance, server.server.originIp) }
                         )
                     }
@@ -256,20 +275,22 @@ private fun InstanceModule(
 @Composable
 private fun HomeGroup(
     titleRes: Int,
+    scale: Float,
     content: @Composable () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp * scale)
     ) {
         Text(
             text = stringResource(titleRes),
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
+            fontSize = MaterialTheme.typography.labelLarge.fontSize * scale
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp * scale),
+            verticalArrangement = Arrangement.spacedBy(8.dp * scale)
         ) {
             content()
         }
@@ -283,10 +304,11 @@ private fun HomeGroup(
 private fun HomeEntryChip(
     title: String,
     subtitle: String?,
+    scale: Float,
     onClick: () -> Unit
 ) {
     FilledTonalButton(
-        modifier = Modifier.widthIn(min = 120.dp, max = 240.dp),
+        modifier = Modifier.widthIn(min = (120 * scale).dp, max = (240 * scale).dp),
         onClick = onClick
     ) {
         Column(
@@ -296,6 +318,7 @@ private fun HomeEntryChip(
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelLarge,
+                fontSize = MaterialTheme.typography.labelLarge.fontSize * scale,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -303,6 +326,7 @@ private fun HomeEntryChip(
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.labelSmall,
+                    fontSize = MaterialTheme.typography.labelSmall.fontSize * scale,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
