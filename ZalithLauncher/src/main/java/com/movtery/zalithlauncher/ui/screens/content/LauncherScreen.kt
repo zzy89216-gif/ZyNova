@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -76,12 +75,9 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
-import com.movtery.zalithlauncher.game.home.HomeLayoutStore
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.ScalingActionButton
 import com.movtery.zalithlauncher.ui.components.defaultRichTextStyle
-import com.movtery.zalithlauncher.ui.components.reorderItem
-import com.movtery.zalithlauncher.ui.components.rememberReorderState
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountAvatar
@@ -94,6 +90,22 @@ import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.viewmodel.HomePageState
 import com.movtery.zalithlauncher.viewmodel.LocalHomePageViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.constrainAs
+import androidx.constraintlayout.compose.createRefs
+import com.movtery.zalithlauncher.setting.enums.ActionMenuSide
+import com.movtery.zalithlauncher.ui.screens.content.home.LocalActionMenuDrag
+import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragAnchor
+import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragExclusion
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.ui.screens.content.home.rememberActionMenuDragState
 
 @Composable
 fun LauncherScreen(
@@ -109,25 +121,37 @@ fun LauncherScreen(
         screenKey = NormalNavKey.LauncherMain,
         currentKey = backStackViewModel.mainScreen.currentKey
     ) { isVisible ->
-        Row(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CompositionLocalProvider(
-                LocalUriHandler provides object : UriHandler {
-                    override fun openUri(uri: String) {
-                        onOpenLink(uri)
-                    }
+        val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+        val dockedSide = AllSettings.launcherActionMenuSide.state
+        val dragState = rememberActionMenuDragState(
+            onCommit = { side -> AllSettings.launcherActionMenuSide.save(side) }
+        )
+        dragState.dockedSide = dockedSide
+        dragState.isRtl = isRtl
+
+        LaunchedEffect(isVisible) {
+            //屏幕切走时打断进行中的拖拽
+            if (!isVisible) dragState.onDragCancel()
+        }
+
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { coordinates ->
+                    dragState.parentOrigin = coordinates.positionInRoot()
                 }
-            ) {
-                ContentMenu(
-                    modifier = Modifier.weight(7f),
-                    isVisible = isVisible,
-                    onHomePageEvent = onHomePageEvent,
-                    onLaunchGame = onLaunchGame,
-                    onPlayWorld = onPlayWorld,
-                    onJoinServer = onJoinServer
-                )
-            }
+        ) {
+            val parentWidthPx = constraints.maxWidth.toFloat()
+            dragState.parentWidthPx = parentWidthPx
+            dragState.outerPaddingPx = with(LocalDensity.current) { ActionMenuOuterPadding.toPx() }
+            dragState.menuSpanPx = parentWidthPx * (ActionMenuWeight / (ActionMenuWeight + ContentWeight))
+
+            //拖拽期间以预览停泊侧为准
+            val effectiveSide = dragState.previewSide ?: dockedSide
+
+            //卡片尺寸与停泊槽一致
+            val cardWidth = maxWidth * (ActionMenuWeight / (ActionMenuWeight + ContentWeight)) - ActionMenuOuterPadding
+            val cardHeight = maxHeight - ActionMenuOuterPadding * 2
 
             val toAccountManageScreen: () -> Unit = {
                 backStackViewModel.mainScreen.navigateTo(
@@ -146,17 +170,67 @@ fun LauncherScreen(
                 }
             }
 
-            RightMenu(
-                isVisible = isVisible,
-                modifier = Modifier
-                    .weight(3f)
-                    .fillMaxHeight()
-                    .padding(top = 12.dp, end = 12.dp, bottom = 12.dp),
-                onLaunchGame = onLaunchGame,
-                toAccountManageScreen = toAccountManageScreen,
-                toVersionManageScreen = toVersionManageScreen,
-                toVersionSettingsScreen = toVersionSettingsScreen
-            )
+            //内容区域：默认主页 / 卡片主页 / 自定义主页 都在 ContentMenu 内部，此处不做任何裁剪
+            Row(modifier = Modifier.fillMaxSize()) {
+                if (dockedSide == ActionMenuSide.START) {
+                    Spacer(modifier = Modifier.weight(ActionMenuWeight))
+                }
+
+                CompositionLocalProvider(
+                    LocalUriHandler provides object : UriHandler {
+                        override fun openUri(uri: String) {
+                            onOpenLink(uri)
+                        }
+                    }
+                ) {
+                    ContentMenu(
+                        modifier = Modifier
+                            .weight(ContentWeight)
+                            .offset { IntOffset(x = dragState.previewShift.value.roundToInt(), y = 0) },
+                        isVisible = isVisible,
+                        onHomePageEvent = onHomePageEvent,
+                        onLaunchGame = onLaunchGame,
+                        onPlayWorld = onPlayWorld,
+                        onJoinServer = onJoinServer
+                    )
+                }
+
+                if (dockedSide == ActionMenuSide.END) {
+                    Spacer(modifier = Modifier.weight(ActionMenuWeight))
+                }
+            }
+
+            //操作菜单：长按整块可以拖到屏幕另一侧
+            CompositionLocalProvider(LocalActionMenuDrag provides dragState) {
+                Box(
+                    modifier = Modifier
+                        .offset {
+                            val translation = if (dragState.floating) {
+                                dragState.cardPosition
+                            } else {
+                                dragState.landingOf(effectiveSide) + dragState.settleOffset.value
+                            }
+                            val x = if (isRtl) {
+                                parentWidthPx - cardWidth.toPx() - translation.x
+                            } else {
+                                translation.x
+                            }
+                            IntOffset(x.roundToInt(), translation.y.roundToInt())
+                        }
+                        .size(cardWidth, cardHeight)
+                ) {
+                    RightMenu(
+                        isVisible = isVisible,
+                        modifier = Modifier.fillMaxSize(),
+                        swapTargetValue = if (dockedSide == ActionMenuSide.END) 40.dp else (-40).dp,
+                        pickUpScale = { dragState.scale },
+                        onLaunchGame = onLaunchGame,
+                        toAccountManageScreen = toAccountManageScreen,
+                        toVersionManageScreen = toVersionManageScreen,
+                        toVersionSettingsScreen = toVersionSettingsScreen
+                    )
+                }
+            }
         }
     }
 }
@@ -261,11 +335,10 @@ private fun ContentMenu(
     }
 }
 
-/** 右侧菜单里可拖动排序的三块 */
-private const val RIGHT_MENU_ACCOUNT = "account"
-private const val RIGHT_MENU_VERSION = "version"
-private const val RIGHT_MENU_LAUNCH = "launch"
-private val RIGHT_MENU_BLOCKS = listOf(RIGHT_MENU_ACCOUNT, RIGHT_MENU_VERSION, RIGHT_MENU_LAUNCH)
+/** 主界面内容区与操作菜单的宽度权重（与上游 ZalithLauncher2 保持一致） */
+private const val ContentWeight = 7f
+private const val ActionMenuWeight = 3f
+private val ActionMenuOuterPadding = 12.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -285,146 +358,133 @@ private fun RightMenuContent(
     val version by VersionsManager.currentVersion.collectAsStateWithLifecycle()
     val isRefreshing by VersionsManager.isRefreshing.collectAsStateWithLifecycle()
 
-    //右侧菜单各块的顺序（长按拖动调整），顺序会被记住
-    var menuOrder by remember {
-        mutableStateOf(
-            HomeLayoutStore.sort(
-                items = RIGHT_MENU_BLOCKS,
-                order = HomeLayoutStore.load(HomeLayoutStore.KEY_RIGHT_MENU),
-                keyOf = { it }
-            )
-        )
-    }
-    val menuReorder = rememberReorderState { dragged, target ->
-        val from = menuOrder.indexOf(dragged as? String)
-        val to = menuOrder.indexOf(target as? String)
-        if (from >= 0 && to >= 0) {
-            menuOrder = HomeLayoutStore.move(menuOrder, from, to)
-            HomeLayoutStore.save(HomeLayoutStore.KEY_RIGHT_MENU, menuOrder)
-        }
-    }
-
-    var showList by remember { mutableStateOf(false) }
-    var versionManagerRow by remember { mutableStateOf<LayoutCoordinates?>(null) }
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+    ConstraintLayout(
+        modifier = modifier
     ) {
-        menuOrder.forEach { block ->
-            when (block) {
-                RIGHT_MENU_ACCOUNT -> AccountAvatar(
-                    modifier = Modifier.reorderItem(RIGHT_MENU_ACCOUNT, menuReorder),
-                    account = account,
-                    onClick = toAccountManageScreen
-                )
+        val (accountAvatar, versionManagerLayout, launchButton) = createRefs()
 
-                RIGHT_MENU_VERSION -> Box(
+        AccountAvatar(
+            modifier = Modifier
+                .constrainAs(accountAvatar) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(versionManagerLayout.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            account = account,
+            onClick = toAccountManageScreen
+        )
+
+        var showList by remember { mutableStateOf(false) }
+        var versionManagerRow by remember { mutableStateOf<LayoutCoordinates?>(null) }
+        Box(
+            modifier = Modifier.constrainAs(versionManagerLayout) {
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(launchButton.top)
+            },
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .reorderItem(RIGHT_MENU_VERSION, menuReorder)
+                        .weight(1f)
+                        .actionMenuDragExclusion()
+                        .onGloballyPositioned { coordinates ->
+                            versionManagerRow = coordinates
+                        }
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    VersionManagerLayout(
+                        isRefreshing = isRefreshing,
+                        version = version,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        swapToVersionManage = toVersionManageScreen,
+                        openListMenu = { showList = true },
+                    )
+                }
+                version?.takeIf { !isRefreshing && it.isValid() }?.let {
+                    IconButton(
+                        modifier = Modifier.padding(end = 8.dp),
+                        onClick = toVersionSettingsScreen
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .onGloballyPositioned { coordinates ->
-                                    versionManagerRow = coordinates
-                                }
-                        ) {
-                            VersionManagerLayout(
-                                isRefreshing = isRefreshing,
-                                version = version,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth(),
-                                swapToVersionManage = toVersionManageScreen,
-                                openListMenu = { showList = true },
-                            )
-                        }
-                        version?.takeIf { !isRefreshing && it.isValid() }?.let {
-                            IconButton(
-                                modifier = Modifier.padding(end = 8.dp),
-                                onClick = toVersionSettingsScreen
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_settings_filled),
-                                    contentDescription = stringResource(R.string.versions_manage_settings)
-                                )
-                            }
-                        }
-                    }
-
-                    val menuAnchor = versionManagerRow
-                    val menuAnchorBounds = menuAnchor?.boundsInParent()
-                    val menuAnchorX = menuAnchorBounds?.left ?: 0f
-                    val menuAnchorHeight = menuAnchorBounds?.height ?: 0f
-
-                    DropdownMenu(
-                        expanded = showList && menuAnchor != null,
-                        onDismissRequest = { showList = false },
-                        modifier = Modifier.width(260.dp),
-                        offset = DpOffset(
-                            x = with(LocalDensity.current) { menuAnchorX.toDp() },
-                            y = with(LocalDensity.current) { (-menuAnchorHeight).toDp() } - 8.dp
-                        ),
-                        shape = MaterialTheme.shapes.extraLarge
-                    ) {
-                        val versions by VersionsManager.versions.collectAsStateWithLifecycle()
-                        versions.forEach { version0 ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        CommonVersionInfoLayout(
-                                            modifier = Modifier.weight(1f),
-                                            version = version0,
-                                            iconSize = 28.dp
-                                        )
-                                        IconButton(
-                                            onClick = {
-                                                onLaunchGame(version0)
-                                                showList = false
-                                            }
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.ic_play_arrow_filled),
-                                                contentDescription = stringResource(R.string.main_launch_game),
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                },
-                                onClick = {
-                                    if (version == version0) return@DropdownMenuItem
-                                    VersionsManager.saveVersion(version0)
-                                    showList = false
-                                }
-                            )
-                        }
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings_filled),
+                            contentDescription = stringResource(R.string.versions_manage_settings)
+                        )
                     }
                 }
+            }
 
-                RIGHT_MENU_LAUNCH -> launchButton(
-                    Modifier
-                        .fillMaxWidth()
-                        .reorderItem(RIGHT_MENU_LAUNCH, menuReorder)
-                        .padding(PaddingValues(horizontal = 12.dp)),
-                    {
-                        onLaunchGame(null)
-                    },
-                    {
-                        MarqueeText(text = stringResource(R.string.main_launch_game))
-                    }
-                )
+            val menuAnchor = versionManagerRow
+            val menuAnchorBounds = menuAnchor?.boundsInParent()
+            val menuAnchorX = menuAnchorBounds?.left ?: 0f
+            val menuAnchorHeight = menuAnchorBounds?.height ?: 0f
+
+            DropdownMenu(
+                expanded = showList && menuAnchor != null,
+                onDismissRequest = { showList = false },
+                modifier = Modifier.width(260.dp),
+                offset = DpOffset(
+                    x = with(LocalDensity.current) { menuAnchorX.toDp() },
+                    y = with(LocalDensity.current) { (-menuAnchorHeight).toDp() } - 8.dp
+                ),
+                shape = MaterialTheme.shapes.extraLarge
+            ) {
+                val versions by VersionsManager.versions.collectAsStateWithLifecycle()
+                versions.forEach { version0 ->
+                    DropdownMenuItem(
+                        text = {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CommonVersionInfoLayout(
+                                    modifier = Modifier.weight(1f),
+                                    version = version0,
+                                    iconSize = 28.dp
+                                )
+                                IconButton(
+                                    onClick = {
+                                        onLaunchGame(version0)
+                                        showList = false
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_play_arrow_filled),
+                                        contentDescription = stringResource(R.string.main_launch_game),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        },
+                        onClick = {
+                            if (version == version0) return@DropdownMenuItem
+                            VersionsManager.saveVersion(version0)
+                            showList = false
+                        }
+                    )
+                }
             }
         }
+
+        launchButton(
+            Modifier
+                .fillMaxWidth()
+                .constrainAs(launchButton) {
+                    bottom.linkTo(parent.bottom, margin = 8.dp)
+                }
+                .padding(PaddingValues(horizontal = 12.dp)),
+            {
+                onLaunchGame(null)
+            },
+            {
+                MarqueeText(text = stringResource(R.string.main_launch_game))
+            }
+        )
     }
 }
 
@@ -432,19 +492,29 @@ private fun RightMenuContent(
 private fun RightMenu(
     isVisible: Boolean,
     onLaunchGame: (Version?) -> Unit,
+    swapTargetValue: Dp = 40.dp,
+    pickUpScale: () -> Float = { 1f },
     modifier: Modifier = Modifier,
     toAccountManageScreen: () -> Unit = {},
     toVersionManageScreen: () -> Unit = {},
     toVersionSettingsScreen: () -> Unit = {}
 ) {
     val xOffset by swapAnimateDpAsState(
-        targetValue = 40.dp,
+        targetValue = swapTargetValue,
         swapIn = isVisible,
         isHorizontal = true
     )
 
     BackgroundCard(
-        modifier = modifier.offset { IntOffset(x = xOffset.roundToPx(), y = 0) },
+        modifier = modifier
+            //长按整块操作菜单可以拖动换边（未提供 LocalActionMenuDrag 时该修饰符无副作用）
+            .actionMenuDragAnchor()
+            .graphicsLayer {
+                val scale = pickUpScale()
+                scaleX = scale
+                scaleY = scale
+            }
+            .offset { IntOffset(x = xOffset.roundToPx(), y = 0) },
         shape = MaterialTheme.shapes.extraLarge
     ) {
         RightMenuContent(

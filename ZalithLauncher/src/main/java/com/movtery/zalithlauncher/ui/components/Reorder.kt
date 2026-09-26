@@ -168,16 +168,28 @@ fun Modifier.reorderItem(
 
     LaunchedEffect(version, key) {
         val pending = state.takeShift(key)
-        if (pending != 0f) {
-            shift.snapTo(pending)
-            shift.animateTo(
-                targetValue = 0f,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioLowBouncy,
-                    stiffness = Spring.StiffnessMediumLow
-                )
-            )
+        if (pending == 0f) {
+            //没有新的位移就确保归零：
+            //动画被新的布局变化打断时，Animatable 会停在中间值上，
+            //不归零的话卡片会「卡」在错位的位置（内容被顶下去）
+            shift.snapTo(0f)
+            return@LaunchedEffect
         }
+        shift.snapTo(shift.value + pending)
+        shift.animateTo(
+            targetValue = 0f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessMediumLow
+            )
+        )
+        //收尾再归零一次，保证任何情况下都不会残留偏移
+        shift.snapTo(0f)
+    }
+
+    //拖动结束时同样归零
+    LaunchedEffect(state.draggingKey) {
+        if (state.draggingKey == null) shift.snapTo(0f)
     }
 
     val dragging = state.isDragging(key)
