@@ -1,6 +1,6 @@
 # Custom Homepage User Guide!
 
-Welcome to Zalith Launcher2's custom homepage! You can use **Markdown** syntax to write your homepage!   
+Welcome to ZyNova's custom homepage! You can use **Markdown** syntax to write your homepage!   
 In addition to standard Markdown, you can also use the following extension components to enrich your homepage.
 
 ### Extension Rules

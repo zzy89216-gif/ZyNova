@@ -123,6 +123,13 @@ The home screen is organized into **per-version modules**: each installed versio
 card that directly lists that version's own local worlds and saved servers.
 Tapping the module card itself launches that version.
 
+The card home screen also supports:
+
+- **Long-press drag to reorder**: version cards, the worlds / servers inside a card,
+  and the three blocks of the right menu can all be dragged into any order, and the order is remembered
+- **Card size**: Settings → Launcher → Home Page → Card Size (70%–140%, default 100%)
+- A single-layer card background, so no extra frame or shadow is drawn
+
 Data is loaded on demand — the launcher does not scan everything at startup.
 The default / card / custom home screen can be selected in settings.
 
