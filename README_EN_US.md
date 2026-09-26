@@ -34,7 +34,8 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
   several layers (rounded fill + scaled graphics layer + shadow), which made the padding ring
   look darker than the content area — the card now has a single background layer, no shadow
 - **New**: long-press **drag to reorder** on the card home page —
-  version cards, and the worlds / servers inside a card, can be dragged into any order,
+  version cards, the worlds / servers inside a card, and the three blocks of the right menu
+  (account avatar / version row / launch button) can be dragged into any order,
   and the order is remembered
 
 ## ✨ Highlights of 26.2.4

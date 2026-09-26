@@ -35,7 +35,8 @@
    - 修复：卡片只有**一层**背景 `clip(shape).background(cardColor())`，
      去掉阴影与缩放图层，点击反馈用默认按压动画
 2. **卡片式主页支持长按拖动排序**
-   - 版本卡片之间、以及卡片内的世界 / 服务器各自可拖动排序，顺序自动记住
+   - 版本卡片之间、卡片内的世界 / 服务器、以及**右侧菜单的三块**
+     （账号头像 / 版本行+设置按键 / 启动按钮）都可以长按拖动排序，顺序自动记住
    - 新增基础设施：`ui/components/Reorder.kt`（`ReorderState` / `rememberReorderState` / `Modifier.reorderItem`）
      与 `game/home/HomeLayoutStore.kt`（MMKV 顺序持久化）
    - 实现要点：用**项的屏幕范围 + 指针位置**判断落点，因此纵向列表、横向列表、
@@ -345,6 +346,7 @@
 | `ui/components/Reorder.kt` | **新增**：拖动排序基础设施（`ReorderState` / `rememberReorderState` / `Modifier.reorderItem`），基于「项屏幕范围 + 指针位置」，不依赖 LazyColumn |
 | `game/home/HomeLayoutStore.kt` | **新增**：拖动后的顺序持久化（MMKV，按标识符保存） |
 | `ui/screens/main/card_home/CardHomePage.kt` | 卡片重建为单层背景（去阴影 / 去缩放图层，点击用默认按压动画）；版本卡片与卡片内世界 / 服务器接入拖动排序 |
+| `ui/screens/content/LauncherScreen.kt` | 右侧菜单由 `ConstraintLayout` 改为可拖动的 `Column`（`Arrangement.SpaceBetween` 保持原观感），三块各自接入拖动排序；版本下拉菜单的锚点逻辑保持不变 |
 | `ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
 
 ### 已删除文件
