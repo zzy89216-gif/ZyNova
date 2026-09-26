@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.2)
+[![Release](https://img.shields.io/badge/Release-26.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.3)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -27,6 +27,17 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.2.3 主要內容
+
+本版本集中修復**模組以外**的資源下載鏈路（整合包 / 資源包 / 存檔 / 光影包）：
+
+- **修復** 資源包 / 光影包 / 存檔搜尋結果幾乎為空
+  （載入器過濾條件被誤用在並不依載入器分類的資源類型上）
+- **修復** 聚合搜尋總頁數變成 0（介面顯示「1 / 0」且完全無法翻頁）
+- **修復**「所有平台」會去請求並不支援該資源類型的來源（存檔在 Modrinth 上並不存在）
+- **修復** 未設定 CurseForge API Key 時 CurseForge 側完全搜不到資源（此時保留 MCIM 鏡像源）
+- **修復** 存檔「類別」過濾器永久不可用、存檔解壓失敗後殘留 `.zip`
 
 ## ✨ 26.2.2 主要內容
 

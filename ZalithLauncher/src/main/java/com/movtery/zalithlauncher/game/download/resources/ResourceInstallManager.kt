@@ -367,6 +367,9 @@ object ResourceInstallManager {
                 }.onFailure { e ->
                     Logger.warning(TAG, "Failed to unpack save file ${targetFile.name}: ${e.message}")
                 }
+                //⚠️ 解压失败时 unpackSaveZip 不会删除压缩包，
+                //必须在这里兜底清掉，否则存档目录里会留下无法识别的 .zip
+                FileUtils.deleteQuietly(targetFile)
             }
             installed++
         }

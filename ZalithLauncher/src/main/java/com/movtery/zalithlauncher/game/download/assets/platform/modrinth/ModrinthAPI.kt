@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.game.download.assets.platform.modrinth
 
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
+import com.movtery.zalithlauncher.game.download.assets.platform.UnsupportedClassesException
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthFacet
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthModLoaderCategory
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.VersionFacet
@@ -41,6 +42,11 @@ fun PlatformSearchFilter.toModrinthRequest(
     query: String,
     platformClasses: PlatformClasses
 ): ModrinthSearchRequest {
+    //存档（SAVES）在 Modrinth 上没有对应的项目类型，
+    //这里必须抛出明确异常，而不是用 `!!` 直接空指针崩溃
+    val projectType = platformClasses.modrinth
+        ?: throw UnsupportedClassesException(platformClasses)
+
     val modrinthVersion = gameVersion.takeIf { it.isNotEmptyOrBlank() }?.let { version ->
         VersionFacet(version.trim())
     }
@@ -54,7 +60,7 @@ fun PlatformSearchFilter.toModrinthRequest(
     return ModrinthSearchRequest(
         query = query,
         facets = listOfNotNull(
-            platformClasses.modrinth!!, //必须为非空处理
+            projectType,
             modrinthVersion,
             *modrinthCategories,
             modrinthModLoader

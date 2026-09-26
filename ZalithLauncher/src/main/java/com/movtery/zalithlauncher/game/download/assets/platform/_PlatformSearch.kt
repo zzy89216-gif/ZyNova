@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.download.assets.platform
 
 import android.util.Log
+import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.game.addons.mirror.MirrorPriority
 import com.movtery.zalithlauncher.game.addons.mirror.resolveMirrorPriority
 import com.movtery.zalithlauncher.game.download.assets.mapExceptionToMessage
@@ -105,10 +106,23 @@ suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
 }
 
 /**
- * 镜像源只能在中国地区使用
+ * 是否配置了 CurseForge 官方 API Key
+ *
+ * 官方接口在缺少 Key 时一定返回 403，与网络环境无关。
+ */
+private fun hasCurseForgeApiKey(): Boolean = BuildKeys.CURSEFORGE_API.isNotBlank()
+
+/**
+ * CurseForge 的候选来源
+ *
+ * 镜像源默认只在中国地区使用。
+ *
+ * ⚠️ 例外：**没有配置 CurseForge API Key** 时官方接口必然返回 403，
+ * 这时即便不在中国大陆也必须保留镜像源，否则 CurseForge 侧永远搜不到任何资源，
+ * 而「存档」这类只有 CurseForge 提供的资源类型会直接变成**固定空列表**。
  */
 fun mirroredCurseForgeSource(
-    enabledMirror: Boolean = isChinaMainland()
+    enabledMirror: Boolean = isChinaMainland() || !hasCurseForgeApiKey()
 ): List<CurseForgeSearcher> {
     val source = resolveMirrorPriority(AllSettings.assetPlatformSource.getValue(), mainland = enabledMirror)
     val mirrorSource = mirrorCurseForgeSearcher.takeIf { enabledMirror }
