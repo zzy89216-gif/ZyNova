@@ -93,8 +93,6 @@ import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.constrainAs
-import androidx.constraintlayout.compose.createRefs
 import com.movtery.zalithlauncher.setting.enums.ActionMenuSide
 import com.movtery.zalithlauncher.ui.screens.content.home.LocalActionMenuDrag
 import com.movtery.zalithlauncher.ui.screens.content.home.actionMenuDragAnchor
@@ -106,6 +104,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.home.rememberActionMenuDragState
+import kotlin.math.roundToInt
 
 @Composable
 fun LauncherScreen(
