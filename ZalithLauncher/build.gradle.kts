@@ -1,6 +1,4 @@
-import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.api.variant.impl.VariantOutputImpl
-import com.android.build.gradle.tasks.MergeSourceSetFolders
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -28,7 +26,13 @@ val defaultStorePassword = project.findProperty("default_store_password") as? St
 val defaultKeyPassword = project.findProperty("default_key_password") as? String ?: error("The \"default_key_password\" property is not set in gradle.properties.")
 val defaultCurseForgeApiKey = project.findProperty("curseforge_api_key") as? String
 
-val projectArch: String = System.getProperty("arch", "all")
+/**
+ * 只发布**一个通用版本**（包含全部 4 个 ABI），不再按架构拆分。
+ *
+ * 因此不再读取 `-Darch`：资源裁剪与 ABI 拆分同时取消，
+ * Release 构建保持代码混淆（`isMinifyEnabled` / `isShrinkResources`，见 buildTypes.release）。
+ */
+val projectArch: String = "all"
 
 fun getKeyFromLocal(envKey: String, fileName: String? = null, default: String? = null): String {
     //⚠️ CI 中**未配置**的 Secrets 会以空字符串注入环境变量。
@@ -92,20 +96,6 @@ android {
         }
     }
 
-    splits {
-        val arch = projectArch.takeIf { it != "all" } ?: return@splits
-        abi {
-            isEnable = true
-            reset()
-            when (arch) {
-                "arm" -> include("armeabi-v7a")
-                "arm64" -> include("arm64-v8a")
-                "x86" -> include("x86")
-                "x86_64" -> include("x86_64")
-            }
-        }
-    }
-
     ndkVersion = "25.2.9519653"
 
     externalNativeBuild {
@@ -145,56 +135,9 @@ androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             if (output is VariantOutputImpl) {
-                val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
-                afterEvaluate {
-                    val task = tasks.named("merge${variantName}Assets").get() as MergeSourceSetFolders
-                    task.inputs.property("lwjglArch", projectArch)
-                    task.doLast {
-                        val assetsDir = task.outputDir.get().asFile
-                        val tag = "JREAssetsCleanup"
-                        logger.lifecycle("[$tag] arch: $projectArch")
-                        val jreList = listOf("jre-8", "jre-17", "jre-21", "jre-25")
-                        jreList.forEach { jreVersion ->
-                            val runtimeDir = File("$assetsDir/runtimes/$jreVersion")
-                            logger.lifecycle("[$tag] runtimeDir: ${runtimeDir.absolutePath}")
-                            runtimeDir.listFiles()?.forEach {
-                                if (projectArch != "all" && it.name != "version" && !it.name.contains("universal") && it.name != "bin-$projectArch.tar.xz") {
-                                    logger.lifecycle("[$tag] delete: $it : ${it.delete()}")
-                                }
-                            }
-                        }
-
-                        if (projectArch == "all") return@doLast
-                        val abi = when (projectArch) {
-                            "arm" -> "armeabi-v7a"
-                            "arm64" -> "arm64-v8a"
-                            "x86" -> "x86"
-                            "x86_64" -> "x86_64"
-                            else -> return@doLast
-                        }
-                        val lwjglVersions = file("libs").listFiles { f ->
-                            f.name.matches(Regex("lwjgl-\\d+\\.\\d+\\.\\d+-natives-release\\.aar"))
-                        }
-                            ?.map { Regex("lwjgl-(\\d+\\.\\d+\\.\\d+)-natives-release\\.aar").find(it.name)!!.groupValues[1] }
-                            ?: emptyList()
-                        lwjglVersions.forEach { version ->
-                            val nativesDir = File(assetsDir, "app_runtime/lwjgl/$version/natives")
-                            if (nativesDir.isDirectory) {
-                                nativesDir.listFiles()?.forEach { dir ->
-                                    if (dir.isDirectory && dir.name != abi) {
-                                        logger.lifecycle("Removing non-target-arch natives: $dir")
-                                        dir.deleteRecursively()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                (output.getFilter(ABI)?.identifier ?: "all").let { abi ->
-                    val baseName = "$launcherName-${if (variant.buildType == "release") launcherVersionName else "Debug-$launcherVersionName"}"
-                    output.outputFileName = if (abi == "all") "$baseName.apk" else "$baseName-$abi.apk"
-                }
+                //通用版本：只输出一个 APK，文件名不带架构后缀
+                val baseName = "$launcherName-${if (variant.buildType == "release") launcherVersionName else "Debug-$launcherVersionName"}"
+                output.outputFileName = "$baseName.apk"
             }
         }
     }

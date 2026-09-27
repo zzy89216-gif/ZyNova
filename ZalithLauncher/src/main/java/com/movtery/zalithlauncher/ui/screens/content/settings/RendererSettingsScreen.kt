@@ -48,6 +48,7 @@ import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer_v2.RendererV2Data
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
 import com.movtery.zalithlauncher.game.renderer.Renderers
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
 import com.movtery.zalithlauncher.path.URL_CLOUD_DRIVE_DRIVER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_CLOUD_RENDERER_PLUGINS
@@ -89,13 +90,15 @@ fun RendererSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) { scope ->
+            //当前选中的渲染器：决定是否在其下方展开 Ironized Zink 的配置面板
+            val currentRendererId = AllSettings.renderer.state
+
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
                 ) {
-                    val currentRendererId = AllSettings.renderer.state
                     val v2PluginEnvUnits = remember(currentRendererId) {
                         Renderers.getRenderers()
                             .filterIsInstance<RendererV2Data>()
@@ -223,6 +226,17 @@ fun RendererSettingsScreen(
                         unit = AllSettings.gameFullScreen,
                         title = stringResource(R.string.settings_renderer_full_screen_title),
                         summary = stringResource(R.string.settings_renderer_full_screen_summary)
+                    )
+                }
+            }
+
+            //选中 Ironized Zink 后，在其下方自动展开完整配置（4 个官方预设 + 全部可调参数）
+            if (currentRendererId == IRONIZED_ZINK_UNIQUE_IDENTIFIER) {
+                AnimatedItem(scope) { yOffset ->
+                    IronizedZinkConfigCards(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
                     )
                 }
             }

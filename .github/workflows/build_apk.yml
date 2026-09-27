@@ -1,5 +1,6 @@
 name: Build ZyNova APK
 
+# push 到 main 时的验证编译：**只出一个通用版本**（含全部 4 个 ABI，已代码混淆）。
 on:
   push:
     branches: [ "main", "master" ]
@@ -8,6 +9,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      # GitHub API Token：只经 Secret / 环境变量注入，绝不写入源码、提交或 APK。
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+      CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
 
     steps:
       - name: Checkout
@@ -22,14 +31,21 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Release APK (arm64)
+      - name: Build Release APK (universal)
         run: |
           chmod +x gradlew
-          ./gradlew ZalithLauncher:assembleRelease -Darch=arm64
+          ./gradlew ZalithLauncher:assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZyNova-Launcher-arm64
+          name: ZyNova-Launcher-universal
           path: ZalithLauncher/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Upload Mapping (obfuscation map)
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZyNova-Launcher-universal-mapping
+          path: ZalithLauncher/build/outputs/mapping/release/mapping.txt

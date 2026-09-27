@@ -9,7 +9,7 @@
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Release](https://img.shields.io/badge/Release-26.2.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.6)
-[![Architecture](https://img.shields.io/badge/Architecture-Multi--ABI-red)](https://github.com/zzy89216-gif/ZyNova)
+[![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
 
@@ -23,12 +23,13 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.2.6**。这一阶段的核心目标是：
+当前版本 **26.3.0**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
 围绕这一目标，项目已经建立了自己的：
 
+- **渲染器体系**（内置 Ironized Zink / GL4ES / MobileGlues，默认 Ironized Zink）
 - 统一资源管理核心（Resource Management Core）
 - 资源来源 Provider 体系（Modrinth / CurseForge）
 - 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
@@ -37,6 +38,7 @@
 - 玻璃效果（Glass UI）两档
 - 启动器自有更新体系（GitHub Releases）
 - Minecraft 26.4 Snapshot 1 的 Vulkan 检测
+- 单一通用版本发布（含全部 4 个 ABI + 代码混淆）
 
 设计上遵循一条原则：
 
@@ -57,7 +59,7 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 - 独立源码仓库与 Release
 - 独立的资源管理与下载体系
 - 独立的启动器更新体系
-- 完整的 Android 工程与多 ABI 构建
+- 完整的 Android 工程与通用版本构建（含代码混淆）
 - 开发流程、项目文档与交接体系
 
 ---
@@ -74,6 +76,8 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 | **卡片式主页**（以版本为模块，模块内展示世界与服务器） | ✅ |
 | **卡片式主页拖动排序**（版本卡片 / 世界 / 服务器 / 右侧菜单） | ✅ |
 | **卡片大小可调**（70% ~ 140%） | ✅ |
+| **渲染器体系重做**（内置只保留 Ironized Zink / GL4ES / MobileGlues） | ✅ |
+| **Ironized Zink 完整配置**（4 个官方预设 + 13 个可调参数，选中即展开） | ✅ |
 | **统一资源管理核心**（Resource Management Core） | ✅ |
 | **资源来源 Provider**（Modrinth / CurseForge） | ✅ |
 | **统一下载管理器**（队列 / 并发 / 续传 / 重试 / 校验 / 清理） | ✅ |
@@ -86,7 +90,7 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 | 游戏实例管理 | ✅ |
 | Android 平台功能调整 | ✅ |
 | ZalithLauncher2 扩展兼容 | ✅ |
-| 多 ABI APK 构建 | ✅ |
+| 单一通用版本 APK 构建（含代码混淆） | ✅ |
 | GitHub Release | ✅ |
 | 项目维护与交接文档 | ✅ |
 
@@ -117,6 +121,36 @@ ZyNova 对原有启动器的用户界面和交互体验进行了较大范围的�
 ### 🎮 Minecraft 启动
 
 针对 Minecraft: Java Edition 启动流程进行修改和调整。
+
+### 🧩 渲染器
+
+26.3.0 起重做渲染器体系。**启动器内置的渲染器只保留三个**：
+
+| 渲染器 | 说明 | 配置 |
+|---|---|---|
+| **Ironized Zink**（默认） | 桌面 OpenGL 4.6 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv | **4 个官方预设 + 13 个可调参数**（见下） |
+| **GL4ES** | 经典 OpenGL 转译层 | 保持默认 |
+| **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | 保持上游默认 |
+
+**Ironized Zink 的 4 个官方预设**（参数取值与上游一致）：
+
+| 预设 | 定位 | Minecraft | 光影 |
+|---|---|---|---|
+| **Potato** | 绝对最高帧率 | 1.8 → 最新（含 26.x） | 不推荐 |
+| **Performance** | 高帧率 + Sodium | 1.20.x → 最新 | 轻量 |
+| **Default** | 均衡 Zink + 光影（**默认**） | 1.16.x → 最新 | 完整（Iris / OptiFine） |
+| **Max Compatibility** | 什么都能跑 | 全部版本 | 完整 + 重度光影包 |
+
+**全部可调参数**：OpenGL 版本（3.3 / 4.3 / 4.5 / 4.6）、线程化 GL、大核绑定、
+乱序绘制、关闭错误检查、垂直同步、放宽 GLSL、暴露全部扩展、着色器磁盘缓存、
+单文件缓存、延迟描述符、内联 uniform、强制软件渲染。
+
+在 **设置 → 渲染器** 里选中 Ironized Zink 后，**下方会立刻展开完整配置面板**；
+选预设会一次性写入整组参数，之后每一项仍可单独调整。
+
+> **外置渲染器不受影响**：仍然可以通过安装渲染器插件（FCL / Zalith 渲染器插件、
+> 新一代 `fclPlugin_V2` 插件）往列表里加入更多渲染器 ——
+> 内置只保留 3 个，外置想装几个还是几个。
 
 ### 🏠 卡片式主页
 
@@ -227,7 +261,7 @@ ZyNova 提供面向 Minecraft 26.4 Snapshot 1 的 Vulkan 检测：
 ZyNova 只维护自己的更新体系：
 
 - 版本信息与更新日志来自 ZyNova 自己的 GitHub Releases
-- 安装包会根据当前设备实际支持的 ABI 自动挑选，用户不需要选择架构
+- Release 只提供一个**通用版本**安装包（已包含全部 4 个 ABI），用户不需要选择架构
 
 ### 🔌 扩展兼容
 
@@ -290,24 +324,27 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 ---
 
-## 📱 多架构支持
+## 📱 通用版本
 
-为了适配不同 Android CPU 架构，ZyNova 提供多个 Release 构建版本。
+26.3.0 起，**Release 只提供一个通用版本 APK**，不再按架构拆分。
 
-| 架构 | 主要适用环境 |
+| 项 | 说明 |
 |---|---|
-| `arm64-v8a` | 当前绝大多数现代 Android 手机 |
-| `armeabi-v7a` | 部分较老的 32 位 ARM 设备 |
-| `x86` | 部分模拟器 / x86 Android 环境 |
-| `x86_64` | 64 位 x86 Android 环境 |
-| Universal | 多架构通用版本 |
+| 覆盖架构 | `arm64-v8a`、`armeabi-v7a`、`x86`、`x86_64`（一个包全部包含） |
+| 代码混淆 | Release 开启（`isMinifyEnabled` + `isShrinkResources`） |
+| 产物名 | `ZyNova-<版本>.apk` |
+| 混淆映射 | `mapping (universal).zip`，用于还原崩溃堆栈 |
 
-Release 中还可能包含：
+为什么只出一个通用版本：
 
-- mapping 文件
+- 用户**不需要判断自己的设备是什么架构**，下载唯一的安装包即可
+- 混淆映射只需要维护一份，排查线上崩溃更简单
+- 代价是包体包含全部 4 个 ABI 的预编译库，比单架构包大
+
+Release 中还会包含：
+
+- mapping 文件（混淆映射）
 - 构建相关文件
-- 调试相关文件
-- 其他开发配套文件
 
 ---
 
@@ -315,7 +352,18 @@ Release 中还可能包含：
 
 当前版本：
 
-**ZyNova 26.2.6**
+**ZyNova 26.3.0**
+
+26.3.0 重做渲染器体系，并收敛发布形态：
+
+- **内置渲染器只保留 Ironized Zink（默认）、GL4ES、MobileGlues**，
+  删除 Krypton Wrapper（NG-GL4ES）、Kopper Zink、VirGL、Freedreno、Panfrost
+- Ironized Zink **完整集成其原生配置**：4 个官方预设（Potato / Performance / Default / Max Compatibility）
+  + 全部 13 个可调参数；在设置里选中后会**自动在下方展开配置面板**
+- 默认渲染器改为 **Ironized Zink 的 Default 预设**
+- **修复主页向下滚动时卡片异常移动**（滚动的整体位移被误判成让位动画）
+- **只发布一个通用版本 APK**（含全部 4 个 ABI）并保持代码混淆
+- 第三方组件许可证逐组件声明（`THIRD_PARTY_NOTICES.md`）
 
 26.2.6 修复拖动排序引入的两个显示问题，并把「操作菜单长按拖动换边」从上游搬了过来：
 
@@ -370,12 +418,8 @@ Release 中还可能包含：
 
 Release 根据版本情况提供：
 
-- ARM64 APK
-- ARM32 APK
-- x86 APK
-- x86_64 APK
-- Universal APK
-- mapping 文件
+- 通用版本 APK（含 `arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`，已代码混淆）
+- mapping 文件（混淆映射）
 - 其他必要的构建文件
 
 ---
@@ -447,7 +491,7 @@ ZyNova 项目有一个比较特殊的工作方式：
 | Gradle / 工程配置处理 | Android 手机 |
 | Git 操作、GitHub 仓库管理 | Android 手机 |
 | 查阅编译日志、修复编译错误 | Android 手机 |
-| **APK 编译（含多架构构建）** | **GitHub Actions 云端服务器** |
+| **APK 编译（通用版本 + 代码混淆）** | **GitHub Actions 云端服务器** |
 | Android 真机安装测试 | Android 手机 |
 | Release 发布 | Android 手机（通过 GitHub API） |
 | 文档编写与维护 | Android 手机 |
@@ -483,7 +527,7 @@ AI Agent 参与的工作包括：
 - 构建错误分析
 - Bug 修复
 - APK 构建
-- 多架构打包
+- 通用版本打包（含代码混淆）
 - 文件整理
 - GitHub 操作
 - Release 文件整理
@@ -578,7 +622,17 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.2.6（当前版本）
+### 26.3.0（当前版本）
+
+- [x] 内置渲染器只保留 Ironized Zink / GL4ES / MobileGlues，删除其余 5 个
+- [x] Ironized Zink 完整集成原生配置（4 个官方预设 + 13 个可调参数）
+- [x] 默认渲染器改为 Ironized Zink 的 Default 预设
+- [x] 选中 Ironized Zink 后自动在下方展开配置面板
+- [x] 修复主页向下滚动时卡片异常移动
+- [x] 只发布一个通用版本 APK（含全部 4 个 ABI）+ 代码混淆
+- [x] 第三方组件许可证逐组件声明（`THIRD_PARTY_NOTICES.md`）
+
+### 26.2.6
 
 - [x] 修复拖动排序后卡片内容被顶到错误位置
 - [x] 操作菜单支持长按拖动换边（搬自上游 ZalithLauncher2）
@@ -683,6 +737,25 @@ ZyNova 的开发离不开上游项目所提供的基础。
 
 ---
 
+## 🧬 内置渲染器的上游
+
+26.3.0 起内置的三个渲染器分别来自这些上游项目（**各自适用各自的许可证**）：
+
+| 渲染器 | 上游 | 许可证 |
+|---|---|---|
+| **Ironized Zink** | https://github.com/GoyDevv/IronizedZink | **GPL-3.0** |
+| **MobileGlues** | https://github.com/MobileGL-Dev/MobileGlues | **LGPL-2.1** |
+| **GL4ES** | https://github.com/PojavLauncherTeam/gl4es_extra_extra | **MIT** |
+
+Ironized Zink 承载的渲染引擎是 **Mesa 的 Zink Gallium 驱动 + Kopper 窗口系统层**
+（https://mesa3d.org/）：主 Mesa / Gallium 代码为 **MIT**，
+GLX 客户端代码为 **SGI Free Software License B**，GL / GLX 头文件为 **Khronos** 许可。
+
+完整的逐组件许可证、版权归属与预编译二进制来源，见
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+---
+
 ## ⚠️ 与 ZalithLauncher2 的关系
 
 **ZyNova 并非 ZalithLauncher2 官方版本。**
@@ -715,6 +788,25 @@ ZalithLauncher2 项目使用：
 
 请在使用、修改或再发布本项目之前仔细阅读相关许可证及版权信息。
 
+### 各组件许可证并不相同
+
+**不要因为某一个依赖是 MIT，就认为整个项目都是 MIT。** 本项目逐组件适用各自的许可证：
+
+| 组件 | 许可证 |
+|---|---|
+| ZyNova Launcher（本项目自身） | GPL-3.0 |
+| Ironized Zink（GoyDevv） | GPL-3.0 |
+| Mesa / Zink / Kopper | MIT（GLX 部分 SGI Free Software License B，GL 头文件 Khronos） |
+| MobileGlues（MobileGL-Dev） | LGPL-2.1 |
+| GL4ES（gl4es_extra_extra） | MIT |
+| 其余第三方依赖 | 见应用内「关于 → 开源许可」 |
+
+- 完整声明：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+- 应用内「关于 → 开源许可」逐条列出各组件及其许可文本
+- **上游作者的版权与署名信息一律保留，不会被删除**
+- MobileGlues 以 **LGPL-2.1** 分发的是**未经修改**的预编译动态库，
+  其对应源码获取方式已在 `THIRD_PARTY_NOTICES.md` 中给出
+
 ---
 
 ## ❤️ 致谢
@@ -722,6 +814,9 @@ ZalithLauncher2 项目使用：
 感谢：
 
 - ZalithLauncher2 项目及其所有贡献者
+- **Ironized Zink（GoyDevv）** —— 本项目的默认渲染器
+- **MobileGlues（MobileGL-Dev）**、**gl4es_extra_extra（PojavLauncherTeam）** —— 另外两个内置渲染器
+- **Mesa / Zink / Kopper** 的作者与贡献者 —— Ironized Zink 的渲染引擎
 - 本项目使用的其他开源项目
 - 第三方开源组件的作者与贡献者
 - 所有参与测试的用户
@@ -748,9 +843,10 @@ ZyNova 从一个最初的界面与功能需求开始，逐渐发展成为一个�
 - 统一下载管理器
 - 卡片式主页
 - 自有更新体系
-- 多 ABI 构建
+- 单一通用版本构建（含代码混淆）
 - GitHub Release
 - 正式 APK
+- 内置渲染器体系（Ironized Zink / GL4ES / MobileGlues）
 - ZalithLauncher2 扩展兼容
 - 功能与 UI 修改
 - 实际 Android 真机测试

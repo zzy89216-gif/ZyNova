@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.6)
+[![Release](https://img.shields.io/badge/Release-26.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.3.0)
 
 [简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
 
@@ -27,6 +27,23 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.3.0 主要內容
+
+- **渲染器體系重做 —— 內建渲染器只保留三個**：
+  **Ironized Zink**（改為預設）、**GL4ES**、**MobileGlues**。
+  移除：Krypton Wrapper（NG-GL4ES）、Kopper Zink、VirGL、Freedreno、Panfrost，
+  以及只有它們會用到的原生函式庫。
+- **Ironized Zink 完整整合**：**13 個可調參數**與 **4 個官方預設**
+  （Potato / Performance / Default / Max Compatibility），移植自上游（作者 GoyDevv，GPL-3.0）。
+  在 **設定 → 渲染器** 選中它之後，下方會**立刻展開完整設定面板**。
+- **預設渲染器改為 Ironized Zink 的 Default 預設。**
+- **修復首頁向下捲動時卡片異常移動** —— 頁面捲動被誤判成排序的「讓位」位移，
+  於是每張卡片都把自己動到錯誤位置。
+- **只發布一個通用版本 APK**（含全部 4 個 ABI，並保留程式碼混淆）。
+- **逐元件授權聲明** —— 見 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- **外掛渲染器不受影響**：FCL / Zalith 渲染器外掛與 `fclPlugin_V2` 外掛
+  仍然可以把更多渲染器加進清單。
 
 ## ✨ 26.2.6 主要內容
 
@@ -112,6 +129,36 @@
 | 啟動器自有更新體系（GitHub Releases） | ✅ |
 | 按需載入與效能策略 | ✅ |
 
+### 渲染器
+
+26.3.0 起，啟動器**內建的渲染器只有三個**：
+
+| 渲染器 | 說明 | 設定 |
+|---|---|---|
+| **Ironized Zink**（預設） | 桌面 OpenGL 4.6 經 Vulkan 轉譯（Mesa Zink + Kopper），作者 GoyDevv | **4 個官方預設 + 13 個可調參數** |
+| **GL4ES** | 經典 OpenGL 轉譯層 | 保持預設 |
+| **MobileGlues** | 把桌面 OpenGL 轉譯到裝置的 OpenGL ES 3.x | 保持上游預設 |
+
+**Ironized Zink 的 4 個官方預設**（參數值與上游一致）：
+
+| 預設 | 定位 | Minecraft | 光影 |
+|---|---|---|---|
+| **Potato** | 絕對最高幀率 | 1.8 → 最新（含 26.x） | 不推薦 |
+| **Performance** | 高幀率 + Sodium | 1.20.x → 最新 | 輕量 |
+| **Default** | 均衡 Zink + 光影（**預設**） | 1.16.x → 最新 | 完整（Iris / OptiFine） |
+| **Max Compatibility** | 什麼都能跑 | 全部版本 | 完整 + 重度光影包 |
+
+**全部可調參數**：OpenGL 版本（3.3 / 4.3 / 4.5 / 4.6）、執行緒化 GL、綁定大核、
+亂序繪製、關閉錯誤檢查、垂直同步、放寬 GLSL、暴露全部擴充、著色器磁碟快取、
+單檔快取、延遲描述符、內聯 uniform、強制軟體渲染。
+
+在 **設定 → 渲染器** 選中 Ironized Zink 後，**下方會立刻展開完整設定面板**；
+選擇預設會一次寫入整組參數，之後每一項仍然可以單獨調整。
+
+> **外掛渲染器不受影響**：仍然可以透過安裝渲染器外掛（FCL / Zalith 渲染器外掛、
+> 新一代 `fclPlugin_V2` 外掛）把更多渲染器加進清單 ——
+> 內建只有 3 個，外掛想裝幾個還是幾個。
+
 ### 卡片式首頁
 
 首頁以**版本為模組**組織內容：每個已安裝的版本是一張模組卡片，
@@ -194,6 +241,13 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 
 2. 你不得移除本程式所顯示的版權聲明。（依據 [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370)）
 
+> **各元件的授權並不相同。** 不要因為某個相依套件是 MIT，就認為整個專案都是 MIT：
+> ZyNova 本身是 GPL-3.0，Ironized Zink 是 GPL-3.0，
+> 它隨附的 Mesa / Zink / Kopper 引擎是 MIT（GLX 部分為 SGI Free Software License B，
+> GL 標頭檔為 Khronos），MobileGlues 是 LGPL-2.1，GL4ES 是 MIT。
+> 完整的逐元件清單、版權聲明，以及重散布二進位檔的原始碼取得方式，
+> 見 **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)**。
+
 ## 引用開源專案
   
 本軟體使用以下開源函式庫:
@@ -225,10 +279,11 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 | material-color-utilities              | Copyright 2021 Google LLC                                                                                     | Apache 2.0           | [链接↗](https://github.com/material-foundation/material-color-utilities)           |
 | Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [链接↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
 | Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
-| Mesa                                  | Copyright © The Mesa Authors                                                                                  | MIT License          | [链接↗](https://mesa3d.org/)                                                       |
+| Ironized Zink                         | Copyright © GoyDevv（渲染引擎：Mesa Zink / Kopper，版權歸 Mesa 作者所有）                                     | GPL-3.0              | [連結↗](https://github.com/GoyDevv/IronizedZink)                                   |
+| Mesa (Zink / Kopper)                  | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT / SGI-B / Khronos | [連結↗](https://mesa3d.org/)                                                      |
 | MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [链接↗](https://github.com/Tencent/MMKV)                                           |
 | Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
-| NG-GL4ES                              | Copyright © 2016-2018 Sebastien Chevalier; Copyright © 2013-2016 Ryan Hileman; Copyright (c) 2025-2026 BZLZHH | MIT License          | [链接↗](https://github.com/BZLZHH/NG-GL4ES)                                        |
+| MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [連結↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
 | OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://github.com/square/okhttp)                                          |
 | Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://square.github.io/okio/)                                            |
 | OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [链接↗](https://github.com/GeyserMC/OpenNBT)                                       |

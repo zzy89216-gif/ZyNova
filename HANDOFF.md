@@ -23,9 +23,91 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.2.6**（`launcher_version_code=260260`）
+**当前版本：26.3.0**（`launcher_version_code=260300`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.3.0 渲染器体系重做与发布形态收敛 ✅
+
+**一、内置渲染器只保留三个，其余全部删除**
+
+| 渲染器 | 状态 | 配置 |
+|---|---|---|
+| **Ironized Zink** | 新增内置，**默认渲染器** | 完整原生配置 + 4 个官方预设 + 13 个可调参数 |
+| **GL4ES** | 保留 | 保持默认，不追加任何环境变量 |
+| **MobileGlues** | 新增内置 | 保持上游默认配置 |
+
+删除：NG-GL4ES（Krypton Wrapper）、Kopper Zink、VirGL、Freedreno、Panfrost。
+
+**二、关键实现位置（改渲染器前必读）**
+
+| 关注点 | 位置 |
+|---|---|
+| 渲染器注册表 | `game/renderer/Renderers.kt` → `addRenderers(IronizedZinkRenderer, GL4ESRenderer, MobileGluesRenderer)` |
+| 三个内置渲染器 | `game/renderer/renderers/{IronizedZink,GL4ES,MobileGlues}Renderer.kt` |
+| Ironized Zink 配置模型（移植自上游） | `game/renderer/ironizedzink/IronizedZinkConfig.kt` |
+| Ironized Zink 设置读写 | `game/renderer/ironizedzink/IronizedZinkSettings.kt` |
+| Ironized Zink 配置 UI | `ui/screens/content/settings/IronizedZinkConfigCards.kt` |
+| 环境变量注入（**最容易出错的地方**） | `game/launch/GameLauncher.kt` → `setRendererEnv()` |
+| 设置项定义 | `setting/AllSettings.kt` → `renderer` 与 `ironizedZink*` 共 15 项 |
+
+**三、环境变量注入的三条铁律（`setRendererEnv`）**
+
+1. `renderer.getRendererEnv()` 在通用兜底块**之前**合并；
+2. 通用兜底块（`MESA_LOADER_DRIVER_OVERRIDE` / `MESA_GL_VERSION_OVERRIDE` /
+   `force_glsl_extensions_warn` …）**必须把三个内置渲染器全部排除**，
+   否则会覆盖用户自己选的 OpenGL 版本等设置；
+3. 插件渲染器走 `selectedRendererPlugin != null` 提前返回，不受此块影响。
+
+> 当前排除条件写在 `GameLauncher.kt`：
+> `renderer != GL4ESRenderer && renderer != MobileGluesRenderer && renderer != IronizedZinkRenderer`。
+> **以后新增内置渲染器时，务必同步加到这个判断里。**
+
+**四、默认渲染器 = Ironized Zink / Default**
+
+- `AllSettings.renderer` 默认值 = `IRONIZED_ZINK_UNIQUE_IDENTIFIER`
+- 该唯一标识符**沿用原「Kopper Zink」的 UUID**（`0fa435e2-…`），
+  这样老用户保存过的 Kopper Zink 选择会自动落到 Ironized Zink，而不是被重置
+- 常量放在 `IronizedZinkConfig.kt` 顶层，**故意不挂在渲染器对象上**，
+  避免 `AllSettings` ↔ 渲染器对象初始化成环
+
+**五、选中后自动展开配置面板**
+
+`ui/screens/content/settings/RendererSettingsScreen.kt`：
+当 `AllSettings.renderer.state == IRONIZED_ZINK_UNIQUE_IDENTIFIER` 时，
+在渲染器列表卡片**下方**插入一个 `AnimatedItem`，渲染 `IronizedZinkConfigCards()`。
+（只有全局渲染器设置里有该面板；`VersionConfigScreen` 的**按版本**渲染器选择不显示它 ——
+Ironized Zink 的参数是全局的，不按版本区分。）
+
+**六、发布形态：一个通用版本 + 代码混淆**
+
+- `ZalithLauncher/build.gradle.kts`：`splits { … }` 已删除，`projectArch` 固定为 `"all"`，
+  不再读取 `-Darch`，也不再按架构裁剪 JRE / LWJGL 资源
+- Release 保持 `isMinifyEnabled = true` + `isShrinkResources = true`
+- 产物名：`ZyNova-<版本>.apk`（不再有 `-arm64-v8a` 之类的后缀）
+
+**七、修复主页滚动时卡片异常移动**
+
+`ui/components/Reorder.kt` → `ReorderState.onBounds()`：
+拖动排序用 `boundsInRoot()` 记录项的屏幕范围，而**滚动会让所有项的 root 坐标一起变化**，
+这段变化被误判成「布局位移」→ 每一项都播放让位动画 → 卡片乱跑。
+修复：**只有在 `draggingKey != null`（正在拖动）时才处理位置变化**，其余情况直接忽略。
+
+**八、许可证与合规**
+
+- 根目录新增 `THIRD_PARTY_NOTICES.md`，并复制到 `assets/licenses/` 随 APK 分发
+- 随包附带：Ironized Zink 的 GPL-3.0 全文、MobileGlues 的 LGPL-2.1 全文、
+  Mesa 完整许可集、上游 Ironized Zink 的 `CREDITS.md` 原文
+- 应用内「关于 → 开源许可」同步：移除 NG-GL4ES 条目，
+  Mesa 条目改用完整许可集，新增 Ironized Zink 与 MobileGlues
+- **绝不删除上游版权声明**；**绝不把不同项目的许可证混为一谈**
+
+**九、GitHub API Token 约定**
+
+- 只允许**本地环境变量**或**CI Secret**注入，**不写入源码 / 提交 / APK**
+- CI：`GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}`（未配置 Secret 时用内置 token）
+- 本地：`export GITHUB_TOKEN=...`，用完 `unset`，并删除本地副本
+- 推送前必须跑隐私扫描（见第十节）
 
 ### 26.2.6 修复与变更 ✅
 
@@ -240,10 +322,9 @@
 ⚠️ **重要**：若在 `/sdcard`（fuse 分区）上执行 `git add` 或编译，会出现 SIGSEGV 崩溃。
 **所有 git 操作与编译请在 ext4 分区的工作副本中进行。**
 
-> 📌 **当前状态（2026-09-26 维护结束后）**：设备上**已不存在**本地工作副本
-> （`/root/work/ZyNova`、`/root/ZyNova`、`/sdcard/Download/dsha工作区/ZyNova` 均已清理），
-> 这是刻意的：本地副本只是临时工作区，权威源码只有 GitHub。
-> 继续开发时重新 `git clone` 到 ext4 分区即可，收尾时再删掉。
+> 📌 本地副本只是临时工作区，权威源码只有 GitHub。
+> 继续开发时把仓库 `git clone` 到 ext4 分区的任意工作目录即可，收尾时再删掉。
+> **文档里不要记录某台机器上的具体绝对路径**，避免把个人环境信息带进仓库。
 
 ---
 
@@ -362,6 +443,29 @@
 | `ui/screens/content/LauncherScreen.kt` | 右侧菜单由 `ConstraintLayout` 改为可拖动的 `Column`（`Arrangement.SpaceBetween` 保持原观感），三块各自接入拖动排序；版本下拉菜单的锚点逻辑保持不变 |
 | `ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
 
+### 26.3.0 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `game/renderer/ironizedzink/IronizedZinkConfig.kt` | **新增**：Ironized Zink 配置模型（13 个参数 + 4 个官方预设 + `buildIronizedZinkEnv()`），移植自上游 `Presets.kt`，GPL-3.0 |
+| `game/renderer/ironizedzink/IronizedZinkSettings.kt` | **新增**：从 `AllSettings` 读取参数、把预设整组写回 |
+| `game/renderer/renderers/IronizedZinkRenderer.kt` | **新增**：Ironized Zink 内置渲染器 |
+| `game/renderer/renderers/MobileGluesRenderer.kt` | **新增**：MobileGlues 内置渲染器 |
+| `ui/screens/content/settings/IronizedZinkConfigCards.kt` | **新增**：选中 Ironized Zink 后展开的配置面板 |
+| `game/renderer/renderers/GL4ESRenderer.kt` | 仅补注释（保持默认配置不变） |
+| `game/renderer/Renderers.kt` | 注册表改为只注册三个内置渲染器 |
+| `game/launch/GameLauncher.kt` | `setRendererEnv()` 的通用兜底块排除 IRONIZED/MOBILEGLUES |
+| `setting/AllSettings.kt` | `renderer` 默认值改为 Ironized Zink；新增 14 个 `ironizedZink*` 设置 |
+| `ui/screens/content/settings/RendererSettingsScreen.kt` | 选中 Ironized Zink 时在下方插入配置面板 |
+| `ui/components/Reorder.kt` | `onBounds()` 仅在拖动中处理位移（修复滚动时卡片异常移动） |
+| `library/_Libraries.kt` | 移除 NG-GL4ES，Mesa 改完整许可集，新增 Ironized Zink / MobileGlues |
+| `ZalithLauncher/build.gradle.kts` | 删除 ABI 拆分与 `-Darch` 资源裁剪，固定通用版本 |
+| `.github/workflows/{build,build_apk,release_ci}.yml` | 改为只构建通用包；注入 `GITHUB_TOKEN` |
+| `THIRD_PARTY_NOTICES.md` | **新增**：逐组件许可证与版权声明 |
+| `assets/licenses/` | **新增**：`THIRD_PARTY_NOTICES.md`、`ironized-zink-CREDITS.md` |
+| `res/raw/` | **新增**：`ironized_zink_license.txt`、`mobileglues_license.txt`、`mesa_licenses.txt` |
+| `jniLibs/*/libmobileglues.so` | **新增**：MobileGlues 2.0.0 官方 release 的未经修改二进制（4 ABI） |
+
 ### 26.2.6 涉及文件
 
 | 文件 | 改动 |
@@ -382,6 +486,21 @@
 | `upgrade/_RemoteData.LangTag.kt` | ZL2 多语言更新日志 / 网盘匹配 |
 | `ui/upgrade/UpgradeFilesDialog.kt` | ZL2 多文件安装包选择对话框 |
 | `utils/device/DeviceUtils.kt` | 基于设备声明的 Vulkan 判断（无使用者） |
+| `game/renderer/renderers/NGGL4ESRenderer.kt` | 26.3.0 渲染器裁剪（Krypton Wrapper） |
+| `game/renderer/renderers/KopperZinkRenderer.kt` | 26.3.0 渲染器裁剪（被 Ironized Zink 取代，UUID 复用） |
+| `game/renderer/renderers/VirGLRenderer.kt` | 26.3.0 渲染器裁剪 |
+| `game/renderer/renderers/FreedrenoRenderer.kt` | 26.3.0 渲染器裁剪 |
+| `game/renderer/renderers/PanfrostRenderer.kt` | 26.3.0 渲染器裁剪 |
+| `libs/NG-GL4ES-release.aar` | 仅 NG-GL4ES 使用，随渲染器一起移除 |
+| `jniLibs/*/libOSMesa_{2121,2300d,8}.so` | 仅被上述 OSMesa 系渲染器使用 |
+| `jniLibs/*/libvirgl_test_server.so`、`libvirglrenderer_1.so` | 仅被 VirGL 渲染器使用 |
+| `res/raw/ng_gl4es_license.txt` | 对应组件已不再分发 |
+| `res/raw/mesa_license.txt` | 由 `mesa_licenses.txt`（Mesa 完整许可集）取代 |
+
+> ⚠️ **注意**：`jniLibs/*/libvulkan_freedreno.so`（Turnip）**不是** Freedreno 渲染器专属，
+> 它是「Vulkan 驱动器」的默认内置驱动（`driver_helper.c` 里作为兜底），**必须保留**。
+> 同理 `libEGL_mesa.so` / `libglxshim.so` / `libglapi.so` / `libzink_dri.so` / `libcutils.so`
+> 由 `libs/kopper-zink-release.aar` 提供，Ironized Zink 正在使用，**不要删**。
 
 ---
 
@@ -397,6 +516,9 @@
 | `lastIgnoredVersion`（整数） | 保留定义不再写入，新逻辑使用 `lastIgnoredVersionName`（字符串），避免存储类型冲突 |
 | `homePageType` | 新增 `Cards` 枚举值，旧值 `Blank / FromLocal / FromURL` 语义不变 |
 | `searchModPlatform` 等搜索平台 | 26.2.1 起新增 `SearchPlatform.ALL`，枚举名与旧 `Platform` 保持一致，旧值可直接反序列化 |
+| `renderer`（全局渲染器） | 26.3.0 起默认值改为 Ironized Zink 的 UUID，**沿用原 Kopper Zink 的 UUID**：老用户存过 Kopper Zink 会自动落到 Ironized Zink；存过已删除渲染器（如 NG-GL4ES）的 UUID 时 `Renderers.setCurrentRenderer` 会回退到**列表首个**（即 Ironized Zink）并打日志，不会卡死 |
+| `versionConfig.renderer`（按版本渲染器） | 同上：空字符串 / 已删除 UUID 都会回退到全局默认或列表首个 |
+| `ironizedZink*`（14 个新设置） | 26.3.0 新增，默认值 = 上游 **Default** 预设。旧用户没有这些键 → 全部取默认值，行为与「Default 预设」一致；**不需要迁移** |
 
 > **原则**：删除功能时可以不再写入旧配置，但要保留其定义，避免 MMKV 读取类型不匹配导致启动异常。
 >
@@ -419,6 +541,14 @@
 - 静态检查（import 解析、字符串引用、残留引用、隐私扫描等）
 - `git add` + `git commit` + `git push`
 
+### 构建形态（26.3.0 起）
+
+- **只产出一个通用版本 APK**（含 `arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`）
+- **不再**传 `-Darch`：`projectArch` 固定为 `"all"`，按架构裁剪 JRE / LWJGL 的逻辑已移除
+- Release 构建开启代码混淆：`isMinifyEnabled = true` + `isShrinkResources = true`，
+  产物同时提供 `mapping.txt`（混淆映射）用于排查崩溃堆栈
+- 本地命令：`./gradlew ZalithLauncher:assembleRelease`
+
 ### 本地 git 推送命令（低内存配置 + 不落盘 Token）
 
 ```bash
@@ -430,9 +560,9 @@ git config core.bigFileThreshold 1m
 
 # 用一次性凭据助手推送：Token 只存在于当前这一条命令的环境变量里，
 # 既不会进 .git/config，也不会出现在 remote URL 中
-export GH_TOKEN="<TOKEN>"
-git -c credential.helper='!f(){ echo username=<用户名>; echo password="$GH_TOKEN"; };f' push origin main
-unset GH_TOKEN
+export GITHUB_TOKEN="<TOKEN>"
+git -c credential.helper='!f(){ echo username=<用户名>; echo password="$GITHUB_TOKEN"; };f' push origin main
+unset GITHUB_TOKEN
 ```
 
 > - **推荐上面的方式**：它不会把 Token 写进 `.git/config`，收尾无需额外清理。
@@ -449,12 +579,12 @@ unset GH_TOKEN
 
 | 文件 | 触发 | 作用 |
 |---|---|---|
-| `.github/workflows/build_apk.yml` | push 到 `main` + 手动 `workflow_dispatch` | 单 ABI（arm64-v8a）验证编译 |
-| `.github/workflows/build.yml` | 手动 / 被 `release_ci.yml` 调用 | 多 ABI 矩阵 `all`/`arm`/`arm64`/`x86`/`x86_64`，上传 `mapping.txt` |
+| `.github/workflows/build_apk.yml` | push 到 `main` + 手动 `workflow_dispatch` | 通用版本验证编译（push 后最快的编译闸门） |
+| `.github/workflows/build.yml` | 手动 / 被 `release_ci.yml` 调用 | 通用版本 Release 构建，上传 APK 与 `mapping.txt` |
 | `.github/workflows/release_ci.yml` | Release 发布（`release: published`） | 调用 `build.yml`，打包 mapping 并自动上传全部产物 |
 
-- 编译命令：`./gradlew ZalithLauncher:assembleRelease -Darch=<架构>`
-- 产物：Release APK（按 `-Darch` 决定架构）+ 对应 `mapping.<架构>.zip`
+- 编译命令：`./gradlew ZalithLauncher:assembleRelease`（**不再传 `-Darch`**）
+- 产物：`ZyNova-<版本>.apk`（通用）+ `mapping (universal).zip`
 
 ### CI 需要的 Secrets
 
@@ -462,6 +592,7 @@ unset GH_TOKEN
 
 | Secret | 缺失后的影响 |
 |---|---|
+| `GH_TOKEN` | **GitHub API Token（可选）**。用于 CI 里调用 GitHub API；未配置时 workflow 回退到 Actions 内置 token（`github.token`）。**只允许 Secret / 环境变量注入，绝不写进源码、提交或 APK** |
 | `KEY_PASSWORD` / `STORE_PASSWORD` | 签名口令，缺失会回退到 `gradle.properties` 里的上游公开默认值 |
 | `OAUTH_CLIENT_ID` | 微软登录相关（本项目已移除正版登录入口，基本不影响） |
 | `CURSEFORGE_API_KEY` | **CurseForge 官方接口固定 403**，见第二节「后续待办 6」；26.2.3 起由 MCIM 镜像兜底 |
@@ -469,8 +600,14 @@ unset GH_TOKEN
 > ⚠️ 三个注意点：
 > 1. **未配置的 Secret 会以空字符串注入环境变量**（不是 null），
 >    构建脚本 `getKeyFromLocal` 必须把空字符串当作「未配置」处理，否则本地密钥文件不会生效；
+>    `build.yml` 里的 `GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}` 也依赖这一点
+>    （空字符串在 GitHub 表达式里为假值，会回退到内置 token）；
 > 2. **密钥值绝不能写进仓库里的任何文件**（包括本文档）；
 > 3. 缺失 Secret **不会**让编译失败，只会让对应功能不可用 —— 排查功能问题时先确认这一点。
+>
+> 📌 **Token 命名约定**：`GH_TOKEN` 是仓库 Secret 名，`GITHUB_TOKEN` 是它在 job 里注入的环境变量名。
+> 本地开发同样用 `GITHUB_TOKEN` 环境变量（见第六节推送命令与第十二节发布流程）。
+> **不要**把 Token 加到 `buildKeys` / `BuildConfig` —— 那会被打进 APK。
 
 ### 查看编译结果（需要 Token）
 
@@ -518,6 +655,24 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 保留上游版权声明（文件头的 `Copyright (C) 2025 MovTery`）
    - 新增文件使用 ZyNova 版权头
    - 分发时附 GPL-3.0 文本（`res/raw/gpl_3_license.txt`）
+5.1 **第三方组件许可证合规（26.3.0 起加严）**：
+   - **每个组件以其上游仓库里的实际 LICENSE 为准**，不要凭印象，也不要「因为某个依赖是 MIT 就认为整个项目是 MIT」：
+     - 本项目自身 = **GPL-3.0**
+     - Ironized Zink（GoyDevv）= **GPL-3.0**
+     - Ironized Zink 承载的 Mesa / Zink / Kopper = **MIT**（GLX 部分 **SGI Free Software License B**，GL 头文件 **Khronos**）
+     - MobileGlues = **LGPL-2.1**
+     - GL4ES（gl4es_extra_extra）= **MIT**
+   - **不删除上游作者信息**：任何保留文件的版权头、`CREDITS.md`、`NOTICE` 都不能删
+   - **不把不同项目的许可证混为一谈**：`THIRD_PARTY_NOTICES.md` 里逐组件分开列出，
+     应用内「关于 → 开源许可」也逐条分开
+   - **重分发二进制要满足对应许可证**：
+     - MobileGlues（LGPL-2.1）随包的是**未经修改**的 `libmobileglues.so`，
+       必须在 `THIRD_PARTY_NOTICES.md` 里给出**对应源码的获取方式**，并说明可以替换该动态库
+     - Mesa 栈（MIT）+ Ironized Zink（GPL-3.0）同样要保留许可证文本与来源说明
+   - **移除组件时同步移除其声明与许可资源**（例如 26.3.0 删除 NG-GL4ES 后，
+     `_Libraries.kt` 条目、`res/raw/ng_gl4es_license.txt`、AAR 一起删）
+   - 新增 / 更换任何第三方库或预编译二进制时，**必须同步更新**：
+     `THIRD_PARTY_NOTICES.md`、`assets/licenses/`、`res/raw/`、`library/_Libraries.kt`
 6. **签名**：release 与 debug 都使用官方公开的 `zalith_launcher_debug.jks`（密码在 gradle.properties，官方本来就公开），不要生成新密钥硬编码密码。
 7. **⛔ 绝对不要删除或修改仓库中的签名密钥文件**（维护者刻意保留的项目资产）：
    - `ZalithLauncher/zalith_launcher_debug.jks`
@@ -636,14 +791,48 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
      （`ui/screens/content/home/ActionMenuDrag.kt`：提起跟手 + 中线预览 + 停泊让位 + 持久化）
    - 自研一套不仅费时，还容易像 26.2.5 那样引入新问题；确认上游有对应实现时直接搬过来适配
 
+28. **`boundsInRoot()` 会把「滚动」算成「布局位移」**（26.3.0 实际踩到并修复）：
+   - 拖动排序用 `onGloballyPositioned { it.boundsInRoot() }` 记录每一项的屏幕范围，
+     再按 `old.top - rect.top` 判断「是否有项让位了」
+   - 但**页面滚动会让所有项的 root 坐标一起变化**，于是每一项都被记上一笔让位位移，
+     卡片在滚动时自己乱跑、位置对不上
+   - 正确做法：**只有 `draggingKey != null`（正在拖动）时才处理位置变化**，
+     非拖动状态下 `bounds` 照常更新，但**不计算也不播放位移**
+   - 推论：任何用「root 坐标差」推断相对位移的逻辑，都要先确认「容器本身是否在滚动」
+
+29. **渲染器的环境变量注入顺序**（26.3.0）：
+   - `GameLauncher.setRendererEnv()` 的顺序是：
+     `SDL_OPENGL_LIBRARY` → `getRendererEnv()` → `POJAVEXEC_EGL`/`SDL_EGL_LIBRARY`
+     → `POJAV_RENDERER` → **通用兜底块** → `LIBGL_ES` 探测
+   - 通用兜底块会写死 `MESA_GL_VERSION_OVERRIDE = 4.6` 等值，
+     因此**凡是自带完整 Mesa 环境的内置渲染器都必须被排除**，
+     否则用户在设置里选的 OpenGL 版本会被悄悄覆盖（表现为「改了没反应」）
+   - 插件渲染器在兜底块之前就 `return` 了，所以历史上没暴露这个问题；内置渲染器则会踩到
+
+30. **渲染器的「唯一标识符」是用户配置里的持久值**（26.3.0）：
+   - `AllSettings.renderer`、`VersionConfig.renderer` 存的都是 `getUniqueIdentifier()`
+   - **重命名渲染器时不要顺手改它的 UUID**，否则所有老用户的选择会失效并回退到列表首个
+   - Ironized Zink 刻意沿用了 Kopper Zink 的 UUID，就是为了让老用户平滑过渡
+   - 删除渲染器时不必做数据迁移：`Renderers.setCurrentRenderer()` 会回退到列表首个并打警告日志
+
+31. **改动渲染器后要一起看的地方（自查清单）**：
+   - `Renderers.kt` 的注册顺序（**列表首个就是所有回退路径的落点**）
+   - `GameLauncher.setRendererEnv()` 的排除条件
+   - `sdl_hook.c` 的 `sdlGlesCompatEnabled()` / `isMobileGluesEgl()`（按 `POJAV_RENDERER` 与
+     `POJAVEXEC_EGL` 判断，改 ID 或 EGL 名要同步确认）
+   - `jni/egl_bridge.c` 的 `pojavInitOpenGL()`（按 `POJAV_RENDERER` 前缀选 bridge）
+   - `library/_Libraries.kt` 的许可条目
+   - `VersionConfigScreen`（按版本渲染器列表）与 `RendererSettingsScreen`（全局）
+   - 预编译库里该渲染器需要的 `.so` 是否真的在包内（`jniLibs/` 或 AAR）
+
 ---
 
 ## 十、给接手者的建议操作顺序
 
-1. 读本文件 + `README.md` + `CHANGELOG.md` + `LICENSE`。
+1. 读本文件 + `README.md` + `CHANGELOG.md` + `LICENSE` + `THIRD_PARTY_NOTICES.md`。
 2. 确认 GitHub 仓库状态（看 Actions 最新编译结果）。
 3. 在 ext4 工作副本中改代码 → 静态检查 → commit → push。
-4. 等 `build_apk.yml`（arm64）验证编译通过 → 按第十二节发布 Release。
+4. 等 `build_apk.yml`（通用版本）验证编译通过 → 按第十二节发布 Release。
 5. 开发新功能前，先读第八节「红线」和第二节「后续待办」。
 
 ### 推荐的静态检查（无本地编译时）
@@ -651,21 +840,37 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 由于本机无法编译，推送前建议做以下静态检查：
 
 - **import 符号解析**：确认没有引用已删除的符号
-- **字符串引用完整性**：`R.string.xxx` 是否都在 XML 中定义
+- **字符串引用完整性**：`R.string.xxx` 是否都在 XML 中定义（**默认语言与 `zh-rCN` 都要有**）
+- **`R.raw` 引用完整性**：`R.raw.xxx` 是否都有对应文件（注意跨模块的 `net.burningtnt.terracotta.R.raw`）
 - **未使用的 import**：清理
 - **残留引用搜索**：搜索已删除功能的符号名
 - **XML 良构性**：用 XML 解析器批量校验 `res/**/*.xml`（能提前发现漏转义的 `&`）
+- **workflow YAML 可解析**：用 YAML 解析器过一遍 `.github/workflows/*.yml`
 - **花括号平衡**：改大段代码后粗略核对 `{` / `}` 数量
-- **隐私扫描**：确认没有 Token / 密钥（见下）
+- **渲染器自查**：见第九节第 31 条清单
+- **隐私扫描**：确认没有 Token / 密钥 / 本地绝对路径（见下）
+
+```bash
+# 渲染器残留引用（应为空）
+grep -rn "NGGL4ESRenderer\|KopperZinkRenderer\|VirGLRenderer\|FreedrenoRenderer\|PanfrostRenderer" \
+  --include=*.kt --include=*.kts .
+
+# 渲染器 libOSMesa 残留引用（应为空）
+grep -rn "libOSMesa" --include=*.kt .
+```
 
 可直接复用的隐私扫描（在仓库根目录执行，排除 `.git`）：
 
 ```bash
 # 常见密钥 / Token 模式
-grep -rInE "ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|xox[baprs]-|AIza[0-9A-Za-z_-]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----" . --exclude-dir=.git
+grep -rInaE "ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|ghu_[A-Za-z0-9]{20,}|ghs_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-|AIza[0-9A-Za-z_-]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----" . --exclude-dir=.git
 
 # 明文口令赋值
 grep -rInE "(token|api[_-]?key|secret|password|passwd)\s*[:=]\s*[\"'][^\"']{8,}[\"']" . --exclude-dir=.git
+
+# 本地绝对路径 / 设备路径（不允许写进仓库文档与源码）
+grep -rInE "/root/|/home/[a-z]+/|/data/user/0/com\.|/data/data/com\.|[A-Z]:\\\\\\\\Users" \
+  --include=*.kt --include=*.kts --include=*.md --include=*.yml --include=*.xml --include=*.properties . --exclude-dir=.git
 
 # 手机号 / QQ 等个人信息
 grep -rInE "\b1[3-9][0-9]{9}\b|\bQQ[:：]\s*[0-9]{5,12}\b" . --exclude-dir=.git
@@ -675,8 +880,9 @@ grep -rnE "secrets\.|password|api_key" .github/workflows/*.yml
 ```
 
 **共享前必须确认**：仓库中没有 GitHub Token / 签名口令明文 /
-OAuth client id / CurseForge API key / 个人联系方式；
+OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / 个人联系方式；
 发布 Release 前同样要对**产物清单**再核对一次（不要把日志、临时文件、凭据一起传上去）。
+另外记得确认**没有把 Token 加进 `buildKeys` / `BuildConfig`** —— 那等于把它打进 APK。
 
 ---
 
@@ -684,12 +890,13 @@ OAuth client id / CurseForge API key / 个人联系方式；
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.2.6**
-- 历史版本：26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.3.0**
+- 历史版本：26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
+- 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
-  - `build_apk.yml` —— push 到 `main` 时单 ABI（arm64-v8a）验证编译
-  - `build.yml` —— 多 ABI 矩阵（`all`/`arm`/`arm64`/`x86`/`x86_64`），上传 `mapping.txt`
+  - `build_apk.yml` —— push 到 `main` 时验证编译**通用版本**（已代码混淆）
+  - `build.yml` —— 通用版本 Release 构建，上传 APK 与 `mapping.txt`
   - `release_ci.yml` —— 发布 Release 时自动调用 `build.yml`，打包 mapping 并上传全部产物
 
 ---
@@ -701,16 +908,16 @@ APK 编译与产物上传全部由 GitHub Actions 自动完成，**不需要手�
 ⚠️ **`<TOKEN>` 由用户临时提供、`<VERSION>` 替换为实际版本号，二者都不要写入任何文件**。
 Token 只放在环境变量或临时凭据助手里，用完即弃（见第八节红线 2）。
 
-### 推荐流程（26.2.2 / 26.2.3 都是这么发的）
+### 推荐流程（26.2.2 / 26.2.3 / 26.3.0 都是这么发的）
 
 ```bash
-TOKEN="<TOKEN>"
+TOKEN="$GITHUB_TOKEN"   # 只从环境变量读，不要把值写进任何文件
 REPO="zzy89216-gif/ZyNova"
 
 # 1. 改代码 + 版本号（ZalithLauncher/gradle.properties 的 launcher_version_name / _code）
-#    并同步文档（CHANGELOG / HANDOFF / README），然后 push 到 main
+#    并同步文档（CHANGELOG / HANDOFF / README ×3 / THIRD_PARTY_NOTICES），然后 push 到 main
 
-# 2. 等 push 触发的 arm64 验证编译跑完（这是最快的编译闸门，约 10~25 分钟）
+# 2. 等 push 触发的通用版本验证编译跑完（这是最快的编译闸门，约 10~25 分钟）
 curl -s -H "Authorization: Bearer $TOKEN" \
   "https://api.github.com/repos/$REPO/actions/runs?per_page=5" \
   | python3 -c "import sys,json;d=json.load(sys.stdin);[print(r['id'],r['name'],r['status'],r['conclusion'],r['head_sha'][:8]) for r in d['workflow_runs']]"
@@ -730,8 +937,8 @@ curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/
   "https://api.github.com/repos/$REPO/releases" \
   | python3 -c "import sys,json;d=json.load(sys.stdin);print(d['id'],d['html_url'])"
 
-# 5. 等 release_ci：会跑 5 个架构 + 一个 Upload-to-Release，约 15~30 分钟
-#    完成后确认 Release 资产是 10 个（5 个 APK + 5 个 mapping.<架构>.zip）
+# 5. 等 release_ci：跑一次通用版本 Release 构建 + 一个 Upload-to-Release，约 10~25 分钟
+#    完成后确认 Release 资产是 2 个（1 个 APK + 1 个 mapping.zip）
 curl -s -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO/releases/tags/v<VERSION>" \
   | python3 -c "import sys,json;d=json.load(sys.stdin);a=d['assets'];print(len(a));[print(' -',x['name']) for x in sorted(a,key=lambda y:y['name'])]"
 
@@ -739,13 +946,13 @@ curl -s -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO/re
 ```
 
 > 之所以能自动上传：`release_ci.yml` 由 `release: published` 触发 →
-> 调用 `build.yml` 跑 5 个架构 → `Upload-to-Release` 用 `softprops/action-gh-release`
+> 调用 `build.yml` 构建**通用版本** → `Upload-to-Release` 用 `softprops/action-gh-release`
 > 把 `./apks/*.apk` 与 `./mappings/*.zip` 一并附到该 Release 上。
 
 ### 备用流程（只在自动上传失败时用）
 
 ```bash
-# 找最近一次成功的多架构 run → 下载 artifact（zip）→ 解压得到 .apk
+# 找最近一次成功的 run → 下载 artifact（zip）→ 解压得到 .apk
 RUN_ID="<run id>"
 curl -s -H "Authorization: Bearer $TOKEN" \
   "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts" \
@@ -759,19 +966,18 @@ unzip apk.zip -d apk_dir/
 RELEASE_ID="<release id>"
 curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/vnd.android.package-archive" \
-  --data-binary @apk_dir/ZyNova-<VERSION>-arm64-v8a.apk \
-  "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=ZyNova-<VERSION>-arm64-v8a.apk"
+  --data-binary @apk_dir/ZyNova-<VERSION>.apk \
+  "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=ZyNova-<VERSION>.apk"
 ```
 
 ### Release 应包含的产物
 
-- `ZyNova-<VERSION>-arm64-v8a.apk`
-- `ZyNova-<VERSION>-armeabi-v7a.apk`
-- `ZyNova-<VERSION>-x86_64.apk`
-- `ZyNova-<VERSION>-x86.apk`
-- `ZyNova-<VERSION>.apk`（universal）
-- mapping（防代码混淆）文件
+26.3.0 起**只有一个通用版本**：
 
+- `ZyNova-<VERSION>.apk`（通用：`arm64-v8a` + `armeabi-v7a` + `x86` + `x86_64`，已代码混淆）
+- `mapping (universal).zip`（混淆映射，用于还原崩溃堆栈）
+
+> 不再有 `-arm64-v8a` / `-armeabi-v7a` / `-x86` / `-x86_64` 之类的架构后缀产物。
 > ⚠️ 大文件上传 / 下载可能中断，APK 下载可用 `curl -C -` 断点续传。
 
 ### ⚠️ 发布前的隐私复检（每次发布都要做）
@@ -783,7 +989,12 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
    收尾时把本地工作副本删掉即可让 `.git/config` 里的带 Token 的 remote URL 一并消失，
    也可以用 `git remote set-url origin https://github.com/zzy89216-gif/ZyNova.git` 清掉。
 4. **Release 说明**：更新日志可以详细，但不要写入任何仅内部可见的信息（内网地址、密钥提示等）。
+5. **第三方合规复检**：
+   - 确认本版本新增 / 移除的组件，`THIRD_PARTY_NOTICES.md`、`assets/licenses/`、
+     `res/raw/`、`library/_Libraries.kt` 四处**已同步**
+   - 确认没有删除任何上游版权声明
+   - 确认预编译二进制的来源与版本号写在 `THIRD_PARTY_NOTICES.md` 里（含源码获取方式）
 
 ---
 
-**最后更新**：2026-09-26（26.2.6 已发布）
+**最后更新**：2026-09-27（26.3.0 已开发完成，待发布）

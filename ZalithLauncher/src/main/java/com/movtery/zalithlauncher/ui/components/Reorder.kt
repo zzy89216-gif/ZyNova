@@ -87,9 +87,13 @@ class ReorderState {
     /**
      * 记录某项的屏幕范围
      *
-     * 如果该项的位置相比上一次布局发生了变化：
+     * 只有在**拖动过程中**才需要处理位置变化：
      * - 它是被拖动项 → 抵消位移，保证卡片继续跟手
      * - 其它项 → 记录位移，由 [reorderItem] 播放成一次平滑的让位动画
+     *
+     * 没有在拖动时必须直接忽略：页面滚动会让所有项的 root 坐标一起变化，
+     * 若继续按「布局位移」处理，每一项都会被记上一笔让位动画，
+     * 卡片就会在滚动时自己乱跑（这正是「主页向下滚动时卡片异常移动」的成因）。
      */
     fun onBounds(key: Any, rect: Rect) {
         val old = bounds[key]
@@ -98,10 +102,12 @@ class ReorderState {
         bounds[key] = rect
         old ?: return
 
+        val dragging = draggingKey ?: return
+
         val delta = old.top - rect.top
         if (delta == 0f) return
 
-        if (draggingKey == key) {
+        if (dragging == key) {
             dragOffset += Offset(0f, -delta)
         } else {
             shifts[key] = (shifts[key] ?: 0f) + delta

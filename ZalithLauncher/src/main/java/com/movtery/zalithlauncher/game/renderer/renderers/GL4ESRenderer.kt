@@ -20,6 +20,14 @@ package com.movtery.zalithlauncher.game.renderer.renderers
 
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
 
+/**
+ * GL4ES
+ *
+ * 由 [PojavLauncherTeam/gl4es_extra_extra](https://github.com/PojavLauncherTeam/gl4es_extra_extra)
+ * 提供，MIT 许可，版权归 Sebastien Chevalier、Ryan Hileman 所有。
+ *
+ * 保持上游默认配置：不追加任何渲染器环境变量，由启动器的通用 GLES 逻辑决定。
+ */
 object GL4ESRenderer : RendererInterface {
     override fun getRendererId(): String = "opengles2"
 

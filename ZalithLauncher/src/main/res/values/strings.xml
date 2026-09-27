@@ -1487,4 +1487,44 @@
     <string name="fm_property_folders">Folders</string>
     <string name="fm_calculating">Calculating…</string>
     <string name="fm_name_conflict">Name conflicts with an existing entry</string>
+    <!-- Ironized Zink 渲染器配置（内置渲染器，配置模型移植自上游 Ironized Zink，GPL-3.0） -->
+    <string name="settings_renderer_ironized_preset_title">Preset</string>
+    <string name="settings_renderer_ironized_preset_summary">Official Ironized Zink presets. Picking one writes the whole parameter set — every parameter below can still be tuned afterwards.</string>
+    <string name="settings_renderer_ironized_preset_custom">Custom — the current parameters match no preset</string>
+    <string name="settings_renderer_ironized_preset_potato_tagline">Absolute maximum FPS</string>
+    <string name="settings_renderer_ironized_preset_potato_note">MC 1.8 → latest (incl. 26.x) · Shaders: not recommended</string>
+    <string name="settings_renderer_ironized_preset_performance_tagline">High FPS with Sodium &amp; light shaders</string>
+    <string name="settings_renderer_ironized_preset_performance_note">MC 1.20.x → latest (incl. 26.x) · Shaders: light (e.g. Complementary low/medium)</string>
+    <string name="settings_renderer_ironized_preset_default_tagline">Balanced Zink + shaders (recommended)</string>
+    <string name="settings_renderer_ironized_preset_default_note">MC 1.16.x → latest (incl. 26.x) · Shaders: full (Iris / OptiFine)</string>
+    <string name="settings_renderer_ironized_preset_max_compat_tagline">Run everything — versions, shaders &amp; mods</string>
+    <string name="settings_renderer_ironized_preset_max_compat_note">All versions (1.8 → 26.x) · Shaders: full + heavy packs</string>
+    <string name="settings_renderer_ironized_gl_version_title">OpenGL version</string>
+    <string name="settings_renderer_ironized_gl_version_summary">Higher means newer Minecraft and shaders; 4.6 is best for Sodium on 26.x.</string>
+    <string name="settings_renderer_ironized_threaded_gl_title">Threaded GL</string>
+    <string name="settings_renderer_ironized_threaded_gl_summary">mesa_glthread — offloads GL to a worker thread; higher FPS</string>
+    <string name="settings_renderer_ironized_big_core_title">Big-core affinity</string>
+    <string name="settings_renderer_ironized_big_core_summary">POJAV_BIG_CORE_AFFINITY — pin rendering to the performance CPU cores</string>
+    <string name="settings_renderer_ironized_out_of_order_title">Out-of-order drawing</string>
+    <string name="settings_renderer_ironized_out_of_order_summary">allow_draw_out_of_order — lets the driver reorder draws; higher FPS, safe on its own</string>
+    <string name="settings_renderer_ironized_vsync_title">VSync (cap to display refresh rate)</string>
+    <string name="settings_renderer_ironized_vsync_summary">vblank_mode / FORCE_VSYNC — syncs to your display\'s real refresh rate. Mesa/Zink has no numeric FPS-limit variable, so this is the honest mechanism behind \"cap to refresh rate\": on = capped, off = uncapped.</string>
+    <string name="settings_renderer_ironized_relax_glsl_title">Relaxed GLSL</string>
+    <string name="settings_renderer_ironized_relax_glsl_summary">force_glsl_extensions_warn + allow_* — compatibility knobs many shaders &amp; mods rely on</string>
+    <string name="settings_renderer_ironized_all_extensions_title">Expose all extensions</string>
+    <string name="settings_renderer_ironized_all_extensions_summary">MESA_EXTENSION_MAX_YEAR — off caps GL extensions to help a few older mods</string>
+    <string name="settings_renderer_ironized_shader_cache_title">Shader disk cache</string>
+    <string name="settings_renderer_ironized_shader_cache_summary">Cache compiled shaders for faster warm loads and less stutter</string>
+    <string name="settings_renderer_ironized_single_file_cache_title">Single-file cache</string>
+    <string name="settings_renderer_ironized_single_file_cache_summary">MESA_DISK_CACHE_SINGLE_FILE — store the shader cache as one file (less I/O)</string>
+    <string name="settings_renderer_ironized_lazy_descriptors_title">Lazy descriptors</string>
+    <string name="settings_renderer_ironized_lazy_descriptors_summary">ZINK_DESCRIPTORS=lazy — lighter descriptor path; can boost FPS</string>
+    <string name="settings_renderer_ironized_inline_uniforms_title">Inline uniforms</string>
+    <string name="settings_renderer_ironized_inline_uniforms_summary">ZINK_INLINE_UNIFORMS — inline small uniforms; may help some shaders</string>
+    <string name="settings_renderer_ironized_no_error_title">No-error fast path</string>
+    <string name="settings_renderer_ironized_no_error_summary">MESA_NO_ERROR — skips GL error/validation checks. Mesa\'s own docs call this \"undefined behavior for invalid use of the API\". Do not combine it with out-of-order drawing: that exact combination was the confirmed cause of the hand rendering through GUI screens bug, so it stays off in every preset.</string>
+    <string name="settings_renderer_ironized_force_software_title">Force software</string>
+    <string name="settings_renderer_ironized_force_software_summary">LIBGL_ALWAYS_SOFTWARE — CPU fallback; last-resort only (very slow)</string>
+    <string name="settings_renderer_ironized_unsafe_combo">Out-of-order drawing and the no-error fast path are both on. This combination is the confirmed cause of the \"hand renders through GUI\" glitch — turn one of them off.</string>
+    <string name="settings_renderer_mobileglues_summary">Translates desktop OpenGL onto the device\'s OpenGL ES 3.x</string>
 </resources>

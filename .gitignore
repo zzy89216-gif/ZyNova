@@ -14,6 +14,13 @@ local.properties
 .key_password.txt
 .curseforge_api.txt
 
+# GitHub API Token / 其它本地凭据：只允许通过环境变量或 CI Secret 注入，绝不提交
+.github_token.txt
+.gh_token.txt
+.gh_token
+.github_token
+*_api_key.txt
+
 # AI agent
 .zcode/
 .agent/

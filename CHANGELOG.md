@@ -2,6 +2,79 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [26.3.0] - 2026-09-27
+
+本版本重做**渲染器体系**：内置渲染器只保留 **Ironized Zink（默认）**、**GL4ES**、**MobileGlues** 三个，
+Ironized Zink 完整集成其原生配置与 4 个官方预设；同时修复主页滚动时卡片异常移动，
+并把发布产物收敛为**一个通用版本**。
+
+### 变更
+
+- **渲染器体系重做：删除全部旧内置渲染器，只保留三个**
+
+  | 渲染器 | 状态 | 配置 |
+  |---|---|---|
+  | **Ironized Zink** | 新增内置（**默认**） | 完整原生配置 + 4 个官方预设 + 全部可调参数 |
+  | **GL4ES** | 保留 | 保持默认，不追加任何环境变量 |
+  | **MobileGlues** | 新增内置 | 保持上游默认配置 |
+
+  被删除的渲染器：**Krypton Wrapper（NG-GL4ES）**、**Kopper Zink**、**VirGL**、
+  **Freedreno（Adreno）**、**Panfrost（Mali）**。
+  它们各自专属的原生库（`libOSMesa_*.so`、`libvirgl*.so`）与 `NG-GL4ES-release.aar`
+  一并移除，不再随包分发。
+
+- **默认渲染器改为 Ironized Zink 的 Default 预设**
+  - `AllSettings.renderer` 默认值指向 Ironized Zink；
+    并沿用原 Kopper Zink 的唯一标识符，老用户升级后不会被重置回列表首个渲染器
+  - 默认参数与该上游 **Default** 预设逐项一致
+
+- **Ironized Zink 完整集成**
+  - 移植上游（作者 GoyDevv，GPL-3.0）`Presets.kt` 的全部 **13 个可调参数**：
+    OpenGL 版本、线程化 GL、大核绑定、乱序绘制、关闭错误检查、垂直同步、
+    放宽 GLSL、暴露全部扩展、着色器磁盘缓存、单文件缓存、
+    延迟描述符、内联 uniform、强制软件渲染
+  - 内置 **4 个官方预设**：`Potato`、`Performance`、`Default`、`Max Compatibility`
+    （参数取值与上游一致，未做增删改值）
+  - 上游把配置写入 `/sdcard/IronizedZink/ironized.env` 再由 `libironized_zink.so`
+    在游戏进程内 `setenv()`；内置后改为启动器**直接把同一组环境变量注入游戏进程**，
+    因此**不再需要任何存储权限**
+
+- **选中 Ironized Zink 后，下方自动展开完整配置面板**
+  - 渲染器列表里选中 Ironized Zink 后，紧随其后出现「预设 / OpenGL 版本 / 全部参数」三组卡片
+  - 选预设会一次性写入整组参数，写入后每个参数仍可单独调整；
+    参数与所选预设不一致时，预设卡片会明确提示「已自定义」
+  - 同时开启「乱序绘制 + 关闭错误检查」时给出红色警告（上游文档确认的「手穿过 GUI」成因）
+  - 渲染器列表里直接显示当前生效的预设名
+
+- **发布产物收敛为一个通用版本**
+  - 移除了 ABI 拆分（不再分别产出 arm64 / arm / x86 / x86_64 包），
+    `-Darch` 资源裁剪逻辑一并移除
+  - Release 构建继续保持**代码混淆**（`isMinifyEnabled` + `isShrinkResources`）
+  - CI 三个 workflow 同步改为只构建 / 上传通用包
+
+### 修复
+
+- **修复主页向下滚动时卡片异常移动**
+  - **现象**：卡片式主页向下滚动时，卡片会自己轻微位移 / 抖动，位置对不上
+  - **原因**：拖动排序用 `boundsInRoot()` 记录每一项的屏幕范围，
+    而**页面滚动会让所有项的 root 坐标一起变化**；这段变化被误判成「布局位移」，
+    于是每一项都被记上一笔让位动画，卡片在滚动时就自己乱跑
+  - **处理**：只有在**拖动过程中**才处理位置变化，非拖动状态下直接忽略 —
+    滚动不再产生任何位移残留
+
+### 文档
+
+- 新增 `THIRD_PARTY_NOTICES.md`（仓库根目录 + 随 APK 分发），逐组件列出许可证与版权归属
+- 新增随包分发的 `assets/licenses/`：上游 Ironized Zink 的 `CREDITS.md` 原文、
+  Mesa 完整许可集（MIT / SGI Free Software License B / Khronos）、
+  Ironized Zink 的 GPL-3.0 全文、MobileGlues 的 LGPL-2.1 全文
+- **GitHub API Token 约定**：只允许通过**本地环境变量**或 **CI Secret** 注入，
+  绝不写入源码、提交或 APK
+
+### 版本
+
+- 版本号更新为 **26.3.0**（`launcher_version_code=260300`）
+
 ## [26.2.6] - 2026-09-26
 
 本版本修复 26.2.5 拖动排序引入的两个显示问题，并把**操作菜单拖动换边**从上游搬了过来。

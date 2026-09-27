@@ -37,6 +37,8 @@ import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.ui.control.HotbarRule
 import com.movtery.zalithlauncher.ui.control.gamepad.JoystickMode
@@ -50,8 +52,10 @@ object AllSettings : SettingsRegistry() {
     //Renderer
     /**
      * 全局渲染器
+     *
+     * 默认 Ironized Zink（Default 预设）
      */
-    val renderer = stringSetting("renderer", "")
+    val renderer = stringSetting("renderer", IRONIZED_ZINK_UNIQUE_IDENTIFIER)
 
     /**
      * Vulkan 驱动器
@@ -97,6 +101,81 @@ object AllSettings : SettingsRegistry() {
      * 启用着色器日志输出
      */
     val dumpShaders = boolSetting("dumpShaders", false)
+
+    //Ironized Zink
+    //以下参数完整对应上游 Ironized Zink 的原生配置（作者 GoyDevv，GPL-3.0）：
+    //https://github.com/GoyDevv/IronizedZink
+    //默认值与该上游的 Default 预设完全一致。
+
+    /**
+     * Ironized Zink 官方预设
+     */
+    val ironizedZinkPreset = enumSetting("ironizedZinkPreset", ZinkPreset.DEFAULT)
+
+    /**
+     * OpenGL 版本（3.3 / 4.3 / 4.5 / 4.6）
+     */
+    val ironizedZinkGlVersion = stringSetting("ironizedZinkGlVersion", "4.6")
+
+    /**
+     * 线程化 GL（mesa_glthread）
+     */
+    val ironizedZinkThreadedGl = boolSetting("ironizedZinkThreadedGl", true)
+
+    /**
+     * 大核绑定（POJAV_BIG_CORE_AFFINITY）
+     */
+    val ironizedZinkBigCoreAffinity = boolSetting("ironizedZinkBigCoreAffinity", false)
+
+    /**
+     * 允许乱序绘制（allow_draw_out_of_order）
+     */
+    val ironizedZinkOutOfOrder = boolSetting("ironizedZinkOutOfOrder", false)
+
+    /**
+     * 关闭 GL 错误检查（MESA_NO_ERROR，未定义行为，默认关闭）
+     */
+    val ironizedZinkNoError = boolSetting("ironizedZinkNoError", false)
+
+    /**
+     * 垂直同步（跟随屏幕真实刷新率）
+     */
+    val ironizedZinkVsync = boolSetting("ironizedZinkVsync", true)
+
+    /**
+     * 放宽 GLSL 限制（着色器兼容性）
+     */
+    val ironizedZinkRelaxGlsl = boolSetting("ironizedZinkRelaxGlsl", true)
+
+    /**
+     * 暴露全部扩展（关闭则限制到 2018 年）
+     */
+    val ironizedZinkAllExtensions = boolSetting("ironizedZinkAllExtensions", true)
+
+    /**
+     * 着色器磁盘缓存
+     */
+    val ironizedZinkShaderCache = boolSetting("ironizedZinkShaderCache", true)
+
+    /**
+     * 单文件着色器缓存
+     */
+    val ironizedZinkSingleFileCache = boolSetting("ironizedZinkSingleFileCache", true)
+
+    /**
+     * 延迟描述符（ZINK_DESCRIPTORS=lazy，实验性）
+     */
+    val ironizedZinkLazyDescriptors = boolSetting("ironizedZinkLazyDescriptors", false)
+
+    /**
+     * 内联 uniform（ZINK_INLINE_UNIFORMS，实验性）
+     */
+    val ironizedZinkInlineUniforms = boolSetting("ironizedZinkInlineUniforms", false)
+
+    /**
+     * 强制软件渲染（LIBGL_ALWAYS_SOFTWARE，实验性）
+     */
+    val ironizedZinkForceSoftware = boolSetting("ironizedZinkForceSoftware", false)
 
     //Game
     /**

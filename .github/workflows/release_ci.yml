@@ -14,6 +14,9 @@ jobs:
     with:
       variant: Release
     secrets:
+      # GitHub API Token（可选）：仓库 Secret 里配置 GH_TOKEN 即可注入，
+      # 未配置时 build.yml 会退回 Actions 内置 token。
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
       KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
       OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
@@ -23,6 +26,10 @@ jobs:
     needs: Build
     runs-on: ubuntu-latest
     if: success()
+
+    env:
+      # 只经 Secret / 环境变量注入，绝不落盘到仓库
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
 
     steps:
       - name: Download Files
@@ -34,23 +41,18 @@ jobs:
         run: |
           mkdir -p ./apks
           mkdir -p ./mappings
-          
+
           find ./artifacts -name "*.apk" -type f -exec cp {} ./apks/ \;
-          
+
           for dir in ./artifacts/*/; do
             dir_name=$(basename "$dir")
-          
-            # 跳过 APK
-            if [[ "$dir_name" == *"release apk"* ]]; then
-              continue
-            fi
-          
+
             if [[ "$dir_name" == mapping* ]]; then
               (cd "$dir" && zip -r "../${dir_name}.zip" .)
               mv "./artifacts/${dir_name}.zip" ./mappings/
             fi
           done
-          
+
           echo "Found $(ls ./apks/ | wc -l) APK file(s)"
           echo "Found $(ls ./mappings/ | wc -l) Mapping file(s)"
 

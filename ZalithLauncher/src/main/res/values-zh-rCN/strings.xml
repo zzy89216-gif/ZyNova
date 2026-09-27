@@ -1469,4 +1469,44 @@
     <string name="fm_property_folders">文件夹数</string>
     <string name="fm_calculating">计算中…</string>
     <string name="fm_name_conflict">与已有条目重名</string>
+    <!-- Ironized Zink 渲染器配置（内置渲染器，配置模型移植自上游 Ironized Zink，GPL-3.0） -->
+    <string name="settings_renderer_ironized_preset_title">预设</string>
+    <string name="settings_renderer_ironized_preset_summary">Ironized Zink 官方预设。选择预设会一次性写入整组参数，写入后下面每一项仍然可以单独调整。</string>
+    <string name="settings_renderer_ironized_preset_custom">已自定义 —— 当前参数与任何预设都不一致</string>
+    <string name="settings_renderer_ironized_preset_potato_tagline">绝对最高帧率</string>
+    <string name="settings_renderer_ironized_preset_potato_note">MC 1.8 → 最新（含 26.x）· 光影：不推荐</string>
+    <string name="settings_renderer_ironized_preset_performance_tagline">高帧率 + Sodium &amp; 轻量光影</string>
+    <string name="settings_renderer_ironized_preset_performance_note">MC 1.20.x → 最新（含 26.x）· 光影：轻量（如 Complementary 低/中）</string>
+    <string name="settings_renderer_ironized_preset_default_tagline">均衡的 Zink + 光影（推荐）</string>
+    <string name="settings_renderer_ironized_preset_default_note">MC 1.16.x → 最新（含 26.x）· 光影：完整（Iris / OptiFine）</string>
+    <string name="settings_renderer_ironized_preset_max_compat_tagline">什么都能跑 —— 版本、光影与模组</string>
+    <string name="settings_renderer_ironized_preset_max_compat_note">全部版本（1.8 → 26.x）· 光影：完整 + 重度光影包</string>
+    <string name="settings_renderer_ironized_gl_version_title">OpenGL 版本</string>
+    <string name="settings_renderer_ironized_gl_version_summary">越高越能支持更新的 Minecraft 与光影；26.x 上用 Sodium 建议 4.6。</string>
+    <string name="settings_renderer_ironized_threaded_gl_title">线程化 GL</string>
+    <string name="settings_renderer_ironized_threaded_gl_summary">mesa_glthread —— 把 GL 调用卸载到工作线程，帧率更高</string>
+    <string name="settings_renderer_ironized_big_core_title">绑定大核</string>
+    <string name="settings_renderer_ironized_big_core_summary">POJAV_BIG_CORE_AFFINITY —— 把渲染固定到性能核上</string>
+    <string name="settings_renderer_ironized_out_of_order_title">乱序绘制</string>
+    <string name="settings_renderer_ironized_out_of_order_summary">allow_draw_out_of_order —— 允许驱动重排绘制顺序；帧率更高，单独使用是安全的</string>
+    <string name="settings_renderer_ironized_vsync_title">垂直同步（限制到屏幕刷新率）</string>
+    <string name="settings_renderer_ironized_vsync_summary">vblank_mode / FORCE_VSYNC —— 与屏幕真实刷新率同步。Mesa/Zink 并没有「限制到某个数字帧率」的环境变量，所以「限制到刷新率」就是靠这个开关：开 = 有上限，关 = 不限制。</string>
+    <string name="settings_renderer_ironized_relax_glsl_title">放宽 GLSL 限制</string>
+    <string name="settings_renderer_ironized_relax_glsl_summary">force_glsl_extensions_warn + allow_* —— 很多光影与模组依赖的兼容开关</string>
+    <string name="settings_renderer_ironized_all_extensions_title">暴露全部扩展</string>
+    <string name="settings_renderer_ironized_all_extensions_summary">MESA_EXTENSION_MAX_YEAR —— 关闭后会把 GL 扩展限制到 2018 年，用于兼容少数老模组</string>
+    <string name="settings_renderer_ironized_shader_cache_title">着色器磁盘缓存</string>
+    <string name="settings_renderer_ironized_shader_cache_summary">缓存已编译的着色器，二次进入加载更快、卡顿更少</string>
+    <string name="settings_renderer_ironized_single_file_cache_title">单文件缓存</string>
+    <string name="settings_renderer_ironized_single_file_cache_summary">MESA_DISK_CACHE_SINGLE_FILE —— 把着色器缓存存成单个文件，减少 I/O</string>
+    <string name="settings_renderer_ironized_lazy_descriptors_title">延迟描述符</string>
+    <string name="settings_renderer_ironized_lazy_descriptors_summary">ZINK_DESCRIPTORS=lazy —— 更轻量的描述符路径，可能提升帧率（实验性）</string>
+    <string name="settings_renderer_ironized_inline_uniforms_title">内联 uniform</string>
+    <string name="settings_renderer_ironized_inline_uniforms_summary">ZINK_INLINE_UNIFORMS —— 内联较小的 uniform，可能对部分光影有帮助（实验性）</string>
+    <string name="settings_renderer_ironized_no_error_title">关闭错误检查（快速路径）</string>
+    <string name="settings_renderer_ironized_no_error_summary">MESA_NO_ERROR —— 跳过 GL 错误与参数校验。Mesa 官方文档称其会让「非法的 API 调用进入未定义行为」。不要与上面的乱序绘制同时开启：正是这两者的组合造成了「手穿过 GUI 界面」的画面错乱，所以所有预设都默认关闭它。</string>
+    <string name="settings_renderer_ironized_force_software_title">强制软件渲染</string>
+    <string name="settings_renderer_ironized_force_software_summary">LIBGL_ALWAYS_SOFTWARE —— 退回 CPU 渲染，仅作最后手段（非常慢）</string>
+    <string name="settings_renderer_ironized_unsafe_combo">乱序绘制与「关闭错误检查」同时开启了。这一组合正是「手穿过 GUI 界面」画面错乱的已知成因 —— 请关掉其中一个。</string>
+    <string name="settings_renderer_mobileglues_summary">把桌面 OpenGL 转译到设备的 OpenGL ES 3.x</string>
 </resources>

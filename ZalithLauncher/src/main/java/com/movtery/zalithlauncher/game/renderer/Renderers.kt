@@ -18,18 +18,17 @@
 
 package com.movtery.zalithlauncher.game.renderer
 
-import com.movtery.zalithlauncher.game.renderer.renderers.FreedrenoRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
-import com.movtery.zalithlauncher.game.renderer.renderers.KopperZinkRenderer
-import com.movtery.zalithlauncher.game.renderer.renderers.NGGL4ESRenderer
-import com.movtery.zalithlauncher.game.renderer.renderers.PanfrostRenderer
-import com.movtery.zalithlauncher.game.renderer.renderers.VirGLRenderer
+import com.movtery.zalithlauncher.game.renderer.renderers.IronizedZinkRenderer
+import com.movtery.zalithlauncher.game.renderer.renderers.MobileGluesRenderer
 import com.movtery.zalithlauncher.utils.logging.Logger
 
 private const val TAG = "Renderers"
 
 /**
  * 启动器所有渲染器总管理者，启动器内置的渲染器与渲染器插件加载的渲染器，都会加载到这里
+ *
+ * 内置渲染器只保留三个：Ironized Zink（默认）、GL4ES、MobileGlues。
  */
 object Renderers {
     private val renderers: MutableList<RendererInterface> = mutableListOf()
@@ -48,12 +47,9 @@ object Renderers {
         }
 
         addRenderers(
-            NGGL4ESRenderer,
+            IronizedZinkRenderer,
             GL4ESRenderer,
-            KopperZinkRenderer,
-            VirGLRenderer,
-            FreedrenoRenderer,
-            PanfrostRenderer
+            MobileGluesRenderer
         )
     }
 

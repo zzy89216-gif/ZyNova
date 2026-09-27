@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.6)
+[![Release](https://img.shields.io/badge/Release-26.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.3.0)
 
 [简体中文](README.md) | [繁體中文](README_ZH_TW.md) | English
 
@@ -27,6 +27,24 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 26.3.0
+
+- **Renderer overhaul — only three built-in renderers remain**:
+  **Ironized Zink** (now the default), **GL4ES** and **MobileGlues**.
+  Removed: Krypton Wrapper (NG-GL4ES), Kopper Zink, VirGL, Freedreno and Panfrost,
+  together with the native libraries that only they used.
+- **Ironized Zink is fully integrated**: all **13 tunable parameters** and the
+  **4 official presets** (Potato / Performance / Default / Max Compatibility),
+  ported from upstream (by GoyDevv, GPL-3.0). Selecting it in **Settings → Renderer**
+  immediately expands the full configuration panel right below.
+- **Default renderer is now Ironized Zink with the Default preset.**
+- **Fixed cards drifting while scrolling the home page** — the page scroll was being
+  mistaken for a reorder "make way" shift, so every card animated itself out of place.
+- **One universal APK only** (all four ABIs in a single build, code obfuscation kept).
+- **Per-component license notices** — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **External renderer plugins are unaffected**: FCL / Zalith renderer plugins and
+  `fclPlugin_V2` plugins can still add more renderers to the list.
 
 ## ✨ Highlights of 26.2.6
 
@@ -127,6 +145,38 @@ and to establish ZyNova's own resource management, download, home screen and UI 
 | Launcher updates via ZyNova's own GitHub Releases | ✅ |
 | On-demand loading and performance strategy | ✅ |
 
+### Renderers
+
+Since 26.3.0 the launcher ships **exactly three built-in renderers**:
+
+| Renderer | What it is | Configuration |
+|---|---|---|
+| **Ironized Zink** (default) | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets + 13 tunable parameters** |
+| **GL4ES** | Classic OpenGL translation layer | Kept at its defaults |
+| **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | Kept at upstream defaults |
+
+**The 4 official Ironized Zink presets** (values identical to upstream):
+
+| Preset | Best for | Minecraft | Shaders |
+|---|---|---|---|
+| **Potato** | Absolute maximum FPS | 1.8 → latest (incl. 26.x) | Not recommended |
+| **Performance** | High FPS with Sodium | 1.20.x → latest | Light |
+| **Default** | Balanced Zink + shaders (**default**) | 1.16.x → latest | Full (Iris / OptiFine) |
+| **Max Compatibility** | Run everything | All versions | Full + heavy packs |
+
+**All tunable parameters**: OpenGL version (3.3 / 4.3 / 4.5 / 4.6), threaded GL,
+big-core affinity, out-of-order drawing, no-error fast path, VSync, relaxed GLSL,
+expose all extensions, shader disk cache, single-file cache, lazy descriptors,
+inline uniforms, force software.
+
+Selecting Ironized Zink in **Settings → Renderer** immediately expands the full
+configuration panel right below it; picking a preset writes the whole parameter set,
+and every parameter can still be tuned individually afterwards.
+
+> **External renderers are unaffected**: renderer plugins (FCL / Zalith renderer plugins
+> and the newer `fclPlugin_V2` plugins) can still add more renderers to the list.
+> Only three are *built in* — you can still install as many plugins as you like.
+
 ### Card-style home screen
 
 The home screen is organized into **per-version modules**: each installed version is a module
@@ -202,6 +252,13 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 
 This project is licensed under the **[GPL-3.0 license](LICENSE)**.
 
+> **Licenses differ per component.** Do not assume the whole project is MIT just because one
+> dependency is: ZyNova itself is GPL-3.0, Ironized Zink is GPL-3.0, the Mesa / Zink / Kopper
+> engine it ships is MIT (GLX: SGI Free Software License B, GL headers: Khronos),
+> MobileGlues is LGPL-2.1, and GL4ES is MIT.
+> See **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)** for the full per-component breakdown,
+> copyright notices and the source availability statement for the redistributed binaries.
+
 ### Additional Terms (Pursuant to Section 7 of the GPLv3 License)
 
 1. When distributing a modified version of this program, you must reasonably modify the program's name or version number to distinguish it from the original version. (According to [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374))
@@ -242,10 +299,11 @@ This software uses the following open source libraries:
 | material-color-utilities              | Copyright 2021 Google LLC                                                                                     | Apache 2.0           | [Link↗](https://github.com/material-foundation/material-color-utilities)           |
 | Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [Link↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
 | Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
-| Mesa                                  | Copyright © The Mesa Authors                                                                                  | MIT License          | [Link↗](https://mesa3d.org/)                                                       |
+| Ironized Zink                         | Copyright © GoyDevv (rendering engine: Mesa Zink / Kopper, © The Mesa Authors)                                 | GPL-3.0              | [Link↗](https://github.com/GoyDevv/IronizedZink)                                   |
+| Mesa (Zink / Kopper)                  | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT / SGI-B / Khronos | [Link↗](https://mesa3d.org/)                                                      |
 | MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [Link↗](https://github.com/Tencent/MMKV)                                           |
 | Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
-| NG-GL4ES                              | Copyright © 2016-2018 Sebastien Chevalier; Copyright © 2013-2016 Ryan Hileman; Copyright (c) 2025-2026 BZLZHH | MIT License          | [Link↗](https://github.com/BZLZHH/NG-GL4ES)                                        |
+| MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [Link↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
 | OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okhttp)                                          |
 | Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://square.github.io/okio/)                                            |
 | OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [Link↗](https://github.com/GeyserMC/OpenNBT)                                       |
