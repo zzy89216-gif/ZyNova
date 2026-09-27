@@ -72,7 +72,7 @@ val libraryData = listOf(
     LibraryInfo("MobileGlues", "Copyright (c) 2025-2026 MobileGL-Dev", License("LGPL-2.1 License", R.raw.mobileglues_license), "https://github.com/MobileGL-Dev/MobileGlues"),
     LibraryInfo("Navigation 3", COPYRIGHT_AOSP, LICENSE_APACHE_2, "https://developer.android.com/jetpack/androidx/releases/navigation3"),
     LibraryInfo("OkHttp", "Copyright © 2019 Square, Inc.", LICENSE_APACHE_2, "https://github.com/square/okhttp"),
-    LibraryInfo("Okio", "Copyright © 2013 Square, Inc.", LICENSE_APACHE_2, "https://square.github.io/okio/"),
+    LibraryInfo("Okio", "Copyright © 2013 Square, Inc.", LICENSE_APACHE_2, "https://github.com/square/okio"),
     LibraryInfo("OpenNBT", "Copyright © 2013-2021 Steveice10.", License(LICENSE_MIT, R.raw.opennbt_license), "https://github.com/GeyserMC/OpenNBT"),
     LibraryInfo("Process Phoenix", "Copyright © 2015 Jake Wharton", LICENSE_APACHE_2, "https://github.com/JakeWharton/ProcessPhoenix"),
     LibraryInfo("proxy-client-android", null, License(LICENSE_LGPL_3, R.raw.lgpl_3_license), "https://github.com/TouchController/TouchController"),

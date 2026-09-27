@@ -5,7 +5,7 @@
 
 **每个组件都以其上游仓库中的实际 LICENSE 为准，本项目不把它们合并成同一个许可证，也不改变任何上游声明。**
 
-若你只想要一句话结论：**本项目自身是 GPL-3.0**；内置渲染器分别属于 **Ironized Zink = GPL-3.0**、**MobileGlues = LGPL-2.1**、**GL4ES = MIT**；而 Ironized Zink 所承载的渲染引擎是 **Mesa / Zink / Kopper = MIT（GLX 部分 SGI Free Software License B，GL 头文件 Khronos）**。
+若你只想要一句话结论：**本项目自身是 GPL-3.0**；内置渲染器分别属于 **Ironized Zink = GPL-3.0**、**MobileGlues = LGPL-2.1**、**GL4ES = MIT**；而 Ironized Zink 所承载的渲染引擎来自 **Mesa**（其中的 **Zink** 驱动与 **Kopper** 窗口系统层也是 Mesa 的一部分）——主 Mesa / Gallium 代码为 **MIT**，GLX 客户端代码为 **SGI Free Software License B**，GL / GLX 头文件为 **Khronos**。
 
 ---
 
@@ -45,6 +45,7 @@ Kopper 窗口系统层包装成一个渲染器。上游许可证全文与署名�
 | 版本 | 2.0.0（release tag `V2.0.0`，2026-08-09 发布；APK 资产 `MobileGlues_2.0.0.apk`） |
 | 许可证 | **GNU LGPL-2.1**（含上游版权头 `Copyright (c) 2025-2026 MobileGL-Dev`）——完整文本见 `ZalithLauncher/src/main/res/raw/mobileglues_license.txt` |
 | 随附形式 | 未经修改的预编译共享库 `libmobileglues.so`（四个 ABI） |
+| 完整性核验 | 已与官方 release 内 `lib/*/libmobileglues.so` 做 **SHA-256 逐字节比对，四个 ABI 全部一致** |
 
 **对应源码（LGPL-2.1 §6 要求）**：所分发的 `libmobileglues.so` 直接取自上游官方
 release 的 `MobileGlues_2.0.0.apk`，**未经任何修改**。其对应源码与构建配方如下：
@@ -56,7 +57,8 @@ release 的 `MobileGlues_2.0.0.apk`，**未经任何修改**。其对应源码�
 若需要与该二进制逐位对应的源码，请按上述插件工程在 `plugin` 分支上的
 `MobileGlues` 子模块提交检出（该子模块指向 MobileGlues 核心库的对应修订）。
 
-本项目对该库**未做任何修改**，因此不存在需要额外提供的修改内容。
+本项目对该库**未做任何修改**（四 ABI 的 `libmobileglues.so` 与官方 release 内的同名文件
+SHA-256 完全一致，可自行复核），因此不存在需要额外提供的修改内容。
 该库以独立的动态库形式随 APK 分发（`lib/<abi>/libmobileglues.so`），
 可由具备相应能力的用户替换为其自行编译的同名库，从而实现 LGPL 意义上的重新链接。
 获取上述源码后，使用 Android NDK + CMake 构建 `MobileGlues-cpp` 即可得到同名库。
@@ -75,7 +77,7 @@ release 的 `MobileGlues_2.0.0.apk`，**未经任何修改**。其对应源码�
 
 ---
 
-## 3. Ironized Zink 承载的渲染引擎：Mesa / Zink / Kopper
+## 3. Ironized Zink 承载的渲染引擎：Mesa（含 Zink / Kopper）
 
 | | |
 |---|---|
@@ -143,6 +145,9 @@ release 的 `MobileGlues_2.0.0.apk`，**未经任何修改**。其对应源码�
    并由 `libironized_zink.so` 在游戏进程内 `setenv()`；本项目改为由启动器
    直接把同一组环境变量注入游戏进程，因此不再内置该 shim，也不需要存储权限。
 4. **MobileGlues 与 Mesa/Zink/Kopper 的原生库保持原样**，未做二进制层面的修改。
+   - MobileGlues：四 ABI 的 `libmobileglues.so` 与上游官方 release 内同名文件 SHA-256 一致
+   - Mesa/Zink/Kopper：`libEGL_mesa.so` / `libglxshim.so` / `libglapi.so` / `libzink_dri.so` /
+     `libcutils.so` 与 `libs/kopper-zink-release.aar` 内的二进制一致（未重新编译、未打补丁）
 
 ---
 

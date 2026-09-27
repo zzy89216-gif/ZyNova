@@ -242,9 +242,10 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 2. 你不得移除本程式所顯示的版權聲明。（依據 [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370)）
 
 > **各元件的授權並不相同。** 不要因為某個相依套件是 MIT，就認為整個專案都是 MIT：
-> ZyNova 本身是 GPL-3.0，Ironized Zink 是 GPL-3.0，
-> 它隨附的 Mesa / Zink / Kopper 引擎是 MIT（GLX 部分為 SGI Free Software License B，
-> GL 標頭檔為 Khronos），MobileGlues 是 LGPL-2.1，GL4ES 是 MIT。
+> ZyNova 本身是 GPL-3.0，Ironized Zink 是 GPL-3.0，MobileGlues 是 LGPL-2.1，GL4ES 是 MIT。
+> Ironized Zink 隨附的渲染引擎來自 **Mesa**：主程式碼與 Gallium（含 **Zink** 驅動）為 MIT，
+> GLX 客戶端程式碼為 SGI Free Software License B，GL / GLX 擴充標頭檔為 Khronos 授權；
+> **Kopper** 同樣屬於 Mesa 程式碼庫，適用 Mesa 的上述條款。
 > 完整的逐元件清單、版權聲明，以及重散布二進位檔的原始碼取得方式，
 > 見 **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)**。
 
@@ -280,12 +281,15 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 | Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [链接↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
 | Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
 | Ironized Zink                         | Copyright © GoyDevv（渲染引擎：Mesa Zink / Kopper，版權歸 Mesa 作者所有）                                     | GPL-3.0              | [連結↗](https://github.com/GoyDevv/IronizedZink)                                   |
-| Mesa (Zink / Kopper)                  | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT / SGI-B / Khronos | [連結↗](https://mesa3d.org/)                                                      |
+| Mesa 主程式碼 / Gallium（含 Zink）    | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT                  | [連結↗](https://mesa3d.org/)                                                       |
+| Mesa GLX 客戶端程式碼                 | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | SGI Free Software License B | [連結↗](https://mesa3d.org/)                                                 |
+| Mesa GL / GLX 擴充標頭檔              | Copyright © The Khronos Group                                                                                 | Khronos              | [連結↗](https://www.khronos.org/)                                                  |
+| Kopper                                | 屬於 Mesa 程式碼庫（Vulkan WSI 層）                                                                           | 隨 Mesa 適用上述條款 | [連結↗](https://mesa3d.org/)                                                      |
 | MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [链接↗](https://github.com/Tencent/MMKV)                                           |
 | Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
 | MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [連結↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
 | OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://github.com/square/okhttp)                                          |
-| Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://square.github.io/okio/)                                            |
+| Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://github.com/square/okio)                                            |
 | OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [链接↗](https://github.com/GeyserMC/OpenNBT)                                       |
 | Process Phoenix                       | Copyright © 2015 Jake Wharton                                                                                 | Apache 2.0           | [链接↗](https://github.com/JakeWharton/ProcessPhoenix)                             |
 | proxy-client-android                  | -                                                                                                             | LGPL-3.0 License     | [链接↗](https://github.com/TouchController/TouchController)                        |

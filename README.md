@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.2.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.2.6)
+[![Release](https://img.shields.io/badge/Release-26.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.3.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 ---
@@ -89,7 +89,7 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 | Minecraft 启动相关功能 | ✅ |
 | 游戏实例管理 | ✅ |
 | Android 平台功能调整 | ✅ |
-| ZalithLauncher2 扩展兼容 | ✅ |
+| **ZalithLauncher2 扩展生态兼容**（渲染器插件 / Vulkan 驱动插件 / 原生库插件） | ✅ |
 | 单一通用版本 APK 构建（含代码混淆） | ✅ |
 | GitHub Release | ✅ |
 | 项目维护与交接文档 | ✅ |
@@ -128,7 +128,7 @@ ZyNova 对原有启动器的用户界面和交互体验进行了较大范围的�
 
 | 渲染器 | 说明 | 配置 |
 |---|---|---|
-| **Ironized Zink**（默认） | 桌面 OpenGL 4.6 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv | **4 个官方预设 + 13 个可调参数**（见下） |
+| **Ironized Zink**（默认） | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6，可在 3.3 ~ 4.6 之间调整 | **4 个官方预设 + 13 个可调参数**（见下） |
 | **GL4ES** | 经典 OpenGL 转译层 | 保持默认 |
 | **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | 保持上游默认 |
 
@@ -148,9 +148,17 @@ ZyNova 对原有启动器的用户界面和交互体验进行了较大范围的�
 在 **设置 → 渲染器** 里选中 Ironized Zink 后，**下方会立刻展开完整配置面板**；
 选预设会一次性写入整组参数，之后每一项仍可单独调整。
 
-> **外置渲染器不受影响**：仍然可以通过安装渲染器插件（FCL / Zalith 渲染器插件、
-> 新一代 `fclPlugin_V2` 插件）往列表里加入更多渲染器 ——
-> 内置只保留 3 个，外置想装几个还是几个。
+#### 官方内置 与 外部扩展 的区别
+
+26.3.0 删除的是**启动器官方内置**的其余 Renderer，**没有**移除外部 Renderer Plugin 机制：
+
+| 类别 | 内容 | 26.3.0 状态 |
+|---|---|---|
+| **官方内置** | Ironized Zink（默认）、GL4ES、MobileGlues | 只保留这 3 个；其余内置 Renderer（Krypton Wrapper / Kopper Zink / VirGL / Freedreno / Panfrost）已删除 |
+| **外部扩展** | FCL / ZalithLauncher 渲染器插件、新一代 `fclPlugin_V2` 渲染器插件、Vulkan 驱动插件、原生库插件 | **完全保留**，安装后仍会正常出现在渲染器列表中 |
+
+外置插件自带自己的原生库，不受本次内置裁剪影响；
+设置页的「下载渲染器插件」入口也仍然保留。
 
 ### 🏠 卡片式主页
 
@@ -169,19 +177,22 @@ ZyNova 提供卡片式主页，**以游戏版本为模块**组织内容：
 
 - **长按拖动排序**：版本卡片之间、卡片内的世界 / 服务器，
   以及右侧菜单的三块（账号头像 / 版本行 / 启动按钮）都能拖动调整顺序，顺序会被记住
-- **卡片大小**：设置 → 启动器 → 主页 → 卡片大小（70% ~ 140%，默认 100%）
+- **卡片大小**：设置 → 启动器 → 卡片大小（70% ~ 140%，默认 100%）
 - 卡片样式为**单层背景**，不会出现多余的边框或阴影
 
 主页数据**按需加载**：只有真正进入主页时才读取，并且限量扫描，
 启动器启动时不会进行全盘扫描。
 
-设置中可以选择主页类型：
+设置中可以选择主页类型，共 **4 种**：
 
-- 默认主页
-- 卡片主页
-- 自定义主页
+| 主页类型 | 说明 |
+|---|---|
+| **空白** | 默认值，不显示任何内容 |
+| **卡片主页** | 以版本为模块的卡片式主页（见上） |
+| **从本地加载** | 加载启动器本地的主页文件（扩展 Markdown 语法），可在设置里一键生成官方主页文档 |
+| **从网络加载** | 从指定链接获取主页文件并缓存，定时刷新重载 |
 
-卡片主页与自定义主页共用同一套主页数据访问接口。
+> 自定义主页属于第三方内容，启动器不为其内容做担保。
 
 ### 📦 统一资源管理核心
 
@@ -341,10 +352,15 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 - 混淆映射只需要维护一份，排查线上崩溃更简单
 - 代价是包体包含全部 4 个 ABI 的预编译库，比单架构包大
 
-Release 中还会包含：
+一次 Release 只上传 **2 个产物**：
 
-- mapping 文件（混淆映射）
-- 构建相关文件
+| 产物 | 内容 |
+|---|---|
+| `ZyNova-<版本>.apk` | 通用版本安装包（已代码混淆） |
+| `mapping.universal.zip` | 混淆映射，用于还原崩溃堆栈 |
+
+> GitHub 上传 Release 资产时会把空格与括号净化为点号，
+> 因此线上资产名固定是 `mapping.universal.zip`（CI 内部 artifact 名为 `mapping (universal)`）。
 
 ---
 
@@ -416,11 +432,10 @@ Release 中还会包含：
 
 完整的变更记录见 [CHANGELOG](CHANGELOG.md)。
 
-Release 根据版本情况提供：
+Release 提供：
 
 - 通用版本 APK（含 `arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`，已代码混淆）
-- mapping 文件（混淆映射）
-- 其他必要的构建文件
+- `mapping.universal.zip`（混淆映射）
 
 ---
 
@@ -571,13 +586,14 @@ ZyNova 是一个完整的 Android 工程。
 - Gradle 构建文件
 - 项目模块
 - GitHub 配置
-- README
-- LICENSE
-- 更新记录
+- README（`README.md` / `README_EN_US.md` / `README_ZH_TW.md`）
+- LICENSE（`LICENSE`，GPL-3.0）
+- 更新记录（`CHANGELOG.md`）
+- 第三方许可证与版权声明（`THIRD_PARTY_NOTICES.md`）
+- 维护及交接资料（`HANDOFF.md`）
 - Release
-- mapping 文件
+- mapping 文件（混淆映射）
 - 构建相关文件
-- 维护及交接资料
 
 因此，该仓库同时承担：
 
@@ -741,17 +757,24 @@ ZyNova 的开发离不开上游项目所提供的基础。
 
 26.3.0 起内置的三个渲染器分别来自这些上游项目（**各自适用各自的许可证**）：
 
-| 渲染器 | 上游 | 许可证 |
+| 渲染器 | 上游项目 | 该渲染器自身代码的许可证 |
 |---|---|---|
 | **Ironized Zink** | https://github.com/GoyDevv/IronizedZink | **GPL-3.0** |
 | **MobileGlues** | https://github.com/MobileGL-Dev/MobileGlues | **LGPL-2.1** |
 | **GL4ES** | https://github.com/PojavLauncherTeam/gl4es_extra_extra | **MIT** |
 
-Ironized Zink 承载的渲染引擎是 **Mesa 的 Zink Gallium 驱动 + Kopper 窗口系统层**
-（https://mesa3d.org/）：主 Mesa / Gallium 代码为 **MIT**，
-GLX 客户端代码为 **SGI Free Software License B**，GL / GLX 头文件为 **Khronos** 许可。
+Ironized Zink 本身是一个「打包 + 配置」项目；真正的渲染引擎来自
+**Mesa**（https://mesa3d.org/）：
 
-完整的逐组件许可证、版权归属与预编译二进制来源，见
+- **Zink**（Mesa 的 Gallium 驱动）与 **Kopper**（Mesa 的 Vulkan 窗口系统集成层）
+  都是 **Mesa 代码库的一部分**，并不是独立的第三方项目
+- Mesa 内部各组件许可证**并不相同**：主 Mesa 代码 / Gallium 代码为 **MIT**，
+  GLX 客户端代码为 **SGI Free Software License B**，
+  GL / GLX 扩展头文件为 **Khronos**，C11 线程模拟为 **Boost（宽松许可）**
+- 随启动器分发的 Zink / Kopper 预编译二进制来自
+  **AngelAuraMC 的 `mesa_zink_kopper` 构建**，以**未经修改**的形式随包分发
+
+完整的逐组件许可证、版权归属、预编译二进制来源与对应源码获取方式，见
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ---
@@ -772,11 +795,10 @@ ZyNova 的具体代码、功能、界面以及后续发展由 ZyNova 项目维�
 
 ## ⚖️ 开源与许可证
 
-ZalithLauncher2 项目使用：
+ZalithLauncher2 项目使用 **GNU General Public License v3.0 (GPL-3.0)**。
 
-**GNU General Public License v3.0 (GPL-3.0)**
-
-由于 ZyNova 基于 ZalithLauncher2 的开源代码进行开发，因此 ZyNova 在涉及上游代码的部分遵循适用的 GPL-3.0 许可证要求。
+ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同样以 GPL-3.0 发布**
+（仓库根目录 `LICENSE`），在涉及上游代码的部分遵循适用的 GPL-3.0 许可证要求。
 
 使用、修改、再发布或分发 ZyNova 时，请同时注意：
 
@@ -794,17 +816,29 @@ ZalithLauncher2 项目使用：
 
 | 组件 | 许可证 |
 |---|---|
-| ZyNova Launcher（本项目自身） | GPL-3.0 |
-| Ironized Zink（GoyDevv） | GPL-3.0 |
-| Mesa / Zink / Kopper | MIT（GLX 部分 SGI Free Software License B，GL 头文件 Khronos） |
-| MobileGlues（MobileGL-Dev） | LGPL-2.1 |
-| GL4ES（gl4es_extra_extra） | MIT |
-| 其余第三方依赖 | 见应用内「关于 → 开源许可」 |
+| ZyNova Launcher（本项目自身） | **GPL-3.0** |
+| ZalithLauncher2（上游，ZyNova 基于其开发） | **GPL-3.0**（上游另有 GPLv3 第 7 条附加条款，见 `README_EN_US.md` / `README_ZH_TW.md` 的「附加条款」小节） |
+| Ironized Zink（GoyDevv） | **GPL-3.0** |
+| MobileGlues（MobileGL-Dev） | **LGPL-2.1** |
+| GL4ES（gl4es_extra_extra / PojavLauncherTeam） | **MIT** |
+| Mesa 主代码 / Gallium 代码（含 Zink 驱动） | **MIT** |
+| Mesa GLX 客户端代码 | **SGI Free Software License B** |
+| Mesa GL / GLX 扩展头文件 | **Khronos** |
+| Mesa C11 线程模拟 | **Boost（宽松许可）** |
+| Kopper | 属于 Mesa 代码库，随 Mesa 适用上述条款 |
+| 其余第三方依赖（ANGLE / LWJGL / SDL3 / MMKV / sora-editor / Terracotta 等） | 各自上游许可证，见应用内「关于 → 开源许可」 |
 
-- 完整声明：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+- 仓库根目录 `LICENSE` 是 **GPL-3.0** 全文，其中保留了上游
+  Zalith Launcher / MovTery 的版权声明 —— 这是 GPL-3.0 的要求，**不会删除**
+- 上游 ZalithLauncher2 依据 GPLv3 第 7 条提出的附加条款（分发修改版时需更名以区别于原版、
+  且不得移除程序显示的版权声明）同样适用；本项目已在启动器「关于」页面标注
+  「非官方修改版本」，并在 `README_EN_US.md` / `README_ZH_TW.md` 中完整转录该附加条款
+- 完整声明（含各预编译二进制的来源与对应源码获取方式）：
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 - 应用内「关于 → 开源许可」逐条列出各组件及其许可文本
 - **上游作者的版权与署名信息一律保留，不会被删除**
-- MobileGlues 以 **LGPL-2.1** 分发的是**未经修改**的预编译动态库，
+- **MobileGlues** 以 LGPL-2.1 分发的是**未经修改**的预编译动态库：
+  已与上游官方 release 内的同名二进制做 **SHA-256 比对，四个 ABI 全部一致**；
   其对应源码获取方式已在 `THIRD_PARTY_NOTICES.md` 中给出
 
 ---
