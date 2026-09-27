@@ -460,7 +460,9 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `ui/components/Reorder.kt` | `onBounds()` 仅在拖动中处理位移（修复滚动时卡片异常移动） |
 | `library/_Libraries.kt` | 移除 NG-GL4ES，Mesa 改完整许可集，新增 Ironized Zink / MobileGlues |
 | `ZalithLauncher/build.gradle.kts` | 删除 ABI 拆分与 `-Darch` 资源裁剪，固定通用版本 |
-| `.github/workflows/{build,build_apk,release_ci}.yml` | 改为只构建通用包；注入 `GITHUB_TOKEN` |
+| `.github/workflows/build.yml` | 去掉 ABI 矩阵，只构建通用包；注入 `GITHUB_TOKEN` |
+| `.github/workflows/build_apk.yml` | 改为通用版本；注入 `GITHUB_TOKEN` |
+| `.github/workflows/release_ci.yml` | 传递 `GH_TOKEN`；按通用包整理产物 |
 | `THIRD_PARTY_NOTICES.md` | **新增**：逐组件许可证与版权声明 |
 | `assets/licenses/` | **新增**：`THIRD_PARTY_NOTICES.md`、`ironized-zink-CREDITS.md` |
 | `res/raw/` | **新增**：`ironized_zink_license.txt`、`mobileglues_license.txt`、`mesa_licenses.txt` |
@@ -492,8 +494,11 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `game/renderer/renderers/FreedrenoRenderer.kt` | 26.3.0 渲染器裁剪 |
 | `game/renderer/renderers/PanfrostRenderer.kt` | 26.3.0 渲染器裁剪 |
 | `libs/NG-GL4ES-release.aar` | 仅 NG-GL4ES 使用，随渲染器一起移除 |
-| `jniLibs/*/libOSMesa_{2121,2300d,8}.so` | 仅被上述 OSMesa 系渲染器使用 |
-| `jniLibs/*/libvirgl_test_server.so`、`libvirglrenderer_1.so` | 仅被 VirGL 渲染器使用 |
+| `jniLibs/{arm64-v8a,armeabi-v7a,x86_64}/libOSMesa_8.so` | 仅被 Freedreno 渲染器使用（`x86` 本来就没有） |
+| `jniLibs/{arm64-v8a,armeabi-v7a,x86_64}/libOSMesa_2121.so` | 仅被 VirGL 渲染器使用 |
+| `jniLibs/{arm64-v8a,armeabi-v7a,x86_64}/libOSMesa_2300d.so` | 仅被 Panfrost 渲染器使用 |
+| `jniLibs/{arm64-v8a,armeabi-v7a,x86_64}/libvirgl_test_server.so` | 仅被 VirGL 渲染器使用 |
+| `jniLibs/{armeabi-v7a,x86_64}/libvirglrenderer_1.so` | 仅被 VirGL 渲染器使用 |
 | `res/raw/ng_gl4es_license.txt` | 对应组件已不再分发 |
 | `res/raw/mesa_license.txt` | 由 `mesa_licenses.txt`（Mesa 完整许可集）取代 |
 
@@ -584,7 +589,7 @@ unset GITHUB_TOKEN
 | `.github/workflows/release_ci.yml` | Release 发布（`release: published`） | 调用 `build.yml`，打包 mapping 并自动上传全部产物 |
 
 - 编译命令：`./gradlew ZalithLauncher:assembleRelease`（**不再传 `-Darch`**）
-- 产物：`ZyNova-<版本>.apk`（通用）+ `mapping (universal).zip`
+- 产物：`ZyNova-<版本>.apk`（通用）+ `mapping.universal.zip`
 
 ### CI 需要的 Secrets
 
@@ -975,7 +980,10 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 26.3.0 起**只有一个通用版本**：
 
 - `ZyNova-<VERSION>.apk`（通用：`arm64-v8a` + `armeabi-v7a` + `x86` + `x86_64`，已代码混淆）
-- `mapping (universal).zip`（混淆映射，用于还原崩溃堆栈）
+- `mapping.universal.zip`（混淆映射，用于还原崩溃堆栈）
+  > 注意：workflow 里 artifact 名是 `mapping (universal)`、打包出的文件名是
+  > `mapping (universal).zip`，但 GitHub 上传 Release 资产时会把空格与括号**净化为点号**，
+  > 所以线上资产名固定是 `mapping.universal.zip`。
 
 > 不再有 `-arm64-v8a` / `-armeabi-v7a` / `-x86` / `-x86_64` 之类的架构后缀产物。
 > ⚠️ 大文件上传 / 下载可能中断，APK 下载可用 `curl -C -` 断点续传。

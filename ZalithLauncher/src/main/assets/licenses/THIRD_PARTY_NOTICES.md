@@ -1,13 +1,11 @@
 # Third-Party Notices / 第三方组件声明
 
 本文件列出 ZyNova Launcher（以下简称「本项目」）分发时随附的第三方代码与二进制，
-以及各自的许可证与版权归属。**每个组件都以其上游仓库中的实际 LICENSE 为准，
-本项目不把它们合并成同一个许可证，也不改变任何上游声明。**
+以及各自的许可证与版权归属。
 
-若你只想要一句话结论：本项目自身是 **GPL-3.0**；内置渲染器分别属于
-**Ironized Zink = GPL-3.0**、**MobileGlues = LGPL-2.1**、**GL4ES = MIT**；
-而 Ironized Zink 所承载的渲染引擎 **Mesa / Zink / Kopper = MIT（GLX 部分 SGI-B，
-GL 头文件 Khronos）**。
+**每个组件都以其上游仓库中的实际 LICENSE 为准，本项目不把它们合并成同一个许可证，也不改变任何上游声明。**
+
+若你只想要一句话结论：**本项目自身是 GPL-3.0**；内置渲染器分别属于 **Ironized Zink = GPL-3.0**、**MobileGlues = LGPL-2.1**、**GL4ES = MIT**；而 Ironized Zink 所承载的渲染引擎是 **Mesa / Zink / Kopper = MIT（GLX 部分 SGI Free Software License B，GL 头文件 Khronos）**。
 
 ---
 
@@ -44,20 +42,24 @@ Kopper 窗口系统层包装成一个渲染器。上游许可证全文与署名�
 |---|---|
 | 上游 | https://github.com/MobileGL-Dev/MobileGlues |
 | 发行版 | https://github.com/MobileGL-Dev/MobileGlues-release |
-| 版本 | 2.0.0（release tag `V2.0.0`，commit `d0211c4871ac7ccbc624070bc6cd990b2c5ee7f9`） |
+| 版本 | 2.0.0（release tag `V2.0.0`，2026-08-09 发布；APK 资产 `MobileGlues_2.0.0.apk`） |
 | 许可证 | **GNU LGPL-2.1**（含上游版权头 `Copyright (c) 2025-2026 MobileGL-Dev`）——完整文本见 `ZalithLauncher/src/main/res/raw/mobileglues_license.txt` |
 | 随附形式 | 未经修改的预编译共享库 `libmobileglues.so`（四个 ABI） |
 
-**对应源码（LGPL-2.1 §6 要求）**：所分发的 `libmobileglues.so` 为上游官方 release
-中未经修改的二进制，其完整对应源码即上述 `V2.0.0` 标签所指的提交：
+**对应源码（LGPL-2.1 §6 要求）**：所分发的 `libmobileglues.so` 直接取自上游官方
+release 的 `MobileGlues_2.0.0.apk`，**未经任何修改**。其对应源码与构建配方如下：
 
-- 源码包：https://github.com/MobileGL-Dev/MobileGlues/archive/refs/tags/... （见 `MobileGlues-release` 的 `V2.0.0` 标签）
-- 提交：https://github.com/MobileGL-Dev/MobileGlues/commit/d0211c4871ac7ccbc624070bc6cd990b2c5ee7f9
-- 二进制来源：https://github.com/MobileGL-Dev/MobileGlues-release/releases/tag/V2.0.0
+- 核心库源码：https://github.com/MobileGL-Dev/MobileGlues
+- 渲染器插件打包工程（含固定核心库版本的 submodule）：https://github.com/MobileGL-Dev/MobileGlues-plugin
+- 二进制来源（release）：https://github.com/MobileGL-Dev/MobileGlues-release/releases/tag/V2.0.0
+
+若需要与该二进制逐位对应的源码，请按上述插件工程在 `plugin` 分支上的
+`MobileGlues` 子模块提交检出（该子模块指向 MobileGlues 核心库的对应修订）。
 
 本项目对该库**未做任何修改**，因此不存在需要额外提供的修改内容。
 该库以独立的动态库形式随 APK 分发（`lib/<abi>/libmobileglues.so`），
 可由具备相应能力的用户替换为其自行编译的同名库，从而实现 LGPL 意义上的重新链接。
+获取上述源码后，使用 Android NDK + CMake 构建 `MobileGlues-cpp` 即可得到同名库。
 
 ### 2.3 GL4ES
 
@@ -81,14 +83,15 @@ Kopper 窗口系统层包装成一个渲染器。上游许可证全文与署名�
 | 版权 | Copyright © 1999-2007 Brian Paul and the Mesa contributors，以及各组件各自作者 |
 | 组件许可证 | **主 Mesa 代码 / Gallium 代码：MIT**；**GLX 客户端代码：SGI Free Software License B**；**扩展头文件（`include/GL/glext.h`、`include/GL/glxext.h`）：Khronos**；C11 线程模拟：Boost（宽松许可） |
 | 随附形式 | 未经修改的预编译共享库：`libEGL_mesa.so`、`libglxshim.so`、`libglapi.so`、`libzink_dri.so`、`libcutils.so`（Mesa 23.0.4，四个 ABI） |
-| 完整文本 | `ZalithLauncher/src/main/assets/licenses/mesa-licenses.rst`（由 `kopper-zink` AAR 随包提供）与 `ZalithLauncher/src/main/res/raw/mesa_licenses.txt` |
+| 完整文本 | 仓库内：`ZalithLauncher/src/main/res/raw/mesa_licenses.txt`（随 APK 分发）；<br>APK 内另有一份由 `libs/kopper-zink-release.aar` 提供的 `assets/licenses/mesa-licenses.rst`（该文件只存在于 AAR 与成品 APK 中，**不在仓库工作树里**） |
 
 > 依 Mesa 项目的要求：本软件不得被称作 “MesaGL”，它是 *Mesa* 或
 > *The Mesa 3-D Graphics Library*。
 
 这些 Android 预编译二进制来自 **AngelAuraMC 的 `mesa_zink_kopper` 构建**，
 其来源与版权说明见上游 Ironized Zink 的 `CREDITS.md`（已随 APK 分发）。
-本项目对这些二进制**未做任何修改**。</n>
+本项目对这些二进制**未做任何修改**。
+
 上述 Zink/Kopper 二进制亦为原内置「Kopper Zink」渲染器所用；本项目保留了它们，
 并将其接入 Ironized Zink 的完整配置体系。
 

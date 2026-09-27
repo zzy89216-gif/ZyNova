@@ -333,7 +333,7 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 | 覆盖架构 | `arm64-v8a`、`armeabi-v7a`、`x86`、`x86_64`（一个包全部包含） |
 | 代码混淆 | Release 开启（`isMinifyEnabled` + `isShrinkResources`） |
 | 产物名 | `ZyNova-<版本>.apk` |
-| 混淆映射 | `mapping (universal).zip`，用于还原崩溃堆栈 |
+| 混淆映射 | `mapping.universal.zip`，用于还原崩溃堆栈 |
 
 为什么只出一个通用版本：
 

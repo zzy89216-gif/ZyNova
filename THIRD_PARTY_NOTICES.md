@@ -1,13 +1,11 @@
 # Third-Party Notices / 第三方组件声明
 
 本文件列出 ZyNova Launcher（以下简称「本项目」）分发时随附的第三方代码与二进制，
-以及各自的许可证与版权归属。**每个组件都以其上游仓库中的实际 LICENSE 为准，
-本项目不把它们合并成同一个许可证，也不改变任何上游声明。**
+以及各自的许可证与版权归属。
 
-若你只想要一句话结论：本项目自身是 **GPL-3.0**；内置渲染器分别属于
-**Ironized Zink = GPL-3.0**、**MobileGlues = LGPL-2.1**、**GL4ES = MIT**；
-而 Ironized Zink 所承载的渲染引擎 **Mesa / Zink / Kopper = MIT（GLX 部分 SGI-B，
-GL 头文件 Khronos）**。
+**每个组件都以其上游仓库中的实际 LICENSE 为准，本项目不把它们合并成同一个许可证，也不改变任何上游声明。**
+
+若你只想要一句话结论：**本项目自身是 GPL-3.0**；内置渲染器分别属于 **Ironized Zink = GPL-3.0**、**MobileGlues = LGPL-2.1**、**GL4ES = MIT**；而 Ironized Zink 所承载的渲染引擎是 **Mesa / Zink / Kopper = MIT（GLX 部分 SGI Free Software License B，GL 头文件 Khronos）**。
 
 ---
 
@@ -85,7 +83,7 @@ release 的 `MobileGlues_2.0.0.apk`，**未经任何修改**。其对应源码�
 | 版权 | Copyright © 1999-2007 Brian Paul and the Mesa contributors，以及各组件各自作者 |
 | 组件许可证 | **主 Mesa 代码 / Gallium 代码：MIT**；**GLX 客户端代码：SGI Free Software License B**；**扩展头文件（`include/GL/glext.h`、`include/GL/glxext.h`）：Khronos**；C11 线程模拟：Boost（宽松许可） |
 | 随附形式 | 未经修改的预编译共享库：`libEGL_mesa.so`、`libglxshim.so`、`libglapi.so`、`libzink_dri.so`、`libcutils.so`（Mesa 23.0.4，四个 ABI） |
-| 完整文本 | `ZalithLauncher/src/main/assets/licenses/mesa-licenses.rst`（由 `kopper-zink` AAR 随包提供）与 `ZalithLauncher/src/main/res/raw/mesa_licenses.txt` |
+| 完整文本 | 仓库内：`ZalithLauncher/src/main/res/raw/mesa_licenses.txt`（随 APK 分发）；<br>APK 内另有一份由 `libs/kopper-zink-release.aar` 提供的 `assets/licenses/mesa-licenses.rst`（该文件只存在于 AAR 与成品 APK 中，**不在仓库工作树里**） |
 
 > 依 Mesa 项目的要求：本软件不得被称作 “MesaGL”，它是 *Mesa* 或
 > *The Mesa 3-D Graphics Library*。
