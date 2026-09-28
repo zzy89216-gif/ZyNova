@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
-import com.movtery.zalithlauncher.game.renderer.ironizedzink.Zink
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.applyIronizedZinkPreset
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ironizedZinkOptions
@@ -37,15 +36,20 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.ListSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCardColumn
-import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 
 /**
- * Ironized Zink 的完整配置面板
+ * Ironized Zink 的配置面板
  *
  * 只在渲染器列表里选中 Ironized Zink 时展示，位于渲染器选择卡片的下方。
  *
- * 内容与上游 Ironized Zink（作者 GoyDevv，GPL-3.0）的设置界面一一对应：
- * 4 个官方预设 + 全部可调参数，没有任何参数被省略。
+ * 面板**只提供上游 Ironized Zink（作者 GoyDevv，GPL-3.0）的 4 个官方预设**：
+ * Potato / Performance / Default / Max Compatibility。
+ * 选择预设 = 一次性写入整组底层参数，**不再暴露任何单独参数开关**，
+ * 避免普通用户需要手动调整底层参数。
+ *
+ * 参数模型与读写链路仍完整保留在 `IronizedZinkConfig.kt` / `IronizedZinkSettings.kt`：
+ * `applyIronizedZinkPreset()` 写入的键与旧版本完全一致，
+ * 因此老用户已保存的取值不受影响，环境变量注入行为也不变。
  */
 @Composable
 fun IronizedZinkConfigCards(modifier: Modifier = Modifier) {
@@ -54,7 +58,7 @@ fun IronizedZinkConfigCards(modifier: Modifier = Modifier) {
     SettingsCardColumn(modifier = modifier.fillMaxWidth()) {
         ListSettingsCard(
             modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Top,
+            position = CardPosition.Single,
             unit = AllSettings.ironizedZinkPreset,
             items = ZinkPreset.entries,
             title = stringResource(R.string.settings_renderer_ironized_preset_title),
@@ -68,121 +72,12 @@ fun IronizedZinkConfigCards(modifier: Modifier = Modifier) {
             getItemText = { it.displayName },
             getItemSummary = { preset -> IronizedPresetSummary(preset) },
             onValueChange = { preset ->
-                //选择预设 = 一次性写入整组参数；写入后每个参数仍可单独调整
+                //选择预设 = 一次性写入整组参数（面板不再提供单独参数调整）
                 AllSettings.applyIronizedZinkPreset(preset)
             }
         )
 
-        ListSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkGlVersion,
-            items = Zink.GL_VERSIONS,
-            title = stringResource(R.string.settings_renderer_ironized_gl_version_title),
-            summary = stringResource(R.string.settings_renderer_ironized_gl_version_summary),
-            getItemText = { it },
-            getItemId = { it }
-        )
-
-        //性能
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkThreadedGl,
-            title = stringResource(R.string.settings_renderer_ironized_threaded_gl_title),
-            summary = stringResource(R.string.settings_renderer_ironized_threaded_gl_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkBigCoreAffinity,
-            title = stringResource(R.string.settings_renderer_ironized_big_core_title),
-            summary = stringResource(R.string.settings_renderer_ironized_big_core_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkOutOfOrder,
-            title = stringResource(R.string.settings_renderer_ironized_out_of_order_title),
-            summary = stringResource(R.string.settings_renderer_ironized_out_of_order_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkVsync,
-            title = stringResource(R.string.settings_renderer_ironized_vsync_title),
-            summary = stringResource(R.string.settings_renderer_ironized_vsync_summary)
-        )
-
-        //着色器与兼容性
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkRelaxGlsl,
-            title = stringResource(R.string.settings_renderer_ironized_relax_glsl_title),
-            summary = stringResource(R.string.settings_renderer_ironized_relax_glsl_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkAllExtensions,
-            title = stringResource(R.string.settings_renderer_ironized_all_extensions_title),
-            summary = stringResource(R.string.settings_renderer_ironized_all_extensions_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkShaderCache,
-            title = stringResource(R.string.settings_renderer_ironized_shader_cache_title),
-            summary = stringResource(R.string.settings_renderer_ironized_shader_cache_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkSingleFileCache,
-            title = stringResource(R.string.settings_renderer_ironized_single_file_cache_title),
-            summary = stringResource(R.string.settings_renderer_ironized_single_file_cache_summary)
-        )
-
-        //实验性
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkLazyDescriptors,
-            title = stringResource(R.string.settings_renderer_ironized_lazy_descriptors_title),
-            summary = stringResource(R.string.settings_renderer_ironized_lazy_descriptors_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkInlineUniforms,
-            title = stringResource(R.string.settings_renderer_ironized_inline_uniforms_title),
-            summary = stringResource(R.string.settings_renderer_ironized_inline_uniforms_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            unit = AllSettings.ironizedZinkNoError,
-            title = stringResource(R.string.settings_renderer_ironized_no_error_title),
-            summary = stringResource(R.string.settings_renderer_ironized_no_error_summary)
-        )
-
-        SwitchSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Bottom,
-            unit = AllSettings.ironizedZinkForceSoftware,
-            title = stringResource(R.string.settings_renderer_ironized_force_software_title),
-            summary = stringResource(R.string.settings_renderer_ironized_force_software_summary)
-        )
-
+        //仅当老用户残留了已知有问题的参数组合时提示；重新选择任意预设即可恢复
         if (options.hasUnsafeCombo) {
             Text(
                 modifier = Modifier

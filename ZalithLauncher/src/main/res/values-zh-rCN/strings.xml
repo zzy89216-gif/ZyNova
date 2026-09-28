@@ -234,6 +234,7 @@
     <string name="download_assets_filter_search_platform">目标平台</string>
     <string name="download_assets_filter_game_version">游戏版本</string>
     <string name="download_assets_filter_category">类别</string>
+    <string name="download_assets_filter_category_with_source">%1$s（仅 %2$s）</string>
     <string name="download_assets_filter_modloader">模组加载器</string>
     <string name="download_assets_filter_none">未选择</string>
     <string name="download_assets_filter_sort_by_relevant">相关性</string>
@@ -544,7 +545,18 @@
     <string name="account_supporting_username_invalid_empty">未填写用户名</string>
     <string name="account_supporting_email_invalid_empty">未填写邮箱或用户名</string>
     <string name="account_supporting_password_invalid_empty">未填写填写密码</string>
+    <string name="account_supporting_microsoft_tip_title">添加微软账号</string>
+    <string name="account_supporting_microsoft_tip_link_text">您可能需要的快捷方式：</string>
     <string name="account_supporting_microsoft_tip_link_purchase">购买 Minecraft</string>
+    <string name="account_supporting_microsoft_tip_link_make_gameid">创建档案 / 编辑档案名称</string>
+    <string name="account_supporting_microsoft_tip_hint_t1">请按照以下步骤添加账户：</string>
+    <string name="account_supporting_microsoft_tip_hint_t2">1. 点击“登录”按钮，启动器将尝试获取验证代码；\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t3">2. 在弹出的网页中输入 %s 提供的代码，并点击“允许访问”；\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t4">3. 根据网页提示完成登录流程；\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t5">4. 当网页询问“是否允许此应用访问您的信息？”时，请点击“接受”；\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t6">5. 当网页显示“大功告成”时，账户将自动添加，请稍候片刻。</string>
+    <string name="account_supporting_microsoft_tip_hint_t7">如果网页提示“出现错误”或账户添加失败，请按照上述步骤重新尝试。\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t8">提示：若当前网络状况不佳，可能会导致网页加载缓慢或无法打开。请尝试使用网络代理后重试。</string>
     <string name="account_delete_title">删除账号</string>
     <string name="account_delete_message">您确定要将账号 %s 从启动器内删除吗？</string>
     <string name="account_microsoft_fetch_device_code">获取设备码</string>
@@ -1471,8 +1483,8 @@
     <string name="fm_name_conflict">与已有条目重名</string>
     <!-- Ironized Zink 渲染器配置（内置渲染器，配置模型移植自上游 Ironized Zink，GPL-3.0） -->
     <string name="settings_renderer_ironized_preset_title">预设</string>
-    <string name="settings_renderer_ironized_preset_summary">Ironized Zink 官方预设。选择预设会一次性写入整组参数，写入后下面每一项仍然可以单独调整。</string>
-    <string name="settings_renderer_ironized_preset_custom">已自定义 —— 当前参数与任何预设都不一致</string>
+    <string name="settings_renderer_ironized_preset_summary">Ironized Zink 官方预设。选择预设会一次性写入整组底层参数，无需手动调整。</string>
+    <string name="settings_renderer_ironized_preset_custom">已自定义 —— 当前参数与任何预设都不一致，重新选择任意预设即可恢复受支持的配置。</string>
     <string name="settings_renderer_ironized_preset_potato_tagline">绝对最高帧率</string>
     <string name="settings_renderer_ironized_preset_potato_note">MC 1.8 → 最新（含 26.x）· 光影：不推荐</string>
     <string name="settings_renderer_ironized_preset_performance_tagline">高帧率 + Sodium &amp; 轻量光影</string>
@@ -1507,6 +1519,6 @@
     <string name="settings_renderer_ironized_no_error_summary">MESA_NO_ERROR —— 跳过 GL 错误与参数校验。Mesa 官方文档称其会让「非法的 API 调用进入未定义行为」。不要与上面的乱序绘制同时开启：正是这两者的组合造成了「手穿过 GUI 界面」的画面错乱，所以所有预设都默认关闭它。</string>
     <string name="settings_renderer_ironized_force_software_title">强制软件渲染</string>
     <string name="settings_renderer_ironized_force_software_summary">LIBGL_ALWAYS_SOFTWARE —— 退回 CPU 渲染，仅作最后手段（非常慢）</string>
-    <string name="settings_renderer_ironized_unsafe_combo">乱序绘制与「关闭错误检查」同时开启了。这一组合正是「手穿过 GUI 界面」画面错乱的已知成因 —— 请关掉其中一个。</string>
+    <string name="settings_renderer_ironized_unsafe_combo">保存的参数组合仍是「手穿过 GUI 界面」画面错乱的已知成因 —— 请在上方重新选择任意预设以恢复受支持的配置。</string>
     <string name="settings_renderer_mobileglues_summary">把桌面 OpenGL 转译到设备的 OpenGL ES 3.x</string>
 </resources>

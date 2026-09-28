@@ -23,9 +23,75 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.3.0**（`launcher_version_code=260300`）
+**当前版本：26.4.0**（`launcher_version_code=260400`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.4.0 正版登录回归与议题修复 ✅
+
+**一、恢复 Microsoft（正版）登录入口（Issue #8）**
+
+26.1.0 只是**切断了 UI 与 ViewModel 的接线**，认证后端从未被删。
+本次按 v2.5.1 的原实现还原，涉及 5 个文件：
+
+| 文件 | 改动 |
+|---|---|
+| `ui/screens/content/elements/AccountElements.kt` | 加回 `MicrosoftLoginOperation` 状态机（`None` / `Tip`）+ `MicrosoftLoginTipDialog()` 添加说明弹窗；`LoginMenuDialog()` 增加 `onMicrosoftLogin` 参数并在左侧列「离线登录」**之上**插回「微软登录」项 |
+| `ui/screens/content/AccountManageScreen.kt` | `AccountManageContent` 加回 `MicrosoftLoginOperation(loginUiState.microsoftOp, actions)` 渲染；`LoginMenuDialog` 接上 `onMicrosoftLogin`（`isMicrosoftLogging()` 为真时不再重复发起）；新增私有 `MicrosoftLoginOperation` 组合函数，确认后发 `PerformMicrosoftLogin` |
+| `viewmodel/AccountManageViewModel.kt` | 加回 `UpdateMicrosoftLoginOp` intent、`_microsoftLoginOp`、`LoginUiState.microsoftOp`（`loginUiState` 的 `combine` 恢复 4 路）；新增 `PerformMicrosoftLogin`；「添加账号」与「会话续期」共用私有 `startMicrosoftLogin()` |
+| `game/account/AccountUtils.kt` | 加回 `isMicrosoftLogging()`（`TaskSystem.containsTask(MICROSOFT_LOGGING_TASK)`），防止重复发起设备代码流 |
+| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 12 条 `account_supporting_microsoft_tip_*` 文案（默认英文 + 简体中文） |
+
+⚠️ **UI 与 ViewModel 存在同名类型**：`AccountElements.kt` 的 `MicrosoftLoginOperation`（sealed interface）
+与 `AccountManageScreen.kt` 里同名的私有 `@Composable fun MicrosoftLoginOperation(...)` 是两回事，
+这是 v2.5.1 的原有写法（Kotlin 允许函数与类型同名），**不要"顺手"给其中一个改名**。
+
+**二、登录实现的关键事实（改这块前必读）**
+
+- 认证方式是 **OAuth 2.0 设备代码流（device code flow）**，**不是重定向流**：
+  `POST /consumers/oauth2/v2.0/devicecode` → 应用内 WebView 打开 `verificationUrl`
+  → 轮询 `/consumers/oauth2/v2.0/token`
+- 因此 **不需要 Redirect URI，也不需要 SHA-1 指纹**
+- Azure 应用注册只需满足一条：**「允许公共客户端流 / Allow public client flows」= 是**
+- 也**绝不能创建 Client Secret**：设备代码流属于公共客户端，带 Secret 反而会破坏该流程
+- Client ID 是**公共标识**，必须随包分发（`buildKeys.OAUTH_CLIENT_ID`），它本来就会被编译进 APK；
+  真正的机密是 Client Secret，本项目不创建、不使用、不保存
+
+**三、签名（未改动）**
+
+- Release 与 Debug 都使用 `ZalithLauncher/zalith_launcher_debug.jks`，别名 `movtery_zalith_debug`，
+  口令取 `gradle.properties` 里的上游公开默认值（`default_store_password` / `default_key_password`）
+- 该证书 SHA-1：`0D:FD:FB:0D:DF:B4:D0:3F:73:1C:F4:7F:0F:40:FF:D7:7A:CB:02:DC`
+  （CN=MovTery，有效期至 2050-05-17）
+- `zalith_launcher.jks` 未被任何构建配置引用，但**维护者刻意保留**，不要删
+
+**四、修复下载资源页「类别」为空（Issue #6）**
+
+- 根因：26.2.1 新增并默认启用「所有平台」后，类别候选列表只在「实际只查一个来源」时才有内容；
+  26.2.3 把判据改成「实际请求的来源数量」，只救回了只有 CurseForge 一个来源的「存档」
+- 修复：`SearchAssetsScreen` 的 `allCategories` 改为**始终取参照来源的类别列表**；
+  `buildFilter()` 里类别条件改为 `filter.categories.takeIf { platform == referencePlatform } ?: emptyList()`，
+  即**只下发给参照来源**，其余来源清空，保住「绝不跨来源传类别 ID」的不变式
+- 多来源时 `SearchFilter` 的 `categorySourceName` 非空，标题显示为「类别（仅 CurseForge）」
+- 新增字符串 `download_assets_filter_category_with_source`
+
+**五、修复列表卡片缺少「资源的类别」徽章（Issue #6）**
+
+- 根因：`_Search.Result.kt` 的 `ResultList` 调用 `ResultProjectLayout` 时**漏传 `classes` 实参**，
+  形参默认 `null` → `ClassesIdentifier` 分支恒为假；详情页 `SearchIdScreen` 传了该实参，
+  所以表现为「详情页有徽章、列表页没有」
+- 修复：补上 `classes = classes`（一行）
+
+**六、Ironized Zink 只保留 4 个官方预设（Issue #7）**
+
+- `IronizedZinkConfigCards.kt` 删掉 13 个单独参数控件（1 个 OpenGL 版本下拉 + 12 个开关），
+  面板只剩预设卡，`CardPosition` 由 `Top` 改为 `Single`
+- `AllSettings` 的 14 个 `ironizedZink*` 定义**全部保留**（见第五节原则），
+  `IronizedZinkSettings.kt` / `IronizedZinkConfig.kt` / `GameLauncher.setRendererEnv()` **一律不动**
+- ⚠️ **已知取舍**：4 个预设的 `glVersion` 全部是 **4.6**，
+  删掉版本下拉后**新用户无法再把 OpenGL 版本降到 4.5 / 4.3 / 3.3**；
+  26.3.0 期间手改过参数的老用户其旧值仍会继续生效
+- 「已自定义」与「不安全参数组合」两处提示已改写为「重新选择任意预设即可恢复」
 
 ### 26.3.0 渲染器体系重做与发布形态收敛 ✅
 
@@ -174,6 +240,10 @@ Ironized Zink 的参数是全局的，不按版本区分。）
    - CurseForge 官方接口缺 Key 必然 403，而 MCIM 镜像此前**只在大陆启用**
    - 修复：空字符串视为未配置；**无 Key 时始终保留 MCIM 镜像源**
 5. **存档「类别」过滤器永久不可用**：判断依据从「是否选了所有平台」改为**实际请求的来源数量**
+   - ⚠️ **26.4.0 已再次改写**（见第二节 26.4.0 第四项）：该判据只救回了「存档」一个类型，
+     模组 / 整合包 / 资源包 / 光影在默认「所有平台」下依然没有类别可选
+     （同一面板的「模组加载器」却一直可用）。现在类别列表**始终**以参照来源为准，
+     类别条件**只下发给参照来源**，其余来源清空
 6. **存档解压失败残留 `.zip`**：无论成功失败都兜底清理解压包
 
 ### 26.2.2 修复 ✅（对应仓库中 3 个 Issue）
@@ -195,7 +265,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
    - 加载器名称改为归一化比较；只有 Mod / 整合包强制校验加载器
 3. **修复 Discord 邀请链接全部失效**（Issue #1）
    - 旧链接是**临时邀请**（`Tbn8Bqg2Yp`，Discord API 返回 `50270 Invite is expired`）
-   - 已换成**永久邀请** `QwPpZQHrTa`，并同步到 README / README_EN_US / README_ZH_TW /
+   - 已换成**永久邀请** `QwPpZQHrTa`，并同步到 README（当时为 `README.md` / `README_EN_US.md` /
      HANDOFF / 应用内 `UrlManager`（`URL_COMMUNITY`、`URL_DISCORD`）
 
 ### 26.2.1 修复与新增 ✅
@@ -225,10 +295,12 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 ### 26.1.0 已完成 ✅
 
-1. **移除正版登录入口**
+1. **移除正版登录入口**（**⚠️ 该决定已于 26.4.0 撤销，见第二节 26.4.0 第一项**）
    - 添加账号界面不再提供微软（正版）登录入口，只保留离线登录与第三方认证服务器
    - 移除了对应的 UI、点击逻辑、状态、无用资源与依赖
    - **保留已有微软账号的会话续期能力**（`AccountManageIntent.ReloginMicrosoft`），确保旧用户升级后仍可正常启动游戏
+   - 26.4.0 恢复了登录菜单里的「微软账号」入口；`microsoftLogin` 认证实现当年从未被删，
+     所以恢复成本很低
 
 2. **彻底移除 ZalithLauncher2 更新链**
    - 移除了 ZL2 更新检查、更新提示、更新弹窗、更新 URL、对应 UI 与状态
@@ -293,6 +365,12 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 3. **自定义主页数据接口**：`HomeDataProvider` 已可作为统一数据入口，可继续开放给自定义主页。
 4. **键位优化、渲染优化**：用户提过，未深入做。
 5. **继续收敛 ZL2 遗留逻辑**：资源系统已统一，其他模块仍可能残留上游耦合。
+5.1 **Ironized Zink 的 OpenGL 版本不可在界面调整（26.4.0 的已知取舍）**：
+   - Issue #7 要求删除面板上全部单独参数控件，已照办；但 4 个官方预设的 `glVersion` **全都是 4.6**，
+     因此新用户再也无法把 OpenGL 版本降到 4.5 / 4.3 / 3.3
+   - 若日后收到「老设备 / 老光影需要更低 GL 版本」的反馈，可选做法：
+     恢复**仅** OpenGL 版本这一个下拉（其余 12 个开关保持删除），
+     或与上游确认后再决定是否给某个预设换更低的 GL 档（**不要擅自改上游预设取值**）
 6. **配置 `CURSEFORGE_API_KEY`（已知遗留，26.2.3 起已有兜底，维护者决定暂不处理）**：
    - 仓库的 Actions Secrets 里**没有配置** `CURSEFORGE_API_KEY`，
      所以打包出来的 APK 调 CurseForge 官方接口**必然返回 403**；
@@ -350,10 +428,10 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 改动 |
 |---|---|
-| `ui/screens/content/elements/AccountElements.kt` | 移除微软登录入口 UI 与状态 |
-| `ui/screens/content/AccountManageScreen.kt` | 移除首登录菜单的微软分支与入口逻辑 |
-| `viewmodel/AccountManageViewModel.kt` | 移除添加账号相关 intent，保留会期续期 |
-| `game/account/AccountUtils.kt` | `microsoftLogin` 移除已删除的状态参数 |
+| `ui/screens/content/elements/AccountElements.kt` | 移除微软登录入口 UI 与状态（**26.4.0 已还原**） |
+| `ui/screens/content/AccountManageScreen.kt` | 移除首登录菜单的微软分支与入口逻辑（**26.4.0 已还原**） |
+| `viewmodel/AccountManageViewModel.kt` | 移除添加账号相关 intent，保留会期续期（**26.4.0 已还原**） |
+| `game/account/AccountUtils.kt` | `microsoftLogin` 移除已删除的状态参数（**26.4.0 补回 `isMicrosoftLogging`**） |
 | `viewmodel/LauncherUpgradeViewModel.kt` | 更新体系改为 ZyNova GitHub Releases |
 | `ui/upgrade/LauncherUpgradeDialog.kt` | 更新弹窗重写，自动匹配架构 |
 | `path/UrlManager.kt` | 移除 ZL2 更新 URL，新增 ZyNova Releases / Discord |
@@ -443,6 +521,21 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `ui/screens/content/LauncherScreen.kt` | 右侧菜单由 `ConstraintLayout` 改为可拖动的 `Column`（`Arrangement.SpaceBetween` 保持原观感），三块各自接入拖动排序；版本下拉菜单的锚点逻辑保持不变 |
 | `ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
 
+### 26.4.0 涉及文件
+
+| 文件 | 改动 |
+|---|---|
+| `ui/screens/content/elements/AccountElements.kt` | **还原**：`MicrosoftLoginOperation` 状态机、`MicrosoftLoginTipDialog()`、`LoginMenuDialog` 的 `onMicrosoftLogin` 与「微软登录」项 |
+| `ui/screens/content/AccountManageScreen.kt` | **还原**：`MicrosoftLoginOperation(...)` 渲染、私有 `MicrosoftLoginOperation` 组合函数、`onMicrosoftLogin` 接线 |
+| `viewmodel/AccountManageViewModel.kt` | **还原**：`UpdateMicrosoftLoginOp`、`_microsoftLoginOp`、`LoginUiState.microsoftOp`、`PerformMicrosoftLogin`、共用私有 `startMicrosoftLogin()` |
+| `game/account/AccountUtils.kt` | **还原**：`isMicrosoftLogging()` |
+| `ui/screens/content/download/assets/search/SearchAssetsScreen.kt` | Issue #6：`allCategories` 始终取参照来源列表；`buildFilter()` 的类别条件只下发给参照来源；新增 `categorySourceName` 实参 |
+| `ui/screens/content/download/assets/elements/_Search.Filter.kt` | Issue #6：新增可选参数 `categorySourceName`，标题按来源标注 |
+| `ui/screens/content/download/assets/elements/_Search.Result.kt` | Issue #6：`ResultList` → `ResultProjectLayout` 补上漏传的 `classes = classes` |
+| `ui/screens/content/settings/IronizedZinkConfigCards.kt` | Issue #7：删除 13 个单独参数控件，面板只剩预设卡（`CardPosition.Single`） |
+| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 12 条微软提示文案；新增 `download_assets_filter_category_with_source`；改写 3 条 Ironized Zink 文案 |
+| `ZalithLauncher/gradle.properties` | 配置 `oauth_client_id`；版本号 26.4.0（`launcher_version_code=260400`） |
+
 ### 26.3.0 涉及文件
 
 | 文件 | 改动 |
@@ -515,7 +608,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 旧配置 | 处理方式 |
 |---|---|
-| 数据库中已有的微软账号 | **保留** `AccountType.MICROSOFT` 与 `microsoftLogin`，仅移除「添加账号」入口 |
+| 数据库中已有的微软账号 | **保留** `AccountType.MICROSOFT` 与 `microsoftLogin`；26.1.0 只移除了「添加账号」入口，**26.4.0 已把该入口还原** |
 | `liquidGlass`（布尔开关） | 保留定义，并在 `loadAllSettings` 中一次性迁移为 `glassLevel = On` |
 | `glassLevel` 旧档位名（`Standard` / `Enhanced` / `Extreme`） | 26.2.2 起枚举只剩 `Off` / `On`；`loadAllSettings` 里的 `migrateLegacyGlassLevel()` **直接读原始字符串**并迁移为 `On`（**不能**先经过 `AllSettings.glassLevel` 读取，那样只会拿到默认值，用户原本的选择会丢失） |
 | `lastIgnoredVersion`（整数） | 保留定义不再写入，新逻辑使用 `lastIgnoredVersionName`（字符串），避免存储类型冲突 |
@@ -599,7 +692,7 @@ unset GITHUB_TOKEN
 |---|---|
 | `GH_TOKEN` | **GitHub API Token（可选）**。用于 CI 里调用 GitHub API；未配置时 workflow 回退到 Actions 内置 token（`github.token`）。**只允许 Secret / 环境变量注入，绝不写进源码、提交或 APK** |
 | `KEY_PASSWORD` / `STORE_PASSWORD` | 签名口令，缺失会回退到 `gradle.properties` 里的上游公开默认值 |
-| `OAUTH_CLIENT_ID` | 微软登录相关（本项目已移除正版登录入口，基本不影响） |
+| `OAUTH_CLIENT_ID` | **微软登录的 Client ID 覆盖项（可选）**。`gradle.properties` 里已有默认值，配置同名 Secret 即可覆盖（例如换一个 Azure 应用注册）。**注意这**不是**密钥**：公共客户端的 Client ID 本来就会打进 APK；**绝不要**创建 Client Secret |
 | `CURSEFORGE_API_KEY` | **CurseForge 官方接口固定 403**，见第二节「后续待办 6」；26.2.3 起由 MCIM 镜像兜底 |
 
 > ⚠️ 三个注意点：
@@ -684,7 +777,17 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - `ZalithLauncher/zalith_launcher.jks`
    - 后者虽然当前构建配置未引用，但**维护者是刻意保留它的**，
      **不要因为「未被引用」就把它当作无用文件清理掉**。
-8. **不要恢复**：正版登录入口、ZL2 更新链、资源中心的一键安装入口、BBSMC。
+8. **不要移除正版（微软）登录入口**（**2026-09-28 由维护者明确要求，取代此前的相反规定**）：
+   - 旧版本此处曾写「不要恢复正版登录入口」，该规定**已作废**。
+     26.4.0 已把 `MicrosoftLoginOperation` 状态机、`MicrosoftLoginTipDialog`、
+     `LoginMenuDialog` 的「微软账号」项与对应 ViewModel 接线**全部还原**；
+     `microsoftLogin` / `MicrosoftAuthenticator` 是设备代码流的完整实现，**请勿删除或裁剪**。
+   - 仍然保留的禁令：**不要恢复 ZL2 更新链、资源中心的一键安装入口、BBSMC**。
+   - **不要创建 Client Secret**：设备代码流是公共客户端，带 Secret 反而会破坏登录。
+     只会用到公开的 `OAUTH_CLIENT_ID`，它必须随包分发。
+9. **不要为了「让预设成为唯一事实来源」而删除 `AllSettings` 里的 `ironizedZink*` 定义**：
+   26.4.0 移除了面板上的 13 个参数控件，但 14 个设置项定义**必须保留**——
+   `IronizedZinkSettings.kt` 仍在读写它们，删定义会导致 MMKV 读取类型不匹配。
 
 ---
 
@@ -700,6 +803,9 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 类内的**成员扩展函数无法从类外以 `obj.ext()` 形式调用**，要改成顶层扩展函数
    - `stringResource()` 是 `@Composable` 调用，**不能放在 `remember {}` 的 lambda 里**
    - 删除状态类型（如 `MicrosoftLoginOperation`）前，先全局搜索所有使用点
+   - **函数可以和类型同名**：`AccountManageScreen.kt` 的私有 `MicrosoftLoginOperation(...)`
+     与 `AccountElements.kt` 的 `MicrosoftLoginOperation` sealed interface 是两回事，
+     类型位置解析到类型、调用位置解析到函数，这是 v2.5.1 的原有写法，**不要改动其中一个的名字**
 7. **native 反射约束**：`VulkanCapabilities` 由 native 通过反射构造，**不能修改其构造参数列表**，只能增加方法 / 属性。
 8. **不要把导航上下文放在 NavKey 上**（26.2.0 实际踩到并修复）：
    - NavKey 是 `@Serializable`，Navigation3 的 saveable 机制会序列化 / 反序列化 key
@@ -741,8 +847,8 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 临时邀请会过期，Discord API 会返回 `{"message": "Invite is expired.", "code": 50270}`
    - 校验方式：`curl https://discord.com/api/v10/invites/<code>?with_counts=true`，
      返回中 `expires_at` 为 `null` 才是永久邀请
-   - 更换链接时必须同步：`path/UrlManager.kt`、`README.md`、`README_EN_US.md`、
-     `README_ZH_TW.md`、`HANDOFF.md`
+   - 更换链接时必须同步：`path/UrlManager.kt`、`README.md`、`README_ZH_CN.md`、
+     `README_ZH_TW.md`、`README_JA_JP.md`、`HANDOFF.md`
 17. **过滤条件还要区分「资源类型」**（26.2.3 实际踩到并修复）：
    - 加载器过滤器只对 **Mod / 整合包**有意义，资源包 / 光影 / 存档**不按加载器分类**
    - 把实例的加载器（如 Fabric）当作搜索条件下发，会让 Modrinth 光影变成 **0 条**、
@@ -830,11 +936,31 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - `VersionConfigScreen`（按版本渲染器列表）与 `RendererSettingsScreen`（全局）
    - 预编译库里该渲染器需要的 `.so` 是否真的在包内（`jniLibs/` 或 AAR）
 
+32. **「UI 门控」和「请求条件」必须成对修改**（26.4.0 实际踩到并修复）：
+   - 类别筛选器的可用性由两处共同决定：`SearchAssetsScreen` 传给 `SearchFilter` 的
+     `allCategories`（列表内容）与 `buildFilter()` 里的 `categories`（实际下发的条件）
+   - 只放开其中一处，就会得到「能选但不生效」的假筛选器，比原本的空白更糟
+   - 判断「某个过滤器能不能用」时，要同时看**界面入口**和**请求侧过滤**两条路径
+
+33. **不要把「某个门控让功能看起来坏掉了」当成设计**（26.4.0）：
+   - 「所有平台」下类别为空，是因为 26.2.1 引入聚合搜索时顺手清空、26.2.3 只补了「存档」一个类型；
+     而同一个面板的「模组加载器」一直可用 —— **同一屏内同类能力表现不一致，几乎总是疏漏**
+   - 项目里已有 `referencePlatform`（「所有」时以 CurseForge 作为界面参照）这一现成机制，
+     新功能应当复用它，而不是各自加一套门控
+
+34. **设备代码流（device code flow）不需要 Redirect URI / SHA-1 / Client Secret**（26.4.0）：
+   - 它属于 **OAuth 2.0 公共客户端**：Azure 应用注册只要开启
+     「允许公共客户端流 / Allow public client flows」即可
+   - 因此排查「微软登录失败」时**不要**去查重定向 URI 或签名指纹，先确认
+     `BuildKeys.OAUTH_CLIENT_ID` 是否真的非空（未配置时是空字符串，请求会被直接拒绝）
+   - Client ID 会随包分发，这是设计使然；**绝不要**为了「安全」而引入 Client Secret
+
 ---
 
 ## 十、给接手者的建议操作顺序
 
-1. 读本文件 + `README.md` + `CHANGELOG.md` + `LICENSE` + `THIRD_PARTY_NOTICES.md`。
+1. 读本文件 + `README.md`（英文默认；另有 `README_ZH_CN.md` / `README_ZH_TW.md` / `README_JA_JP.md`）
+   + `CHANGELOG.md` + `LICENSE` + `THIRD_PARTY_NOTICES.md`。
 2. 确认 GitHub 仓库状态（看 Actions 最新编译结果）。
 3. 在 ext4 工作副本中改代码 → 静态检查 → commit → push。
 4. 等 `build_apk.yml`（通用版本）验证编译通过 → 按第十二节发布 Release。
@@ -895,8 +1021,8 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.3.0**
-- 历史版本：26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**26.4.0**
+- 历史版本：26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
@@ -1005,4 +1131,4 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-09-27（26.3.0 已开发完成，待发布）
+**最后更新**：2026-09-28（26.4.0 已开发完成：恢复正版登录入口 + 修复 Issue #6 / #7）

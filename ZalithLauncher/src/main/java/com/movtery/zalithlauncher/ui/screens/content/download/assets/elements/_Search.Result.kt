@@ -390,6 +390,9 @@ private fun ResultList(
                 platform = platform,
                 title = mcmod.getMcmodTitle(title, context),
                 description = description,
+                //资源的类别（模组 / 资源包 / 光影包 / 存档 / 整合包）徽章；
+                //这里曾漏传该实参，导致列表卡片上的类别徽章永不渲染
+                classes = classes,
                 iconUrl = iconUrl,
                 author = author,
                 downloads = downloads,

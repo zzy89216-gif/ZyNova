@@ -39,6 +39,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -94,7 +95,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -109,6 +112,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.graphics.createBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountType
@@ -167,6 +171,19 @@ sealed interface LoginMenuOperation {
 
     /** 呼出登陆账号菜单，将所有登录方式放到一个对话框中展示 */
     data object Login : LoginMenuOperation
+}
+
+/**
+ * 微软登录的操作状态
+ *
+ * [Tip] 是「添加微软账号」前的说明弹窗；确认后才会真正发起设备代码流登录。
+ * 已有微软账号的会话续期不走这里，见 `AccountManageIntent.ReloginMicrosoft`。
+ */
+sealed interface MicrosoftLoginOperation {
+    data object None : MicrosoftLoginOperation
+
+    /** 微软账号相关提示Dialog流程 */
+    data object Tip : MicrosoftLoginOperation
 }
 
 /**
@@ -434,6 +451,7 @@ fun AccountItem(
 @Composable
 fun LoginMenuDialog(
     onDismissRequest: () -> Unit,
+    onMicrosoftLogin: () -> Unit,
     onLocalLogin: () -> Unit,
     authServers: List<AuthServer>,
     onAuthServerLogin: (server: AuthServer) -> Unit,
@@ -478,6 +496,15 @@ fun LoginMenuDialog(
                                 .padding(start = 12.dp, end = 6.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            //微软登录
+                            LoginItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                title = stringResource(R.string.account_type_microsoft),
+                                onClick = {
+                                    onMicrosoftLogin()
+                                    onDismissRequest()
+                                }
+                            )
                             //离线登录
                             LoginItem(
                                 modifier = Modifier.fillMaxWidth(),
@@ -558,6 +585,7 @@ private fun PreviewLoginMenuDialog() {
     MaterialExpressiveTheme {
         LoginMenuDialog(
             onDismissRequest = {},
+            onMicrosoftLogin = {},
             onLocalLogin = {},
             authServers = emptyList(),
             onAuthServerLogin = {},
@@ -602,6 +630,80 @@ private fun PreviewLoginItem() {
             )
         }
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun MicrosoftLoginTipDialog(
+    onDismissRequest: () -> Unit = {},
+    onConfirm: () -> Unit = {},
+    openLink: (url: String) -> Unit = {}
+) {
+    SimpleAlertDialog(
+        title = stringResource(R.string.account_supporting_microsoft_tip_title),
+        text = {
+            Text(
+                text = stringResource(R.string.account_supporting_microsoft_tip_link_text),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            FlowRow {
+                IconTextButton(
+                    onClick = {
+                        openLink(URL_MINECRAFT_PURCHASE)
+                    },
+                    painter = painterResource(R.drawable.ic_link),
+                    contentDescription = null,
+                    text = stringResource(R.string.account_supporting_microsoft_tip_link_purchase)
+                )
+                IconTextButton(
+                    onClick = {
+                        openLink("https://www.minecraft.net/msaprofile/mygames/editprofile")
+                    },
+                    painter = painterResource(R.drawable.ic_link),
+                    contentDescription = null,
+                    text = stringResource(R.string.account_supporting_microsoft_tip_link_make_gameid)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.account_supporting_microsoft_tip_hint_t1),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t2))
+                    append(
+                        stringResource(
+                            R.string.account_supporting_microsoft_tip_hint_t3,
+                            BuildKeys.LAUNCHER_NAME
+                        )
+                    )
+                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t4))
+                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t5))
+                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t6))
+                },
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.account_supporting_microsoft_tip_hint_t7))
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(stringResource(R.string.account_supporting_microsoft_tip_hint_t8))
+                    }
+                },
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmText = stringResource(R.string.account_login),
+        onConfirm = onConfirm,
+        onCancel = onDismissRequest,
+        onDismissRequest = onDismissRequest
+    )
 }
 
 private val localNamePattern = Pattern.compile("[^a-zA-Z0-9_]")

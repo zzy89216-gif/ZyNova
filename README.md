@@ -2,911 +2,347 @@
 
 > **Minecraft: Java Edition · Android Launcher**
 >
-> 基于 ZalithLauncher2 开源代码开发的独立非官方项目  
-> **只用一部 Android 手机完成开发、测试与发布（编译交由 GitHub Actions 云端完成）**
+> An independent, unofficial project based on the open-source code of ZalithLauncher2
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.3.0)
-[![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
+[![Release](https://img.shields.io/badge/Release-26.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.0)
+
+**[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
 ---
 
-## ✦ 项目简介
+## ✦ About
 
-**ZyNova** 是一个基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码深度开发的 **Minecraft: Java Edition Android 启动器**，由 ZyNova 项目维护者独立开发与维护。
+**ZyNova** is an **unofficial** Minecraft: Java Edition launcher for Android, built on the
+open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2).
 
-> **目标很简单：打爆同行 100 年。（玩梗）**
-
-> **ZyNova 并非 ZalithLauncher2 官方版本。**
+> **ZyNova is NOT an official version of ZalithLauncher2.**
 >
-> 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
+> ZyNova is an unofficial modified project based on ZalithLauncher2's open-source code.
 
-当前版本 **26.3.0**。这一阶段的核心目标是：
+- GitHub: <https://github.com/zzy89216-gif/ZyNova>
+- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
-> **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+---
 
-围绕这一目标，项目已经建立了自己的：
+## ✨ Highlights of 26.4.0
 
-- **渲染器体系**（内置 Ironized Zink / GL4ES / MobileGlues，默认 Ironized Zink）
-- 统一资源管理核心（Resource Management Core）
-- 资源来源 Provider 体系（Modrinth / CurseForge）
-- 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
-- 极简资源安装流程（上下文直装）
-- 卡片式主页（以版本为模块，模块内展示世界与服务器）
-- 玻璃效果（Glass UI）两档
-- 启动器自有更新体系（GitHub Releases）
-- Minecraft 26.4 Snapshot 1 的 Vulkan 检测
-- 单一通用版本发布（含全部 4 个 ABI + 代码混淆）
+- **Microsoft (premium) sign-in is back**: the account login menu offers **Microsoft** again.
+  It uses the OAuth 2.0 **device code flow** — the launcher fetches a device code, copies it to
+  the clipboard, opens the verification page, and then polls for the token.
+  The authentication backend was never removed: 26.1.0 only cut the UI and ViewModel wiring,
+  which this release restores. **No Client Secret, no redirect URI and no SHA-1 are required**,
+  and the public OAuth Client ID ships inside the APK as designed.
+- **Fixed the empty "Category" filter on the download page** (Issue #6):
+  under the default "All platforms" mode the category list now follows the reference source
+  (CurseForge) instead of being cleared, and the category condition is only sent to that source,
+  so a category ID is never handed to a source it does not belong to.
+  When more than one source is queried the filter title says so, e.g. "Category (CurseForge only)".
+- **Fixed the missing resource-type badge on result cards** (Issue #6):
+  the search result list failed to pass the `classes` argument down to the card layout, so the
+  mod / resource pack / shader / world / modpack badge never rendered — while the detail page,
+  which did pass it, showed the badge correctly.
+- **Ironized Zink now exposes only its 4 official presets** (Issue #7):
+  the OpenGL version dropdown and the 12 parameter switches were removed, so ordinary users no
+  longer have to tune low-level parameters. Selecting a preset still writes the whole parameter set.
+  ⚠️ All four presets pin the OpenGL version to 4.6, so new users can no longer lower it to
+  4.5 / 4.3 / 3.3; values already saved by users who tuned parameters during 26.3.0 keep working.
 
-设计上遵循一条原则：
+## ✨ Highlights of 26.3.0
+
+- **Renderer overhaul — only three built-in renderers remain**:
+  **Ironized Zink** (now the default), **GL4ES** and **MobileGlues**.
+  Removed: Krypton Wrapper (NG-GL4ES), Kopper Zink, VirGL, Freedreno and Panfrost,
+  together with the native libraries that only they used.
+- **Ironized Zink is fully integrated**: all **13 tunable parameters** and the
+  **4 official presets** (Potato / Performance / Default / Max Compatibility),
+  ported from upstream (by GoyDevv, GPL-3.0). Selecting it in **Settings → Renderer**
+  immediately expands the configuration panel right below.
+  *(26.4.0 later reduced that panel to the 4 presets only — see the highlights above.)*
+- **Default renderer is now Ironized Zink with the Default preset.**
+- **Fixed cards drifting while scrolling the home page** — the page scroll was being
+  mistaken for a reorder "make way" shift, so every card animated itself out of place.
+- **One universal APK only** (all four ABIs in a single build, code obfuscation kept).
+- **Per-component license notices** — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **External renderer plugins are unaffected**: FCL / Zalith renderer plugins and
+  `fclPlugin_V2` plugins can still add more renderers to the list.
+
+## ✨ Highlights of 26.2.6
+
+- **Fixed** cards being pushed to the wrong place after drag reordering
+  (the offset modifier was applied inside `clip` / `background`, and an interrupted
+  make-way animation could leave a permanent offset behind)
+- **Changed**: the action menu can now be **long-pressed and dragged to either side of the screen**
+  (ported from upstream ZalithLauncher2: the menu lifts, follows the finger, previews the dock side
+  and settles there, with the content area making way; the side is remembered)
+- **Fixed** the right menu layout being restored to the upstream arrangement
+
+## ✨ Highlights of 26.2.5
+
+- **Fixed** the visible frame around cards on the card home page: the card used to stack
+  several layers (rounded fill + scaled graphics layer + shadow), which made the padding ring
+  look darker than the content area — the card now has a single background layer, no shadow
+- **New**: long-press **drag to reorder** on the card home page —
+  version cards, the worlds / servers inside a card, and the three blocks of the right menu
+  (account avatar / version row / launch button) can be dragged into any order,
+  and the order is remembered
+
+## ✨ Highlights of 26.2.4
+
+Two new reports were handled in this release:
+
+- **Fixed** the card home page ignoring the *Background Element Opacity* setting:
+  the card colour was hard-coded with `cardColor(false)`, which opts out of being influenced
+  by the custom background, so the cards stayed fully opaque while every other page followed the setting
+- **New**: an adjustable **Card Size** for the card home page
+  (Settings → Launcher → Home Page → Card Size, 70%–140%, default 100% which keeps the original look)
+
+## ✨ Highlights of 26.2.3
+
+This release fixes the resource download flow for **everything except mods**
+(modpacks, resource packs, worlds and shaders):
+
+- **Fixed** resource pack / shader / world searches returning almost nothing:
+  the mod-loader filter was being applied to resource types that are not categorised by loader
+- **Fixed** the aggregated search total page count collapsing to 0 (the UI showed "1 / 0" and could not page)
+- **Fixed** the *All* platform option querying sources that do not support the selected resource type
+  (worlds do not exist on Modrinth)
+- **Fixed** CurseForge being completely unreachable when no API key is configured
+  (the MCIM mirror is now kept as a source in that case)
+- **Fixed** the dead category filter on worlds, and leftover `.zip` files when unpacking a world fails
+
+## ✨ Highlights of 26.2.2
+
+This release focuses on fixing issues reported by users:
+
+- **Removed** the *⚠️ Extreme* glass level and simplified the glass effect into
+  **Off / Enable Dynamic Glass** — the extreme level blurred the text layer along with the
+  background, making the UI font look blurry
+- **Fixed** the one-tap install occasionally failing with
+  `No compatible version found for this instance`: after switching the search platform, the
+  mod-loader filter was silently dropped, so results included assets for other loaders
+- **Improved** install failures: messages are now localized and include the target instance's
+  Minecraft version and mod loader
+- **Fixed** required dependencies no longer being dropped silently — unresolved prerequisites
+  are logged and reported
+- **Fixed** the Discord invite links: the old temporary invite expired and was replaced with a
+  permanent one
+
+## ✨ Highlights of 26.2.1
+
+- **Reworked**: the *⚠️ Extreme* glass level now uses a real GPU shader
+  (multi-sample blur + wave-based refraction/distortion) instead of barely visible gradients
+- **Fixed**: search-result cards now provide a one-tap install button
+- **Fixed**: the mod loader is now selected automatically from the current instance
+- **Home screen**: reorganized into **per-version modules**, each listing its own worlds and servers
+- **New**: an **All** platform option that merges CurseForge and Modrinth results into one list
+- **Changed**: default sort order is now **Total Downloads**
+
+### Highlights of 26.2.0
+
+- **Fixed**: resource installation context being lost when entering the download center
+  from *Version Settings → resource management* (the `@Transient` field on a NavKey was
+  silently dropped by Navigation3's saveable serialization)
+- **Improved**: resource search now automatically filters by the current instance's
+  Minecraft version — no need to pick the version manually
+- **New**: a **⚠️ Extreme** glass level (with a performance warning before enabling)
+
+### Highlights of 26.1.0
+
+The goal of this release is to further move away from the legacy logic of ZalithLauncher2,
+and to establish ZyNova's own resource management, download, home screen and UI foundation.
 
 > **Context First. Less Steps.**
->
-> 能自动判断，就不要让用户选择；能一步完成，就不要拆成两步；
-> 已有上下文，就直接使用上下文；没有必要的按钮直接删除。
 
----
-
-## 🌟 项目定位
-
-ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而是在上游优秀开源项目的基础上，根据实际使用需求逐步形成属于 ZyNova 自身的功能、界面与使用体验。
-
-随着开发推进，项目已经形成了独立的：
-
-- 项目名称与应用身份
-- 独立源码仓库与 Release
-- 独立的资源管理与下载体系
-- 独立的启动器更新体系
-- 完整的 Android 工程与通用版本构建（含代码混淆）
-- 开发流程、项目文档与交接体系
-
----
-
-## ✨ 主要功能与修改
-
-目前项目涉及的开发内容包括：
-
-| 项目 | 状态 |
+| Feature | Status |
 |---|:---:|
-| Android Minecraft Java Edition 启动器 | ✅ |
-| 用户界面重新设计 | ✅ |
-| 交互逻辑调整 | ✅ |
-| **卡片式主页**（以版本为模块，模块内展示世界与服务器） | ✅ |
-| **卡片式主页拖动排序**（版本卡片 / 世界 / 服务器 / 右侧菜单） | ✅ |
-| **卡片大小可调**（70% ~ 140%） | ✅ |
-| **渲染器体系重做**（内置只保留 Ironized Zink / GL4ES / MobileGlues） | ✅ |
-| **Ironized Zink 完整配置**（4 个官方预设 + 13 个可调参数，选中即展开） | ✅ |
-| **统一资源管理核心**（Resource Management Core） | ✅ |
-| **资源来源 Provider**（Modrinth / CurseForge） | ✅ |
-| **统一下载管理器**（队列 / 并发 / 续传 / 重试 / 校验 / 清理） | ✅ |
-| **极简资源安装**（上下文直装，不再重复选择） | ✅ |
-| **玻璃效果两档**（关闭 / 启用动态玻璃） | ✅ |
-| **Minecraft 26.4 Snapshot 1 Vulkan 检测与兼容判断** | ✅ |
-| **按需加载与性能策略** | ✅ |
-| **启动器自有更新体系**（GitHub Releases） | ✅ |
-| Minecraft 启动相关功能 | ✅ |
-| 游戏实例管理 | ✅ |
-| Android 平台功能调整 | ✅ |
-| **ZalithLauncher2 扩展生态兼容**（渲染器插件 / Vulkan 驱动插件 / 原生库插件） | ✅ |
-| 单一通用版本 APK 构建（含代码混淆） | ✅ |
-| GitHub Release | ✅ |
-| 项目维护与交接文档 | ✅ |
+| Card-style home screen (recent versions / local worlds / servers) | ✅ |
+| Unified Resource Management Core | ✅ |
+| Resource Providers (Modrinth / CurseForge) | ✅ |
+| Unified Download Manager (queue / concurrency / resume / retry / verification) | ✅ |
+| Minimal resource installation (context-aware) | ✅ |
+| Glass UI with two levels (Off / Enable Dynamic Glass; the former Standard / Enhanced / Extreme levels were removed in 26.2.2) | ✅ |
+| Vulkan detection and compatibility for Minecraft 26.4 Snapshot 1 | ✅ |
+| Launcher updates via ZyNova's own GitHub Releases | ✅ |
+| On-demand loading and performance strategy | ✅ |
 
-具体功能会随着项目版本更新不断变化。
+### Renderers
 
----
+Since 26.3.0 the launcher ships **exactly three built-in renderers**:
 
-## 🎨 UI 与视觉体验
-
-ZyNova 对原有启动器的用户界面和交互体验进行了较大范围的调整。
-
-项目并不是简单修改应用名称或者替换少量界面元素，而是根据实际 Android 手机使用场景，对多个界面和交互部分进行了重新设计。
-
-主要包括：
-
-- 全新的界面布局调整
-- 交互逻辑调整
-- 动态毛玻璃效果
-- 半透明与模糊相关视觉效果
-- Android 手机端适配
-- 启动器操作流程调整
-- 其他使用体验相关优化
-
----
-
-## ⚙️ 功能开发
-
-### 🎮 Minecraft 启动
-
-针对 Minecraft: Java Edition 启动流程进行修改和调整。
-
-### 🧩 渲染器
-
-26.3.0 起重做渲染器体系。**启动器内置的渲染器只保留三个**：
-
-| 渲染器 | 说明 | 配置 |
+| Renderer | What it is | Configuration |
 |---|---|---|
-| **Ironized Zink**（默认） | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6，可在 3.3 ~ 4.6 之间调整 | **4 个官方预设 + 13 个可调参数**（见下） |
-| **GL4ES** | 经典 OpenGL 转译层 | 保持默认 |
-| **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | 保持上游默认 |
+| **Ironized Zink** (default) | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets + 13 tunable parameters** |
+| **GL4ES** | Classic OpenGL translation layer | Kept at its defaults |
+| **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | Kept at upstream defaults |
 
-**Ironized Zink 的 4 个官方预设**（参数取值与上游一致）：
+**The 4 official Ironized Zink presets** (values identical to upstream):
 
-| 预设 | 定位 | Minecraft | 光影 |
+| Preset | Best for | Minecraft | Shaders |
 |---|---|---|---|
-| **Potato** | 绝对最高帧率 | 1.8 → 最新（含 26.x） | 不推荐 |
-| **Performance** | 高帧率 + Sodium | 1.20.x → 最新 | 轻量 |
-| **Default** | 均衡 Zink + 光影（**默认**） | 1.16.x → 最新 | 完整（Iris / OptiFine） |
-| **Max Compatibility** | 什么都能跑 | 全部版本 | 完整 + 重度光影包 |
+| **Potato** | Absolute maximum FPS | 1.8 → latest (incl. 26.x) | Not recommended |
+| **Performance** | High FPS with Sodium | 1.20.x → latest | Light |
+| **Default** | Balanced Zink + shaders (**default**) | 1.16.x → latest | Full (Iris / OptiFine) |
+| **Max Compatibility** | Run everything | All versions | Full + heavy packs |
 
-**全部可调参数**：OpenGL 版本（3.3 / 4.3 / 4.5 / 4.6）、线程化 GL、大核绑定、
-乱序绘制、关闭错误检查、垂直同步、放宽 GLSL、暴露全部扩展、着色器磁盘缓存、
-单文件缓存、延迟描述符、内联 uniform、强制软件渲染。
+**All tunable parameters**: OpenGL version (3.3 / 4.3 / 4.5 / 4.6), threaded GL,
+big-core affinity, out-of-order drawing, no-error fast path, VSync, relaxed GLSL,
+expose all extensions, shader disk cache, single-file cache, lazy descriptors,
+inline uniforms, force software.
 
-在 **设置 → 渲染器** 里选中 Ironized Zink 后，**下方会立刻展开完整配置面板**；
-选预设会一次性写入整组参数，之后每一项仍可单独调整。
+Selecting Ironized Zink in **Settings → Renderer** immediately expands the full
+configuration panel right below it; picking a preset writes the whole parameter set,
+and every parameter can still be tuned individually afterwards.
 
-#### 官方内置 与 外部扩展 的区别
+> **External renderers are unaffected**: renderer plugins (FCL / Zalith renderer plugins
+> and the newer `fclPlugin_V2` plugins) can still add more renderers to the list.
+> Only three are *built in* — you can still install as many plugins as you like.
 
-26.3.0 删除的是**启动器官方内置**的其余 Renderer，**没有**移除外部 Renderer Plugin 机制：
+### Card-style home screen
 
-| 类别 | 内容 | 26.3.0 状态 |
-|---|---|---|
-| **官方内置** | Ironized Zink（默认）、GL4ES、MobileGlues | 只保留这 3 个；其余内置 Renderer（Krypton Wrapper / Kopper Zink / VirGL / Freedreno / Panfrost）已删除 |
-| **外部扩展** | FCL / ZalithLauncher 渲染器插件、新一代 `fclPlugin_V2` 渲染器插件、Vulkan 驱动插件、原生库插件 | **完全保留**，安装后仍会正常出现在渲染器列表中 |
+The home screen is organized into **per-version modules**: each installed version is a module
+card that directly lists that version's own local worlds and saved servers.
+Tapping the module card itself launches that version.
 
-外置插件自带自己的原生库，不受本次内置裁剪影响；
-设置页的「下载渲染器插件」入口也仍然保留。
+The card home screen also supports:
 
-### 🏠 卡片式主页
+- **Long-press drag to reorder**: version cards, the worlds / servers inside a card,
+  and the three blocks of the right menu can all be dragged into any order, and the order is remembered
+- **Card size**: Settings → Launcher → Home Page → Card Size (70%–140%, default 100%)
+- A single-layer card background, so no extra frame or shadow is drawn
 
-ZyNova 提供卡片式主页，**以游戏版本为模块**组织内容：
+Data is loaded on demand — the launcher does not scan everything at startup.
+The default / card / custom home screen can be selected in settings.
 
-每个已安装的版本是一个模块卡片，卡片内部**直接列出该版本自己的**：
+### Unified Resource Management Core
 
-| 内容 | 操作 |
-|---|---|
-| 本地世界 | 点击直接进入 |
-| 已保存的服务器 | 点击直接加入 |
+Mods, resource packs, shaders and worlds all share a single pipeline:
 
-点击模块卡片本身即可**启动该版本**。
+> Search → Details → Version matching → File selection → Download → Verification → Install
 
-卡片式主页还支持：
+### Resource Providers
 
-- **长按拖动排序**：版本卡片之间、卡片内的世界 / 服务器，
-  以及右侧菜单的三块（账号头像 / 版本行 / 启动按钮）都能拖动调整顺序，顺序会被记住
-- **卡片大小**：设置 → 启动器 → 卡片大小（70% ~ 140%，默认 100%）
-- 卡片样式为**单层背景**，不会出现多余的边框或阴影
+Resource sources are decoupled from the UI. Upper layers only depend on a unified interface.
+Adding another source later only requires implementing a provider — no rewrite needed.
 
-主页数据**按需加载**：只有真正进入主页时才读取，并且限量扫描，
-启动器启动时不会进行全盘扫描。
+### Unified Download Manager
 
-设置中可以选择主页类型，共 **4 种**：
+One download entry point for everything: download queue, concurrency control, progress,
+resume, retry, cancellation, checksum verification, temporary file cleanup, and
+post-download install triggering.
 
-| 主页类型 | 说明 |
-|---|---|
-| **空白** | 默认值，不显示任何内容 |
-| **卡片主页** | 以版本为模块的卡片式主页（见上） |
-| **从本地加载** | 加载启动器本地的主页文件（扩展 Markdown 语法），可在设置里一键生成官方主页文档 |
-| **从网络加载** | 从指定链接获取主页文件并缓存，定时刷新重载 |
+### Minimal resource installation
 
-> 自定义主页属于第三方内容，启动器不为其内容做担保。
+When entering a resource page from *Version Settings → Mods*, the launcher already knows the
+current instance, Minecraft version, loader and resource directory. Tapping download installs
+directly, without repeatedly asking for the Minecraft version, instance or installation path.
+The resource list shows an **Installed** state afterwards.
 
-### 📦 统一资源管理核心
+### Vulkan detection
 
-ZyNova 建立了自己的资源管理核心（Resource Management Core），
-统一处理 Mod、资源包、光影、存档等 Minecraft 资源：
+Detection results are clearly split into **available / unavailable / check failed**, with
+concrete reasons, GPU and driver information, and a manual re-check button. Detection is based
+on the capabilities actually enumerated from the device, not on what the device claims to support.
 
-> **搜索 → 资源详情 → 版本匹配 → 文件选择 → 下载 → 校验 → 安装**
+---
 
-所有资源类型走同一条流程，界面不再分别实现自己的下载与安装逻辑。
+## 📦 Build Instructions (For Developers)
 
-### 🔌 资源来源（Resource Provider）
+> The following section is for developers who wish to contribute or build the project locally.
 
-资源来源与界面完全解耦：
+### Requirements
 
+* Android Studio that supports **AGP 9.3.0** (recent stable release) —— older versions cannot open this project
+* Android SDK:
+  * **Minimum API level**: 26
+  * **Target API level**: 34
+  * **Compile SDK**: 37
+* JDK 17
+* Gradle **9.5.0** (the wrapper handles this automatically)
+
+### Build Steps
+
+```bash
+git clone https://github.com/zzy89216-gif/ZyNova.git
+# Open the project in Android Studio and build
 ```
-Resource Provider
-├── Modrinth
-└── CurseForge
-```
-
-上层只依赖统一接口。以后增加其他资源来源时，通过 Provider 扩展即可，
-不需要重写整个资源系统。
-
-### 📥 统一下载管理
-
-Mod、资源包、光影、存档以及它们的前置依赖，全部使用统一下载管理器：
-
-- 下载队列
-- 并发控制
-- 下载进度
-- 断点续传
-- 失败重试
-- 取消下载
-- 文件校验
-- 临时文件清理
-- 下载完成后的安装触发
-
-### ⚡ 极简资源安装
-
-当用户从「版本设置 → Mods / 资源包 / 光影 / 存档」进入资源页面时，
-系统已经知道当前实例、Minecraft 版本、加载器和资源目录。
-
-因此点击资源卡片上的下载按钮后会直接：
-
-> **检查兼容性 → 选择兼容文件 → 下载 → 校验 → 安装**
-
-不会再重复要求用户选择 Minecraft 版本、实例或安装位置。
-安装完成后资源列表会根据状态显示「已安装」。
-
-从主界面进入的资源中心则只负责浏览与管理，不提供一键安装入口。
-
-### 🖥️ Vulkan 检测与兼容性
-
-ZyNova 提供面向 Minecraft 26.4 Snapshot 1 的 Vulkan 检测：
-
-- 检测结果明确区分：**可用 / 不可用 / 检测失败**
-- 检测内容包括：Vulkan 是否可用、Vulkan API 版本、驱动是否正常、
-  必要扩展与功能、GPU / 渲染器信息，以及检测失败的具体原因
-- 不可用时给出具体原因，并支持用户主动重新检测
-- 判断依据是设备**实际枚举出来的 Vulkan 能力**，
-  而不是设备对外声明的 Vulkan 支持情况
-
-### 🎨 界面与视觉效果
-
-- 玻璃效果（Glass UI）提供两档：**关闭 / 启用动态玻璃**，默认关闭
-  - 关闭档不叠加任何玻璃高光层，性能优先
-  - 启用动态玻璃会在毛玻璃之上叠加缓慢流动的高光与折射光晕
-  - ⚠️ 此前的「标准 / 增强 / ⚠️极致」三档已在 26.2.2 移除：
-    「极致」档使用 GPU 着色器对整个元素做多重采样模糊与折射扭曲，
-    会连带把承载文字的图层一起模糊，导致**字体明显模糊、文字渲染异常**，
-    因此在 26.2.2 中简化掉
-- 在性能与视觉效果之间优先保证移动设备的流畅度，
-  避免高开销实时模糊、大量透明层叠加与持续动画
-
-### 🔄 启动器更新
-
-ZyNova 只维护自己的更新体系：
-
-- 版本信息与更新日志来自 ZyNova 自己的 GitHub Releases
-- Release 只提供一个**通用版本**安装包（已包含全部 4 个 ABI），用户不需要选择架构
-
-### 🔌 扩展兼容
-
-ZyNova 在独立开发的同时，继续保留对 ZalithLauncher2 相关扩展生态的兼容。
-
-项目会尽可能在独立开发新功能的同时保持原有扩展的兼容性。
 
 ---
 
-## 🔄 与 ZalithLauncher2 共存
-
-ZyNova 使用独立的应用名称以及独立的应用签名。
-
-因此，在 Android 系统及设备环境允许的情况下，ZyNova 可以与 ZalithLauncher2 同时安装并共存。
-
-| 项目 | 状态 |
-|---|:---:|
-| ZalithLauncher2 单独安装 | ✅ |
-| ZyNova 单独安装 | ✅ |
-| ZalithLauncher2 + ZyNova 同时安装 | ✅ |
-| 不删除 ZyNova 使用 ZalithLauncher2 | ✅ |
-| 不删除 ZalithLauncher2 使用 ZyNova | ✅ |
-
-用户可以根据自己的需求自由选择使用哪个启动器。
-
-如果之后希望重新使用 ZalithLauncher2，也可以重新下载安装原项目。
-
----
-
-## 🧬 技术栈
-
-ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文件。
-
-项目涉及：
-
-| 技术 | 用途 |
-|---|---|
-| Kotlin | Android 主要开发语言 |
-| Java | Android / 项目相关代码 |
-| C | Native 相关部分 |
-| NDK | Native 构建及相关功能 |
-| Gradle | 项目构建 |
-| Git | 版本管理 |
-| GitHub | 源码与项目管理 |
-| GitHub Actions | 自动化相关流程 |
-| Android | 主要目标平台 |
-
-当前 GitHub 语言统计曾显示：
-
-| Language | Percentage |
-|---|---:|
-| Kotlin | **64%** |
-| Java | **22.9%** |
-| C | **13%** |
-| JavaScript | **0.1%** |
-| Makefile | **0%** |
-| C++ | **0%** |
-
-由于项目仍在持续开发和修改过程中，实际比例可能随版本变化。
-
----
-
-## 📱 通用版本
-
-26.3.0 起，**Release 只提供一个通用版本 APK**，不再按架构拆分。
-
-| 项 | 说明 |
-|---|---|
-| 覆盖架构 | `arm64-v8a`、`armeabi-v7a`、`x86`、`x86_64`（一个包全部包含） |
-| 代码混淆 | Release 开启（`isMinifyEnabled` + `isShrinkResources`） |
-| 产物名 | `ZyNova-<版本>.apk` |
-| 混淆映射 | `mapping.universal.zip`，用于还原崩溃堆栈 |
-
-为什么只出一个通用版本：
-
-- 用户**不需要判断自己的设备是什么架构**，下载唯一的安装包即可
-- 混淆映射只需要维护一份，排查线上崩溃更简单
-- 代价是包体包含全部 4 个 ABI 的预编译库，比单架构包大
-
-一次 Release 只上传 **2 个产物**：
-
-| 产物 | 内容 |
-|---|---|
-| `ZyNova-<版本>.apk` | 通用版本安装包（已代码混淆） |
-| `mapping.universal.zip` | 混淆映射，用于还原崩溃堆栈 |
-
-> GitHub 上传 Release 资产时会把空格与括号净化为点号，
-> 因此线上资产名固定是 `mapping.universal.zip`（CI 内部 artifact 名为 `mapping (universal)`）。
-
----
-
-## 🚀 Release
-
-当前版本：
-
-**ZyNova 26.3.0**
-
-26.3.0 重做渲染器体系，并收敛发布形态：
-
-- **内置渲染器只保留 Ironized Zink（默认）、GL4ES、MobileGlues**，
-  删除 Krypton Wrapper（NG-GL4ES）、Kopper Zink、VirGL、Freedreno、Panfrost
-- Ironized Zink **完整集成其原生配置**：4 个官方预设（Potato / Performance / Default / Max Compatibility）
-  + 全部 13 个可调参数；在设置里选中后会**自动在下方展开配置面板**
-- 默认渲染器改为 **Ironized Zink 的 Default 预设**
-- **修复主页向下滚动时卡片异常移动**（滚动的整体位移被误判成让位动画）
-- **只发布一个通用版本 APK**（含全部 4 个 ABI）并保持代码混淆
-- 第三方组件许可证逐组件声明（`THIRD_PARTY_NOTICES.md`）
-
-26.2.6 修复拖动排序引入的两个显示问题，并把「操作菜单长按拖动换边」从上游搬了过来：
-
-- 修复拖动后卡片内容被顶到错误位置（位移修饰符层级 + 让位动画残留）
-- 操作菜单：**长按整块可以拖到屏幕左侧或右侧**，内容区一起让位，停泊侧会被记住
-- 右侧菜单恢复上游的排布
-
-26.2.5 处理卡片式主页的边框显示问题，并加入长按拖动排序：
-
-- 彻底移除卡片式主页卡片的边框（卡片只保留一层背景，去掉阴影与缩放图层）
-- 卡片式主页支持**长按拖动排序**：版本卡片之间、卡片内的世界 / 服务器、
-  以及右侧菜单的三块（账号头像 / 版本行 / 启动按钮）都可以拖动调整顺序，顺序会自动记住
-
-26.2.4 处理两个新反馈：一个卡片式主页的 Bug 与一个卡片大小的功能请求：
-
-- 修复卡片式主页的卡片不透明度不跟随「背景元素不透明度」设置
-- 卡片式主页新增「卡片大小」设置（70% ~ 140%，默认 100% 保持原有外观）
-
-26.2.3 集中修复**模组以外**的资源下载链路（整合包 / 资源包 / 存档 / 光影包）：
-
-- 修复资源包 / 光影包 / 存档的搜索结果几乎为空
-  （加载器过滤条件被错误地用在了并不按加载器分类的资源类型上）
-- 修复聚合搜索的总页数会变成 0（界面显示「1 / 0」并且完全无法翻页）
-- 修复「所有平台」会去请求并不支持该资源类型的来源（例如存档在 Modrinth 上并不存在）
-- 修复未配置 CurseForge API Key 时 CurseForge 侧完全搜不到资源（无 Key 时保留 MCIM 镜像源）
-- 修复存档「类别」过滤器永久不可用、存档解压失败后残留 `.zip`
-
-26.2.2 是一次以「修复实际反馈」为主的版本：
-
-- 移除了会让字体模糊的「⚠️极致」玻璃档，玻璃效果简化为 **关闭 / 启用动态玻璃** 两档
-- 修复了一键安装偶尔报 `No compatible version found for this instance` 的问题
-  （搜索在切换平台后丢失加载器过滤条件，导致结果里混进其他加载器的资源）
-- 失败提示改为本地化，并带上目标实例的 Minecraft 版本与模组加载器
-- 前置依赖解析失败不再被静默丢弃
-- 修复 Discord 服务器邀请链接全部失效的问题（更换为永久邀请）
-
-26.2.1 重做了「⚠️极致」玻璃效果、修复了搜索结果缺少快捷安装按钮与模组加载器未自动选中的问题，
-并把主页改为以「版本」为模块、新增「所有平台」聚合搜索。
-
-26.1.0 版本的核心目标是：进一步脱离 ZalithLauncher2 的遗留逻辑，
-建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。
-
-主要变化包括：
-
-- 统一资源管理核心与资源来源 Provider
-- 统一下载管理器与极简资源安装
-- 卡片式主页与玻璃效果（26.2.2 起简化为两档）
-- Minecraft 26.4 Snapshot 1 的 Vulkan 检测与兼容判断
-- 移除 ZalithLauncher2 更新链与添加账号界面的正版登录入口
-
-完整的变更记录见 [CHANGELOG](CHANGELOG.md)。
-
-Release 提供：
-
-- 通用版本 APK（含 `arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`，已代码混淆）
-- `mapping.universal.zip`（混淆映射）
-
----
-
-## 🛠️ 开发与测试流程
-
-ZyNova 的开发并不是只在源码层面完成。
-
-实际流程包括：
-
-**需求**
-
-↓
-
-**源码分析**
-
-↓
-
-**代码修改 / 功能开发**（在 Android 手机上）
-
-↓
-
-**工程构建 / APK 打包**（GitHub Actions 云端）
-
-↓
-
-**Android 真机安装**
-
-↓
-
-**实际测试**
-
-↓
-
-**发现 Bug**
-
-↓
-
-**修复 Bug**
-
-↓
-
-**重新构建**（云端）
-
-↓
-
-**再次测试**
-
-↓
-
-**Release 发布**（通过 GitHub）
-
-项目中的部分功能是在实际 Android 设备使用过程中进行测试和调整的。
-
----
-
-## 📱 用手机开发的项目
-
-ZyNova 项目有一个比较特殊的工作方式：
-
-> **从写代码、测试到发布，全部只使用一部 Android 手机操作，没有使用电脑。**
-
-不过有一点需要说明清楚：**APK 的编译并不在手机上完成，而是在 GitHub Actions 的云端服务器上完成。**
-
-| 环节 | 在哪里完成 |
-|---|---|
-| 源代码编写 / 修改 | Android 手机 |
-| 项目文件管理 | Android 手机 |
-| Gradle / 工程配置处理 | Android 手机 |
-| Git 操作、GitHub 仓库管理 | Android 手机 |
-| 查阅编译日志、修复编译错误 | Android 手机 |
-| **APK 编译（通用版本 + 代码混淆）** | **GitHub Actions 云端服务器** |
-| Android 真机安装测试 | Android 手机 |
-| Release 发布 | Android 手机（通过 GitHub API） |
-| 文档编写与维护 | Android 手机 |
-
-原因很直接：Android 手机环境缺少完整的 Android SDK / NDK 工具链
-（NDK 的 clang 只有 x86_64 版本，Google 不提供 arm64 Linux 版），
-无法在手机本地完成 APK 编译，因此编译环节交由 GitHub Actions 的云端服务器执行。
-
-所以更准确的说法是：
-
-> **整个项目的开发、测试与发布流程只用一部 Android 手机操作完成，编译则借助 GitHub Actions 在云端完成。**
-
-本项目不是：
-
-> 电脑开发 → 电脑构建 → 手机测试
-
-而是：
-
-> **手机开发 → 云端构建 → 手机测试 → 手机发布**
-
----
-
-## 🤖 AI Agent 辅助开发
-
-ZyNova 的开发过程中大量使用 AI Agent 辅助实际工程工作。
-
-AI Agent 参与的工作包括：
-
-- 源码分析
-- 工程结构分析
-- 代码修改
-- 功能开发
-- 构建错误分析
-- Bug 修复
-- APK 构建
-- 通用版本打包（含代码混淆）
-- 文件整理
-- GitHub 操作
-- Release 文件整理
-- 项目文档编写
-- 项目交接文档编写
-
-AI Agent 是项目开发过程中使用的辅助工具之一。
-
-项目的需求、开发方向、测试结果以及最终发布由项目维护者决定。
-
----
-
-## 📚 项目文档与交接
-
-为了避免项目未来完全依赖某一次开发过程或者某一个 AI 对话，ZyNova 建立了相应的项目维护与交接资料。
-
-相关资料用于记录：
-
-- 项目结构
-- 当前项目状态
-- 构建方式
-- 主要修改内容
-- 已知问题
-- 维护方式
-- 后续开发方向
-- 未来开发者或 AI 如何继续参与项目
-
-这样即使原有开发环境或者 AI 对话上下文不存在，未来仍然可以通过公开源码和项目文档继续了解和维护 ZyNova。
-
----
-
-## 🏗️ 项目结构
-
-ZyNova 是一个完整的 Android 工程。
-
-仓库中包括：
-
-- Android 项目源码
-- Kotlin / Java 源码
-- Native / C 相关代码
-- Gradle 构建文件
-- 项目模块
-- GitHub 配置
-- README（`README.md` / `README_EN_US.md` / `README_ZH_TW.md`）
-- LICENSE（`LICENSE`，GPL-3.0）
-- 更新记录（`CHANGELOG.md`）
-- 第三方许可证与版权声明（`THIRD_PARTY_NOTICES.md`）
-- 维护及交接资料（`HANDOFF.md`）
-- Release
-- mapping 文件（混淆映射）
-- 构建相关文件
-
-因此，该仓库同时承担：
-
-**源码仓库 + 开发仓库 + 文档仓库 + Release 发布仓库**
-
----
-
-## 👥 项目维护者
-
-目前 ZyNova 的核心开发由：
-
-**zzy**
-
-以及：
-
-**ChalkyDuke_pwp**
-
-共同参与。
-
-项目的具体代码、功能、界面、版本以及后续发展由 ZyNova 项目维护者负责。
-
----
-
-## 🌱 项目维护理念
-
-ZyNova 不追求为了保持更新而强行加入大量功能。
-
-项目目前采用相对自由的长期维护方式：
-
-| 情况 | 处理方式 |
-|---|---|
-| 🐛 发现 Bug | 修复 |
-| 💡 有新的实际需求 | 视情况增加功能 |
-| 🔧 有值得改进的地方 | 进行调整 |
-| 😴 没有新的需求 | 保持当前状态 |
-
-项目不会为了制造版本号而强行加入大量功能。
-
-让 ZyNova 按照实际需求自然发展。
-
----
-
-## 🗺️ Roadmap
-
-### 26.3.0（当前版本）
-
-- [x] 内置渲染器只保留 Ironized Zink / GL4ES / MobileGlues，删除其余 5 个
-- [x] Ironized Zink 完整集成原生配置（4 个官方预设 + 13 个可调参数）
-- [x] 默认渲染器改为 Ironized Zink 的 Default 预设
-- [x] 选中 Ironized Zink 后自动在下方展开配置面板
-- [x] 修复主页向下滚动时卡片异常移动
-- [x] 只发布一个通用版本 APK（含全部 4 个 ABI）+ 代码混淆
-- [x] 第三方组件许可证逐组件声明（`THIRD_PARTY_NOTICES.md`）
-
-### 26.2.6
-
-- [x] 修复拖动排序后卡片内容被顶到错误位置
-- [x] 操作菜单支持长按拖动换边（搬自上游 ZalithLauncher2）
-
-### 26.2.5
-
-- [x] 彻底移除卡片式主页的卡片边框
-- [x] 版本卡片、世界、服务器支持长按拖动排序（顺序自动记住）
-
-### 26.2.4
-
-- [x] 修复卡片式主页的卡片不透明度不跟随「背景元素不透明度」设置
-- [x] 卡片式主页新增「卡片大小」设置（70% ~ 140%，默认 100%）
-
-### 26.2.3
-
-- [x] 修复资源包 / 光影包 / 存档搜索结果几乎为空（加载器过滤用错了资源类型）
-- [x] 修复聚合搜索总页数变成 0（界面 1 / 0、无法翻页）
-- [x] 「所有平台」只请求真正支持该资源类型的来源
-- [x] 无 CurseForge API Key 时保留 MCIM 镜像源，CurseForge 侧恢复可用
-- [x] 修复存档「类别」过滤器永久不可用
-- [x] 修复存档解压失败残留 `.zip`
-
-### 26.2.2
-
-- [x] 移除「⚠️极致」玻璃档，简化为「关闭 / 启用动态玻璃」两档（修复字体模糊）
-- [x] 修复一键安装偶发 `No compatible version found for this instance`
-- [x] 安装失败提示本地化，并显示目标实例的版本与加载器
-- [x] 前置依赖解析失败不再静默丢弃，改为记录日志与告警
-- [x] 修复 Discord 邀请链接失效（更换为永久邀请）
-
-### 26.2.1
-
-- [x] 极致玻璃效果重做（真实 GPU 多重采样模糊 + 波纹折射扭曲）
-- [x] 搜索结果卡片增加快捷安装按钮
-- [x] 模组加载器按当前实例自动选中
-- [x] 主页改为以「版本」为模块，模块内展示该版本的世界与服务器
-- [x] 新增「所有平台」聚合搜索（CurseForge + Modrinth 合并到同一列表）
-- [x] 排序方式默认改为「总下载量」
-
-### 26.2.0
-
-- [x] 修复资源安装上下文丢失（导航键的 `@Transient` 字段会被序列化机制丢弃）
-- [x] 资源搜索自动按当前实例的 Minecraft 版本过滤
-- [x] 玻璃效果新增「⚠️极致」档位（切换前弹出性能警告）
-
-### 26.1.x
-
-- [x] 统一资源管理核心（Resource Management Core）
-- [x] 资源来源 Provider 化（Modrinth / CurseForge）
-- [x] 统一下载管理器
-- [x] 极简资源安装（上下文直装）
-- [x] 卡片式主页
-- [x] 玻璃效果（关闭 / 标准 / 增强 / ⚠️极致，26.2.2 已简化为两档）
-- [x] Minecraft 26.4 Snapshot 1 Vulkan 检测适配
-- [x] 移除 ZalithLauncher2 更新链
-- [x] 移除添加账号界面的正版登录入口
-- [x] 按需加载与性能策略
-- [x] 修复卡片式主页导致的启动器崩溃（26.1.1）
-
-### 后续方向
-
-- [ ] 为自定义主页开放更完整的统一数据接口
-- [ ] 让统一资源管理核心覆盖更多资源来源
-- [ ] 继续收敛 ZalithLauncher2 的遗留逻辑
-- [ ] 渲染与键位相关的进一步优化
-
----
-
-## 💬 社区与反馈
-
-| 渠道 | 地址 |
-|---|---|
-| GitHub 仓库 | <https://github.com/zzy89216-gif/ZyNova> |
-| GitHub Issues（Bug / 建议） | <https://github.com/zzy89216-gif/ZyNova/issues> |
-| Discord 服务器 | <https://discord.gg/QwPpZQHrTa> |
-| Releases（下载） | <https://github.com/zzy89216-gif/ZyNova/releases> |
-
-> ⚠️ Discord 使用的是**永久邀请链接**。如果该链接失效，说明服务器更换了邀请，
-> 请以 GitHub 仓库首页与启动器「关于」页面中的链接为准，并到 Issues 反馈。
-
----
-
-## 🔗 上游项目
-
-ZyNova 基于：
-
-**ZalithLauncher2**
-
-官方项目仓库：
-
-https://github.com/ZalithLauncher/ZalithLauncher2
-
-感谢 ZalithLauncher2 项目以及所有贡献者提供的：
-
-- 开源代码
-- 技术基础
-- 项目经验
-- 相关工作
-
-ZyNova 的开发离不开上游项目所提供的基础。
-
----
-
-## 🧬 内置渲染器的上游
-
-26.3.0 起内置的三个渲染器分别来自这些上游项目（**各自适用各自的许可证**）：
-
-| 渲染器 | 上游项目 | 该渲染器自身代码的许可证 |
-|---|---|---|
-| **Ironized Zink** | https://github.com/GoyDevv/IronizedZink | **GPL-3.0** |
-| **MobileGlues** | https://github.com/MobileGL-Dev/MobileGlues | **LGPL-2.1** |
-| **GL4ES** | https://github.com/PojavLauncherTeam/gl4es_extra_extra | **MIT** |
-
-Ironized Zink 本身是一个「打包 + 配置」项目；真正的渲染引擎来自
-**Mesa**（https://mesa3d.org/）：
-
-- **Zink**（Mesa 的 Gallium 驱动）与 **Kopper**（Mesa 的 Vulkan 窗口系统集成层）
-  都是 **Mesa 代码库的一部分**，并不是独立的第三方项目
-- Mesa 内部各组件许可证**并不相同**：主 Mesa 代码 / Gallium 代码为 **MIT**，
-  GLX 客户端代码为 **SGI Free Software License B**，
-  GL / GLX 扩展头文件为 **Khronos**，C11 线程模拟为 **Boost（宽松许可）**
-- 随启动器分发的 Zink / Kopper 预编译二进制来自
-  **AngelAuraMC 的 `mesa_zink_kopper` 构建**，以**未经修改**的形式随包分发
-
-完整的逐组件许可证、版权归属、预编译二进制来源与对应源码获取方式，见
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
-
----
-
-## ⚠️ 与 ZalithLauncher2 的关系
-
-**ZyNova 并非 ZalithLauncher2 官方版本。**
-
-ZyNova 是基于 ZalithLauncher2 开源代码进行开发的非官方修改项目。
-
-本项目与 ZalithLauncher2 官方项目不存在官方合作、授权或隶属关系，除非另有明确说明。
-
-ZyNova 的具体代码、功能、界面以及后续发展由 ZyNova 项目维护者负责。
-
-如需了解 ZalithLauncher2 官方项目，请以其官方仓库中的信息为准。
-
----
-
-## ⚖️ 开源与许可证
-
-ZalithLauncher2 项目使用 **GNU General Public License v3.0 (GPL-3.0)**。
-
-ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同样以 GPL-3.0 发布**
-（仓库根目录 `LICENSE`），在涉及上游代码的部分遵循适用的 GPL-3.0 许可证要求。
-
-使用、修改、再发布或分发 ZyNova 时，请同时注意：
-
-- ZalithLauncher2 所适用的许可证要求
-- ZyNova 自身适用的许可证要求
-- 项目中其他第三方开源组件各自适用的许可证
-- 相关版权声明
-- 各许可证文本中的其他要求
-
-请在使用、修改或再发布本项目之前仔细阅读相关许可证及版权信息。
-
-### 各组件许可证并不相同
-
-**不要因为某一个依赖是 MIT，就认为整个项目都是 MIT。** 本项目逐组件适用各自的许可证：
-
-| 组件 | 许可证 |
-|---|---|
-| ZyNova Launcher（本项目自身） | **GPL-3.0** |
-| ZalithLauncher2（上游，ZyNova 基于其开发） | **GPL-3.0**（上游另有 GPLv3 第 7 条附加条款，见 `README_EN_US.md` / `README_ZH_TW.md` 的「附加条款」小节） |
-| Ironized Zink（GoyDevv） | **GPL-3.0** |
-| MobileGlues（MobileGL-Dev） | **LGPL-2.1** |
-| GL4ES（gl4es_extra_extra / PojavLauncherTeam） | **MIT** |
-| Mesa 主代码 / Gallium 代码（含 Zink 驱动） | **MIT** |
-| Mesa GLX 客户端代码 | **SGI Free Software License B** |
-| Mesa GL / GLX 扩展头文件 | **Khronos** |
-| Mesa C11 线程模拟 | **Boost（宽松许可）** |
-| Kopper | 属于 Mesa 代码库，随 Mesa 适用上述条款 |
-| 其余第三方依赖（ANGLE / LWJGL / SDL3 / MMKV / sora-editor / Terracotta 等） | 各自上游许可证，见应用内「关于 → 开源许可」 |
-
-- 仓库根目录 `LICENSE` 是 **GPL-3.0** 全文，其中保留了上游
-  Zalith Launcher / MovTery 的版权声明 —— 这是 GPL-3.0 的要求，**不会删除**
-- 上游 ZalithLauncher2 依据 GPLv3 第 7 条提出的附加条款（分发修改版时需更名以区别于原版、
-  且不得移除程序显示的版权声明）同样适用；本项目已在启动器「关于」页面标注
-  「非官方修改版本」，并在 `README_EN_US.md` / `README_ZH_TW.md` 中完整转录该附加条款
-- 完整声明（含各预编译二进制的来源与对应源码获取方式）：
-  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
-- 应用内「关于 → 开源许可」逐条列出各组件及其许可文本
-- **上游作者的版权与署名信息一律保留，不会被删除**
-- **MobileGlues** 以 LGPL-2.1 分发的是**未经修改**的预编译动态库：
-  已与上游官方 release 内的同名二进制做 **SHA-256 比对，四个 ABI 全部一致**；
-  其对应源码获取方式已在 `THIRD_PARTY_NOTICES.md` 中给出
-
----
-
-## ❤️ 致谢
-
-感谢：
-
-- ZalithLauncher2 项目及其所有贡献者
-- **Ironized Zink（GoyDevv）** —— 本项目的默认渲染器
-- **MobileGlues（MobileGL-Dev）**、**gl4es_extra_extra（PojavLauncherTeam）** —— 另外两个内置渲染器
-- **Mesa / Zink / Kopper** 的作者与贡献者 —— Ironized Zink 的渲染引擎
-- 本项目使用的其他开源项目
-- 第三方开源组件的作者与贡献者
-- 所有参与测试的用户
-- 提交 Bug 和反馈问题的用户
-- 提供建议和改进意见的用户
-
-感谢所有开源项目和社区生态为 ZyNova 提供的技术基础。
-
----
-
-## 📌 总结
-
-ZyNova 从一个最初的界面与功能需求开始，逐渐发展成为一个完整的 Android Minecraft: Java Edition 启动器项目。
-
-目前项目已经拥有：
-
-- 独立名称
-- 独立应用身份
-- 独立源码仓库
-- 完整 Android 工程
-- Kotlin / Java / C / NDK
-- 统一资源管理核心
-- 资源来源 Provider 体系
-- 统一下载管理器
-- 卡片式主页
-- 自有更新体系
-- 单一通用版本构建（含代码混淆）
-- GitHub Release
-- 正式 APK
-- 内置渲染器体系（Ironized Zink / GL4ES / MobileGlues）
-- ZalithLauncher2 扩展兼容
-- 功能与 UI 修改
-- 实际 Android 真机测试
-- Bug 修复与版本迭代
-- 项目维护与交接文档
-
-并且整个项目的开发、测试与发布流程，均**只使用一部 Android 手机操作完成**（APK 编译交由 GitHub Actions 在云端执行）。
-
-ZyNova 不追求一次完成所有事情，也不会为了更新而强行加入功能。
-
-未来将按照实际需求自然发展：
-
-> **有 Bug 就修。**
->
-> **有需要就改。**
->
-> **有想法就加。**
->
-> **没有需要，就保持当前状态。**
-
----
-
-# ZyNova
-
-**Minecraft: Java Edition Android Launcher**
-
-**基于开源，持续开发，独立维护。**
-
-**一个只用一部 Android 手机操作完成开发、测试与发布的独立项目（编译借助云端 CI）。**
+## 📜 License
+
+This project is licensed under the **[GPL-3.0 license](LICENSE)**.
+
+> **Licenses differ per component.** Do not assume the whole project is MIT just because one
+> dependency is: ZyNova itself is GPL-3.0, Ironized Zink is GPL-3.0, MobileGlues is LGPL-2.1,
+> and GL4ES is MIT. The rendering engine Ironized Zink ships is **Mesa** — its core and Gallium
+> code (including the **Zink** driver) are MIT, the GLX client code is under the
+> SGI Free Software License B, and the GL / GLX extension headers are under the Khronos license.
+> **Kopper** is also part of the Mesa code base, so the Mesa terms apply to it.
+> See **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)** for the full per-component breakdown,
+> copyright notices and the source availability statement for the redistributed binaries.
+
+### Additional Terms (Pursuant to Section 7 of the GPLv3 License)
+
+1. When distributing a modified version of this program, you must reasonably modify the program's name or version number to distinguish it from the original version. (According to [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374))
+    - Modified versions **must not include the original program name "ZalithLauncher" or its abbreviation "ZL" in their name, nor use any name that is similar enough to cause confusion with the official name**.
+    - All modified versions **must clearly indicate that they are “Unofficial Modified Versions” on the program’s startup screen or main interface**.
+    - The application name of the program can be modified in [gradle.properties](./ZalithLauncher/gradle.properties).
+
+2. You must not remove the copyright notices displayed by the program. (According to [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370))
+
+## Open Source Libraries and Licenses
+
+This software uses the following open source libraries:
+
+| Library                               | Copyright                                                                                                     | License              | Official Link                                                                      |
+|---------------------------------------|---------------------------------------------------------------------------------------------------------------|----------------------|------------------------------------------------------------------------------------|
+| androidx-appcompat                    | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/appcompat)         |
+| androidx-constraintlayout-compose     | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/develop/ui/compose/layouts/constraintlayout) |
+| androidx-webkit                       | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/webkit)            |
+| ANGLE                                 | Copyright 2018 The ANGLE Project Authors                                                                      | BSD 3-Clause License | [Link↗](http://angleproject.org/)                                                  |
+| Apache Commons Codec                  | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-codec)                           |
+| Apache Commons Compress               | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-compress)                        |
+| Apache Commons IO                     | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-io)                              |
+| ByteHook                              | Copyright © 2020-2024 ByteDance, Inc.                                                                         | MIT License          | [Link↗](https://github.com/bytedance/bhook)                                        |
+| BuildKeys                             | Copyright © 2026 MovTery                                                                                      | Apache 2.0           | [Link↗](https://github.com/MovTery/BuildKeys)                                      |
+| Coil Compose                          | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
+| Coil Gifs                             | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
+| Coil SVG                              | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
+| Fishnet                               | Copyright © 2025 Kyant                                                                                        | Apache 2.0           | [Link↗](https://github.com/Kyant0/Fishnet)                                         |
+| gl4es_extra_extra                     | Copyright © 2016-2018 Sebastien Chevalier; Copyright (c) 2013-2016 Ryan Hileman                               | MIT License          | [Link↗](https://github.com/PojavLauncherTeam/gl4es_extra_extra)                    |
+| Gson                                  | Copyright © 2008 Google Inc.                                                                                  | Apache 2.0           | [Link↗](https://github.com/google/gson)                                            |
+| kotlinx.coroutines                    | Copyright © 2000-2020 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://github.com/Kotlin/kotlinx.coroutines)                              |
+| ktor-client-content-negotiation       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-client-core                      | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-client-okhttp                    | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-http                             | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-serialization-kotlinx-json       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| LWJGL - Lightweight Java Game Library | Copyright © 2012-present Lightweight Java Game Library All rights reserved.                                   | BSD 3-Clause License | [Link↗](https://github.com/LWJGL/lwjgl3)                                           |
+| material-color-utilities              | Copyright 2021 Google LLC                                                                                     | Apache 2.0           | [Link↗](https://github.com/material-foundation/material-color-utilities)           |
+| Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [Link↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
+| Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
+| Ironized Zink                         | Copyright © GoyDevv (rendering engine: Mesa Zink / Kopper, © The Mesa Authors)                                 | GPL-3.0              | [Link↗](https://github.com/GoyDevv/IronizedZink)                                   |
+| Mesa core / Gallium (incl. Zink)      | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT                  | [Link↗](https://mesa3d.org/)                                                       |
+| Mesa GLX client code                  | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | SGI Free Software License B | [Link↗](https://mesa3d.org/)                                                 |
+| Mesa GL / GLX extension headers       | Copyright © The Khronos Group                                                                                 | Khronos              | [Link↗](https://www.khronos.org/)                                                  |
+| Kopper                                | Part of the Mesa code base (Vulkan WSI layer)                                                                 | Covered by the Mesa terms above | [Link↗](https://mesa3d.org/)                                            |
+| MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [Link↗](https://github.com/Tencent/MMKV)                                           |
+| Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
+| MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [Link↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
+| OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okhttp)                                          |
+| Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okio)                                            |
+| OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [Link↗](https://github.com/GeyserMC/OpenNBT)                                       |
+| Process Phoenix                       | Copyright © 2015 Jake Wharton                                                                                 | Apache 2.0           | [Link↗](https://github.com/JakeWharton/ProcessPhoenix)                             |
+| proxy-client-android                  | -                                                                                                             | LGPL-3.0 License     | [Link↗](https://github.com/TouchController/TouchController)                        |
+| Reorderable                           | Copyright © 2023 Calvin Liang                                                                                 | Apache 2.0           | [Link↗](https://github.com/Calvin-LL/Reorderable)                                  |
+| sdl2-compat                           | Copyright (C) 2026 Sam Lantinga <slouken@libsdl.org>                                                          | Zlib License         | [Link↗](https://github.com/libsdl-org/sdl2-compat)                                 |
+| SDL3                                  | Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>                                                     | Zlib License         | [Link↗](https://github.com/libsdl-org/SDL)                                         |
+| skinview3d                            | Copyright © 2014-2018 Kent Rasmussen; Copyright © 2017-2022 Haowei Wen, Sean Boult and contributors           | MIT License          | [Link↗](https://github.com/bs-community/skinview3d)                                |
+| sora-editor                           | Copyright (C) 2020-2026  Rosemoe                                                                              | LGPL-2.1 License     | [Link↗](https://github.com/Rosemoe/sora-editor)                                    |
+| StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [Link↗](https://github.com/MegatronKing/StringFog)                                 |
+| tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [Link↗](https://github.com/eclipse-tm4e/tm4e)                                      |
+| XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [Link↗](https://tukaani.org/xz/java.html)                                          |

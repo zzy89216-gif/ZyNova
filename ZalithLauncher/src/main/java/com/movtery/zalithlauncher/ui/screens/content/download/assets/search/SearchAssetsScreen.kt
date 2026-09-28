@@ -158,8 +158,9 @@ private class SearchScreenViewModel(
                 ?.let { name -> resolveModloader(SearchPlatform.of(platform), name) }
                 ?: loaderFor(platform)
         } else null,
-        //类别 ID 在不同来源之间不通用：只有实际只查一个来源时才带上类别条件
-        categories = if (effectivePlatforms.size > 1) emptyList() else filter.categories
+        //类别 ID 在不同来源之间不通用：只把它下发给「参照来源」（「所有」时 = CurseForge），
+        //其余来源一律清空，绝不把 A 来源的类别 ID 传给 B 来源
+        categories = filter.categories.takeIf { platform == referencePlatform } ?: emptyList()
     )
 
     /** 当前资源类型可用的来源（例如存档只有 CurseForge 提供） */
@@ -627,10 +628,15 @@ fun SearchAssetsScreen(
                         viewModel.searchFilter.copy(sortField = it)
                     )
                 },
-                //类别是来源特有的：只有实际只查一个来源时才提供选择
-                //（例如存档固定使用「所有」，但它只有 CurseForge 一个来源）
-                allCategories = if (viewModel.categoryFilterAvailable) categories else emptyList(),
+                //类别列表与加载器列表一样，以参照来源为准（「所有」时 = CurseForge）
+                allCategories = categories,
                 categories = viewModel.searchFilter.categories,
+                //多来源时类别只作用于参照来源，在标题里标明，避免误以为对所有来源都生效
+                categorySourceName = if (viewModel.categoryFilterAvailable) {
+                    null
+                } else {
+                    viewModel.referencePlatform.displayName
+                },
                 onCategoryChanged = { categories ->
                     viewModel.researchWithFilter(
                         viewModel.searchFilter.copy(categories = categories)

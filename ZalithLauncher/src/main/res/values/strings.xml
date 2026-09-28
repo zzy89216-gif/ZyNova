@@ -233,6 +233,7 @@
     <string name="download_assets_filter_search_platform">Target Platform</string>
     <string name="download_assets_filter_game_version">Game Version</string>
     <string name="download_assets_filter_category">Category</string>
+    <string name="download_assets_filter_category_with_source">%1$s (%2$s only)</string>
     <string name="download_assets_filter_modloader">Mod Loader</string>
     <string name="download_assets_filter_none">None Selected</string>
     <string name="download_assets_filter_sort_by_relevant">Relevance</string>
@@ -543,7 +544,18 @@
     <string name="account_supporting_username_invalid_empty">Username required</string>
     <string name="account_supporting_email_invalid_empty">Email required</string>
     <string name="account_supporting_password_invalid_empty">Password required</string>
+    <string name="account_supporting_microsoft_tip_title">Add Microsoft Account</string>
+    <string name="account_supporting_microsoft_tip_link_text">Shortcuts you might need:</string>
     <string name="account_supporting_microsoft_tip_link_purchase">Buy Minecraft</string>
+    <string name="account_supporting_microsoft_tip_link_make_gameid">Create Profile / Edit Profile Name</string>
+    <string name="account_supporting_microsoft_tip_hint_t1">Please follow the steps below to add your account:</string>
+    <string name="account_supporting_microsoft_tip_hint_t2">1. Click the "Login" button — the launcher will attempt to retrieve a verification code;\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t3">2. Enter the code provided by %s on the pop-up webpage and click "Allow access";\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t4">3. Follow the instructions on the webpage to complete the sign-in process;\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t5">4. When prompted with "Let this app access your info?", click "Accept";\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t6">5. When the webpage displays "All done!", the account will be added automatically. Please wait a moment.</string>
+    <string name="account_supporting_microsoft_tip_hint_t7">If the webpage shows an "Error" message or the account fails to be added, please retry the above steps.\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t8">Tip: If your network connection is poor, the webpage may load slowly or fail to open. Try using a network proxy and retry.</string>
     <string name="account_delete_title">Delete Account</string>
     <string name="account_delete_message">Are you sure you want to delete account %s from the launcher?</string>
     <string name="account_microsoft_fetch_device_code">Get Device Code</string>
@@ -1489,8 +1501,8 @@
     <string name="fm_name_conflict">Name conflicts with an existing entry</string>
     <!-- Ironized Zink 渲染器配置（内置渲染器，配置模型移植自上游 Ironized Zink，GPL-3.0） -->
     <string name="settings_renderer_ironized_preset_title">Preset</string>
-    <string name="settings_renderer_ironized_preset_summary">Official Ironized Zink presets. Picking one writes the whole parameter set — every parameter below can still be tuned afterwards.</string>
-    <string name="settings_renderer_ironized_preset_custom">Custom — the current parameters match no preset</string>
+    <string name="settings_renderer_ironized_preset_summary">Official Ironized Zink presets. Picking one writes the whole underlying parameter set — no manual tuning needed.</string>
+    <string name="settings_renderer_ironized_preset_custom">Custom — the current parameters match no preset. Pick a preset to restore a supported configuration.</string>
     <string name="settings_renderer_ironized_preset_potato_tagline">Absolute maximum FPS</string>
     <string name="settings_renderer_ironized_preset_potato_note">MC 1.8 → latest (incl. 26.x) · Shaders: not recommended</string>
     <string name="settings_renderer_ironized_preset_performance_tagline">High FPS with Sodium &amp; light shaders</string>
@@ -1525,6 +1537,6 @@
     <string name="settings_renderer_ironized_no_error_summary">MESA_NO_ERROR — skips GL error/validation checks. Mesa\'s own docs call this \"undefined behavior for invalid use of the API\". Do not combine it with out-of-order drawing: that exact combination was the confirmed cause of the hand rendering through GUI screens bug, so it stays off in every preset.</string>
     <string name="settings_renderer_ironized_force_software_title">Force software</string>
     <string name="settings_renderer_ironized_force_software_summary">LIBGL_ALWAYS_SOFTWARE — CPU fallback; last-resort only (very slow)</string>
-    <string name="settings_renderer_ironized_unsafe_combo">Out-of-order drawing and the no-error fast path are both on. This combination is the confirmed cause of the \"hand renders through GUI\" glitch — turn one of them off.</string>
+    <string name="settings_renderer_ironized_unsafe_combo">The saved parameters still use a combination that is the confirmed cause of the \"hand renders through GUI\" glitch. Pick any preset above to restore a supported configuration.</string>
     <string name="settings_renderer_mobileglues_summary">Translates desktop OpenGL onto the device\'s OpenGL ES 3.x</string>
 </resources>

@@ -99,6 +99,7 @@ import com.movtery.zalithlauncher.utils.animation.getAnimateTween
  * @param gameVersion 游戏版本
  * @param sortField 排序方式
  * @param allCategories 可用资源类别列表
+ * @param categorySourceName 类别列表的来源名；非空时在标题中标注，说明类别只作用于该来源
  * @param categories 已选择的资源类别
  * @param enableModLoader 是否启用模组加载器过滤
  * @param modloaders 可用模组加载器列表
@@ -126,6 +127,7 @@ fun SearchFilter(
     sortField: PlatformSortField,
     onSortFieldChange: (PlatformSortField) -> Unit = {},
     allCategories: List<PlatformFilterCode>,
+    categorySourceName: String? = null,
     categories: List<PlatformFilterCode>,
     onCategoryChanged: (List<PlatformFilterCode>) -> Unit = {},
     enableModLoader: Boolean = true,
@@ -236,7 +238,15 @@ fun SearchFilter(
                 getItemLabel = { item ->
                     stringResource(item.getDisplayName())
                 },
-                title = stringResource(R.string.download_assets_filter_category)
+                //类别 ID 是来源特有的：只作用于一个来源时无需标注；
+                //多来源（「所有」）时类别只下发给参照来源，标题中标明该来源
+                title = categorySourceName?.let { source ->
+                    stringResource(
+                        R.string.download_assets_filter_category_with_source,
+                        stringResource(R.string.download_assets_filter_category),
+                        source
+                    )
+                } ?: stringResource(R.string.download_assets_filter_category)
             )
         }
 

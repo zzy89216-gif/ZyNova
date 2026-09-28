@@ -60,7 +60,8 @@ const val URL_PROJECT: String = "https://github.com/zzy89216-gif/ZyNova"
  * 旧的 `discord.gg/Tbn8Bqg2Yp` 是临时邀请，已经失效
  * （Discord API 返回 `50270 Invite is expired`），26.2.2 起更换为永久邀请。
  * 若以后再次失效，请到「服务器设置 → 邀请」重新生成永久邀请，
- * 并同步更新 README / README_EN_US / README_ZH_TW / HANDOFF 中的同一链接。
+ * 并同步更新 README（`README.md` / `README_ZH_CN.md` / `README_ZH_TW.md` / `README_JA_JP.md`）
+ * 与 HANDOFF 中的同一链接。
  */
 const val URL_COMMUNITY: String = "https://discord.gg/QwPpZQHrTa"
 const val URL_DISCORD: String = "https://discord.gg/QwPpZQHrTa"

@@ -62,6 +62,7 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.ChangeCape
 import com.movtery.zalithlauncher.ui.screens.content.elements.ChangeSkin
 import com.movtery.zalithlauncher.ui.screens.content.elements.LocalLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.LoginMenuOperation
+import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.OtherLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.ServerOperation
 import com.movtery.zalithlauncher.utils.network.toLocal
@@ -94,6 +95,10 @@ sealed interface AccountManageIntent {
     /** 呼出账号登录菜单 */
     data class UpdateLoginMenuOp(val operation: LoginMenuOperation) : AccountManageIntent
 
+    /** 微软账号「添加账号」前的说明弹窗流程 */
+    data class UpdateMicrosoftLoginOp(val operation: MicrosoftLoginOperation) :
+        AccountManageIntent
+
     data class UpdateLocalLoginOp(val operation: LocalLoginOperation) : AccountManageIntent
     data class UpdateOtherLoginOp(val operation: OtherLoginOperation) : AccountManageIntent
     data class UpdateServerOp(val operation: ServerOperation) : AccountManageIntent
@@ -107,6 +112,18 @@ sealed interface AccountManageIntent {
     data class OnSkinPicked(val uri: Uri) : AccountManageIntent
     data object ResetAccountSkinDialogState : AccountManageIntent
 
+
+    /**
+     * 添加一个新的微软（正版）账号
+     *
+     * 走与 [ReloginMicrosoft] 相同的设备代码流实现（`microsoftLogin`），
+     * 区别只在于语义：这里是「添加账号」，[ReloginMicrosoft] 是「已有账号会话续期」。
+     */
+    data class PerformMicrosoftLogin(
+        val toWeb: (url: String) -> Unit,
+        val backToMain: () -> Unit,
+        val checkIfInWebScreen: () -> Boolean
+    ) : AccountManageIntent
 
     /**
      * 已有微软账号的会话续期（重新登录）
@@ -202,6 +219,8 @@ class AccountManageViewModel @AssistedInject constructor(
     }
     private val _loginMenuOp = MutableStateFlow<LoginMenuOperation>(LoginMenuOperation.None)
 
+    private val _microsoftLoginOp =
+        MutableStateFlow<MicrosoftLoginOperation>(MicrosoftLoginOperation.None)
     private val _localLoginOp = MutableStateFlow<LocalLoginOperation>(LocalLoginOperation.None)
     private val _otherLoginOp = MutableStateFlow<OtherLoginOperation>(OtherLoginOperation.None)
     private val _serverOp = MutableStateFlow<ServerOperation>(ServerOperation.None)
@@ -218,11 +237,13 @@ class AccountManageViewModel @AssistedInject constructor(
      */
     val loginUiState: StateFlow<LoginUiState> = kotlinxCombine(
         _loginMenuOp,
+        _microsoftLoginOp,
         _localLoginOp,
         _otherLoginOp
-    ) { loginMenuOp, localLoginOp, otherLoginOp ->
+    ) { loginMenuOp, microsoftLoginOp, localLoginOp, otherLoginOp ->
         LoginUiState(
             menuOp = loginMenuOp,
+            microsoftOp = microsoftLoginOp,
             localOp = localLoginOp,
             otherOp = otherLoginOp
         )
@@ -234,6 +255,7 @@ class AccountManageViewModel @AssistedInject constructor(
 
     data class LoginUiState(
         val menuOp: LoginMenuOperation = LoginMenuOperation.None,
+        val microsoftOp: MicrosoftLoginOperation = MicrosoftLoginOperation.None,
         val localOp: LocalLoginOperation = LocalLoginOperation.None,
         val otherOp: OtherLoginOperation = OtherLoginOperation.None
     )
@@ -312,6 +334,9 @@ class AccountManageViewModel @AssistedInject constructor(
             is AccountManageIntent.UpdateLoginMenuOp ->
                 _loginMenuOp.value = intent.operation
 
+            is AccountManageIntent.UpdateMicrosoftLoginOp ->
+                _microsoftLoginOp.value = intent.operation
+
             is AccountManageIntent.UpdateLocalLoginOp -> _localLoginOp.value = intent.operation
             is AccountManageIntent.UpdateOtherLoginOp -> _otherLoginOp.value = intent.operation
             is AccountManageIntent.UpdateServerOp -> _serverOp.value = intent.operation
@@ -341,6 +366,7 @@ class AccountManageViewModel @AssistedInject constructor(
                 _accountSkinDialogState.update { AccountSkinDialogState() }
             }
 
+            is AccountManageIntent.PerformMicrosoftLogin -> performMicrosoftLogin(intent)
             is AccountManageIntent.ReloginMicrosoft -> reloginMicrosoft(intent)
             is AccountManageIntent.ApplySkin ->
                 applySkin(intent.account, intent.file, intent.model)
@@ -431,13 +457,27 @@ class AccountManageViewModel @AssistedInject constructor(
     }
 
 
+    /** 添加微软账号 */
+    private fun performMicrosoftLogin(intent: AccountManageIntent.PerformMicrosoftLogin) {
+        startMicrosoftLogin(intent.toWeb, intent.backToMain, intent.checkIfInWebScreen)
+    }
+
     /** 已有微软账号的会话续期 */
     private fun reloginMicrosoft(intent: AccountManageIntent.ReloginMicrosoft) {
+        startMicrosoftLogin(intent.toWeb, intent.backToMain, intent.checkIfInWebScreen)
+    }
+
+    /** 「添加账号」与「会话续期」共用的微软登录流程 */
+    private fun startMicrosoftLogin(
+        toWeb: (String) -> Unit,
+        backToMain: () -> Unit,
+        checkIfInWebScreen: () -> Boolean
+    ) {
         microsoftLogin(
             context = context,
-            toWeb = intent.toWeb,
-            backToMain = intent.backToMain,
-            checkIfInWebScreen = intent.checkIfInWebScreen,
+            toWeb = toWeb,
+            backToMain = backToMain,
+            checkIfInWebScreen = checkIfInWebScreen,
             showToast = ::emitToast,
             submitError = { emitError(it.title, it.message) }
         )

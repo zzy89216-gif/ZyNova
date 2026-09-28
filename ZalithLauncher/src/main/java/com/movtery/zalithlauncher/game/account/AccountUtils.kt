@@ -95,6 +95,14 @@ fun Account.accountTypePriority(): Int {
 
 private const val MICROSOFT_LOGGING_TASK = "microsoft_logging_task"
 
+/**
+ * 检查当前微软账号登陆是否正在进行中
+ *
+ * 「添加微软账号」与「会话续期」共用同一个任务 ID，因此两者都会让这里返回 true，
+ * 用于避免重复发起第二个设备代码流。
+ */
+fun isMicrosoftLogging() = TaskSystem.containsTask(MICROSOFT_LOGGING_TASK)
+
 fun microsoftLogin(
     context: Context,
     toWeb: (url: String) -> Unit,

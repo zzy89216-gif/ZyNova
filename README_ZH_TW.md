@@ -7,9 +7,9 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.3.0)
+[![Release](https://img.shields.io/badge/Release-26.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.0)
 
-[简体中文](README.md) | 繁體中文 | [English](README_EN_US.md)
+[English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
 ---
 
@@ -27,6 +27,21 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.4.0 主要內容
+
+- **恢復 Microsoft（正版）登入**：帳號登入選單重新提供 **「微軟帳號」**，
+  走 OAuth 2.0 **裝置代碼流程**（取得裝置代碼並自動複製到剪貼簿 → 開啟驗證網頁 → 輪詢換取權杖）。
+  認證後端從未被移除，26.1.0 只切斷了 UI 與 ViewModel 的接線，本次原樣還原。
+  **不需要 Client Secret，也不需要 Redirect URI / SHA-1**。
+- **修復下載資源頁「類別」篩選器內容為空**（Issue #6）：
+  預設「所有平台」下類別清單改以參照來源（CurseForge）為準，且類別條件只下發給該來源；
+  多來源時標題會標註來源，例如「類別（僅 CurseForge）」。
+- **修復資源列表卡片缺少「資源的類別」徽章**（Issue #6）：
+  列表呼叫時漏傳 `classes` 實參，導致 模組 / 資源包 / 光影包 / 存檔 / 整合包 徽章永不渲染。
+- **Ironized Zink 設定面板只保留 4 個官方預設**（Issue #7）：
+  移除 OpenGL 版本下拉與 12 個參數開關。
+  ⚠️ 4 個預設的 OpenGL 版本都是 4.6，因此新使用者無法再降到 4.5 / 4.3 / 3.3。
 
 ## ✨ 26.3.0 主要內容
 
@@ -263,7 +278,7 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 | Apache Commons Compress               | -                                                                                                             | Apache 2.0           | [链接↗](https://commons.apache.org/proper/commons-compress)                        |
 | Apache Commons IO                     | -                                                                                                             | Apache 2.0           | [链接↗](https://commons.apache.org/proper/commons-io)                              |
 | ByteHook                              | Copyright © 2020-2024 ByteDance, Inc.                                                                         | MIT License          | [链接↗](https://github.com/bytedance/bhook)                                        |
-| BuildKeys                             | Copyright © 2026 MovTery                                                                                      | Aoache 2.0           | [链接↗](https://github.com/MovTery/BuildKeys)                                      |
+| BuildKeys                             | Copyright © 2026 MovTery                                                                                      | Apache 2.0           | [链接↗](https://github.com/MovTery/BuildKeys)                                      |
 | Coil Compose                          | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [链接↗](https://github.com/coil-kt/coil)                                           |
 | Coil Gifs                             | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [链接↗](https://github.com/coil-kt/coil)                                           |
 | Coil SVG                              | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [链接↗](https://github.com/coil-kt/coil)                                           |

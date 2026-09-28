@@ -67,6 +67,7 @@ import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.isAuthServerAccount
+import com.movtery.zalithlauncher.game.account.isMicrosoftLogging
 import com.movtery.zalithlauncher.game.account.yggdrasil.PlayerProfile
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
@@ -90,6 +91,8 @@ import com.movtery.zalithlauncher.ui.screens.content.elements.LocalLoginDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.LocalLoginOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.LoginMenuDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.LoginMenuOperation
+import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginOperation
+import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftLoginTipDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.MicrosoftReloginDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.OtherAccountReloginDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.OtherLoginOperation
@@ -255,6 +258,7 @@ private fun AccountManageContent(
     }
 
     LoginMenuOperation(loginUiState.menuOp, actions, profileUiState.authServers)
+    MicrosoftLoginOperation(loginUiState.microsoftOp, actions)
     LocalLoginOperation(loginUiState.localOp, actions)
     OtherLoginOperation(loginUiState.otherOp, actions)
     ServerTypeOperation(operationUiState.serverOp, actions)
@@ -371,6 +375,16 @@ private fun LoginMenuOperation(
                     )
                 },
                 authServers = authServers,
+                onMicrosoftLogin = {
+                    //已有微软登录任务在进行时不再重复发起
+                    if (!isMicrosoftLogging()) {
+                        actions.onIntent(
+                            AccountManageIntent.UpdateMicrosoftLoginOp(
+                                MicrosoftLoginOperation.Tip
+                            )
+                        )
+                    }
+                },
                 onLocalLogin = {
                     actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.Edit))
                 },
@@ -391,6 +405,48 @@ private fun LoginMenuOperation(
                         )
                     )
                 }
+            )
+        }
+    }
+}
+
+/**
+ * 微软账号「添加账号」相关逻辑处理
+ *
+ * 只负责流程前端的说明弹窗；确认后交给 [AccountManageIntent.PerformMicrosoftLogin]
+ * 执行真正的设备代码流登录（实现见 `AccountUtils.microsoftLogin`）。
+ */
+@Composable
+private fun MicrosoftLoginOperation(
+    operation: MicrosoftLoginOperation,
+    actions: AccountActions
+) {
+    when (operation) {
+        is MicrosoftLoginOperation.None -> {}
+        is MicrosoftLoginOperation.Tip -> {
+            MicrosoftLoginTipDialog(
+                onDismissRequest = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftLoginOp(
+                            MicrosoftLoginOperation.None
+                        )
+                    )
+                },
+                onConfirm = {
+                    actions.onIntent(
+                        AccountManageIntent.UpdateMicrosoftLoginOp(
+                            MicrosoftLoginOperation.None
+                        )
+                    )
+                    actions.onIntent(
+                        AccountManageIntent.PerformMicrosoftLogin(
+                            toWeb = actions.navigateToWeb,
+                            backToMain = actions.backToMainScreen,
+                            checkIfInWebScreen = actions.checkIfInWebScreen
+                        )
+                    )
+                },
+                openLink = actions.openLink
             )
         }
     }
