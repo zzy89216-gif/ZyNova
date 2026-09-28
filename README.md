@@ -175,7 +175,7 @@ Since 26.3.0 the launcher ships **exactly three built-in renderers**:
 
 | Renderer | What it is | Configuration |
 |---|---|---|
-| **Ironized Zink** (default) | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets + 13 tunable parameters** |
+| **Ironized Zink** (default) | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets** (26.4.0 removed the individual parameter controls) |
 | **GL4ES** | Classic OpenGL translation layer | Kept at its defaults |
 | **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | Kept at upstream defaults |
 
@@ -188,14 +188,16 @@ Since 26.3.0 the launcher ships **exactly three built-in renderers**:
 | **Default** | Balanced Zink + shaders (**default**) | 1.16.x → latest | Full (Iris / OptiFine) |
 | **Max Compatibility** | Run everything | All versions | Full + heavy packs |
 
-**All tunable parameters**: OpenGL version (3.3 / 4.3 / 4.5 / 4.6), threaded GL,
-big-core affinity, out-of-order drawing, no-error fast path, VSync, relaxed GLSL,
-expose all extensions, shader disk cache, single-file cache, lazy descriptors,
-inline uniforms, force software.
+Since **26.4.0** the panel exposes **only the 4 presets**: the OpenGL version dropdown and the
+12 individual parameter switches were removed so that ordinary users do not have to tune
+low-level parameters. Picking a preset still writes the whole parameter set at once.
 
-Selecting Ironized Zink in **Settings → Renderer** immediately expands the full
-configuration panel right below it; picking a preset writes the whole parameter set,
-and every parameter can still be tuned individually afterwards.
+> ⚠️ All four presets pin the OpenGL version to **4.6**. With the dropdown gone, new users can no
+> longer lower it to 4.5 / 4.3 / 3.3. Values already saved by users who tuned parameters during
+> 26.3.0 keep working (they are still injected as environment variables) but can no longer be
+> edited from the UI — re-picking any preset restores a supported combination.
+
+Selecting Ironized Zink in **Settings → Renderer** immediately expands the preset panel right below it.
 
 > **External renderers are unaffected**: renderer plugins (FCL / Zalith renderer plugins
 > and the newer `fclPlugin_V2` plugins) can still add more renderers to the list.

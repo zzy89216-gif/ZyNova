@@ -350,7 +350,7 @@ private fun ActionsLayout(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
-                //直接打开登录菜单（离线登录 / 认证服务器）
+                //直接打开登录菜单（微软账号 / 离线登录 / 认证服务器）
                 actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
             }
         ) {

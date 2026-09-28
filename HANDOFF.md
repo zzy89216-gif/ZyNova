@@ -40,7 +40,7 @@
 | `ui/screens/content/AccountManageScreen.kt` | `AccountManageContent` 加回 `MicrosoftLoginOperation(loginUiState.microsoftOp, actions)` 渲染；`LoginMenuDialog` 接上 `onMicrosoftLogin`（`isMicrosoftLogging()` 为真时不再重复发起）；新增私有 `MicrosoftLoginOperation` 组合函数，确认后发 `PerformMicrosoftLogin` |
 | `viewmodel/AccountManageViewModel.kt` | 加回 `UpdateMicrosoftLoginOp` intent、`_microsoftLoginOp`、`LoginUiState.microsoftOp`（`loginUiState` 的 `combine` 恢复 4 路）；新增 `PerformMicrosoftLogin`；「添加账号」与「会话续期」共用私有 `startMicrosoftLogin()` |
 | `game/account/AccountUtils.kt` | 加回 `isMicrosoftLogging()`（`TaskSystem.containsTask(MICROSOFT_LOGGING_TASK)`），防止重复发起设备代码流 |
-| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 12 条 `account_supporting_microsoft_tip_*` 文案（默认英文 + 简体中文） |
+| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 11 条 `account_supporting_microsoft_tip_*` 文案（默认英文 + 简体中文）；弹窗共用到 12 条，`link_purchase` 一直保留 |
 
 ⚠️ **UI 与 ViewModel 存在同名类型**：`AccountElements.kt` 的 `MicrosoftLoginOperation`（sealed interface）
 与 `AccountManageScreen.kt` 里同名的私有 `@Composable fun MicrosoftLoginOperation(...)` 是两回事，
@@ -99,7 +99,7 @@
 
 | 渲染器 | 状态 | 配置 |
 |---|---|---|
-| **Ironized Zink** | 新增内置，**默认渲染器** | 完整原生配置 + 4 个官方预设 + 13 个可调参数 |
+| **Ironized Zink** | 新增内置，**默认渲染器** | 完整原生配置 + 4 个官方预设 + 13 个可调参数（**26.4.0 起面板只保留 4 个预设**，见第二节） |
 | **GL4ES** | 保留 | 保持默认，不追加任何环境变量 |
 | **MobileGlues** | 新增内置 | 保持上游默认配置 |
 
@@ -142,6 +142,7 @@
 `ui/screens/content/settings/RendererSettingsScreen.kt`：
 当 `AllSettings.renderer.state == IRONIZED_ZINK_UNIQUE_IDENTIFIER` 时，
 在渲染器列表卡片**下方**插入一个 `AnimatedItem`，渲染 `IronizedZinkConfigCards()`。
+（**26.4.0 起该面板只剩预设卡**，不再包含 OpenGL 版本下拉与 12 个参数开关。）
 （只有全局渲染器设置里有该面板；`VersionConfigScreen` 的**按版本**渲染器选择不显示它 ——
 Ironized Zink 的参数是全局的，不按版本区分。）
 
@@ -296,7 +297,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 ### 26.1.0 已完成 ✅
 
 1. **移除正版登录入口**（**⚠️ 该决定已于 26.4.0 撤销，见第二节 26.4.0 第一项**）
-   - 添加账号界面不再提供微软（正版）登录入口，只保留离线登录与第三方认证服务器
+   - 当年的改动：添加账号界面不再提供微软（正版）登录入口，只保留离线登录与第三方认证服务器
    - 移除了对应的 UI、点击逻辑、状态、无用资源与依赖
    - **保留已有微软账号的会话续期能力**（`AccountManageIntent.ReloginMicrosoft`），确保旧用户升级后仍可正常启动游戏
    - 26.4.0 恢复了登录菜单里的「微软账号」入口；`microsoftLogin` 认证实现当年从未被删，
@@ -533,7 +534,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `ui/screens/content/download/assets/elements/_Search.Filter.kt` | Issue #6：新增可选参数 `categorySourceName`，标题按来源标注 |
 | `ui/screens/content/download/assets/elements/_Search.Result.kt` | Issue #6：`ResultList` → `ResultProjectLayout` 补上漏传的 `classes = classes` |
 | `ui/screens/content/settings/IronizedZinkConfigCards.kt` | Issue #7：删除 13 个单独参数控件，面板只剩预设卡（`CardPosition.Single`） |
-| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 12 条微软提示文案；新增 `download_assets_filter_category_with_source`；改写 3 条 Ironized Zink 文案 |
+| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 11 条微软提示文案；新增 `download_assets_filter_category_with_source`；改写 3 条 Ironized Zink 文案 |
 | `ZalithLauncher/gradle.properties` | 配置 `oauth_client_id`；版本号 26.4.0（`launcher_version_code=260400`） |
 
 ### 26.3.0 涉及文件
@@ -544,7 +545,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `game/renderer/ironizedzink/IronizedZinkSettings.kt` | **新增**：从 `AllSettings` 读取参数、把预设整组写回 |
 | `game/renderer/renderers/IronizedZinkRenderer.kt` | **新增**：Ironized Zink 内置渲染器 |
 | `game/renderer/renderers/MobileGluesRenderer.kt` | **新增**：MobileGlues 内置渲染器 |
-| `ui/screens/content/settings/IronizedZinkConfigCards.kt` | **新增**：选中 Ironized Zink 后展开的配置面板 |
+| `ui/screens/content/settings/IronizedZinkConfigCards.kt` | **新增**：选中 Ironized Zink 后展开的配置面板（**26.4.0 起只剩 4 个预设卡**） |
 | `game/renderer/renderers/GL4ESRenderer.kt` | 仅补注释（保持默认配置不变） |
 | `game/renderer/Renderers.kt` | 注册表改为只注册三个内置渲染器 |
 | `game/launch/GameLauncher.kt` | `setRendererEnv()` 的通用兜底块排除 IRONIZED/MOBILEGLUES |
@@ -814,7 +815,13 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 9. **聚合搜索要处理「平台特有」的过滤条件**（26.2.1 实际踩到）：
    - `PlatformFilterCode`（资源类别）与加载器过滤器都是**来源特有**的，
      CurseForge 的类别 ID 传给 Modrinth 会匹配失败
-   - 聚合多个来源时，必须为每个来源**重新解析**加载器，并**清空**平台特有的类别条件
+   - 聚合多个来源时，必须为每个来源**重新解析**加载器，
+     并且**绝不把某个来源的类别 ID 传给另一个来源**
+   - ⚠️ **26.4.0 起的具体做法**：加载器按每个来源分别解析后照常下发；
+     类别则**只下发给「参照来源」**（`referencePlatform`，「所有」时 = CurseForge），
+     其余来源清空。界面上的类别列表也始终取参照来源的列表，
+     并在标题标注来源（`categorySourceName`）。
+     **不要**退回成「多来源时整个类别过滤器都清空」——那会让默认「所有平台」下没有类别可选
 10. **新增函数参数不要加在 lambda 参数之后**（26.2.1 实际踩到）：
    - 若函数的最后一个参数是 lambda，调用方常用尾随 lambda 语法，
      把新参数追加到末尾会导致尾随 lambda 被解析成新参数，报 `Too many arguments`

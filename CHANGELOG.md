@@ -16,9 +16,12 @@
   - 底层认证实现（`game/account/microsoft/MicrosoftAuthenticator.kt`）
     与登录流程（`game/account/AccountUtils.kt` 的 `microsoftLogin`）此前一直保留，
     26.1.0 移除的只是 UI 与 ViewModel 接线；本次把这几处**原样还原**
-  - 「添加账号」按钮的既有行为**不变**（离线状态下仍然打开登录菜单）；
+  - 「添加账号」按钮的既有行为**不变**（仍然直接打开登录菜单，本次未改动该按钮）；
     已有微软账号的**会话续期**逻辑也不变
-  - 补回 12 条微软登录提示文案（默认英文 + 简体中文）；其余语言按 Android 规则回退到默认文案
+  - 补回 11 条微软登录提示文案（默认英文 + 简体中文）。
+    弹窗共用到 12 条 `account_supporting_microsoft_tip_*`：
+    26.1.0 删掉了其中 11 条，`link_purchase` 因离线登录弹窗仍在引用而一直保留；
+    其余语言按 Android 规则回退到默认文案
   - 在 `ZalithLauncher/gradle.properties` 配置并随包分发 Microsoft OAuth **Client ID**：
     设备代码流属于**公共客户端**，该 ID 必须随包分发才能工作，本身不是密钥；
     **不创建、不使用、不保存任何 Client Secret**
