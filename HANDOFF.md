@@ -27,7 +27,7 @@
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
-### 26.4.1 正版登录失败归因修复与「Invalid app registration」结论 ✅
+### 26.4.1 正版登录修复（Client ID 允许名单）与失败归因修正 ✅
 
 **一、背景：26.4.0 的正版登录卡在 Minecraft Services**
 
@@ -74,20 +74,51 @@ HTTP 403
 - 上游 ZalithLauncher2 的仓库里同样是注释掉的 `#oauth_client_id=xxx`，
   说明**上游是在构建时注入一个已获批准的 Client ID**，该 ID 不在仓库内
 
-**四、处置方式（无需改代码）**
+**四、已确认的正解：只能使用「已获 Mojang 批准」的应用注册**
 
 - 向 Minecraft 官方提交应用审核：
   **Java Edition Game Service API Review / Application Process**，
   <https://help.minecraft.net/hc/en-us/articles/16254801392141>
-  审批通过、Client ID 进入允许名单后，**现有代码可直接登录成功**
-- 构建脚本**已经支持**注入已获批准的 Client ID：
+  审批通过、Client ID 进入允许名单后，**认证代码无需任何改动**即可登录
+- 构建脚本**已经支持**注入外部 Client ID：
   `getKeyFromLocal("OAUTH_CLIENT_ID", ".oauth_client_id.txt", defaultOAuthClientID)`，
-  优先级 **环境变量（CI Secret）> `.oauth_client_id.txt` > `gradle.properties`**。
-  在仓库配置 Secret `OAUTH_CLIENT_ID` 并重新构建即可，**不需要改任何代码**
+  优先级 **环境变量（CI Secret）> `.oauth_client_id.txt` > `gradle.properties`**
 - ⚠️ 不要为了绕过它去创建 Client Secret、改 Redirect URI 或改认证架构：
   该错误与这些配置无关
 
-**五、26.4.1 的代码改动（只碰失败路径，认证流程一行未改）**
+**五、⚠️⚠️ 正版登录使用的 Microsoft 应用注册（最容易搞混的地方，务必分清）**
+
+> **这是本节最重要的一节。** ZyNova 与 ZalithLauncher2 是两个不同项目，
+> 但**正版登录所用的应用注册属于 ZalithLauncher2**。请不要把二者混为一谈。
+
+| | 显示名称 | Client ID | 所属项目 | Mojang 允许名单 | 当前状态 |
+|---|---|---|---|---|---|
+| **上游应用注册** | ZalithLauncher | `（已移除）` | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 正在使用它构建** |
+| **本项目的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ZyNova | ❌ 尚未批准 | ❌ 已保留但**不使用** |
+
+- **ZyNova 自己的 Entra 应用信息（备份，当前未生效）**：目录（租户）ID `8d99ba88-0cbd-4e04-8438-1b9e0ae9f867`，
+  对象 ID `834b0aa7-87d3-41b2-9976-773cc4f7bda6`，
+  支持账户类型「所有 Microsoft 帐户用户」，已开启公共客户端流
+- **注入方式**：仓库 Secret **`OAUTH_CLIENT_ID`**，**构建时注入**，
+  **不写进源码**；因此 `ZalithLauncher/gradle.properties` 里保留的是 ZyNova 自己的
+  那个（尚未获批），它只在 Secret 缺失时才会生效
+- **上游 ZalithLauncher2 的做法完全一致**：其仓库里同样是注释掉的
+  `#oauth_client_id=xxx`，真实 ID 通过 CI Secret / `.oauth_client_id.txt` 在构建时注入。
+  上面这个 ID 是从 **ZalithLauncher2 2.6.1 的正式 APK** 中解出的
+  （`buildKeys` 的「Base64 → 字符码整数数组」混淆可以直接还原，
+  参见本文件第「附：如何从 APK 中还原 BuildKeys 字符串」一节）
+- **可预期的现象**：由于认证使用 ZalithLauncher2 的应用注册，
+  用户微软账号的「已连接的应用 / 应用与设备」中会显示 **ZalithLauncher** 而非 ZyNova，
+  **这是预期行为**，不是 bug
+- **后续切换（零代码）**：ZyNova 自己的 Client ID 已提交官方审核。
+  一旦获批，**只需把仓库 Secret `OAUTH_CLIENT_ID` 换成
+  `7b66e168-f8cd-43fc-a52d-2e78dba189b0` 并重新构建即可，不需要改任何代码**
+- ⚠️ **风险提示（维护者须知）**：使用上游的应用注册意味着 ZyNova 在
+  Microsoft / Minecraft 侧**以 ZalithLauncher2 的应用身份完成认证**。
+  这是分支项目的常见做法，但该应用注册**属于 ZalithLauncher2 项目，并非 ZyNova 所有**；
+  应尽快换成自己获批的 ID
+
+**六、26.4.1 的代码改动（只碰失败路径，认证流程一行未改）**
 
 | 文件 | 改动 |
 |---|---|
@@ -96,9 +127,25 @@ HTTP 403
 | `game/account/yggdrasil/YggdrasilApi.kt` | `getPlayerProfile()` 失败时记录状态码与响应体 |
 | `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 新增 `account_logging_app_not_registered` 文案（默认英文 + 简体中文） |
 | `ZalithLauncher/gradle.properties` | 版本号 26.4.1（`launcher_version_code=260401`） |
+| 仓库 Secret `OAUTH_CLIENT_ID` | 设为上游已获批准的 Client ID（**不在仓库文件中，不是代码改动**） |
 
 ⚠️ **日志安全**：`login_with_xbox` 只在**非 2xx** 时读取响应体，
 拿到的是服务端的错误 JSON，**不含 `access_token`**。
+
+### 附：如何从 APK 中还原 BuildKeys 字符串
+
+`com.movtery.buildkeys` 插件的 `string(name, value, true)` 只是把字符串
+**Base64 编码后转成字符码整数数组**（见插件源码 `DefaultStringObfuscator`），
+运行期再用 `java.util.Base64` 解回。因此任何 ZyNova / ZalithLauncher2 的 APK
+都能还原出其中内嵌的 Client ID：
+
+1. 从 APK 中取出 `classes*.dex`
+2. 用正则找 `\x00\x03\x04\x00`（`fill-array-data-payload`，元素宽度 4），
+   读出随后的 int32 数组
+3. 把每个 int 当作 `char` 拼成字符串，再做 Base64 解码
+
+> 注意：这是**只读的取证手段**，仅用于确认某个 APK 实际使用哪个 Client ID；
+> 它同样说明**内嵌在 APK 里的 Client ID 并不是秘密**，任何人都能还原。
 
 ### 26.4.0 正版登录回归与议题修复 ✅
 

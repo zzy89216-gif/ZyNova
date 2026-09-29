@@ -30,27 +30,48 @@
 
 ## ✨ 26.4.1 のハイライト
 
-- **サインイン失敗時に本当のエラーが残るようになりました**：26.4.0 で「Microsoft サインイン」を
-  復活させたあと、Microsoft OAuth・Xbox Live・XSTS の**3 ステップすべてが成功**したあとに
-  Minecraft Services で停止していましたが、ログには `message` が常に `null` の例外
-  （`il6: null`）しか出ておらず、実際の HTTP ステータスコードもサーバーの応答本文も
-  記録されていませんでした。現在は `login_with_xbox` と `getPlayerProfile` の失敗時に
-  **リクエスト URL・実際の HTTP ステータスコード・応答本文**・完全なスタックトレースを記録します
-  （記録されるのは非 2xx のエラー JSON で、`access_token` は含まれません）
+- **正規サインインが使えるようになりました（中心的な修正）**：26.4.0 のサインインは
+  Microsoft OAuth・Xbox Live・XSTS の**3 ステップすべてが成功**したあとに
+  Minecraft Services で停止していました。本当の原因は **Mojang 側のアプリケーション
+  許可リスト**で、Minecraft Services は **HTTP 403 `Invalid app registration`** を返していました
+  （コード・Entra 設定・IP・ネットワーク・リクエスト頻度・アカウントのプロフィールの
+  いずれとも無関係です）。26.4.1 は **Mojang の承認済み Microsoft アプリケーション登録**を
+  使ってビルドするため、正規サインインが完了します
+- **サインイン失敗時に本当のエラーが残るようになりました**：以前はログに
+  `message` が常に `null` の例外（`il6: null`）しか出ておらず、実際の HTTP ステータスコードも
+  サーバーの応答本文も記録されていませんでした。現在は `login_with_xbox` と
+  `getPlayerProfile` の失敗時に**リクエスト URL・実際の HTTP ステータスコード・応答本文**・
+  完全なスタックトレースを記録します（記録されるのは非 2xx のエラー JSON で、
+  `access_token` は含まれません）
 - **403 の誤った原因表示を修正**：Minecraft Services の 403 には
   `BLOCKED_IP`（IP がブロック）と `Invalid app registration`（Client ID が Mojang の
-  許可リストにない）という**まったく異なる 2 つの意味**があります。
-  以前はすべて後者以外の前者として表示され、ネットワークや IP の問題だと誤解させていました。
-  現在は応答本文で区別し、後者には専用のメッセージを表示します
-- ⚠️ **既知の問題**：本ビルドに内蔵された OAuth Client ID では、Minecraft Services が
-  **HTTP 403 `Invalid app registration`** を返すため、**正規サインインは完了できません**。
-  これは **Mojang 側の Client ID 許可リスト**の問題であり、コード・Entra 設定・IP・
-  ネットワーク・リクエスト頻度・アカウントのプロフィールのいずれとも無関係です
-  （OAuth / XBL / XSTS はすべて成功しています）。
-  Minecraft 公式の
-  [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)
-  に申請して Client ID を許可リストに追加する必要があります。**承認後はコードの変更は不要です**。
-  ビルドスクリプトはリポジトリ Secret `OAUTH_CLIENT_ID` による注入に既に対応しています
+  許可リストにない）という**まったく異なる 2 つの意味**があります。以前はすべて前者として
+  表示され、ネットワークや IP の問題だと誤解させていました。現在は応答本文で区別し、
+  後者には専用のメッセージを表示します
+
+**ℹ️ 正規サインインに使われる Microsoft アプリケーション（プロジェクトの帰属と混同しないでください）**
+
+**ZyNova は ZalithLauncher2 の非公式フォークであり、両者は別プロジェクトで、独立して
+保守されています。** ただしサインインに使われる **Microsoft アプリケーション登録は ZyNova の
+ものではなく**、上流の ZalithLauncher2 プロジェクトに属します。Mojang の許可リストに
+載っているアプリケーションだけが Minecraft Services にアクセスできるためです：
+
+| | 表示名 | Client ID | Mojang 許可リスト | 26.4.1 での使用 |
+|---|---|---|---|---|
+| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | `（已移除）` | ✅ 承認済み | ✅ **使用中** |
+| **ZyNova 自身のアプリ登録** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 未承認 | ❌ 未使用 |
+
+- Client ID はリポジトリ Secret `OAUTH_CLIENT_ID` により**ビルド時に注入**され、
+  ソースにハードコードされません。優先順位は
+  **環境変数（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- **表示される現象**：認証には上流のアプリ登録を使うため、Microsoft アカウントの
+  「接続済みのアプリ / アプリとデバイス」には ZyNova ではなく **ZalithLauncher** が表示されます。
+  これは想定どおりの動作で、利用には影響しません
+- ZyNova 自身の Client ID は公式審査に申請済みです
+  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）。
+  承認後は**リポジトリ Secret を差し替えて再ビルドするだけ**で、コードの変更は不要です
+- 必要なものは依然として**「パブリッククライアント + Client ID」のみ**です。
+  Client Secret・Redirect URI・SHA-1 は不要です
 
 ## ✨ 26.4.0 のハイライト
 

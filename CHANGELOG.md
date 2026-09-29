@@ -4,7 +4,7 @@
 
 ## [26.4.1] - 2026-09-29
 
-本版本修复**正版登录失败时的错误归因**，并补上此前完全缺失的失败诊断信息。
+本版本**让正版登录真正可用**，并修复失败时的错误归因、补上此前完全缺失的诊断信息。
 
 26.4.0 恢复「微软登录」后，登录会在 Microsoft OAuth、Xbox Live、XSTS
 **三步全部成功**之后卡在 Minecraft Services。但当时的日志里只有一个
@@ -16,6 +16,13 @@
 
 ### 修复
 
+- **正版登录恢复可用（核心修复）**
+  - 真实原因是 Mojang 侧的应用注册允许名单：Minecraft Services 返回
+    **HTTP 403 `Invalid app registration, see https://aka.ms/AppRegInfo`**
+  - 这与代码、Entra 配置、IP、网络、请求频率、账号档案**均无关**：
+    Microsoft OAuth、Xbox Live、XSTS 三步全部成功，只在最后一步被服务端拒绝
+  - 修复方式是**构建时注入一个已获 Mojang 批准的应用注册**，见下方
+    「正版登录的 Client ID 来源」一节；**认证流程代码一行未改**
 - **正版登录失败不再丢失真实错误信息**
   - `MicrosoftAuthenticator.authenticateMinecraft()` 在
     `POST https://api.minecraftservices.com/authentication/login_with_xbox`
@@ -34,22 +41,28 @@
   - 现在按响应体内容区分，新增 `APP_NOT_REGISTERED` 状态与对应文案
     （默认英文 + 简体中文；其余语言按 Android 规则回退到默认文案）
 
-### 已知问题
+### 正版登录的 Client ID 来源（重要，不要与项目归属混淆）
 
-- 使用本项目内置的 OAuth Client ID 时，Minecraft Services 会返回
-  **HTTP 403 `Invalid app registration, see https://aka.ms/AppRegInfo`**，
-  正版登录**无法完成**。
-  这是 **Mojang 侧的 Client ID 允许名单**问题，与代码、Entra 配置、
-  IP、网络、请求频率、账号档案均无关：
-  Microsoft OAuth、Xbox Live、XSTS 三步全部成功，只在最后一步被服务端拒绝。
-  - 处置方式：向 Minecraft 官方提交应用审核
-    （**Java Edition Game Service API Review / Application Process**，
-    <https://help.minecraft.net/hc/en-us/articles/16254801392141>），
-    把 Client ID 加入允许名单；**审批通过后无需改动任何代码**即可登录
-  - 构建脚本**已经支持**通过仓库 Secret `OAUTH_CLIENT_ID` 注入 Client ID，
-    其优先级高于 `ZalithLauncher/gradle.properties`
-    （环境变量 > `.oauth_client_id.txt` > `gradle.properties`）；
-    拿到已获批准的 Client ID 后，只需在仓库里配置该 Secret 并重新构建，**无需改代码**
+⚠️ **ZyNova 是 ZalithLauncher2 的非官方分支（fork），两者是不同项目、独立维护。**
+但正版登录所使用的 Microsoft 应用注册**不属于 ZyNova**，具体如下：
+
+| | 显示名称 | Client ID | Mojang 允许名单 | 当前是否使用 |
+|---|---|---|---|---|
+| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ✅ **已获批准** | ✅ **本版本使用它构建** |
+| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暂不使用 |
+
+- **注入方式**：Client ID 通过仓库 Secret **`OAUTH_CLIENT_ID`** 在**构建时注入**，
+  不写死在源码里。取值优先级为
+  **环境变量（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- **因此源码仓库中不包含任何实际生效的 Client ID**；`gradle.properties` 里保留的是
+  ZyNova 自己的那个（尚未获批）
+- **可预期的现象**：因为认证使用的是 ZalithLauncher2 的应用注册，
+  在微软账号的「已连接的应用 / 应用与设备」中会看到 **ZalithLauncher**，
+  而不是 ZyNova；这是预期行为，不影响使用
+- **后续切换**：ZyNova 自己的 Client ID 已提交官方审核
+  （**Java Edition Game Service API Review / Application Process**，
+  <https://help.minecraft.net/hc/en-us/articles/16254801392141>）。
+  一旦获批，**只需更换仓库 Secret `OAUTH_CLIENT_ID` 并重新构建即可，无需改动任何代码**
 
 ### 变更
 
@@ -57,10 +70,12 @@
 
 ### 兼容性
 
-- 本次改动只影响失败时的日志与提示文案，认证流程本身（OAuth 设备代码流、
-  Xbox Live、XSTS、Minecraft Services 的请求构造与顺序）**一行未改**
+- 认证流程本身（OAuth 设备代码流、Xbox Live、XSTS、Minecraft Services 的
+  请求构造与顺序）**一行未改**
 - 未改动 OAuth 架构、未新增 Redirect URI 或 SHA-1、未创建 Client Secret
 - `MinecraftProfileException` 的 `status` 字段与既有取值保持兼容
+- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、
+  不需要 Redirect URI、不需要 SHA-1 指纹
 
 ## [26.4.0] - 2026-09-28
 

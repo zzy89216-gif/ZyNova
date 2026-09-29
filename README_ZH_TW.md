@@ -30,10 +30,13 @@
 
 ## ✨ 26.4.1 主要內容
 
-- **登入失敗不再遺失真實錯誤**：26.4.0 恢復「微軟登入」後，登入會在
-  Microsoft OAuth、Xbox Live、XSTS **三步全部成功**之後卡在 Minecraft Services，
-  而日誌裡只有一個 `message` 恆為 `null` 的例外（`il6: null`），
-  真實 HTTP 狀態碼與伺服端回傳內容完全沒有被記錄。
+- **正版登入恢復可用（核心修復）**：26.4.0 的登入會在 Microsoft OAuth、Xbox Live、XSTS
+  **三步全部成功**之後卡在 Minecraft Services。真實原因是 **Mojang 端的應用註冊允許名單**——
+  Minecraft Services 回傳 **HTTP 403 `Invalid app registration`**
+  （與程式碼、Entra 設定、IP、網路、請求頻率、帳號檔案**都無關**）。
+  26.4.1 改為**使用一個已獲 Mojang 批准的 Microsoft 應用註冊**建置，登入現已可用
+- **登入失敗不再遺失真實錯誤**：此前日誌裡只有一個 `message` 恆為 `null` 的例外
+  （`il6: null`），真實 HTTP 狀態碼與伺服端回傳內容完全沒有被記錄。
   現在 `login_with_xbox` 與 `getPlayerProfile` 失敗時會記錄
   **請求 URL、真實 HTTP 狀態碼、回應內容**與完整例外堆疊
   （記錄的是非 2xx 的錯誤 JSON，不含 `access_token`）
@@ -41,14 +44,27 @@
   `BLOCKED_IP`（IP 被禁止）與 `Invalid app registration`（Client ID 未獲 Mojang 授權）。
   此前一律顯示為「當前 IP 位址已被禁止登入」，把排查方向錯誤地引向網路與 IP；
   現在依回應內容區分，後者有獨立文案
-- ⚠️ **已知問題**：使用本版本內建的 OAuth Client ID 時，Minecraft Services 會回傳
-  **HTTP 403 `Invalid app registration`**，**正版登入暫時無法完成**。
-  這是 **Mojang 端的 Client ID 允許名單**問題，與程式碼、Entra 設定、IP、網路、
-  請求頻率、帳號檔案都無關（OAuth / XBL / XSTS 三步均成功）。
-  需向 Minecraft 官方提交應用審核
-  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）
-  並把 Client ID 加入允許名單；**審核通過後無需修改任何程式碼**。
-  建置腳本已支援透過倉庫 Secret `OAUTH_CLIENT_ID` 注入已獲批准的 Client ID
+
+**ℹ️ 正版登入用的是哪個微軟應用（請勿與專案歸屬混淆）**
+
+**ZyNova 是 ZalithLauncher2 的非官方分支（fork），兩者是不同專案、獨立維護。**
+但登入所用的 **Microsoft 應用註冊並不屬於 ZyNova**，而是屬於上游 ZalithLauncher2 專案——
+因為只有進入 Mojang 允許名單的應用才能存取 Minecraft Services：
+
+| | 顯示名稱 | Client ID | Mojang 允許名單 | 26.4.1 是否使用 |
+|---|---|---|---|---|
+| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | `（已移除）` | ✅ 已獲批准 | ✅ **正在使用** |
+| **ZyNova 自己的應用註冊** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暫不使用 |
+
+- Client ID 透過倉庫 Secret `OAUTH_CLIENT_ID` **在建置時注入**，不寫死在原始碼中；
+  取值優先順序：**環境變數（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- **你會看到的現象**：因為認證走的是上游的應用註冊，
+  微軟帳號的「已連接的應用程式 / 應用程式與裝置」頁面會顯示 **ZalithLauncher** 而不是 ZyNova，
+  這是預期行為，不影響使用
+- ZyNova 自己的 Client ID 已提交官方審核
+  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）。
+  獲准後**只需更換倉庫 Secret 並重新建置，無需修改任何程式碼**
+- 仍然**只需要「公開客戶端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
 
 ## ✨ 26.4.0 主要內容
 

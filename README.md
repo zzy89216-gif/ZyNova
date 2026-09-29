@@ -30,28 +30,45 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ## ✨ Highlights of 26.4.1
 
-- **A failed Microsoft sign-in no longer loses the real error.**
-  26.4.0 could stop at the Minecraft Services step after Microsoft OAuth, Xbox Live and
-  XSTS had all succeeded, but the log only ever showed an exception whose `message`
-  was permanently `null` (`il6: null`) — the HTTP status code and the server's response
-  body were never recorded, and **every** HTTP 403 was reported in the UI as
-  "The current IP address has been blocked from logging in".
-  The launcher now logs the request URL, the real HTTP status code, the response body
-  (the non-2xx error JSON, which never contains an `access_token`) and the full stack
-  trace for both `login_with_xbox` and `getPlayerProfile`.
-- **403 is no longer misattributed.** Minecraft Services uses 403 for two very different
-  things: `BLOCKED_IP` and `Invalid app registration` (the launcher's Client ID is not on
-  Mojang's allow list). The two are now told apart by the response body, and the second one
-  gets its own message instead of sending users off to change their network or VPN.
-- **Known issue — see [CHANGELOG](CHANGELOG.md#2641---2026-09-29):** with the OAuth Client ID
-  shipped inside this build, Minecraft Services answers
-  `403 Invalid app registration`, so **premium sign-in cannot complete**.
-  That is a Mojang-side *Client ID allow list* matter — Microsoft OAuth, Xbox Live and XSTS
-  all succeed — and it cannot be fixed in code. Apply through Minecraft's official
-  [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141);
-  once approved, **no code change is needed**. The build script already accepts an approved
-  Client ID through the repository secret `OAUTH_CLIENT_ID`, which overrides
-  `gradle.properties`.
+- **Microsoft (premium) sign-in works again.** 26.4.0 could stop at the Minecraft Services
+  step after Microsoft OAuth, Xbox Live and XSTS had all succeeded, and the real cause turned
+  out to be a **Mojang-side application allow list** — Minecraft Services answered
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`. Nothing was wrong with the
+  code, the Entra configuration, the IP, the network, the request rate or the account.
+  26.4.1 builds the launcher with a **Microsoft application registration that Mojang has already
+  approved**, so premium sign-in now completes.
+- **A failed sign-in no longer loses the real error.** Previously the log only ever showed an
+  exception whose `message` was permanently `null` (`il6: null`) — the HTTP status code and the
+  server's response body were never recorded, and **every** HTTP 403 was reported in the UI as
+  "The current IP address has been blocked from logging in". The launcher now logs the request URL,
+  the real HTTP status code, the response body (the non-2xx error JSON, which never contains an
+  `access_token`) and the full stack trace for both `login_with_xbox` and `getPlayerProfile`.
+- **403 is no longer misattributed.** Minecraft Services uses 403 for two very different things:
+  `BLOCKED_IP` and `Invalid app registration`. The two are now told apart by the response body,
+  and the second one gets its own message instead of sending users off to change their network.
+
+### ℹ️ Which Microsoft application is used for sign-in
+
+**ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
+independently.** The Microsoft application registration used for premium sign-in, however,
+belongs to the **upstream ZalithLauncher2 project**, because only applications on Mojang's
+allow list may talk to Minecraft Services:
+
+| | Display name | Client ID | Mojang allow list | Used by 26.4.1 |
+|---|---|---|---|---|
+| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | `（已移除）` | ✅ approved | ✅ yes |
+| **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ not approved yet | ❌ no |
+
+- The Client ID is **injected at build time** through the repository secret `OAUTH_CLIENT_ID`;
+  it is never hard-coded in the source. Its priority is
+  **environment variable (CI secret) > `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**.
+- **What you will see:** because the sign-in uses the upstream application registration,
+  your Microsoft account's *Connected apps / Apps and devices* page will list
+  **ZalithLauncher**, not ZyNova. This is expected and does not affect usage.
+- ZyNova's own Client ID has been submitted to Minecraft's official
+  [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141).
+  Once approved, switching to it is **a repository-secret change and a rebuild — no code change**.
+- Still required: **public client + Client ID only**. No Client Secret, no redirect URI, no SHA-1.
 
 ## ✨ Highlights of 26.4.0
 
