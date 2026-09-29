@@ -28,6 +28,7 @@ import com.movtery.zalithlauncher.path.GLOBAL_CLIENT
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.safeBodyAsJson
+import com.movtery.zalithlauncher.utils.network.safeBodyAsText
 import com.movtery.zalithlauncher.utils.network.withRetry
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.forms.formData
@@ -135,9 +136,13 @@ suspend fun getPlayerProfile(
     }.safeBodyAsJson<PlayerProfile>()
 }.onFailure { e ->
     if (e is ResponseException) {
-        when (e.response.status.value) {
-            429 -> throw MinecraftProfileException(FREQUENT)
-            404 -> throw MinecraftProfileException(PROFILE_NOT_EXISTS)
+        // 诊断日志：记录真实 HTTP 状态码与响应体，便于区分 429 / 404 / 其他
+        val status = e.response.status.value
+        val body = runCatching { e.response.safeBodyAsText() }.getOrNull()
+        Logger.error(TAG, "getPlayerProfile rejected: GET $apiUrl/minecraft/profile -> HTTP $status, body = $body", e)
+        when (status) {
+            429 -> throw MinecraftProfileException(FREQUENT, "HTTP 429 from $apiUrl/minecraft/profile")
+            404 -> throw MinecraftProfileException(PROFILE_NOT_EXISTS, "HTTP 404 from $apiUrl/minecraft/profile")
         }
     }
 }.getOrThrow()

@@ -49,6 +49,7 @@ import com.movtery.zalithlauncher.path.GLOBAL_CLIENT
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.httpPostJson
 import com.movtery.zalithlauncher.utils.network.safeBodyAsJson
+import com.movtery.zalithlauncher.utils.network.safeBodyAsText
 import com.movtery.zalithlauncher.utils.network.submitForm
 import com.movtery.zalithlauncher.utils.string.toUuidStr
 import io.ktor.client.plugins.ClientRequestException
@@ -389,19 +390,31 @@ private suspend fun authenticateMinecraft(
 ): MinecraftAuthResponse {
     update(AsyncStatus.AUTHENTICATE_MINECRAFT)
 
+    val url = "$MINECRAFT_SERVICES_URL/authentication/login_with_xbox"
+
     return withRetry {
         runCatching {
             httpPostJson<MinecraftAuthResponse>(
-                url = "$MINECRAFT_SERVICES_URL/authentication/login_with_xbox",
+                url = url,
                 body = mapOf("identityToken" to "XBL3.0 x=${xstsResult.uhs};${xstsResult.token}"),
                 context = context
-            )
+            ).also {
+                Logger.debug(TAG, "login_with_xbox succeeded: expiresIn = ${it.expiresIn}")
+            }
         }.onFailure { e ->
             if (e is ResponseException) {
-                when (e.response.status.value) {
-                    429 -> throw MinecraftProfileException(FREQUENT)
-                    403 -> throw MinecraftProfileException(BLOCKED_IP)
+                // 诊断日志：记录真实 HTTP 状态码与响应体
+                // 走到这里说明响应非 2xx，body 是服务端的错误 JSON，不含 access_token
+                val status = e.response.status.value
+                val body = runCatching { e.response.safeBodyAsText() }.getOrNull()
+                Logger.error(TAG, "login_with_xbox rejected: POST $url -> HTTP $status, body = $body", e)
+                when (status) {
+                    429 -> throw MinecraftProfileException(FREQUENT, "HTTP 429 from $url")
+                    403 -> throw MinecraftProfileException(BLOCKED_IP, "HTTP 403 from $url")
                 }
+            } else {
+                // 非 HTTP 错误：连接失败、TLS、DNS 解析失败等
+                Logger.error(TAG, "login_with_xbox request failed: ${e.javaClass.name}: ${e.message}", e)
             }
         }.getOrThrow()
     }

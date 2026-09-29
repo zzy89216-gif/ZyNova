@@ -27,8 +27,15 @@ import com.movtery.zalithlauncher.ui.androidText
 
 /**
  * Minecraft 配置获取异常
+ *
+ * @param status 业务状态，界面通过 [toLocal] 转换为用户可读文案
+ * @param message 诊断用信息（例如真实 HTTP 状态码与来源 URL）。
+ *                仅用于日志排查，不参与业务判断。
  */
-class MinecraftProfileException(val status: ExceptionStatus) : RuntimeException() {
+class MinecraftProfileException(
+    val status: ExceptionStatus,
+    message: String? = null
+) : RuntimeException(message) {
     enum class ExceptionStatus {
         /**
          * 登陆过于频繁
