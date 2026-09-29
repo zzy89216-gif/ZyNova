@@ -65,7 +65,7 @@ allow list may talk to Minecraft Services:
 - **What you will see:** because the sign-in uses the upstream application registration,
   your Microsoft account's *Connected apps / Apps and devices* page will list
   **ZalithLauncher**, not ZyNova. This is expected and does not affect usage.
-- ZyNova's own Client ID has been submitted to Minecraft's official
+- ZyNova's own Client ID **still has to be submitted** to Minecraft's official
   [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141).
   Once approved, switching to it is **a repository-secret change and a rebuild — no code change**.
 - Still required: **public client + Client ID only**. No Client Secret, no redirect URI, no SHA-1.

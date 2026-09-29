@@ -19,6 +19,24 @@
 项目由 Zalith Launcher 2 / Fold Craft Launcher / PojavLauncher 一脉演化而来，
 上游作者与贡献者的版权声明完整保留在源码头部与 `LICENSE` 中。
 
+### 1.1 Microsoft（正版）登录所使用的应用注册
+
+⚠️ **正版登录所用的 Microsoft 应用注册不属于本项目，而属于上游 ZalithLauncher2 项目。**
+
+| | 显示名称 | Client ID | Mojang 允许名单 | 当前是否使用 |
+|---|---|---|---|---|
+| **ZalithLauncher2 的应用注册（上游）** | ZalithLauncher | `（已移除）` | ✅ 已获批准 | ✅ 当前使用 |
+| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暂不使用 |
+
+原因：**只有进入 Mojang 允许名单的应用注册才能访问 Minecraft Services**，
+否则会在 `login_with_xbox` 收到 `HTTP 403 Invalid app registration`。
+因此 ZyNova 在构建时通过仓库 Secret `OAUTH_CLIENT_ID` 注入上游已获批准的 Client ID。
+
+- Client ID 属于**公共标识**，会随 APK 一同分发，本身不是密钥
+- 本项目**不创建、不使用、不保存任何 Client Secret**
+- 因此用户微软账号的「已连接的应用」中会显示 **ZalithLauncher** 而非 ZyNova，这是预期行为
+- ZyNova 自己的 Client ID 正在申请审核，获批后只需更换该 Secret 并重新构建即可切换
+
 ---
 
 ## 2. 内置渲染器

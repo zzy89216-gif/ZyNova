@@ -417,7 +417,7 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 - **你会看到的现象**：因为认证走的是上游的应用注册，
   微软账号的「已连接的应用 / 应用与设备」页面里会显示 **ZalithLauncher** 而不是 ZyNova，
   这是预期行为，不影响使用
-- ZyNova 自己的 Client ID 已提交官方审核
+- ZyNova 自己的 Client ID **仍需提交**官方审核（目前尚未提交）
   （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）。
   获批后**只需更换仓库 Secret 并重新构建，无需改动任何代码**
 - 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
