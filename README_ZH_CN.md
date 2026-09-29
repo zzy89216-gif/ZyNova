@@ -307,6 +307,13 @@ ZyNova 使用独立的应用名称以及独立的应用签名。
 
 如果之后希望重新使用 ZalithLauncher2，也可以重新下载安装原项目。
 
+> ⚠️ **注意：安装可以共存，但「正版登录」所用的微软应用注册是同一个。**
+> ZyNova 是 ZalithLauncher2 的非官方分支，两者是**不同项目**；
+> 但 ZyNova 当前用于正版登录的 Microsoft 应用注册**属于上游 ZalithLauncher2**
+> （因为只有进入 Mojang 允许名单的应用才能访问 Minecraft Services）。
+> 因此在微软账号的「已连接的应用」中会看到 **ZalithLauncher**，而不是 ZyNova。
+> 详见下方 [Release → 正版登录用的是哪个微软应用](#-release)。
+
 ---
 
 ## 🧬 技术栈

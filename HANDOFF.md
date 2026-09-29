@@ -96,9 +96,10 @@ HTTP 403
 | **上游应用注册** | ZalithLauncher | `（已移除）` | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 正在使用它构建** |
 | **本项目的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ZyNova | ❌ 尚未批准 | ❌ 已保留但**不使用** |
 
-- **ZyNova 自己的 Entra 应用信息（备份，当前未生效）**：目录（租户）ID `8d99ba88-0cbd-4e04-8438-1b9e0ae9f867`，
-  对象 ID `834b0aa7-87d3-41b2-9976-773cc4f7bda6`，
-  支持账户类型「所有 Microsoft 帐户用户」，已开启公共客户端流
+- **ZyNova 自己的 Entra 应用（当前未生效）**：支持账户类型「所有 Microsoft 帐户用户」，
+  已开启公共客户端流，**未创建 Client Secret**。
+  其租户 ID / 对象 ID 属于项目维护者的目录标识，**不写入本文档**，
+  需要时请到维护者的 Entra 后台查看
 - **注入方式**：仓库 Secret **`OAUTH_CLIENT_ID`**，**构建时注入**，
   **不写进源码**；因此 `ZalithLauncher/gradle.properties` 里保留的是 ZyNova 自己的
   那个（尚未获批），它只在 Secret 缺失时才会生效
