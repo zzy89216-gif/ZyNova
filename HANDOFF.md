@@ -23,9 +23,82 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.4.0**（`launcher_version_code=260400`）
+**当前版本：26.4.1**（`launcher_version_code=260401`）
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+
+### 26.4.1 正版登录失败归因修复与「Invalid app registration」结论 ✅
+
+**一、背景：26.4.0 的正版登录卡在 Minecraft Services**
+
+现象是：Microsoft OAuth、Xbox Live（XBL）、XSTS **三步全部成功**，
+随后停在 `authenticateMinecraft()`，日志里只有一行
+
+```
+[NetWorks/DEBUG] MicrosoftAuthenticator: Attempt 1 failed: il6: null
+```
+
+`il6` = `com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException`。
+`null` 不是错误内容——`MinecraftProfileException` 继承 `RuntimeException()` 时**不传 message**，
+所以 `message` 恒为 `null`；它携带的 `FREQUENT`(429) / `BLOCKED_IP`(403) /
+`PROFILE_NOT_EXISTS`(404) 状态**从来没有被写进日志**。
+
+**二、定位过程（可复用）**
+
+1. 设备上的日志目录可以直接读：
+   `/storage/emulated/0/Android/data/com.zynova.launcher/files/logs/`
+   （`adb-shell` 可读；DSHA 设备桥对 `Android/data` 是禁止的，必须走设备 shell）
+2. 用 `withRetry` 的 `logTag` 反推抛出点：`"MicrosoftAuthenticator"` 这个 tag
+   **只在 `MicrosoftAuthenticator.kt` 的私有 `withRetry` 包装里使用**，
+   而该文件 5 个 `withRetry` 调用点中，只有 `authenticateMinecraft()` 能抛出
+   `MinecraftProfileException`；且日志里没有出现 `Verifying Minecraft ownership`，
+   因此可以确定失败在 `login_with_xbox`，即 **403 或 429**
+3. 补诊断日志后拿到真实响应（见下）
+
+**三、真实原因：Mojang 侧的 Client ID 允许名单**
+
+```
+POST https://api.minecraftservices.com/authentication/login_with_xbox
+HTTP 403
+{"path":"/authentication/login_with_xbox",
+ "errorMessage":"Invalid app registration, see https://aka.ms/AppRegInfo for more information"}
+```
+
+- **不是** IP 被封、**不是** 429 频率限制、**不是** 账号没有 Minecraft 档案
+- 是启动器的 **OAuth Client ID 不在 Mojang 的允许名单**里
+- 已排除的干扰项：从同一台手机的中国移动直连出口 IP 探测
+  `api.minecraftservices.com` 返回 **401（正常应答）**，说明该 IP 并未被封
+- 该仓库的 **Actions Secrets 为空**，因此 `secrets.OAUTH_CLIENT_ID` 不存在，
+  构建回落到 `gradle.properties`，所以打包进 APK 的就是 ZyNova 自己注册的
+  Client ID（`7b66e168-f8cd-43fc-a52d-2e78dba189b0`）
+- 上游 ZalithLauncher2 的仓库里同样是注释掉的 `#oauth_client_id=xxx`，
+  说明**上游是在构建时注入一个已获批准的 Client ID**，该 ID 不在仓库内
+
+**四、处置方式（无需改代码）**
+
+- 向 Minecraft 官方提交应用审核：
+  **Java Edition Game Service API Review / Application Process**，
+  <https://help.minecraft.net/hc/en-us/articles/16254801392141>
+  审批通过、Client ID 进入允许名单后，**现有代码可直接登录成功**
+- 构建脚本**已经支持**注入已获批准的 Client ID：
+  `getKeyFromLocal("OAUTH_CLIENT_ID", ".oauth_client_id.txt", defaultOAuthClientID)`，
+  优先级 **环境变量（CI Secret）> `.oauth_client_id.txt` > `gradle.properties`**。
+  在仓库配置 Secret `OAUTH_CLIENT_ID` 并重新构建即可，**不需要改任何代码**
+- ⚠️ 不要为了绕过它去创建 Client Secret、改 Redirect URI 或改认证架构：
+  该错误与这些配置无关
+
+**五、26.4.1 的代码改动（只碰失败路径，认证流程一行未改）**
+
+| 文件 | 改动 |
+|---|---|
+| `game/account/microsoft/MicrosoftAuthenticator.kt` | `authenticateMinecraft()` 失败时记录 URL / 真实 HTTP 状态码 / 响应体 / 完整堆栈；成功时记录 `expiresIn`；403 按响应体区分 `APP_NOT_REGISTERED` 与 `BLOCKED_IP` |
+| `game/account/microsoft/MinecraftProfileException.kt` | 构造函数增加可选 `message`；新增 `APP_NOT_REGISTERED` 状态及 `toLocal()` 分支 |
+| `game/account/yggdrasil/YggdrasilApi.kt` | `getPlayerProfile()` 失败时记录状态码与响应体 |
+| `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 新增 `account_logging_app_not_registered` 文案（默认英文 + 简体中文） |
+| `ZalithLauncher/gradle.properties` | 版本号 26.4.1（`launcher_version_code=260401`） |
+
+⚠️ **日志安全**：`login_with_xbox` 只在**非 2xx** 时读取响应体，
+拿到的是服务端的错误 JSON，**不含 `access_token`**。
 
 ### 26.4.0 正版登录回归与议题修复 ✅
 

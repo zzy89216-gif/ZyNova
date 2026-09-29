@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.0)
+[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -25,7 +25,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.4.0**。这一阶段的核心目标是：
+当前版本 **26.4.1**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -375,6 +375,30 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 当前版本：
 
+**ZyNova 26.4.1**
+
+26.4.1 修复**正版登录失败时的错误归因**，并补上此前完全缺失的失败诊断信息：
+
+- **登录失败不再丢失真实错误**：26.4.0 恢复「微软登录」后，登录会在
+  Microsoft OAuth、Xbox Live、XSTS **三步全部成功**之后卡在 Minecraft Services，
+  而日志里只有一个 `message` 恒为 `null` 的异常（`il6: null`），
+  真实 HTTP 状态码与服务端返回内容完全没有被记录。
+  现在 `login_with_xbox` 与 `getPlayerProfile` 失败时会记录
+  **请求 URL、真实 HTTP 状态码、响应体**与完整异常堆栈
+  （记录的是非 2xx 的错误 JSON，不含 `access_token`）
+- **修正 403 的错误归因**：Minecraft Services 的 403 有两种完全不同的含义——
+  `BLOCKED_IP`（IP 被禁止）与 `Invalid app registration`（Client ID 未获 Mojang 授权）。
+  此前一律显示为「当前 IP 地址已被禁止登陆」，把排查方向错误地引向网络与 IP；
+  现在按响应体区分，后者有独立文案
+- ⚠️ **已知问题**：使用本版本内置的 OAuth Client ID 时，Minecraft Services 会返回
+  **HTTP 403 `Invalid app registration`**，**正版登录暂时无法完成**。
+  这是 **Mojang 侧的 Client ID 允许名单**问题，与代码、Entra 配置、IP、网络、
+  请求频率、账号档案都无关（OAuth / XBL / XSTS 三步均成功）。
+  需向 Minecraft 官方提交应用审核
+  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）
+  并把 Client ID 加入允许名单；**审批通过后无需改动任何代码**。
+  构建脚本已支持通过仓库 Secret `OAUTH_CLIENT_ID` 注入已获批准的 Client ID
+
 **ZyNova 26.4.0**
 
 26.4.0 恢复正版登录入口，并处理 3 个议题：
@@ -662,7 +686,13 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.4.0（当前版本）
+### 26.4.1（当前版本）
+
+- [x] 正版登录失败时记录真实 HTTP 状态码、响应体与完整异常堆栈（此前只有 `il6: null`）
+- [x] 修正 403 的错误归因：区分 `BLOCKED_IP` 与 `Invalid app registration`
+- [ ] 将本项目的 OAuth Client ID 提交 Minecraft 官方审核并加入允许名单（**已确认为 Mojang 侧限制，非代码问题**）
+
+### 26.4.0
 
 - [x] 恢复 Microsoft（正版）账号登录入口（设备代码流；UI + ViewModel 接线还原）
 - [x] 配置并随包分发 OAuth Client ID（不使用 Client Secret）

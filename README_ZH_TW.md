@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.0)
+[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -27,6 +27,28 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 26.4.1 主要內容
+
+- **登入失敗不再遺失真實錯誤**：26.4.0 恢復「微軟登入」後，登入會在
+  Microsoft OAuth、Xbox Live、XSTS **三步全部成功**之後卡在 Minecraft Services，
+  而日誌裡只有一個 `message` 恆為 `null` 的例外（`il6: null`），
+  真實 HTTP 狀態碼與伺服端回傳內容完全沒有被記錄。
+  現在 `login_with_xbox` 與 `getPlayerProfile` 失敗時會記錄
+  **請求 URL、真實 HTTP 狀態碼、回應內容**與完整例外堆疊
+  （記錄的是非 2xx 的錯誤 JSON，不含 `access_token`）
+- **修正 403 的錯誤歸因**：Minecraft Services 的 403 有兩種完全不同的含義——
+  `BLOCKED_IP`（IP 被禁止）與 `Invalid app registration`（Client ID 未獲 Mojang 授權）。
+  此前一律顯示為「當前 IP 位址已被禁止登入」，把排查方向錯誤地引向網路與 IP；
+  現在依回應內容區分，後者有獨立文案
+- ⚠️ **已知問題**：使用本版本內建的 OAuth Client ID 時，Minecraft Services 會回傳
+  **HTTP 403 `Invalid app registration`**，**正版登入暫時無法完成**。
+  這是 **Mojang 端的 Client ID 允許名單**問題，與程式碼、Entra 設定、IP、網路、
+  請求頻率、帳號檔案都無關（OAuth / XBL / XSTS 三步均成功）。
+  需向 Minecraft 官方提交應用審核
+  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）
+  並把 Client ID 加入允許名單；**審核通過後無需修改任何程式碼**。
+  建置腳本已支援透過倉庫 Secret `OAUTH_CLIENT_ID` 注入已獲批准的 Client ID
 
 ## ✨ 26.4.0 主要內容
 

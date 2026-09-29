@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.0)
+[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -27,6 +27,31 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 26.4.1
+
+- **A failed Microsoft sign-in no longer loses the real error.**
+  26.4.0 could stop at the Minecraft Services step after Microsoft OAuth, Xbox Live and
+  XSTS had all succeeded, but the log only ever showed an exception whose `message`
+  was permanently `null` (`il6: null`) — the HTTP status code and the server's response
+  body were never recorded, and **every** HTTP 403 was reported in the UI as
+  "The current IP address has been blocked from logging in".
+  The launcher now logs the request URL, the real HTTP status code, the response body
+  (the non-2xx error JSON, which never contains an `access_token`) and the full stack
+  trace for both `login_with_xbox` and `getPlayerProfile`.
+- **403 is no longer misattributed.** Minecraft Services uses 403 for two very different
+  things: `BLOCKED_IP` and `Invalid app registration` (the launcher's Client ID is not on
+  Mojang's allow list). The two are now told apart by the response body, and the second one
+  gets its own message instead of sending users off to change their network or VPN.
+- **Known issue — see [CHANGELOG](CHANGELOG.md#2641---2026-09-29):** with the OAuth Client ID
+  shipped inside this build, Minecraft Services answers
+  `403 Invalid app registration`, so **premium sign-in cannot complete**.
+  That is a Mojang-side *Client ID allow list* matter — Microsoft OAuth, Xbox Live and XSTS
+  all succeed — and it cannot be fixed in code. Apply through Minecraft's official
+  [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141);
+  once approved, **no code change is needed**. The build script already accepts an approved
+  Client ID through the repository secret `OAUTH_CLIENT_ID`, which overrides
+  `gradle.properties`.
 
 ## ✨ Highlights of 26.4.0
 

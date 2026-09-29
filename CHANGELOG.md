@@ -2,6 +2,66 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [26.4.1] - 2026-09-29
+
+本版本修复**正版登录失败时的错误归因**，并补上此前完全缺失的失败诊断信息。
+
+26.4.0 恢复「微软登录」后，登录会在 Microsoft OAuth、Xbox Live、XSTS
+**三步全部成功**之后卡在 Minecraft Services。但当时的日志里只有一个
+`message` 恒为 `null` 的异常（`il6: null`）——因为
+`MinecraftProfileException` 继承 `RuntimeException()` 时不传消息，
+它携带的 `FREQUENT` / `BLOCKED_IP` / `PROFILE_NOT_EXISTS` 状态从未被输出；
+界面上又会把 **所有 403 统一报成「当前 IP 地址已被禁止登陆」**，
+把排查方向错误地引向 IP 与网络。
+
+### 修复
+
+- **正版登录失败不再丢失真实错误信息**
+  - `MicrosoftAuthenticator.authenticateMinecraft()` 在
+    `POST https://api.minecraftservices.com/authentication/login_with_xbox`
+    失败时，现在会记录**请求 URL、真实 HTTP 状态码、服务端响应体**
+    与完整异常堆栈；成功时记录 `expiresIn`
+  - `YggdrasilApi.getPlayerProfile()` 同样记录状态码与响应体，
+    便于把 429 / 404 / 其他区分开
+  - `MinecraftProfileException` 支持可选诊断 `message`；
+    `status` 字段与 `toLocal()` 的界面文案映射保持不变
+  - 记录的是**非 2xx 的错误 JSON**，不含 `access_token`
+- **修正 403 的错误归因**
+  - Minecraft Services 的 403 有两种**完全不同**的含义：
+    `BLOCKED_IP`（IP 被禁止）与 `Invalid app registration`
+    （启动器的 Client ID 未获 Mojang 授权）
+  - 此前一律按前者展示，用户换网络、换 VPN、换 IP 都不会有任何改善
+  - 现在按响应体内容区分，新增 `APP_NOT_REGISTERED` 状态与对应文案
+    （默认英文 + 简体中文；其余语言按 Android 规则回退到默认文案）
+
+### 已知问题
+
+- 使用本项目内置的 OAuth Client ID 时，Minecraft Services 会返回
+  **HTTP 403 `Invalid app registration, see https://aka.ms/AppRegInfo`**，
+  正版登录**无法完成**。
+  这是 **Mojang 侧的 Client ID 允许名单**问题，与代码、Entra 配置、
+  IP、网络、请求频率、账号档案均无关：
+  Microsoft OAuth、Xbox Live、XSTS 三步全部成功，只在最后一步被服务端拒绝。
+  - 处置方式：向 Minecraft 官方提交应用审核
+    （**Java Edition Game Service API Review / Application Process**，
+    <https://help.minecraft.net/hc/en-us/articles/16254801392141>），
+    把 Client ID 加入允许名单；**审批通过后无需改动任何代码**即可登录
+  - 构建脚本**已经支持**通过仓库 Secret `OAUTH_CLIENT_ID` 注入 Client ID，
+    其优先级高于 `ZalithLauncher/gradle.properties`
+    （环境变量 > `.oauth_client_id.txt` > `gradle.properties`）；
+    拿到已获批准的 Client ID 后，只需在仓库里配置该 Secret 并重新构建，**无需改代码**
+
+### 变更
+
+- 版本号更新为 **26.4.1**（`launcher_version_code=260401`）
+
+### 兼容性
+
+- 本次改动只影响失败时的日志与提示文案，认证流程本身（OAuth 设备代码流、
+  Xbox Live、XSTS、Minecraft Services 的请求构造与顺序）**一行未改**
+- 未改动 OAuth 架构、未新增 Redirect URI 或 SHA-1、未创建 Client Secret
+- `MinecraftProfileException` 的 `status` 字段与既有取值保持兼容
+
 ## [26.4.0] - 2026-09-28
 
 本版本**恢复被移除的 Microsoft（正版）登录入口**，修复两个已提交的议题

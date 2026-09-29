@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.0)
+[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -27,6 +27,30 @@
 - Discord: <https://discord.gg/QwPpZQHrTa>（永続招待リンク）
 
 ---
+
+## ✨ 26.4.1 のハイライト
+
+- **サインイン失敗時に本当のエラーが残るようになりました**：26.4.0 で「Microsoft サインイン」を
+  復活させたあと、Microsoft OAuth・Xbox Live・XSTS の**3 ステップすべてが成功**したあとに
+  Minecraft Services で停止していましたが、ログには `message` が常に `null` の例外
+  （`il6: null`）しか出ておらず、実際の HTTP ステータスコードもサーバーの応答本文も
+  記録されていませんでした。現在は `login_with_xbox` と `getPlayerProfile` の失敗時に
+  **リクエスト URL・実際の HTTP ステータスコード・応答本文**・完全なスタックトレースを記録します
+  （記録されるのは非 2xx のエラー JSON で、`access_token` は含まれません）
+- **403 の誤った原因表示を修正**：Minecraft Services の 403 には
+  `BLOCKED_IP`（IP がブロック）と `Invalid app registration`（Client ID が Mojang の
+  許可リストにない）という**まったく異なる 2 つの意味**があります。
+  以前はすべて後者以外の前者として表示され、ネットワークや IP の問題だと誤解させていました。
+  現在は応答本文で区別し、後者には専用のメッセージを表示します
+- ⚠️ **既知の問題**：本ビルドに内蔵された OAuth Client ID では、Minecraft Services が
+  **HTTP 403 `Invalid app registration`** を返すため、**正規サインインは完了できません**。
+  これは **Mojang 側の Client ID 許可リスト**の問題であり、コード・Entra 設定・IP・
+  ネットワーク・リクエスト頻度・アカウントのプロフィールのいずれとも無関係です
+  （OAuth / XBL / XSTS はすべて成功しています）。
+  Minecraft 公式の
+  [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)
+  に申請して Client ID を許可リストに追加する必要があります。**承認後はコードの変更は不要です**。
+  ビルドスクリプトはリポジトリ Secret `OAUTH_CLIENT_ID` による注入に既に対応しています
 
 ## ✨ 26.4.0 のハイライト
 
