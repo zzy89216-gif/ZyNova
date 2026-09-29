@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.account.microsoft
 
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.APP_NOT_REGISTERED
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.BLOCKED_IP
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.FREQUENT
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.PROFILE_NOT_EXISTS
