@@ -67,8 +67,8 @@
 - **表示される現象**：認証には上流のアプリ登録を使うため、Microsoft アカウントの
   「接続済みのアプリ / アプリとデバイス」には ZyNova ではなく **ZalithLauncher** が表示されます。
   これは想定どおりの動作で、利用には影響しません
-- ZyNova 自身の Client ID は**まだ公式審査に申請していません**（申請が必要です）
-  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）。
+- ZyNova 自身の Client ID は**まだ公式審査に申請していません**（申請が必要です）。
+  申請先は [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141) です。
   承認後は**リポジトリ Secret を差し替えて再ビルドするだけ**で、コードの変更は不要です
 - 必要なものは依然として**「パブリッククライアント + Client ID」のみ**です。
   Client Secret・Redirect URI・SHA-1 は不要です

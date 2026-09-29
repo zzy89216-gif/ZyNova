@@ -59,9 +59,9 @@
 - **可预期的现象**：因为认证使用的是 ZalithLauncher2 的应用注册，
   在微软账号的「已连接的应用 / 应用与设备」中会看到 **ZalithLauncher**，
   而不是 ZyNova；这是预期行为，不影响使用
-- **后续切换**：ZyNova 自己的 Client ID **仍需提交**官方审核（截至本版本尚未提交）
-  （**Java Edition Game Service API Review / Application Process**，
-  <https://help.minecraft.net/hc/en-us/articles/16254801392141>）。
+- **后续切换**：ZyNova 自己的 Client ID **仍需提交官方审核**（截至本版本尚未提交）。
+  提交入口为 **Java Edition Game Service API Review / Application Process**：
+  <https://help.minecraft.net/hc/en-us/articles/16254801392141>
   一旦获批，**只需更换仓库 Secret `OAUTH_CLIENT_ID` 并重新构建即可，无需改动任何代码**
 
 ### 变更

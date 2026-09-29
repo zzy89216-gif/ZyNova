@@ -35,7 +35,8 @@
 - Client ID 属于**公共标识**，会随 APK 一同分发，本身不是密钥
 - 本项目**不创建、不使用、不保存任何 Client Secret**
 - 因此用户微软账号的「已连接的应用」中会显示 **ZalithLauncher** 而非 ZyNova，这是预期行为
-- ZyNova 自己的 Client ID 正在申请审核，获批后只需更换该 Secret 并重新构建即可切换
+- ZyNova 自己的 Client ID **尚未提交审核**；
+  获批后只需更换该 Secret 并重新构建即可切换，无需改动任何代码
 
 ---
 

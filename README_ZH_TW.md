@@ -61,8 +61,8 @@
 - **你會看到的現象**：因為認證走的是上游的應用註冊，
   微軟帳號的「已連接的應用程式 / 應用程式與裝置」頁面會顯示 **ZalithLauncher** 而不是 ZyNova，
   這是預期行為，不影響使用
-- ZyNova 自己的 Client ID **仍需提交**官方審核（目前尚未提交）
-  （[Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)）。
+- ZyNova 自己的 Client ID **仍需提交官方審核**（目前尚未提交）。
+  提交入口為 [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)；
   獲准後**只需更換倉庫 Secret 並重新建置，無需修改任何程式碼**
 - 仍然**只需要「公開客戶端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
 
