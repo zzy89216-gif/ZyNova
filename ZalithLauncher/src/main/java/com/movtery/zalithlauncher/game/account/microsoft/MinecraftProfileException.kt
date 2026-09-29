@@ -50,7 +50,17 @@ class MinecraftProfileException(
         /**
          * 未创建配置
          */
-        PROFILE_NOT_EXISTS
+        PROFILE_NOT_EXISTS,
+
+        /**
+         * 该应用注册未被 Minecraft 服务端认可
+         *
+         * Minecraft Services 返回 HTTP 403 且响应体为
+         * `Invalid app registration, see https://aka.ms/AppRegInfo`。
+         * 这与 IP 被封（[BLOCKED_IP]）是**两件完全不同的事**：
+         * 前者是启动器的 Client ID 不在 Mojang 的允许名单里，用户换 IP 也没用。
+         */
+        APP_NOT_REGISTERED
     }
 }
 
@@ -60,6 +70,7 @@ fun MinecraftProfileException.toLocal(): AndroidStringText {
             FREQUENT -> R.string.account_logging_frequent
             BLOCKED_IP -> R.string.account_logging_blocked_ip
             PROFILE_NOT_EXISTS -> R.string.account_logging_profile_not_exists
+            APP_NOT_REGISTERED -> R.string.account_logging_app_not_registered
         }
     )
 }

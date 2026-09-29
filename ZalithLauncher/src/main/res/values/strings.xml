@@ -494,6 +494,7 @@
     <string name="account_logging_frequent">Login attempts are too frequent. Please try again later.</string>
     <string name="account_logging_blocked_ip">The current IP address has been blocked from logging in.</string>
     <string name="account_logging_profile_not_exists">Please create a Minecraft player profile first, then try logging in again!</string>
+    <string name="account_logging_app_not_registered">This launcher is not authorized by Minecraft services (Invalid app registration). This is unrelated to your network or IP — please report it to the launcher\'s developer.</string>
     <string name="account_logging_not_purchased_minecraft">Minecraft ownership not verified. Please purchase it from Minecraft\'s official website.</string>
     <string name="account_relogin_title">Sign In Required</string>
     <string name="account_relogin_microsoft_message">The launcher failed to refresh this Microsoft account\'s sign-in credentials. The password may have been changed or the authorization has been revoked, so you need to sign in to the Microsoft account again.</string>

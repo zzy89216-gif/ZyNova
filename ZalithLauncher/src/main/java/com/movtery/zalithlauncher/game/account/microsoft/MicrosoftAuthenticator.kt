@@ -23,6 +23,7 @@ import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountType
 import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.game.account.CredentialsExpiredException
+import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.APP_NOT_REGISTERED
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.BLOCKED_IP
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException.ExceptionStatus.FREQUENT
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException.ExceptionStatus.BANNED
@@ -408,9 +409,17 @@ private suspend fun authenticateMinecraft(
                 val status = e.response.status.value
                 val body = runCatching { e.response.safeBodyAsText() }.getOrNull()
                 Logger.error(TAG, "login_with_xbox rejected: POST $url -> HTTP $status, body = $body", e)
-                when (status) {
-                    429 -> throw MinecraftProfileException(FREQUENT, "HTTP 429 from $url")
-                    403 -> throw MinecraftProfileException(BLOCKED_IP, "HTTP 403 from $url")
+                when {
+                    429 == status -> throw MinecraftProfileException(FREQUENT, "HTTP 429 from $url")
+                    // 403 有两种完全不同的含义，必须靠响应体区分：
+                    // 「Invalid app registration」= 启动器的 Client ID 未获 Mojang 授权，
+                    // 与用户的 IP 完全无关，绝不能报成「当前 IP 地址已被禁止登陆」
+                    403 == status && body?.contains("Invalid app registration", ignoreCase = true) == true ->
+                        throw MinecraftProfileException(
+                            APP_NOT_REGISTERED,
+                            "HTTP 403 Invalid app registration from $url"
+                        )
+                    403 == status -> throw MinecraftProfileException(BLOCKED_IP, "HTTP 403 from $url")
                 }
             } else {
                 // 非 HTTP 错误：连接失败、TLS、DNS 解析失败等
