@@ -32,7 +32,7 @@
 **一、本版本做了什么（两件事）**
 
 1. **正版登录改用 ZyNova 自己的 Microsoft 应用注册**（只改 Secret，不改代码）
-2. **更换应用图标与启动加载界面**（纯资源 + 一处 Compose 改动）
+2. **更换应用图标**（纯资源改动，**未改动任何代码**）
 
 **1）正版登录的 Client ID 切换**
 
@@ -53,8 +53,10 @@
 | `mipmap-anydpi-v26/ic_launcher{,_round}.xml` | 引用上面三层 |
 | `values/ic_launcher_background.xml` | 兜底底色改为 `#1B2450` |
 | `ic_launcher-playstore.png` | Google Play 512×512 |
-| `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用同一前景资源，**自动同步** |
-| `ui/screens/splash/SplashScreen.kt` | 顶部加 **44dp 图标**，底部加 **`by：zzy`** 小字署名 |
+| `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用同一前景资源，**自动同步**（文件本身未改） |
+
+⚠️ **应用内的解压界面（`ui/screens/splash/SplashScreen.kt`，首次启动 / 更新后出现的那一屏）
+本次未做任何改动**，与 26.4.1 逐字节一致。
 
 **二、切换方式（零代码改动）**
 
