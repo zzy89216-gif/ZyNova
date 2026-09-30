@@ -296,6 +296,111 @@ object ResourceInstallManager {
     }
 
     /**
+     * 构建安装计划：主资源 + 必需的（递归）前置依赖
+     *
+     * @param type 资源类别；同时决定前置依赖按哪种资源去查询
+     * @param includeOptionalDependencies 是否同时安装可选依赖
+     */
+    suspend fun buildInstallPlan(
+        version: ResourceVersion,
+        type: ResourceType,
+        instance: Version,
+        includeOptionalDependencies: Boolean = false
+    ): ResourceInstallPlan {
+        val plan = mutableListOf<ResourceInstallEntry>()
+        val unresolvedRequired = mutableListOf<ResourceMissingDependency>()
+        val visited = mutableSetOf<String>()
+
+        //同一个项目只保留一份：两个模组可能各自依赖同一前置的**不同版本**，
+        //两份都装进 mods 目录会直接冲突（游戏可能崩，也可能加载错的那一份）
+        val addedProjects = mutableMapOf<String, ResourceVersion>()
+
+        val info = instance.getVersionInfo()
+        val minecraftVersion = info?.minecraftVersion ?: instance.getVersionName()
+        val loaderName = info?.loaderInfo?.loader?.displayName
+
+        suspend fun collect(current: ResourceVersion, isDependency: Boolean, required: Boolean) {
+            val versionKey = "${current.provider}:${current.projectId}:${current.versionId}"
+            if (!visited.add(versionKey)) return
+
+            //① 该版本没有可下载文件。
+            //   以前这里直接 return，导致「已经解析成功但没有文件」的必需前置
+            //   既不会被安装、也不会被记录成未解析 —— 静默缺前置，进游戏才崩。
+            if (current.file == null) {
+                if (isDependency && required) {
+                    unresolvedRequired.add(
+                        ResourceMissingDependency(
+                            provider = current.provider,
+                            projectId = current.projectId,
+                            reason = "该版本没有提供可下载的文件"
+                        )
+                    )
+                }
+                Logger.warning(
+                    TAG,
+                    "Dependency ${current.provider}:${current.projectId} has no downloadable file"
+                )
+                return
+            }
+
+            //② 同一项目已加入过 → 不再重复安装
+            val projectKey = "${current.provider}:${current.projectId}"
+            val existing = addedProjects[projectKey]
+            if (existing != null) {
+                if (existing.versionId != current.versionId) {
+                    Logger.warning(
+                        TAG,
+                        "Project $projectKey was already planned as version ${existing.versionId}; " +
+                                "skipping the duplicate version ${current.versionId} to avoid installing two copies"
+                    )
+                }
+                return
+            }
+
+            plan.add(ResourceInstallEntry(current, isDependency, required))
+            addedProjects[projectKey] = current
+
+            current.dependencies.forEach { dependency ->
+                if (!dependency.isRequired && !includeOptionalDependencies) return@forEach
+
+                val resolved = resolveDependency(
+                    dependency = dependency,
+                    type = type,
+                    minecraftVersion = minecraftVersion,
+                    loaderName = loaderName
+                )
+                if (resolved == null) {
+                    //前置依赖解析失败不能静默丢弃：
+                    //主资源会被装上，但游戏内会因为缺少前置而崩溃，用户却不知道原因
+                    Logger.warning(
+                        TAG,
+                        "Unresolved dependency ${dependency.provider}:${dependency.projectId} " +
+                                "(required=${dependency.isRequired}) for ${current.projectId}"
+                    )
+                    if (dependency.isRequired) {
+                        unresolvedRequired.add(
+                            ResourceMissingDependency(
+                                provider = dependency.provider,
+                                projectId = dependency.projectId,
+                                reason = "找不到与该实例（$minecraftVersion${loaderName?.let { " / $it" } ?: ""}）兼容的版本"
+                            )
+                        )
+                    }
+                } else {
+                    //把「是否为必需」传下去：递归到它自己没文件时才能被正确记录
+                    collect(resolved, true, dependency.isRequired)
+                }
+            }
+        }
+
+        collect(version, false, true)
+        return ResourceInstallPlan(
+            entries = plan,
+            unresolvedRequiredDependencies = unresolvedRequired
+        )
+    }
+
+    /**
      * 解析单个依赖对应的可用版本
      *
      * 1. 优先使用作者指定的精确版本
