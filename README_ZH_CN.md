@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
+[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -25,7 +25,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.4.1**。这一阶段的核心目标是：
+当前版本 **26.4.2**。这一阶段的核心目标是：
 
 > **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
@@ -382,6 +382,34 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 当前版本：
 
+**ZyNova 26.4.2**
+
+26.4.2 把正版登录**切换为 ZyNova 自己的 Microsoft 应用注册**：
+
+- **正版登录改用 ZyNova 自己的应用注册**：26.4.0 / 26.4.1 因为只有处于 Minecraft
+  应用程序允许名单中的注册才能访问 Minecraft Services，借用了**上游 ZalithLauncher2 项目**的
+  应用注册；从 26.4.2 起改用 **ZyNova 自己的注册**
+- 除此之外**没有任何功能变化**：认证流程、渲染器、资源管理等全部与 26.4.1 一致
+
+**ℹ️ 正版登录用的是哪个微软应用（请勿与项目归属混淆）**
+
+**ZyNova 是 ZalithLauncher2 的非官方分支（fork），两者是不同项目、独立维护。**
+两个应用注册的关系如下：
+
+| | 显示名称 | Client ID | 本版本是否使用 |
+|---|---|---|---|
+| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **正在使用** |
+| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+
+- **只有处于 Minecraft 应用程序允许名单中的应用注册**才能完成正版登录；
+  否则 `POST /authentication/login_with_xbox` 会返回
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`，
+  与 OAuth / Xbox Live / XSTS 是否成功无关
+- Client ID 通过仓库 Secret `OAUTH_CLIENT_ID` **在构建时注入**，不写死在源码中；
+  取值优先级：**环境变量（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- **你会看到的现象**：微软账号的「已连接的应用 / 应用与设备」页面里会以上表中的**显示名称**出现
+- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
+
 **ZyNova 26.4.1**
 
 26.4.1 让**正版登录真正可用**，并修复失败时的错误归因、补上此前完全缺失的诊断信息：
@@ -390,7 +418,8 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
   **三步全部成功**之后卡在 Minecraft Services。真实原因是 **Mojang 侧的应用注册允许名单**——
   Minecraft Services 返回 **HTTP 403 `Invalid app registration`**
   （与代码、Entra 配置、IP、网络、请求频率、账号档案**都无关**）。
-  26.4.1 改为**使用一个已获 Mojang 批准的 Microsoft 应用注册**构建，登录现已可用
+  26.4.1 改为**使用一个已获 Mojang 批准的 Microsoft 应用注册**构建，登录现已可用；
+  26.4.2 起已切换为 ZyNova 自己的应用注册（见上）
 - **登录失败不再丢失真实错误**：此前日志里只有一个 `message` 恒为 `null` 的异常
   （`il6: null`），真实 HTTP 状态码与服务端返回内容完全没有被记录。
   现在 `login_with_xbox` 与 `getPlayerProfile` 失败时会记录
@@ -400,27 +429,6 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
   `BLOCKED_IP`（IP 被禁止）与 `Invalid app registration`（Client ID 未获 Mojang 授权）。
   此前一律显示为「当前 IP 地址已被禁止登陆」，把排查方向错误地引向网络与 IP；
   现在按响应体区分，后者有独立文案
-
-**ℹ️ 正版登录用的是哪个微软应用（请勿与项目归属混淆）**
-
-**ZyNova 是 ZalithLauncher2 的非官方分支（fork），两者是不同项目、独立维护。**
-但登录所用的 **Microsoft 应用注册并不属于 ZyNova**，而是属于上游 ZalithLauncher2 项目——
-因为只有进入 Mojang 允许名单的应用才能访问 Minecraft Services：
-
-| | 显示名称 | Client ID | Mojang 允许名单 | 26.4.1 是否使用 |
-|---|---|---|---|---|
-| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ✅ 已获批准 | ✅ **正在使用** |
-| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暂不使用 |
-
-- Client ID 通过仓库 Secret `OAUTH_CLIENT_ID` **在构建时注入**，不写死在源码中；
-  取值优先级：**环境变量（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
-- **你会看到的现象**：因为认证走的是上游的应用注册，
-  微软账号的「已连接的应用 / 应用与设备」页面里会显示 **ZalithLauncher** 而不是 ZyNova，
-  这是预期行为，不影响使用
-- ZyNova 自己的 Client ID **仍需提交官方审核**（目前尚未提交）。
-  提交入口为 [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)；
-  获批后**只需更换仓库 Secret 并重新构建，无需改动任何代码**
-- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
 
 **ZyNova 26.4.0**
 
@@ -709,12 +717,17 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.4.1（当前版本）
+### 26.4.2（当前版本）
+
+- [x] 正版登录**切换为 ZyNova 自己的 Microsoft 应用注册**（`7b66e168-…`）
+- [x] 其余功能与 26.4.1 完全一致（无功能变化）
+
+### 26.4.1
 
 - [x] 正版登录失败时记录真实 HTTP 状态码、响应体与完整异常堆栈（此前只有 `il6: null`）
 - [x] 修正 403 的错误归因：区分 `BLOCKED_IP` 与 `Invalid app registration`
 - [x] 让正版登录真正可用：构建时注入上游 ZalithLauncher2 已获 Mojang 批准的 Client ID（仓库 Secret，零代码改动）
-- [ ] 将 ZyNova 自己的 OAuth Client ID（`7b66e168-…`）提交 Minecraft 官方审核；获批后更换仓库 Secret 即可切回自有 ID
+- [x] 将 ZyNova 自己的 OAuth Client ID（`7b66e168-…`）提交 Minecraft 官方审核；26.4.2 已切换为自有 ID
 
 ### 26.4.0
 

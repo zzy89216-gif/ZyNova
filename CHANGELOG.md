@@ -2,6 +2,35 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [26.4.2] - 2026-09-29
+
+本版本把正版登录**切换为 ZyNova 自己的 Microsoft 应用注册**，除此之外**没有任何功能变化**。
+
+### 变更
+
+- **正版登录改用 ZyNova 自己的应用注册**
+  - 背景：只有处于 **Minecraft 应用程序允许名单**中的注册才能访问 Minecraft Services；
+    26.4.0 / 26.4.1 为此借用了**上游 ZalithLauncher2 项目**的应用注册
+    （`（已移除）`，已获批准）
+  - 本版本起改用 **ZyNova 自己的应用注册**
+    （`7b66e168-f8cd-43fc-a52d-2e78dba189b0`）
+  - 切换方式仅为更换仓库 Secret `OAUTH_CLIENT_ID` 并重新构建，
+    **认证流程与其余代码一行未改**
+  - 版本号更新为 **26.4.2**（`launcher_version_code=260402`）
+
+### 说明
+
+- **ZyNova 与 ZalithLauncher2 是两个不同项目**（前者是后者的非官方分支）。
+  本版本改变的只是「登录使用哪一个应用注册」，项目归属、源码结构、渲染器与资源管理均无变化
+- Client ID 仍通过仓库 Secret **在构建时注入**，不写死在源码中；
+  取值优先级为 **环境变量（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、
+  不需要 Redirect URI、不需要 SHA-1
+- **只有处于 Minecraft 应用程序允许名单中的应用注册才能完成正版登录**；
+  否则 `POST /authentication/login_with_xbox` 会返回
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`，
+  与 OAuth / Xbox Live / XSTS 是否成功无关
+
 ## [26.4.1] - 2026-09-29
 
 本版本**让正版登录真正可用**，并修复失败时的错误归因、补上此前完全缺失的诊断信息。
@@ -43,13 +72,16 @@
 
 ### 正版登录的 Client ID 来源（重要，不要与项目归属混淆）
 
-⚠️ **ZyNova 是 ZalithLauncher2 的非官方分支（fork），两者是不同项目、独立维护。**
-但正版登录所使用的 Microsoft 应用注册**不属于 ZyNova**，具体如下：
+> ℹ️ 本节描述的是 **26.4.1 发布当时**的状态。
+> **26.4.2 起已切换为 ZyNova 自己的应用注册**，见上方 `[26.4.2]` 条目。
 
-| | 显示名称 | Client ID | Mojang 允许名单 | 当前是否使用 |
+⚠️ **ZyNova 是 ZalithLauncher2 的非官方分支（fork），两者是不同项目、独立维护。**
+26.4.1 中正版登录所使用的 Microsoft 应用注册**不属于 ZyNova**，具体如下：
+
+| | 显示名称 | Client ID | Mojang 允许名单 | 26.4.1 是否使用 |
 |---|---|---|---|---|
 | **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ✅ **已获批准** | ✅ **本版本使用它构建** |
-| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暂不使用 |
+| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | 当时尚未批准 | ❌ 当时未使用 |
 
 - **注入方式**：Client ID 通过仓库 Secret **`OAUTH_CLIENT_ID`** 在**构建时注入**，
   不写死在源码里。取值优先级为
@@ -59,10 +91,8 @@
 - **可预期的现象**：因为认证使用的是 ZalithLauncher2 的应用注册，
   在微软账号的「已连接的应用 / 应用与设备」中会看到 **ZalithLauncher**，
   而不是 ZyNova；这是预期行为，不影响使用
-- **后续切换**：ZyNova 自己的 Client ID **仍需提交官方审核**（截至本版本尚未提交）。
-  提交入口为 **Java Edition Game Service API Review / Application Process**：
-  <https://help.minecraft.net/hc/en-us/articles/16254801392141>
-  一旦获批，**只需更换仓库 Secret `OAUTH_CLIENT_ID` 并重新构建即可，无需改动任何代码**
+- **后续切换**：**26.4.2 起已改用 ZyNova 自己的应用注册**，
+  详见上方 `[26.4.2]` 条目；本节描述的是 26.4.1 发布当时的状态
 
 ### 变更
 

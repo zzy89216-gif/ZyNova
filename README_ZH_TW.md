@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
+[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -28,13 +28,40 @@
 
 ---
 
+## ✨ 26.4.2 主要內容
+
+- **正版登入改用 ZyNova 自己的 Microsoft 應用註冊**：26.4.0 / 26.4.1 因為只有處於 Minecraft
+  應用程式允許名單中的註冊才能存取 Minecraft Services，借用了**上游 ZalithLauncher2 專案**的
+  應用註冊；從 26.4.2 起改用 **ZyNova 自己的註冊**
+- 除此之外**沒有任何功能變化**：認證流程、渲染器、資源管理等全部與 26.4.1 一致
+
+**ℹ️ 正版登入用的是哪個微軟應用（請勿與專案歸屬混淆）**
+
+**ZyNova 是 ZalithLauncher2 的非官方分支（fork），兩者是不同專案、獨立維護。**
+兩個應用註冊的關係如下：
+
+| | 顯示名稱 | Client ID | 本版本是否使用 |
+|---|---|---|---|
+| **ZyNova 自己的應用註冊** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **正在使用** |
+| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | `（已移除）` | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+
+- **只有處於 Minecraft 應用程式允許名單中的應用註冊**才能完成正版登入；
+  否則 `POST /authentication/login_with_xbox` 會回傳
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`，
+  與 OAuth / Xbox Live / XSTS 是否成功無關
+- Client ID 透過倉庫 Secret `OAUTH_CLIENT_ID` **在建置時注入**，不寫死在原始碼中；
+  取值優先順序：**環境變數（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- **你會看到的現象**：微軟帳號的「已連接的應用程式 / 應用程式與裝置」頁面會以上表中的**顯示名稱**出現
+- 仍然**只需要「公開客戶端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
+
 ## ✨ 26.4.1 主要內容
 
 - **正版登入恢復可用（核心修復）**：26.4.0 的登入會在 Microsoft OAuth、Xbox Live、XSTS
   **三步全部成功**之後卡在 Minecraft Services。真實原因是 **Mojang 端的應用註冊允許名單**——
   Minecraft Services 回傳 **HTTP 403 `Invalid app registration`**
   （與程式碼、Entra 設定、IP、網路、請求頻率、帳號檔案**都無關**）。
-  26.4.1 改為**使用一個已獲 Mojang 批准的 Microsoft 應用註冊**建置，登入現已可用
+  26.4.1 改為**使用一個已獲 Mojang 批准的 Microsoft 應用註冊**建置，登入現已可用；
+  26.4.2 起已切換為 ZyNova 自己的應用註冊（見上）
 - **登入失敗不再遺失真實錯誤**：此前日誌裡只有一個 `message` 恆為 `null` 的例外
   （`il6: null`），真實 HTTP 狀態碼與伺服端回傳內容完全沒有被記錄。
   現在 `login_with_xbox` 與 `getPlayerProfile` 失敗時會記錄
@@ -44,27 +71,6 @@
   `BLOCKED_IP`（IP 被禁止）與 `Invalid app registration`（Client ID 未獲 Mojang 授權）。
   此前一律顯示為「當前 IP 位址已被禁止登入」，把排查方向錯誤地引向網路與 IP；
   現在依回應內容區分，後者有獨立文案
-
-**ℹ️ 正版登入用的是哪個微軟應用（請勿與專案歸屬混淆）**
-
-**ZyNova 是 ZalithLauncher2 的非官方分支（fork），兩者是不同專案、獨立維護。**
-但登入所用的 **Microsoft 應用註冊並不屬於 ZyNova**，而是屬於上游 ZalithLauncher2 專案——
-因為只有進入 Mojang 允許名單的應用才能存取 Minecraft Services：
-
-| | 顯示名稱 | Client ID | Mojang 允許名單 | 26.4.1 是否使用 |
-|---|---|---|---|---|
-| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | `（已移除）` | ✅ 已獲批准 | ✅ **正在使用** |
-| **ZyNova 自己的應用註冊** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暫不使用 |
-
-- Client ID 透過倉庫 Secret `OAUTH_CLIENT_ID` **在建置時注入**，不寫死在原始碼中；
-  取值優先順序：**環境變數（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
-- **你會看到的現象**：因為認證走的是上游的應用註冊，
-  微軟帳號的「已連接的應用程式 / 應用程式與裝置」頁面會顯示 **ZalithLauncher** 而不是 ZyNova，
-  這是預期行為，不影響使用
-- ZyNova 自己的 Client ID **仍需提交官方審核**（目前尚未提交）。
-  提交入口為 [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141)；
-  獲准後**只需更換倉庫 Secret 並重新建置，無需修改任何程式碼**
-- 仍然**只需要「公開客戶端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
 
 ## ✨ 26.4.0 主要內容
 

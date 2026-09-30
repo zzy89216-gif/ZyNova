@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
+[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -28,6 +28,37 @@
 
 ---
 
+## ✨ 26.4.2 のハイライト
+
+- **正規サインインが ZyNova 自身の Microsoft アプリケーション登録に切り替わりました**：
+  26.4.0 / 26.4.1 は、Minecraft のアプリケーション許可リストに載っている登録でなければ
+  Minecraft Services にアクセスできないため、**上流の ZalithLauncher2 プロジェクト**の
+  アプリ登録を借用していました。26.4.2 からは **ZyNova 自身の登録**でビルドします
+- それ以外に**機能の変更はありません**：認証フロー・レンダラー・リソース管理などは
+  26.4.1 と完全に同じです
+
+**ℹ️ 正規サインインに使われる Microsoft アプリケーション（プロジェクトの帰属と混同しないでください）**
+
+**ZyNova は ZalithLauncher2 の非公式フォークであり、両者は別プロジェクトで、独立して
+保守されています。** 関係する 2 つのアプリ登録は次のとおりです：
+
+| | 表示名 | Client ID | 本ビルドでの使用 |
+|---|---|---|---|
+| **ZyNova 自身のアプリ登録** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **使用中** |
+| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | `（已移除）` | ❌ 未使用（26.4.0 / 26.4.1 で使用） |
+
+- **Minecraft のアプリケーション許可リストに載っているアプリ登録だけ**が正規サインインを
+  完了できます。そうでない場合、`POST /authentication/login_with_xbox` は
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo` を返します
+  （OAuth / Xbox Live / XSTS の成否とは無関係です）
+- Client ID はリポジトリ Secret `OAUTH_CLIENT_ID` により**ビルド時に注入**され、
+  ソースにハードコードされません。優先順位は
+  **環境変数（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
+- **表示される現象**：Microsoft アカウントの「接続済みのアプリ / アプリとデバイス」には
+  上の表の**表示名**で表示されます
+- 必要なものは依然として**「パブリッククライアント + Client ID」のみ**です。
+  Client Secret・Redirect URI・SHA-1 は不要です
+
 ## ✨ 26.4.1 のハイライト
 
 - **正規サインインが使えるようになりました（中心的な修正）**：26.4.0 のサインインは
@@ -36,7 +67,7 @@
   許可リスト**で、Minecraft Services は **HTTP 403 `Invalid app registration`** を返していました
   （コード・Entra 設定・IP・ネットワーク・リクエスト頻度・アカウントのプロフィールの
   いずれとも無関係です）。26.4.1 は **Mojang の承認済み Microsoft アプリケーション登録**を
-  使ってビルドするため、正規サインインが完了します
+  使ってビルドするため、正規サインインが完了します（26.4.2 で ZyNova 自身の登録に切り替え済み）
 - **サインイン失敗時に本当のエラーが残るようになりました**：以前はログに
   `message` が常に `null` の例外（`il6: null`）しか出ておらず、実際の HTTP ステータスコードも
   サーバーの応答本文も記録されていませんでした。現在は `login_with_xbox` と
@@ -48,30 +79,6 @@
   許可リストにない）という**まったく異なる 2 つの意味**があります。以前はすべて前者として
   表示され、ネットワークや IP の問題だと誤解させていました。現在は応答本文で区別し、
   後者には専用のメッセージを表示します
-
-**ℹ️ 正規サインインに使われる Microsoft アプリケーション（プロジェクトの帰属と混同しないでください）**
-
-**ZyNova は ZalithLauncher2 の非公式フォークであり、両者は別プロジェクトで、独立して
-保守されています。** ただしサインインに使われる **Microsoft アプリケーション登録は ZyNova の
-ものではなく**、上流の ZalithLauncher2 プロジェクトに属します。Mojang の許可リストに
-載っているアプリケーションだけが Minecraft Services にアクセスできるためです：
-
-| | 表示名 | Client ID | Mojang 許可リスト | 26.4.1 での使用 |
-|---|---|---|---|---|
-| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | `（已移除）` | ✅ 承認済み | ✅ **使用中** |
-| **ZyNova 自身のアプリ登録** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 未承認 | ❌ 未使用 |
-
-- Client ID はリポジトリ Secret `OAUTH_CLIENT_ID` により**ビルド時に注入**され、
-  ソースにハードコードされません。優先順位は
-  **環境変数（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
-- **表示される現象**：認証には上流のアプリ登録を使うため、Microsoft アカウントの
-  「接続済みのアプリ / アプリとデバイス」には ZyNova ではなく **ZalithLauncher** が表示されます。
-  これは想定どおりの動作で、利用には影響しません
-- ZyNova 自身の Client ID は**まだ公式審査に申請していません**（申請が必要です）。
-  申請先は [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141) です。
-  承認後は**リポジトリ Secret を差し替えて再ビルドするだけ**で、コードの変更は不要です
-- 必要なものは依然として**「パブリッククライアント + Client ID」のみ**です。
-  Client Secret・Redirect URI・SHA-1 は不要です
 
 ## ✨ 26.4.0 のハイライト
 

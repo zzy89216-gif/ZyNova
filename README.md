@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.1)
+[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -28,6 +28,34 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
+## ✨ Highlights of 26.4.2
+
+- **Premium sign-in now uses ZyNova's own Microsoft application registration.** The 26.4.0 and
+  26.4.1 builds had to borrow the registration of the **upstream ZalithLauncher2 project**, because
+  only a registration that is on Minecraft's application allow list may talk to Minecraft Services.
+  From 26.4.2 on, the launcher is built with **ZyNova's own registration**.
+
+### ℹ️ Which Microsoft application is used for sign-in
+
+**ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
+independently.** The two registrations involved are:
+
+| | Display name | Client ID | Used by this build |
+|---|---|---|---|
+| **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ yes |
+| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | `（已移除）` | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
+
+- Only an application registration that is on **Minecraft's application allow list** can complete
+  premium sign-in. Otherwise `POST /authentication/login_with_xbox` answers
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`, no matter how OAuth, Xbox Live and
+  XSTS went.
+- The Client ID is **injected at build time** through the repository secret `OAUTH_CLIENT_ID`;
+  it is never hard-coded in the source. Its priority is
+  **environment variable (CI secret) > `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**.
+- **What you will see:** the sign-in appears in your Microsoft account's
+  *Connected apps / Apps and devices* page under the display name listed above.
+- Still required: **public client + Client ID only**. No Client Secret, no redirect URI, no SHA-1.
+
 ## ✨ Highlights of 26.4.1
 
 - **Microsoft (premium) sign-in works again.** 26.4.0 could stop at the Minecraft Services
@@ -35,8 +63,8 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
   out to be a **Mojang-side application allow list** — Minecraft Services answered
   `403 Invalid app registration, see https://aka.ms/AppRegInfo`. Nothing was wrong with the
   code, the Entra configuration, the IP, the network, the request rate or the account.
-  26.4.1 builds the launcher with a **Microsoft application registration that Mojang has already
-  approved**, so premium sign-in now completes.
+  26.4.1 shipped with a **Microsoft application registration that Mojang has already approved**,
+  so premium sign-in completed; 26.4.2 moves to ZyNova's own registration (see above).
 - **A failed sign-in no longer loses the real error.** Previously the log only ever showed an
   exception whose `message` was permanently `null` (`il6: null`) — the HTTP status code and the
   server's response body were never recorded, and **every** HTTP 403 was reported in the UI as
@@ -46,29 +74,6 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - **403 is no longer misattributed.** Minecraft Services uses 403 for two very different things:
   `BLOCKED_IP` and `Invalid app registration`. The two are now told apart by the response body,
   and the second one gets its own message instead of sending users off to change their network.
-
-### ℹ️ Which Microsoft application is used for sign-in
-
-**ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
-independently.** The Microsoft application registration used for premium sign-in, however,
-belongs to the **upstream ZalithLauncher2 project**, because only applications on Mojang's
-allow list may talk to Minecraft Services:
-
-| | Display name | Client ID | Mojang allow list | Used by 26.4.1 |
-|---|---|---|---|---|
-| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | `（已移除）` | ✅ approved | ✅ yes |
-| **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ not approved yet | ❌ no |
-
-- The Client ID is **injected at build time** through the repository secret `OAUTH_CLIENT_ID`;
-  it is never hard-coded in the source. Its priority is
-  **environment variable (CI secret) > `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**.
-- **What you will see:** because the sign-in uses the upstream application registration,
-  your Microsoft account's *Connected apps / Apps and devices* page will list
-  **ZalithLauncher**, not ZyNova. This is expected and does not affect usage.
-- ZyNova's own Client ID **still has to be submitted** to Minecraft's official
-  [Java Edition Game Service API Review](https://help.minecraft.net/hc/en-us/articles/16254801392141).
-  Once approved, switching to it is **a repository-secret change and a rebuild — no code change**.
-- Still required: **public client + Client ID only**. No Client Secret, no redirect URI, no SHA-1.
 
 ## ✨ Highlights of 26.4.0
 

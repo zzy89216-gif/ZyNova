@@ -21,22 +21,25 @@
 
 ### 1.1 Microsoft（正版）登录所使用的应用注册
 
-⚠️ **正版登录所用的 Microsoft 应用注册不属于本项目，而属于上游 ZalithLauncher2 项目。**
+正版登录使用 **ZyNova 自己的 Microsoft 应用注册**。作为背景说明：
+**ZyNova 是 ZalithLauncher2 的非官方分支（fork），两者是不同项目、独立维护**；
+26.4.0 / 26.4.1 曾借用上游 ZalithLauncher2 的应用注册。
 
-| | 显示名称 | Client ID | Mojang 允许名单 | 当前是否使用 |
-|---|---|---|---|---|
-| **ZalithLauncher2 的应用注册（上游）** | ZalithLauncher | `（已移除）` | ✅ 已获批准 | ✅ 当前使用 |
-| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 尚未批准 | ❌ 暂不使用 |
+| | 显示名称 | Client ID | 当前是否使用 |
+|---|---|---|---|
+| **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **当前使用** |
+| **ZalithLauncher2 的应用注册（上游）** | ZalithLauncher | `（已移除）` | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
 
-原因：**只有进入 Mojang 允许名单的应用注册才能访问 Minecraft Services**，
+原因：**只有进入 Minecraft 应用程序允许名单的应用注册才能访问 Minecraft Services**，
 否则会在 `login_with_xbox` 收到 `HTTP 403 Invalid app registration`。
-因此 ZyNova 在构建时通过仓库 Secret `OAUTH_CLIENT_ID` 注入上游已获批准的 Client ID。
+Client ID 由仓库 Secret `OAUTH_CLIENT_ID` **在构建时注入**，
+因此源码中不包含实际生效的 Client ID。
 
 - Client ID 属于**公共标识**，会随 APK 一同分发，本身不是密钥
 - 本项目**不创建、不使用、不保存任何 Client Secret**
-- 因此用户微软账号的「已连接的应用」中会显示 **ZalithLauncher** 而非 ZyNova，这是预期行为
-- ZyNova 自己的 Client ID **尚未提交审核**；
-  获批后只需更换该 Secret 并重新构建即可切换，无需改动任何代码
+- 用户微软账号的「已连接的应用」中会以上表中的**显示名称**出现
+- 更换应用注册只需更换该 Secret 并重新构建，**无需改动任何代码**
+- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1
 
 ---
 
