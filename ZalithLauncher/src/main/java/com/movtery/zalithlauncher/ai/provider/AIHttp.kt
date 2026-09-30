@@ -42,12 +42,15 @@ import java.util.concurrent.TimeUnit
  * 同时仍然复用项目已有的 `createOkHttpClientBuilder()`（自带 ResilientDns）。
  */
 private val AI_CLIENT: OkHttpClient by lazy {
-    createOkHttpClientBuilder {
+    createOkHttpClientBuilder { builder ->
         // 流式对话可能很久没有数据（模型思考），读超时要放宽
-        readTimeout(5, TimeUnit.MINUTES)
-        connectTimeout(30, TimeUnit.SECONDS)
+        builder.readTimeout(5, TimeUnit.MINUTES)
+        builder.connectTimeout(30, TimeUnit.SECONDS)
+        // SSE 是长连接：**整体调用不能设超时**，
+        // 否则长回答会在中途被 callTimeout 掐断（基类默认设了 callTimeout）
+        builder.callTimeout(0, TimeUnit.MILLISECONDS)
         // SSE 不重试（重试会重复扣费），由上层决定是否重发
-        retryOnConnectionFailure(false)
+        builder.retryOnConnectionFailure(false)
     }.build()
 }
 

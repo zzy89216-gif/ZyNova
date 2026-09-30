@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
+[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,14 +29,16 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **26.4.2**。这一阶段的核心目标是：
+当前版本 **27.1.0**。这一阶段的核心目标是：
 
-> **进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+> **在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
+> 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
 
 围绕这一目标，项目已经建立了自己的：
 
 - **渲染器体系**（内置 Ironized Zink / GL4ES / MobileGlues，默认 Ironized Zink）
 - **Microsoft（正版）账号登录**（OAuth 2.0 设备代码流，无需 Client Secret）
+- **全局 AI Agent**（Provider 可扩展 / 模型从服务商动态获取 / 流式对话 / 25 个可真正执行操作的工具）
 - 统一资源管理核心（Resource Management Core）
 - 资源来源 Provider 体系（Modrinth / CurseForge）
 - 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
@@ -386,6 +388,26 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 当前版本：
 
+**ZyNova 27.1.0**
+
+27.1.0 新增**全局 AI Agent**，让 AI 能**真正调用启动器的能力动手干活**：
+
+- **入口**：主界面顶部「文件」旁新增 **AI** 按钮，点击**直接进入聊天界面**，不设独立的 AI 首页
+- **聊天即 Agent**：聊天与 Agent 是同一个入口。先问「为什么这个实例进不去？」，
+  它会读日志分析；接着说「那帮我修」，它会**直接调用工具去改**，而不是写一段操作教程
+- **AI 配置独立于启动器通用设置**（聊天界面右上角进入）：
+  Provider（OpenAI / Anthropic，可扩展）、自备 API Key（**只存本机**）、
+  **模型从服务商动态获取（代码中不硬编码任何模型名）**、可自定义 Base URL、
+  Agent 权限模式（完全控制 / 操作确认）
+- **25 个工具，全部复用启动器现有能力**：实例管理、模组真实元数据解析与启停 / 删除、
+  文件读写与搜索、日志与崩溃分析、**118 项启动器设置读写**、
+  Modrinth / CurseForge 搜索与安装（含递归安装必需前置）、**真正启动游戏**
+- **安全边界**：文件类工具只能访问游戏目录与启动器数据目录；敏感键名拒绝读写；
+  「操作确认」模式下确认界面不可用时**一律拒绝写操作**
+- **修复**：自动安装前置依赖的 5 处静默失败（此前会出现「提示安装成功、进游戏却缺前置崩溃」）
+
+> 26.4.2 的内容（正版登录切换 + 更换图标）作为历史保留在下方。
+
 **ZyNova 26.4.2**
 
 26.4.2 把正版登录**切换为 ZyNova 自己的 Microsoft 应用注册**，并**更换了应用图标**：
@@ -725,10 +747,18 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 26.4.2（当前版本）
+### 27.1.0（当前版本）
+
+- [x] **全局 AI Agent**：主界面顶部 AI 入口，点击直达聊天界面（聊天与 Agent 同一入口）
+- [x] AI 配置独立于启动器通用设置：Provider（OpenAI / Anthropic，可扩展）/
+      API Key（仅存本机）/ 模型（**从服务商动态获取，不硬编码**）/ Base URL / 权限模式
+- [x] Agent 工具架构：**25 个工具**，全部复用现有实例、模组、文件、日志、设置、下载与启动系统
+- [x] 修复自动安装前置依赖的 **5 处静默失败**（缺前置却提示安装成功）
+
+### 26.4.2
 
 - [x] 正版登录**切换为 ZyNova 自己的 Microsoft 应用注册**（`7b66e168-…`）
-- [x] 其余功能与 26.4.1 完全一致（无功能变化）
+- [x] 更换应用图标（自适应三层 / 传统方与圆形各 5 密度 / 商店 512）
 
 ### 26.4.1
 

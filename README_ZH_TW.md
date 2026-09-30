@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
+[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -31,6 +31,21 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 27.1.0 主要內容
+
+- **全域 AI Agent。** 頂部工具列「檔案」旁新增 **AI** 按鈕，點擊**直接進入聊天介面**，
+  不設獨立的 AI 首頁。聊天與 Agent 是**同一個入口**：先問「為什麼這個實例進不去？」，
+  它會去讀日誌；接著說「幫我修」，它會**直接呼叫工具動手處理**，而不是寫一段教學給你。
+- **AI 真的能操作啟動器。** 共 25 個工具，全部建立在啟動器現有系統之上：
+  實例、模組真實中繼資料、啟用／停用／刪除模組、資源包、光影、存檔、檔案、日誌、
+  崩潰報告、**118 項啟動器設定**、資源搜尋與安裝（含遞迴安裝必需前置），
+  以及**真正啟動遊戲**。
+- **AI 設定與啟動器設定完全分開。** 服務商（OpenAI / Anthropic，可擴充）、
+  自備 API Key（僅存本機）、模型清單**由服務商動態取得，程式碼中不硬編碼任何模型名稱**、
+  可自訂 Base URL，以及 Agent 權限模式（完全控制／操作確認）。
+- **修復：自動安裝前置依賴的多個靜默失敗。** 五處缺陷都表現成同一個現象——
+  介面顯示「安裝成功」，進遊戲卻因為缺少前置而崩潰。
 
 ## ✨ 26.4.2 主要內容
 

@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
+[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -31,6 +31,25 @@
 - Discord: <https://discord.gg/QwPpZQHrTa>（永続招待リンク）
 
 ---
+
+## ✨ 27.1.0 のハイライト
+
+- **グローバル AI Agent。** 上部バーの「ファイル」の隣に **AI** ボタンを追加しました。
+  タップすると**直接チャット画面**に入ります（独立した AI ホームはありません）。
+  チャットと Agent は**同じ入口**です。「このインスタンスが起動しないのはなぜ？」と聞けば
+  ログを読みに行き、「直して」と言えば**実際にツールを呼んで処理します**。
+  操作手順を書いて渡すだけではありません。
+- **AI は本当にランチャーを操作できます。** 全 25 個のツールは、すべてランチャーの
+  既存機能の上に構築されています：インスタンス、MOD の実メタデータ、MOD の有効化／
+  無効化／削除、リソースパック、シェーダー、ワールド、ファイル、ログ、クラッシュレポート、
+  **118 項目のランチャー設定**、リソースの検索とインストール（必須前提の再帰インストールを含む）、
+  そして**実際のゲーム起動**。
+- **AI 設定はランチャー設定とは完全に別です。** プロバイダー（OpenAI / Anthropic、拡張可能）、
+  自分の API キー（端末内のみに保存）、モデル一覧は**プロバイダーから動的に取得し、
+  コードにモデル名を一切ハードコードしません**、Base URL のカスタム、Agent 権限モード
+  （完全制御／操作確認）。
+- **修正：前提 MOD の自動インストールにおける無言の失敗。** 5 つの不具合はいずれも
+  「UI ではインストール成功、ゲーム内では前提不足でクラッシュ」という同じ症状でした。
 
 ## ✨ 26.4.2 のハイライト
 

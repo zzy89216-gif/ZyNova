@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-26.4.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v26.4.2)
+[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -31,6 +31,24 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 27.1.0
+
+- **A global AI Agent.** A new **AI** button sits next to the file entry in the top bar and opens
+  the chat screen directly — there is no separate AI home page. Chat and Agent are **the same
+  entry point**: ask *"why won't this instance launch?"* and it goes and reads the logs; then say
+  *"fix it for me"* and it **calls tools and actually does it**, instead of writing you a tutorial.
+- **The AI can really act on your launcher.** 25 tools, all built on top of the launcher's existing
+  systems: instances, real mod metadata, enabling / disabling / deleting mods, resource packs,
+  shaders, saves, files, logs, crash reports, **118 launcher settings**, resource search and install
+  (including recursive installation of required dependencies), and **actually launching the game**.
+- **AI settings are completely separate from the launcher settings.** Provider
+  (OpenAI / Anthropic, extensible), your own API key (stored locally only), model selection
+  **fetched dynamically from the provider — no model name is hard-coded anywhere**, a customisable
+  base URL, and an agent permission mode (full control / confirm each operation).
+- **Fixed: silent failures when auto-installing dependencies.** Five separate defects all produced
+  the same symptom — the UI said "installed successfully", and the game then crashed because a
+  required dependency had never been installed.
 
 ## ✨ Highlights of 26.4.2
 

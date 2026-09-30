@@ -23,9 +23,90 @@
 
 ## 二、当前版本与进度
 
-**当前版本：26.4.2**（`launcher_version_code=260402`）
+**当前版本：27.1.0**（`launcher_version_code=270100`）
 
-26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
+27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
+让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.1.0 全局 AI Agent ✅
+
+**一、本版本做了什么（两件事）**
+
+1. **新增全局 AI Agent**（聊天即 Agent，25 个工具可真正执行操作）
+2. **修复自动安装前置依赖的 5 处静默失败**
+
+**1）入口与定位**
+
+- 主界面顶部「文件」**旁边**新增 **AI** 按钮，点击**直接进入聊天界面**，**不设独立的 AI 首页**
+- **聊天与 Agent 是同一个入口**：
+  - 用户：「为什么这个实例进不去？」→ Agent 调 `read_log` / `summarize_log` 读真实日志
+  - 用户：「那帮我修」→ Agent 直接调工具改，**不重新要求用户手动操作**
+
+**2）AI 配置（独立于启动器通用设置）**
+
+- 入口在**聊天界面右上角**，**不出现在「设置」页面**，配置存在独立的 `AISettings`
+- `ai/AISettings.kt`：复用 `SettingsRegistry` + MMKV，键名统一 `ai` 前缀
+  - `aiProvider` / `aiOpenAIKey` / `aiAnthropicKey` / `aiModel`
+  - `aiOpenAIBaseUrl` / `aiAnthropicBaseUrl`
+  - `aiPermissionMode` / `aiTemperature` / `aiMaxAgentSteps` / `aiShowToolCalls`
+- **API Key 只保存在本机 MMKV**，不上传任何自有服务器
+- **模型不硬编码**：`GET {baseUrl}/models` 动态拉取后由用户选择
+
+**3）Provider 层（可扩展）**
+
+| 文件 | 作用 |
+|---|---|
+| `ai/provider/AIProvider.kt` | 接口：`listModels()` + `streamChat()`，含统一的 `AIStreamEvent` |
+| `ai/provider/AIHttp.kt` | AI 专用 OkHttp 客户端 + SSE 逐行解析；**`callTimeout(0)` 防止长回答被掐断** |
+| `ai/provider/OpenAIProvider.kt` | Chat Completions；兼容 `data` / `models` 两种模型列表返回 |
+| `ai/provider/AnthropicProvider.kt` | Messages API；content block / `tool_use` / `tool_result` |
+| `ai/provider/AIProviders.kt` | 注册表：新增 Provider = 一个枚举值 + 一个实现 |
+
+**4）Agent 工具架构**
+
+- `ai/agent/AITool.kt`：工具接口 + `AIToolRisk`（READ / WRITE / DANGEROUS）+ `AIToolContext`
+- `ai/agent/AIToolRegistry.kt`：注册表，`builtinTools()` 汇总 25 个工具
+- `ai/agent/AIAgent.kt`：主循环（请求 → 工具调用 → 执行 → 结果回灌 → 继续）
+  - 权限裁决：**「操作确认」模式下若上层没有确认器，一律拒绝写操作**
+  - 工具异常会转成可读文本回灌给模型，让它自行调整
+  - 步数上限 `aiMaxAgentSteps`，避免模型死循环
+
+**5）25 个工具（全部复用现有系统，不重复实现）**
+
+| 工具组 | 数量 | 复用的现有能力 |
+|---|---|---|
+| 实例管理 | 3 | `VersionsManager` / `Version` / `VersionFolders` / `PathManager` |
+| 内容管理 | 5 | `AllModReader`（真实解析模组元数据）、`VersionFolders`、模组启停与删除 |
+| 文件管理 | 6 | `PathManager`，**全部路径经 `resolveInside()` 允许目录校验** |
+| 日志与崩溃 | 5 | 启动器日志 / 原生日志 / 实例 `crash-reports` / 错误行聚合 |
+| 设置读写 | 3 | `AllSettings` + `SettingsRegistry.units()/findUnit()`（含敏感键拒绝名单） |
+| 启动游戏 | 1 | 现有启动事件链路（由 `MainScreen` 注入 `AIToolContext.launchGame`） |
+| 搜索与安装 | 2 | `ResourceManager` 统一资源核心（含递归安装必需前置） |
+
+**6）UI**
+
+- `ai/ui/AIChatScreen.kt`：流式输出、工具调用与结果可视化、停止 / 清空、「操作确认」弹窗
+- `ai/ui/AIConfigScreen.kt`：Provider / Key / Base URL / 拉取模型列表 / 权限模式
+- `viewmodel/AIChatViewModel.kt`：驱动 Agent 循环 + 注入启动与确认回调
+- 新增图标 `ic_ai_filled` / `ic_send` / `ic_stop`；新增 31 条字符串 × 4 语言
+
+**7）修复：自动安装前置依赖的静默失败**
+
+统一资源核心中定位到 5 处缺陷，共同表现为「界面显示安装成功、进游戏却缺前置崩溃」：
+
+| # | 缺陷 | 修复 |
+|---|---|---|
+| 1 | 依赖解析成功但无下载文件 → 静默丢弃 | 记录为缺失并说明原因 |
+| 2 | 必需前置下载失败被当成「可选」跳过 | 新增 `ResourceDownloadFailure` / `downloadAllDetailed()`，如实上报 |
+| 3 | 作者钉死的依赖版本不校验兼容性 | 必须先通过 `isCompatibleWith()`，否则回退最新兼容版本 |
+| 4 | 同一前置解析成两个版本 → 装两份 | 按 `provider:projectId` 去重 |
+| 5 | 缺失信息传不到 UI | 一路传到 `_Download.QuickInstall` 并提示 + 4 语言字符串 |
+
+**8）兼容性**
+
+- 未改动认证、渲染器、下载、实例管理内部实现
+- 未改动解压界面等既有界面
+- 设置单元新增方法均为默认实现，不影响现有调用路径
 
 ### 26.4.2 正版登录改用自有应用注册 + 更换应用图标 ✅
 
@@ -606,6 +687,26 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 作用 |
 |---|---|
+| `ai/AISettings.kt` | AI 独立配置（Provider / Key / Model / BaseUrl / 权限模式） |
+| `ai/AIPermissionMode.kt` | 完全控制 / 操作确认 |
+| `ai/model/AIMessage.kt` | 与 Provider 无关的统一消息模型 |
+| `ai/model/AIModelInfo.kt` | 动态获取到的模型信息 |
+| `ai/provider/AIProvider.kt` | Provider 接口 + 统一流式事件 |
+| `ai/provider/AIHttp.kt` | AI 专用 OkHttp + SSE 解析 |
+| `ai/provider/OpenAIProvider.kt` | OpenAI Chat Completions 实现 |
+| `ai/provider/AnthropicProvider.kt` | Anthropic Messages API 实现 |
+| `ai/provider/AIProviders.kt` | Provider 注册表 |
+| `ai/agent/AITool.kt` | 工具接口 / 风险等级 / 执行上下文 |
+| `ai/agent/AIToolRegistry.kt` | 工具注册表 |
+| `ai/agent/AIToolSchema.kt` | JSON Schema 辅助 |
+| `ai/agent/AIAgent.kt` | Agent 主循环 + 权限裁决 |
+| `ai/agent/tools/*.kt` | 25 个内置工具（实例 / 内容 / 文件 / 日志 / 设置 / 启动 / 搜索安装） |
+| `ai/ui/AIChatScreen.kt` | AI 聊天界面（同时就是 Agent 界面） |
+| `ai/ui/AIConfigScreen.kt` | AI 配置界面（独立于启动器通用设置） |
+| `viewmodel/AIChatViewModel.kt` | 驱动 Agent 循环 + 注入启动/确认回调 |
+| `res/drawable/ic_ai_filled.xml` | AI 入口图标 |
+| `res/drawable/ic_send.xml` | 发送图标 |
+| `res/drawable/ic_stop.xml` | 停止图标 |
 | `game/download/resources/Resource.kt` | 统一资源模型 + 平台模型适配 |
 | `game/download/resources/ResourceProvider.kt` | Provider 接口、Modrinth/CurseForge 实现、注册表 |
 | `game/download/resources/ResourceDownloadManager.kt` | 统一下载管理器 |
