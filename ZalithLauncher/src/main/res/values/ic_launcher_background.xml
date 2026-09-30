@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#FFE08F</color>
+    <!-- ZyNova 图标背景色（取自画作四角内侧的深蓝，与自适应图标背景 PNG 融合） -->
+    <color name="ic_launcher_background">#1B2450</color>
 </resources>

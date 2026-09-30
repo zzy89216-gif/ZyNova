@@ -27,17 +27,34 @@
 
 26.x 系列的核心目标是：**进一步脱离 ZalithLauncher2 的遗留逻辑，建立 ZyNova 自己的资源管理、下载、主页与 UI 基础。**
 
-### 26.4.2 正版登录改用 ZyNova 自己的应用注册 ✅
+### 26.4.2 正版登录改用自有应用注册 + 更换应用图标 ✅
 
-**一、本版本做了什么**
+**一、本版本做了什么（两件事）**
 
-**只做了一件事**：把正版登录所用的 Microsoft 应用注册，从
-**上游 ZalithLauncher2 的**换成 **ZyNova 自己的**。除此之外**没有任何功能变化**。
+1. **正版登录改用 ZyNova 自己的 Microsoft 应用注册**（只改 Secret，不改代码）
+2. **更换应用图标与启动加载界面**（纯资源 + 一处 Compose 改动）
+
+**1）正版登录的 Client ID 切换**
 
 | | 显示名称 | Client ID | 26.4.0 / 26.4.1 | 26.4.2 |
 |---|---|---|---|---|
 | **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 未使用 | ✅ **正在使用** |
 | **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ✅ 曾使用 | ❌ 不再使用 |
+
+**2）应用图标更换（涉及文件）**
+
+| 资源 | 说明 |
+|---|---|
+| `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher.webp` | 传统方图标，5 个密度（48/72/96/144/192） |
+| `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher_round.webp` | 圆形图标，5 个密度 |
+| `drawable-nodpi/ic_launcher_bg.png` | 自适应图标**背景层**：画作放大铺满 + 高斯模糊扩边，蒙版任意形状都不露接缝 |
+| `drawable-nodpi/ic_launcher_foreground.png` | 自适应图标**前景层**：864px 画布，画作占 **624px（78dp / 108dp）** |
+| `drawable-nodpi/ic_launcher_monochrome.png` | 自适应图标**单色层**：按亮度阈值 80% 提亮部做剪影 |
+| `mipmap-anydpi-v26/ic_launcher{,_round}.xml` | 引用上面三层 |
+| `values/ic_launcher_background.xml` | 兜底底色改为 `#1B2450` |
+| `ic_launcher-playstore.png` | Google Play 512×512 |
+| `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用同一前景资源，**自动同步** |
+| `ui/screens/splash/SplashScreen.kt` | 顶部加 **44dp 图标**，底部加 **`by：zzy`** 小字署名 |
 
 **二、切换方式（零代码改动）**
 
@@ -60,10 +77,20 @@
 - ⚠️ 如果换成**尚未获批**的 Client ID，正版登录会**立刻失效**；
   这种情况下不要发布正式版本，或把 Secret 换回已获批准的那个
 
-**四、文档与代码一致性**
+**四、图标设计的两个要点（改图标前必读）**
+
+1. **自适应图标不能让画作铺满 108dp**
+   自适应图标的可见区是画布中心 **72dp**；画作若铺满 108dp，
+   系统蒙版会切掉边缘（`ZyNova` 字样会被切）。
+   因此前景画作按 **78dp / 108dp** 居中放置——**完整可见，且不露背景**。
+2. **背景层不要用纯色**
+   画作四角颜色差异很大（深蓝 → 亮蓝），纯色背景在圆角处一定会露馅。
+   现在的做法是**把画作放大铺满画布再做高斯模糊**，任何蒙版形状下都无缝融合。
+
+**五、文档与代码一致性**
 
 - 四语言 README、CHANGELOG、THIRD_PARTY_NOTICES（含 `assets/licenses/` 镜像）
-  均已同步为「使用 ZyNova 自己的应用注册」
+  均已同步为「使用 ZyNova 自己的应用注册」与「图标已更换」
 - 26.4.1 的相关章节**作为历史保留**（当时的叙述是正确的），并在开头标注当前状态
 
 ### 26.4.1 正版登录修复（Client ID 允许名单）与失败归因修正 ✅

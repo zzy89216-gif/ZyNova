@@ -34,6 +34,12 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
   26.4.1 builds had to borrow the registration of the **upstream ZalithLauncher2 project**, because
   only a registration that is on Minecraft's application allow list may talk to Minecraft Services.
   From 26.4.2 on, the launcher is built with **ZyNova's own registration**.
+- **New app icon, and a signature on the start-up screen.** Every icon variant was replaced with
+  the new ZyNova artwork: the **adaptive icon** (background / foreground / monochrome layers), the
+  **legacy square and round icons** at all densities, and the **Google Play 512×512 icon**.
+  The artwork sits inside the adaptive icon's visible area, so the character and the `ZyNova`
+  wordmark stay **fully visible and uncropped**. The brief loading screen shown at start-up now
+  displays the new icon, with a small **`by：zzy`** credit at the bottom.
 
 ### ℹ️ Which Microsoft application is used for sign-in
 
