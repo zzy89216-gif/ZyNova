@@ -88,6 +88,8 @@ import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.ai.ui.AIChatScreen
+import com.movtery.zalithlauncher.ai.ui.AIConfigScreen
 import com.movtery.zalithlauncher.ui.screens.content.AccountManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.DownloadScreen
 import com.movtery.zalithlauncher.ui.screens.content.FileSelectorScreen
@@ -205,6 +207,12 @@ fun MainScreen(
                         )
                     )
                 },
+                toAIChat = {
+                    screenBackStackModel.mainScreen.removeAndNavigateTo(
+                        removes = screenBackStackModel.clearBeforeNavKeys,
+                        screenKey = NormalNavKey.AIChat
+                    )
+                },
                 changeExpandedState = {
                     changeTasksExpandedState()
                 },
@@ -254,6 +262,7 @@ private fun <E: TitledNavKey> TopBar(
     toDownloadScreen: () -> Unit,
     toMultiplayerScreen: () -> Unit,
     openFileManager: () -> Unit,
+    toAIChat: () -> Unit,
     changeExpandedState: () -> Unit,
 ) {
     val festivals = LocalFestivals.current
@@ -261,6 +270,7 @@ private fun <E: TitledNavKey> TopBar(
     val inMultiplayerScreen = mainScreenKey is NormalNavKey.Multiplayer
     val inDownloadScreen = mainScreenKey is NestedNavKey.Download
     val inSettingsScreen = mainScreenKey is NestedNavKey.Settings
+    val inAIChatScreen = mainScreenKey is NormalNavKey.AIChat
 
     CompositionLocalProvider(
         LocalContentColor provides contentColor
@@ -408,6 +418,20 @@ private fun <E: TitledNavKey> TopBar(
                     Icon(
                         painter = painterResource(R.drawable.ic_folder_filled),
                         contentDescription = null
+                    )
+                }
+
+                // AI 入口：与「文件」并排，点击直接进入聊天界面（不设独立的 AI 首页）
+                IconButton(
+                    onClick = {
+                        if (!inAIChatScreen) toAIChat()
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_ai_filled),
+                        contentDescription = stringResource(R.string.ai_title),
+                        tint = if (inAIChatScreen) MaterialTheme.colorScheme.primary
+                        else LocalContentColor.current
                     )
                 }
 
@@ -650,6 +674,31 @@ private fun NavigationUI(
                 }
                 entry<NormalNavKey.LogView> { key ->
                     LogViewScreen(
+                        key = key,
+                        backStackViewModel = screenBackStackModel,
+                    )
+                }
+                entry<NormalNavKey.AIChat> { key ->
+                    AIChatScreen(
+                        key = key,
+                        backStackViewModel = screenBackStackModel,
+                        toAIConfig = {
+                            screenBackStackModel.mainScreen.navigateTo(
+                                screenKey = NormalNavKey.AIConfig,
+                                useClassEquality = true
+                            )
+                        },
+                        // 把启动器的启动链路交给 Agent：
+                        // AI 启动游戏与用户点「启动」走的是同一条路径
+                        onLaunchGame = { version ->
+                            eventViewModel.sendEvent(
+                                EventViewModel.Event.Launch.Game(version)
+                            )
+                        },
+                    )
+                }
+                entry<NormalNavKey.AIConfig> { key ->
+                    AIConfigScreen(
                         key = key,
                         backStackViewModel = screenBackStackModel,
                     )

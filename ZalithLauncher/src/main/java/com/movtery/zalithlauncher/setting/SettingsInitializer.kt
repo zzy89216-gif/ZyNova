@@ -37,6 +37,9 @@ private const val GLASS_LEVEL_KEY = "glassLevel"
 fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     if (reloadAll) AllSettings.reloadAll()
 
+    //AI Agent 的配置独立于启动器通用设置，但同样需要初始化
+    if (reloadAll) com.movtery.zalithlauncher.ai.AISettings.reloadAll()
+
     //旧配置兼容：把旧版「液态玻璃」布尔开关迁移为新的玻璃效果
     if (AllSettings.liquidGlass.getValue()) {
         AllSettings.glassLevel.save(GlassLevel.On)

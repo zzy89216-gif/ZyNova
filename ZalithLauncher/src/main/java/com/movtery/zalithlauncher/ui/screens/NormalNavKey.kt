@@ -38,6 +38,26 @@ sealed interface NormalNavKey : TitledNavKey {
     @Serializable data object UnpackDeps: NormalNavKey
     /** 启动器主页屏幕 */
     @Serializable data object LauncherMain : NormalNavKey
+
+    /**
+     * AI 聊天屏幕
+     *
+     * 它同时就是 Agent 界面：聊天与 Agent 是同一个入口，
+     * 用户可以先让 AI 分析问题，再直接让它动手修。
+     */
+    @Serializable data object AIChat : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.ai_title)
+    }
+
+    /**
+     * AI 配置屏幕
+     *
+     * ⚠️ 刻意独立于启动器通用设置：由聊天界面右上角进入，
+     * 不出现在「设置」页面里。
+     */
+    @Serializable data object AIConfig : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.ai_config_title)
+    }
     /** 账号管理屏幕 */
     @Serializable data class AccountManager(
         val loginMenu: FirstLoginMenu = FirstLoginMenu.NONE
