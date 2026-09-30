@@ -183,7 +183,10 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                             )
                         }
 
-                        AgentEvent.ToolStarted, AgentEvent.Done -> Unit
+                        // 工具开始执行：结果出来时会单独发一条 TOOL 消息，这里不用处理
+                        is AgentEvent.ToolStarted -> Unit
+
+                        AgentEvent.Done -> Unit
                     }
                 }
             } catch (e: Exception) {
