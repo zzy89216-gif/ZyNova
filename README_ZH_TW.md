@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icon.png" width="180" alt="ZyNova">
+</p>
+
 # ZyNova
 
 > **Minecraft: Java Edition · Android 啟動器**
