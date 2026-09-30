@@ -40,4 +40,12 @@ class IntSettingUnit(
     override fun updateState(value: Int) {
         this.state = value.coerceIn(valueRange)
     }
+
+    override fun valueAsString(): String = getValue().toString()
+
+    override fun setFromString(value: String): Boolean {
+        val v = value.trim().toIntOrNull() ?: return false
+        save(v)
+        return true
+    }
 }

@@ -39,4 +39,12 @@ class FloatSettingUnit(
     override fun updateState(value: Float) {
         this.state = value.coerceIn(valueRange)
     }
+
+    override fun valueAsString(): String = getValue().toString()
+
+    override fun setFromString(value: String): Boolean {
+        val v = value.trim().toFloatOrNull() ?: return false
+        save(v)
+        return true
+    }
 }

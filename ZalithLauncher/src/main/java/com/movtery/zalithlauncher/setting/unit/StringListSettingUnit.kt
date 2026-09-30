@@ -39,6 +39,14 @@ class StringListSettingUnit(
         launcherMMKV().encode(key, ListParcelable(v))
         return v
     }
+
+    override fun valueAsString(): String = getValue().joinToString(",")
+
+    override fun setFromString(value: String): Boolean {
+        val list = value.split(',', '\n').map { it.trim() }.filter { it.isNotEmpty() }
+        save(list)
+        return true
+    }
 }
 
 @Parcelize

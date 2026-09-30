@@ -1091,6 +1091,8 @@
     <string name="download_assets_install_progress_downloading">下載並安裝資源\n%1$s\n (%2$s / %3$s)</string>
     <string name="download_assets_install_progress_installing">安裝資源\n%s</string>
     <string name="download_assets_install_failed">安裝資源失敗!</string>
+    <string name="download_assets_missing_dependencies_title">部分必需前置未安裝</string>
+    <string name="download_assets_missing_dependencies">資源本體已安裝，但以下必需前置沒有裝上：\n%1$s\n\n請手動補裝它們，否則進入遊戲可能會崩潰。</string>
     <string name="download_assets_id_holder">專案 ID</string>
     <string name="download_assets_id_tip">根據專案 ID 快速取得對應專案</string>
     <string name="download_assets_id_not_found">未找到該專案！</string>

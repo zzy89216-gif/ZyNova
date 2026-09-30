@@ -30,4 +30,11 @@ class StringSettingUnit(key: String, defaultValue: String) : AbstractSettingUnit
         launcherMMKV().putString(key, v).apply()
         return v
     }
+
+    override fun valueAsString(): String = getValue()
+
+    override fun setFromString(value: String): Boolean {
+        save(value)
+        return true
+    }
 }

@@ -73,4 +73,22 @@ abstract class AbstractSettingUnit<V>(
     fun reset() {
         this.state = saveValue(defaultValue)
     }
+
+    /**
+     * 以字符串形式读取当前值。
+     *
+     * 供 AI Agent 与诊断工具按 key 读取设置用；
+     * 不影响任何现有调用路径。
+     */
+    open fun valueAsString(): String = state.toString()
+
+    /**
+     * 用字符串写入设置值。
+     *
+     * 供 AI Agent 按 key 修改设置用。默认返回 false（表示该类型不支持字符串写入），
+     * 各具体类型自行重写。
+     *
+     * @return 是否写入成功（解析失败或类型不支持时为 false）
+     */
+    open fun setFromString(value: String): Boolean = false
 }

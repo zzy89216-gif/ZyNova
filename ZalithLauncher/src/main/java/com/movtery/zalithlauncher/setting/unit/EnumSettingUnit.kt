@@ -38,6 +38,14 @@ class EnumSettingUnit<E : Enum<E>>(
         launcherMMKV().putString(key, v.name).apply()
         return v
     }
+
+    override fun valueAsString(): String = getValue().name
+
+    override fun setFromString(value: String): Boolean {
+        val v = getEnum(value.trim()) ?: getEnum(value.trim().uppercase()) ?: return false
+        save(v)
+        return true
+    }
 }
 
 inline fun <reified E : Enum<E>> enumSettingUnit(

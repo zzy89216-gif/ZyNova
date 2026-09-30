@@ -30,4 +30,18 @@ class BooleanSettingUnit(key: String, defaultValue: Boolean) : AbstractSettingUn
         launcherMMKV().putBoolean(key, v).apply()
         return v
     }
+
+    override fun valueAsString(): String = getValue().toString()
+
+    override fun setFromString(value: String): Boolean {
+        val v = value.trim().lowercase().let {
+            when (it) {
+                "true", "1", "yes", "on" -> true
+                "false", "0", "no", "off" -> false
+                else -> return false
+            }
+        }
+        save(v)
+        return true
+    }
 }

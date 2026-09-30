@@ -39,4 +39,12 @@ class LongSettingUnit(
     override fun updateState(value: Long) {
         this.state = value.coerceIn(valueRange)
     }
+
+    override fun valueAsString(): String = getValue().toString()
+
+    override fun setFromString(value: String): Boolean {
+        val v = value.trim().toLongOrNull() ?: return false
+        save(v)
+        return true
+    }
 }

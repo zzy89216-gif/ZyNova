@@ -269,6 +269,8 @@
     <string name="download_assets_install_progress_downloading">下载安装资源中\n%1$s\n (%2$s / %3$s)</string>
     <string name="download_assets_install_progress_installing">安装资源中\n%s</string>
     <string name="download_assets_install_failed">安装资源失败！</string>
+    <string name="download_assets_missing_dependencies_title">部分必需前置未安装</string>
+    <string name="download_assets_missing_dependencies">资源本体已安装，但以下必需前置没有装上：\n%1$s\n\n请手动补装它们，否则进入游戏可能会崩溃。</string>
     <string name="download_assets_quick_install_resolving">正在解析资源与前置依赖…</string>
     <string name="download_assets_quick_install_progress">一键安装 (%1$d/%2$d)：%3$s</string>
     <string name="download_assets_quick_install_done">%1$s 已安装完成</string>

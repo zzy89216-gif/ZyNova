@@ -98,37 +98,46 @@ object ResourceManager {
     /**
      * 安装一个已确定的资源版本（下载 → 校验 → 安装）
      *
-     * @return 实际安装的文件数量
+     * @return 安装结果，**包含没能装上的必需前置依赖**
+     *
+     * ⚠️ 调用方必须检查 [ResourceInstallResult.hasMissingRequiredDependencies]：
+     * 主资源装上了、前置没装上时安装不会失败，但如果不说，
+     * 用户只会在进游戏时看到崩溃，却完全不知道原因。
      */
     suspend fun installVersion(
         version: ResourceVersion,
         type: ResourceType,
         instance: Version,
         onProgress: (ResourceDownloadProgress) -> Unit = {}
-    ): Int {
+    ): ResourceInstallResult {
         val plan = ResourceInstallManager.buildInstallPlan(
             version = version,
             type = type,
             instance = instance
         )
 
-        //前置依赖缺失不会让安装失败，但必须留下痕迹，
-        //否则用户只会看到「装好了」，进游戏却因为缺少前置而崩溃
-        if (plan.hasUnresolvedRequiredDependencies) {
-            Logger.warning(
-                TAG,
-                "Installed ${version.projectId} but ${plan.unresolvedRequiredDependencies.size} " +
-                        "required dependencies could not be resolved: " +
-                        plan.unresolvedRequiredDependencies.joinToString { "${it.provider}:${it.projectId}" }
-            )
-        }
-
-        return ResourceInstallManager.install(
+        val result = ResourceInstallManager.install(
             plan = plan.entries,
             type = type,
             instance = instance,
             onProgress = onProgress
         )
+
+        //把「解析不到」与「下载失败」合并成一份完整缺失清单
+        val missing = (plan.unresolvedRequiredDependencies + result.missingRequiredDependencies)
+            .distinctBy { it.key }
+
+        if (missing.isNotEmpty()) {
+            //前置依赖缺失不会让安装失败，但必须留下痕迹，
+            //否则用户只会看到「装好了」，进游戏却因为缺少前置而崩溃
+            Logger.warning(
+                TAG,
+                "Installed ${version.projectId} but ${missing.size} required dependencies are missing: " +
+                        missing.joinToString()
+            )
+        }
+
+        return result.copy(missingRequiredDependencies = missing)
     }
 
     /**
@@ -137,7 +146,7 @@ object ResourceManager {
      * 调用方只需要提供来源、资源 ID 与目标实例，
      * 版本匹配、文件选择、下载、校验、安装全部由核心完成。
      *
-     * @return 实际安装的资源版本
+     * @return 安装到的资源版本 + 安装结果（含缺失的必需前置依赖）
      * @throws ResourceMatchException 匹配失败时抛出，携带具体原因
      */
     suspend fun installToInstance(
@@ -146,14 +155,25 @@ object ResourceManager {
         type: ResourceType,
         instance: Version,
         onProgress: (ResourceDownloadProgress) -> Unit = {}
-    ): ResourceVersion {
+    ): ResourceInstallOutcome {
         val matched = matchVersion(platform, projectId, type, instance)
-        installVersion(
+        val result = installVersion(
             version = matched,
             type = type,
             instance = instance,
             onProgress = onProgress
         )
-        return matched
+        return ResourceInstallOutcome(version = matched, result = result)
     }
 }
+
+/**
+ * 「极简安装」的完整产物
+ *
+ * @param version 实际安装的资源版本
+ * @param result 安装结果（含缺失的必需前置依赖）
+ */
+data class ResourceInstallOutcome(
+    val version: ResourceVersion,
+    val result: ResourceInstallResult
+)

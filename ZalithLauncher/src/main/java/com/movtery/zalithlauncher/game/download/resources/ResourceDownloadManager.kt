@@ -31,6 +31,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
@@ -87,6 +88,26 @@ data class ResourceDownloadResult(
 )
 
 /**
+ * 单个文件下载失败
+ *
+ * 非必需文件（例如前置依赖）下载失败时，以前只会 `return null` 静默丢弃：
+ * 主资源装上了、前置没装上，用户却看不到任何提示，进游戏才崩。
+ * 现在把失败原因一并带出来，由上层汇总提示。
+ */
+data class ResourceDownloadFailure(
+    val request: ResourceDownloadRequest,
+    val cause: Throwable?
+)
+
+/**
+ * 一批下载的完整结果（成功 + 失败）
+ */
+data class ResourceDownloadOutcome(
+    val results: List<ResourceDownloadResult>,
+    val failures: List<ResourceDownloadFailure> = emptyList()
+)
+
+/**
  * ZyNova 统一下载管理器
  *
  * Mod、资源包、光影、存档以及它们的前置依赖全部使用这里的同一个入口，
@@ -109,7 +130,7 @@ object ResourceDownloadManager {
     private const val MAX_RETRIES = 2
 
     /**
-     * 批量下载资源文件
+     * 批量下载资源文件（只返回成功结果）
      *
      * @param cacheDir 临时缓存目录
      * @param requests 下载请求列表
@@ -122,16 +143,33 @@ object ResourceDownloadManager {
         requests: List<ResourceDownloadRequest>,
         concurrency: Int = DEFAULT_CONCURRENCY,
         onProgress: (ResourceDownloadProgress) -> Unit = {}
-    ): List<ResourceDownloadResult> = withContext(Dispatchers.IO) {
-        if (requests.isEmpty()) return@withContext emptyList()
+    ): List<ResourceDownloadResult> =
+        downloadAllDetailed(cacheDir, requests, concurrency, onProgress).results
+
+    /**
+     * 批量下载资源文件，并**如实返回失败项**
+     *
+     * 与 [downloadAll] 的唯一区别是会额外给出失败清单。
+     * 前置依赖属于「非必需」，失败不会中断整批下载 —— 但必须能被上层看到，
+     * 否则就会出现「提示安装成功、进游戏却缺前置崩溃」的经典问题。
+     */
+    suspend fun downloadAllDetailed(
+        cacheDir: File,
+        requests: List<ResourceDownloadRequest>,
+        concurrency: Int = DEFAULT_CONCURRENCY,
+        onProgress: (ResourceDownloadProgress) -> Unit = {}
+    ): ResourceDownloadOutcome = withContext(Dispatchers.IO) {
+        if (requests.isEmpty()) return@withContext ResourceDownloadOutcome(emptyList())
 
         val totalCount = requests.size
         val totalBytes = requests.sumOf { it.size }
         val finishedCount = AtomicInteger(0)
         val downloadedBytes = AtomicLong(0L)
         val semaphore = Semaphore(concurrency.coerceAtLeast(1))
+        //并发写入，用同步列表保证线程安全
+        val failures = Collections.synchronizedList(mutableListOf<ResourceDownloadFailure>())
 
-        try {
+        val results = try {
             coroutineScope {
                 requests.map { request ->
                     async {
@@ -143,7 +181,8 @@ object ResourceDownloadManager {
                                 totalBytes = totalBytes,
                                 finishedCount = finishedCount,
                                 downloadedBytes = downloadedBytes,
-                                onProgress = onProgress
+                                onProgress = onProgress,
+                                failures = failures
                             )
                         }
                     }
@@ -155,12 +194,17 @@ object ResourceDownloadManager {
                 FileUtils.deleteQuietly(File(cacheDir, request.fileName + TEMP_FILE_SUFFIX))
             }
         }
+
+        ResourceDownloadOutcome(
+            results = results,
+            failures = failures.toList()
+        )
     }
 
     /**
      * 下载单个文件
      *
-     * 非必需文件失败时返回 null，不中断整批下载。
+     * 非必需文件失败时记录到 [failures] 并返回 null，不中断整批下载。
      */
     private suspend fun downloadOne(
         cacheDir: File,
@@ -169,12 +213,15 @@ object ResourceDownloadManager {
         totalBytes: Long,
         finishedCount: AtomicInteger,
         downloadedBytes: AtomicLong,
-        onProgress: (ResourceDownloadProgress) -> Unit
+        onProgress: (ResourceDownloadProgress) -> Unit,
+        failures: MutableList<ResourceDownloadFailure>
     ): ResourceDownloadResult? {
         if (request.downloadUrls.isEmpty()) {
-            if (request.required) {
-                throw ResourceProviderException("No download url available for ${request.fileName}")
-            }
+            val e = ResourceProviderException("No download url available for ${request.fileName}")
+            if (request.required) throw e
+            //前置依赖没有可用下载地址 → 必须被上层看到
+            failures.add(ResourceDownloadFailure(request, e))
+            finishedCount.incrementAndGet()
             return null
         }
 
@@ -204,6 +251,7 @@ object ResourceDownloadManager {
         }.getOrElse { e ->
             if (request.required) throw e
             Logger.warning(TAG, "Optional resource failed to download: ${request.fileName}", e)
+            failures.add(ResourceDownloadFailure(request, e))
             null
         }.also {
             finishedCount.incrementAndGet()

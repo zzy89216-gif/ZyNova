@@ -268,6 +268,8 @@
     <string name="download_assets_install_progress_downloading">Downloading and installing assets\n%1$s\n (%2$s / %3$s)</string>
     <string name="download_assets_install_progress_installing">Installing assets\n%s</string>
     <string name="download_assets_install_failed">Failed to install assets!</string>
+    <string name="download_assets_missing_dependencies_title">Some required dependencies were not installed</string>
+    <string name="download_assets_missing_dependencies">The asset itself was installed, but the following required dependencies could not be installed:\n%1$s\n\nPlease install them manually, otherwise the game may crash on launch.</string>
     <string name="download_assets_quick_install_resolving">Resolving asset and dependencies…</string>
     <string name="download_assets_quick_install_progress">One-click install (%1$d/%2$d): %3$s</string>
     <string name="download_assets_quick_install_done">%1$s has been installed</string>

@@ -40,6 +40,17 @@ abstract class SettingsRegistry {
 
     fun reloadAll() = refreshableList.forEach { it.init() }
 
+    /**
+     * 全部设置项（只读视图）。
+     *
+     * 供 AI Agent 列出 / 读取设置用；不影响任何现有 UI 逻辑。
+     */
+    fun units(): List<AbstractSettingUnit<*>> = refreshableList.toList()
+
+    /** 按 key 找设置项 */
+    fun findUnit(key: String): AbstractSettingUnit<*>? =
+        refreshableList.firstOrNull { it.key == key }
+
     protected fun boolSetting(key: String, def: Boolean) =
         BooleanSettingUnit(key, def).also { refreshableList.add(it) }
 

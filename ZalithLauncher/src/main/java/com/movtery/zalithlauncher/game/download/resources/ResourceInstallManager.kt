@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.game.download.resources
 
+import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersionByLocalFile
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.saves.unpackSaveZip
@@ -86,9 +87,34 @@ sealed class ResourceMatchException(
 data class ResourceInstallEntry(
     val version: ResourceVersion,
     /** 是否为前置依赖 */
-    val isDependency: Boolean
+    val isDependency: Boolean,
+    /**
+     * 是否为**必需**条目。
+     *
+     * 主资源恒为 `true`；前置依赖取它自己声明的类型。
+     * 下载时用它决定「这个文件下载失败要不要中断整批」——
+     * 必需前置下载失败**绝不能**像以前那样被当成可选文件静默跳过。
+     */
+    val required: Boolean = true
 ) {
     val fileName: String? get() = version.file?.fileName
+}
+
+/**
+ * 一个**没能装上**的必需前置依赖
+ *
+ * @param provider 依赖来源
+ * @param projectId 依赖项目 ID
+ * @param reason 失败原因（解析不到 / 与实例不兼容 / 下载失败）
+ */
+data class ResourceMissingDependency(
+    val provider: Platform,
+    val projectId: String,
+    val reason: String
+) {
+    val key: String get() = "$provider:$projectId"
+
+    override fun toString(): String = "$key（$reason）"
 }
 
 /**
@@ -103,10 +129,33 @@ data class ResourceInstallEntry(
  */
 data class ResourceInstallPlan(
     val entries: List<ResourceInstallEntry>,
-    val unresolvedRequiredDependencies: List<ResourceDependency> = emptyList()
+    val unresolvedRequiredDependencies: List<ResourceMissingDependency> = emptyList()
 ) {
     val hasUnresolvedRequiredDependencies: Boolean
         get() = unresolvedRequiredDependencies.isNotEmpty()
+}
+
+/**
+ * 一次安装的结果
+ *
+ * @param installedCount 实际落到实例目录里的文件数
+ * @param missingRequiredDependencies 没能装上的**必需**前置依赖
+ *        （解析不到、与实例不兼容、或下载失败）
+ *
+ * ⚠️ 关键点：`missingRequiredDependencies` 非空意味着**安装是残缺的**，
+ * 调用方必须提示用户，否则用户以为装好了、进游戏却因为缺前置崩溃。
+ */
+data class ResourceInstallResult(
+    val installedCount: Int,
+    val missingRequiredDependencies: List<ResourceMissingDependency> = emptyList()
+) {
+    /** 是否有必需前置没装上 */
+    val hasMissingRequiredDependencies: Boolean
+        get() = missingRequiredDependencies.isNotEmpty()
+
+    /** 汇总成一行可读文本，方便直接塞进提示 */
+    fun missingDependenciesText(): String =
+        missingRequiredDependencies.joinToString("\n") { it.toString() }
 }
 
 /**
@@ -214,71 +263,52 @@ object ResourceInstallManager {
         return versions
             .sortedByDescending { it.publishedAt }
             .firstOrNull { version ->
-                version.file != null &&
-                        version.supportsGameVersion(info.minecraftVersion) &&
-                        (!type.requiresLoader || version.supportsLoader(loaderName))
+                isCompatibleWith(
+                    version = version,
+                    type = type,
+                    minecraftVersion = info.minecraftVersion,
+                    loaderName = loaderName
+                )
             }
             ?: throw ResourceMatchException.NoCompatibleVersion(info.minecraftVersion, loaderName)
     }
 
     /**
-     * 构建安装计划：主资源 + 必需的（递归）前置依赖
+     * 判断一个资源版本能否用在目标实例上
      *
-     * @param type 资源类别；同时决定前置依赖按哪种资源去查询
-     * @param includeOptionalDependencies 是否同时安装可选依赖
+     * 规则集中在这里，避免「主资源」与「前置依赖」用两套判断标准：
+     * - 必须有可下载文件
+     * - Minecraft 版本要匹配
+     * - 只有需要加载器的资源类型（Mod / 整合包）才强制校验加载器；
+     *   资源包、光影、存档的加载器标注在各来源之间并不统一，
+     *   强制匹配会把本来可用的资源挡在外面
      */
-    suspend fun buildInstallPlan(
+    fun isCompatibleWith(
         version: ResourceVersion,
         type: ResourceType,
-        instance: Version,
-        includeOptionalDependencies: Boolean = false
-    ): ResourceInstallPlan {
-        val plan = mutableListOf<ResourceInstallEntry>()
-        val unresolvedRequired = mutableListOf<ResourceDependency>()
-        val visited = mutableSetOf<String>()
-
-        suspend fun collect(current: ResourceVersion, isDependency: Boolean) {
-            val key = "${current.provider}:${current.projectId}:${current.versionId}"
-            if (!visited.add(key)) return
-            if (current.file == null) return
-
-            plan.add(ResourceInstallEntry(current, isDependency))
-
-            current.dependencies
-                .filter { it.isRequired || includeOptionalDependencies }
-                .forEach { dependency ->
-                    val resolved = resolveDependency(dependency, type, instance)
-                    if (resolved == null) {
-                        //前置依赖解析失败不能静默丢弃：
-                        //主资源会被装上，但游戏内会因为缺少前置而崩溃，用户却不知道原因
-                        Logger.warning(
-                            TAG,
-                            "Unresolved dependency ${dependency.provider}:${dependency.projectId} " +
-                                    "(required=${dependency.isRequired}) for ${current.projectId}"
-                        )
-                        if (dependency.isRequired) unresolvedRequired.add(dependency)
-                    } else {
-                        collect(resolved, true)
-                    }
-                }
-        }
-
-        collect(version, false)
-        return ResourceInstallPlan(
-            entries = plan,
-            unresolvedRequiredDependencies = unresolvedRequired
-        )
+        minecraftVersion: String,
+        loaderName: String?
+    ): Boolean {
+        if (version.file == null) return false
+        if (!version.supportsGameVersion(minecraftVersion)) return false
+        if (type.requiresLoader && !version.supportsLoader(loaderName)) return false
+        return true
     }
 
     /**
      * 解析单个依赖对应的可用版本
      *
-     * 优先使用作者指定的精确版本，失败时回退为「选择适配当前实例的最新版本」。
+     * 1. 优先使用作者指定的精确版本
+     * 2. 但**必须**先确认该精确版本与当前实例兼容：
+     *    作者钉死的版本可能是给别的 Minecraft 版本 / 加载器构建的，
+     *    直接装上去比不装更容易崩
+     * 3. 不兼容或解析不到时，回退为「选择适配当前实例的最新版本」
      */
     private suspend fun resolveDependency(
         dependency: ResourceDependency,
         type: ResourceType,
-        instance: Version
+        minecraftVersion: String,
+        loaderName: String?
     ): ResourceVersion? {
         val provider = runCatching { ResourceProviders.of(dependency.provider) }.getOrElse { e ->
             Logger.warning(TAG, "Unknown resource provider: ${dependency.provider} (${e.message})")
@@ -286,18 +316,33 @@ object ResourceInstallManager {
         }
 
         dependency.versionId?.let { versionId ->
-            runCatching {
+            val pinned = runCatching {
                 provider.getVersionById(versionId, dependency.projectId, type)
             }.onFailure { e ->
                 Logger.warning(
                     TAG,
                     "Failed to load the dependency version $versionId of ${dependency.projectId}: ${e.message}"
                 )
-            }.getOrNull()?.let { return it }
+            }.getOrNull()
+
+            if (pinned != null) {
+                if (isCompatibleWith(pinned, type, minecraftVersion, loaderName)) {
+                    return pinned
+                }
+                Logger.warning(
+                    TAG,
+                    "The pinned dependency version $versionId of ${dependency.projectId} is not compatible " +
+                            "with $minecraftVersion / ${loaderName ?: "vanilla"}; " +
+                            "falling back to the latest compatible version"
+                )
+            }
         }
 
         return runCatching {
-            resolveCompatibleVersion(provider, dependency.projectId, type, instance)
+            val versions = provider.getVersions(dependency.projectId, type)
+            versions
+                .sortedByDescending { it.publishedAt }
+                .firstOrNull { isCompatibleWith(it, type, minecraftVersion, loaderName) }
         }.onFailure { e ->
             Logger.warning(
                 TAG,
@@ -322,8 +367,8 @@ object ResourceInstallManager {
         type: ResourceType,
         instance: Version,
         onProgress: (ResourceDownloadProgress) -> Unit = {}
-    ): Int {
-        if (plan.isEmpty()) return 0
+    ): ResourceInstallResult {
+        if (plan.isEmpty()) return ResourceInstallResult(installedCount = 0)
 
         val targetFolder = File(instance.getGameDir(), type.classes.versionFolder.folderName)
         if (!targetFolder.exists() && !targetFolder.mkdirs()) {
@@ -332,28 +377,43 @@ object ResourceInstallManager {
 
         //1. 统一交给下载管理器（并发、重试、续传、校验都在这里完成）
         val cacheDir = File(PathManager.DIR_CACHE, "resources")
+        val entryByFileName = linkedMapOf<String, ResourceInstallEntry>()
         val requests = plan.mapNotNull { entry ->
             entry.version.file?.let { file ->
+                entryByFileName.putIfAbsent(file.fileName, entry)
                 ResourceDownloadRequest(
                     fileName = file.fileName,
                     downloadUrls = file.downloadUrls,
                     sha1 = file.sha1,
                     size = file.size,
-                    //前置依赖失败不应该让主资源也失败
+                    //主资源下载失败必须整体失败；
+                    //前置依赖失败不中断整批，但会通过 failures 如实上报（见下一步），
+                    //不再像以前那样「静默跳过、界面仍显示安装成功」
                     required = !entry.isDependency
                 )
             }
         }
 
-        val downloaded = ResourceDownloadManager.downloadAll(
+        val outcome = ResourceDownloadManager.downloadAllDetailed(
             cacheDir = cacheDir,
             requests = requests,
             onProgress = onProgress
         )
 
-        //2. 安装到目标实例
+        //2. 必需的前置依赖下载失败 → 记录为缺失，交给上层提示用户
+        val missingRequired = outcome.failures.mapNotNull { failure ->
+            val entry = entryByFileName[failure.request.fileName] ?: return@mapNotNull null
+            if (!entry.isDependency || !entry.required) return@mapNotNull null
+            ResourceMissingDependency(
+                provider = entry.version.provider,
+                projectId = entry.version.projectId,
+                reason = "下载失败：${failure.cause?.message ?: "未知原因"}"
+            )
+        }
+
+        //3. 安装到目标实例
         var installed = 0
-        downloaded.forEach { result ->
+        outcome.results.forEach { result ->
             val targetFile = File(targetFolder, result.file.name)
             if (targetFile.exists() && !targetFile.delete()) {
                 throw IOException("Failed to delete the existing resource file: ${targetFile.absolutePath}")
@@ -374,8 +434,11 @@ object ResourceInstallManager {
             installed++
         }
 
-        //3. 清理本次的缓存文件
-        downloaded.forEach { FileUtils.deleteQuietly(it.file) }
-        return installed
+        //4. 清理本次的缓存文件
+        outcome.results.forEach { FileUtils.deleteQuietly(it.file) }
+        return ResourceInstallResult(
+            installedCount = installed,
+            missingRequiredDependencies = missingRequired
+        )
     }
 }

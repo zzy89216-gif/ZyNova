@@ -87,7 +87,7 @@ fun quickInstallAsset(
                 val resourceVersion = version.toResourceVersion(projectId ?: version.platformId())
 
                 //2. 统一下载 → 校验 → 安装（统一走资源管理核心）
-                ResourceManager.installVersion(
+                val result = ResourceManager.installVersion(
                     version = resourceVersion,
                     type = type,
                     instance = currentVersion,
@@ -103,6 +103,20 @@ fun quickInstallAsset(
                         )
                     }
                 )
+
+                //3. 必需前置没装上必须告诉用户：
+                //   主资源已经装好，但如果不说，用户进游戏只会看到崩溃
+                if (result.hasMissingRequiredDependencies) {
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.download_assets_missing_dependencies_title),
+                            message = androidText(
+                                R.string.download_assets_missing_dependencies,
+                                result.missingDependenciesText()
+                            )
+                        )
+                    )
+                }
             },
             onError = { e ->
                 Logger.warning(TAG, "Quick install failed.", e)
@@ -157,7 +171,7 @@ fun quickInstallResource(
                 task.updateProgress(-1f)
                 task.updateMessage(androidText(R.string.download_assets_quick_install_resolving))
 
-                val installed = ResourceManager.installToInstance(
+                val outcome = ResourceManager.installToInstance(
                     platform = platform,
                     projectId = projectId,
                     type = ResourceType.of(classes),
@@ -177,9 +191,22 @@ fun quickInstallResource(
                 task.updateMessage(
                     androidText(
                         R.string.download_assets_quick_install_done,
-                        installed.displayName
+                        outcome.version.displayName
                     )
                 )
+
+                //必需前置没装上必须告诉用户，否则进游戏只会看到崩溃
+                if (outcome.result.hasMissingRequiredDependencies) {
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.download_assets_missing_dependencies_title),
+                            message = androidText(
+                                R.string.download_assets_missing_dependencies,
+                                outcome.result.missingDependenciesText()
+                            )
+                        )
+                    )
+                }
             },
             onError = { e ->
                 Logger.warning(TAG, "Quick install from search result failed.", e)
