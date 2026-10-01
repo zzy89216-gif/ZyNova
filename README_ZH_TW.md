@@ -25,6 +25,8 @@
 > **ZyNova 並非 ZalithLauncher2 官方版本。**
 >
 > ZyNova 是基於 ZalithLauncher2 開源程式碼進行開發的非官方修改專案。
+>
+> 內建 **全域 AI Agent**：不只是聊天，而是能**直接讀日誌、管模組、改設定、裝資源、啟動遊戲**。
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>

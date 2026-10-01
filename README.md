@@ -25,6 +25,9 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 > **ZyNova is NOT an official version of ZalithLauncher2.**
 >
 > ZyNova is an unofficial modified project based on ZalithLauncher2's open-source code.
+>
+> It ships with a **built-in AI Agent** that can really read your logs, manage mods, edit
+> configs, install resources and launch the game for you — not just give advice.
 
 - GitHub: <https://github.com/zzy89216-gif/ZyNova>
 - Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
