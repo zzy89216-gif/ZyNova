@@ -67,15 +67,20 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 **ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
 independently.** The two registrations involved are:
 
-| | Display name | Client ID | Used by this build |
-|---|---|---|---|
-| **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ yes |
-| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | `（已移除）` | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
+| | Display name | Client ID | Mojang allow list | Used by this build |
+|---|---|---|---|---|
+| **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **approved (2026-09-30)** | ✅ yes |
+| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | `（已移除）` | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
 
 - Only an application registration that is on **Minecraft's application allow list** can complete
   premium sign-in. Otherwise `POST /authentication/login_with_xbox` answers
   `403 Invalid app registration, see https://aka.ms/AppRegInfo`, no matter how OAuth, Xbox Live and
   XSTS went.
+- ✅ **ZyNova's own registration is on that allow list.** The Mojang Enforcement AppID review was
+  completed on **2026-09-30** and stated that the submission in that batch
+  *"met the required criteria and have been approved for our allow list"*.
+  **Premium sign-in therefore works with the current builds — ZyNova no longer borrows the
+  upstream project's registration.**
 - The Client ID is **injected at build time** through the repository secret `OAUTH_CLIENT_ID`;
   it is never hard-coded in the source. Its priority is
   **environment variable (CI secret) > `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**.

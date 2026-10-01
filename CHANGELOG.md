@@ -54,6 +54,15 @@
 - **缺失信息传不到界面** → 现在一路传到下载界面并提示用户，
   新增 4 语言字符串（英 / 简 / 繁 / 日）
 
+### 说明：正版登录已获 Mojang 白名单批准 ✅
+
+- ZyNova 自己的 Microsoft 应用注册（`7b66e168-…`）已于 **2026-09-30**
+  通过 Mojang Enforcement 的 AppID 审核，进入 **Minecraft 应用程序允许名单**：
+  「*met the required criteria and have been approved for our allow list*」
+- 因此**当前版本的正版登录可以正常完成**，不再需要借用上游 ZalithLauncher2 的应用注册
+- ⚠️ 这一变化**不需要任何代码或构建改动**：26.4.2 起构建时注入的就已经是
+  ZyNova 自己的 Client ID；此前失败仅因为该申请尚在审核中
+
 ### 兼容性
 
 - 未改动认证、渲染器、下载、实例管理内部实现

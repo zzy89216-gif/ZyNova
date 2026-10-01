@@ -71,15 +71,20 @@
 **ZyNova は ZalithLauncher2 の非公式フォークであり、両者は別プロジェクトで、独立して
 保守されています。** 関係する 2 つのアプリ登録は次のとおりです：
 
-| | 表示名 | Client ID | 本ビルドでの使用 |
-|---|---|---|---|
-| **ZyNova 自身のアプリ登録** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **使用中** |
-| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | `（已移除）` | ❌ 未使用（26.4.0 / 26.4.1 で使用） |
+| | 表示名 | Client ID | Mojang 許可リスト | 本ビルドでの使用 |
+|---|---|---|---|---|
+| **ZyNova 自身のアプリ登録** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **承認済み（2026-09-30）** | ✅ **使用中** |
+| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | `（已移除）` | ✅ 承認済み | ❌ 未使用（26.4.0 / 26.4.1 で使用） |
 
 - **Minecraft のアプリケーション許可リストに載っているアプリ登録だけ**が正規サインインを
   完了できます。そうでない場合、`POST /authentication/login_with_xbox` は
   `403 Invalid app registration, see https://aka.ms/AppRegInfo` を返します
   （OAuth / Xbox Live / XSTS の成否とは無関係です）
+- ✅ **ZyNova 自身のアプリ登録は、この許可リストに掲載されました。**
+  Mojang Enforcement が **2026-09-30** に AppID レビューを完了し、このバッチの申請について
+  「**met the required criteria and have been approved for our allow list**」
+  と通知してきました。**したがって現在のビルドでは正規サインインが正常に完了します
+  ——上流プロジェクトのアプリ登録を借りる必要はもうありません。**
 - Client ID はリポジトリ Secret `OAUTH_CLIENT_ID` により**ビルド時に注入**され、
   ソースにハードコードされません。優先順位は
   **環境変数（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**

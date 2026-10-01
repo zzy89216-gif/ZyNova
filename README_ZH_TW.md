@@ -63,15 +63,19 @@
 **ZyNova 是 ZalithLauncher2 的非官方分支（fork），兩者是不同專案、獨立維護。**
 兩個應用註冊的關係如下：
 
-| | 顯示名稱 | Client ID | 本版本是否使用 |
-|---|---|---|---|
-| **ZyNova 自己的應用註冊** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **正在使用** |
-| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | `（已移除）` | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+| | 顯示名稱 | Client ID | Mojang 允許名單 | 本版本是否使用 |
+|---|---|---|---|---|
+| **ZyNova 自己的應用註冊** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **已獲批准（2026-09-30）** | ✅ **正在使用** |
+| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | `（已移除）` | ✅ 已獲批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
 
 - **只有處於 Minecraft 應用程式允許名單中的應用註冊**才能完成正版登入；
   否則 `POST /authentication/login_with_xbox` 會回傳
   `403 Invalid app registration, see https://aka.ms/AppRegInfo`，
   與 OAuth / Xbox Live / XSTS 是否成功無關
+- ✅ **ZyNova 自己的應用註冊已經進入該允許名單。** Mojang Enforcement 於 **2026-09-30**
+  完成 AppID 審核，並明確告知該批次的申請
+  「**met the required criteria and have been approved for our allow list**」。
+  **因此目前版本的正版登入可以正常完成——不再需要借用上游專案的應用註冊。**
 - Client ID 透過倉庫 Secret `OAUTH_CLIENT_ID` **在建置時注入**，不寫死在原始碼中；
   取值優先順序：**環境變數（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**
 - **你會看到的現象**：微軟帳號的「已連接的應用程式 / 應用程式與裝置」頁面會以上表中的**顯示名稱**出現

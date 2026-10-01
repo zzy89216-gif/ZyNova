@@ -149,6 +149,11 @@
 
 **三、⚠️ 关键前提：白名单（改这块前必读）**
 
+> ✅ **当前状态（2026-09-30 起）：ZyNova 自己的应用注册已获批准。**
+> Mojang Enforcement 于 **2026-09-30** 完成 AppID 审核，明确告知该批次申请
+> 「*met the required criteria and have been approved for our allow list*」。
+> 因此**当前版本的正版登录可以正常完成**，无需再借用上游应用注册。
+
 **只有处于 Minecraft 应用程序允许名单中的应用注册，才能完成正版登录。**
 
 - 否则 `POST https://api.minecraftservices.com/authentication/login_with_xbox` 会返回
@@ -244,10 +249,14 @@ HTTP 403
 > **这是本节最重要的一节。** ZyNova 与 ZalithLauncher2 是两个不同项目，
 > 但**正版登录所用的应用注册属于 ZalithLauncher2**。请不要把二者混为一谈。
 
-| | 显示名称 | Client ID | 所属项目 | Mojang 允许名单 | 当前状态 |
+> ⚠️ **下表描述的是 26.4.1 当时的状态，已不是现状。**
+> 现状见本节上方的「三、关键前提」：**ZyNova 自己的应用注册已于 2026-09-30 获批准，
+> 26.4.2 起构建使用的就是它。**
+
+| | 显示名称 | Client ID | 所属项目 | Mojang 允许名单（26.4.1 当时） | 26.4.1 的状态 |
 |---|---|---|---|---|---|
 | **上游应用注册** | ZalithLauncher | `（已移除）` | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 正在使用它构建** |
-| **本项目的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ZyNova | ❌ 尚未批准 | ❌ 已保留但**不使用** |
+| **本项目的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ZyNova | ⏳ 当时仍在审核 | ❌ 已保留但**未使用** |
 
 - **ZyNova 自己的 Entra 应用（当前未生效）**：支持账户类型「所有 Microsoft 帐户用户」，
   已开启公共客户端流，**未创建 Client Secret**。
