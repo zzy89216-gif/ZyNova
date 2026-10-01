@@ -23,10 +23,82 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.1.0**（`launcher_version_code=270100`）
+**当前版本：27.1.1**（`launcher_version_code=270101`）
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.1.1 Agent 无轮数上限 + 历史对话 + 缺陷修复 ✅
+
+**一、本版本做了什么**
+
+1. **移除 Agent 工具调用的轮数上限**（原来 12 轮）
+2. **历史对话与侧边栏**
+3. **修复 6 个缺陷** + 清理死代码 + 错误信息本地化
+
+**二、移除轮数上限**
+
+- `AISettings.maxAgentSteps` 设置项已**删除**；`AIAgent.run()` 的 `maxSteps` 参数已**删除**
+- Agent 现在一直循环到「模型不再返回工具调用」为止；用户随时可点「停止」（协程取消）
+- 唯一保留的保护是 **重复调用保护**：`MAX_IDENTICAL_CALLS = 6`，
+  同一个工具被用**完全相同的参数**重复调用超过 6 次才判定死循环并停止
+  - 实现：`callSignatures: MutableMap<String, Int>`，key 为 `工具名 \u0000 参数`
+  - **不是步数限制**：正常的多步任务（调不同工具 / 参数不同）永远不会触发
+
+**三、历史对话与侧边栏**
+
+| 文件 | 作用 |
+|---|---|
+| `ai/conversation/AIConversation.kt` | 对话模型 + 摘要模型；标题取第一条用户消息 |
+| `ai/conversation/AIConversationStore.kt` | 文件式持久化（一段对话一个 JSON + `index.json`） |
+| `ui/AIChatScreen.kt` 的 `ConversationSidebar` | 侧边栏（自绘，未用 Material3 Drawer） |
+
+- 存储位置：`DIR_FILES_PRIVATE/ai_conversations/`
+- **为什么不用 Room**：现有库是账号 / 路径等实体，
+  加表要改 schema version 并写迁移，风险大于收益；对话是整体读写，用文件更自然
+- 索引损坏时**自动扫目录重建**；解析失败的文件**不会被删除**（宁可侧边栏看不到，也不删用户数据）
+- 侧边栏不用 `ModalNavigationDrawer`：Material3 是 alpha 版且项目从未用过，
+  自绘面板零 API 风险，且能贴合 ZyNova 的卡片 / 玻璃风格
+
+**四、修复的缺陷（真机 + 代码复查发现）**
+
+| # | 缺陷 | 影响 | 修复 |
+|---|---|---|---|
+| 1 | SSE 是阻塞读，协程取消后仍卡在读取 | 点「停止」最长要等 5 分钟才停 | 协程取消时 `invokeOnCompletion { resp.close() }` |
+| 2 | `read_log` 的 `file` 参数含 `../` 可越界 | **安全**：能读允许目录外的文件 | 统一走 `AIToolSupport.resolveInside` 白名单校验 |
+| 3 | 读日志直接 `readText()` | 几百 MB 日志 → **OOM** | 按需只读头 / 尾一段，尾部用 `RandomAccessFile` |
+| 4 | 落盘协程与切换对话竞争 | 旧消息可能写进**新对话**的 id | 调用时捕获快照 + `limitedParallelism(1)` 串行落盘 |
+| 5 | 系统提示写死「用中文回答」 | 非中文用户体验错误 | 改为**跟随用户提问语言** |
+| 6 | 每个 token 遍历重建整个消息列表 | 流式输出越久越卡 | 改为 `replaceMessage(id)` 只更新一条 |
+
+**五、UI 优化**
+
+- 工具执行期间显示「执行中」（`AIToolResult.running`，落盘前会清掉）
+- 自动滚动：只在**已贴底**时跟随，且 `scrollToItem`（瞬时）替代 `animateScrollToItem`
+- 输入框支持键盘「发送」键（`ImeAction.Send`）
+- 「清空当前对话」与「删除对话」都加二次确认
+- **API Key 默认以密码形式显示**（`PasswordVisualTransformation` + 眼睛切换）
+- 模型列表支持筛选并限高 320dp
+
+**六、代码质量**
+
+- 删除死代码：ViewModel 中 5 个从未使用的模型拉取成员、
+  `postJsonForText` / `AI_SSE_MEDIA`、7 个未使用 import
+- 抽出 `ai/AIModelRepository.kt`：聊天界面与配置界面不再各写一遍模型拉取
+- 错误信息本地化：`ai/AIStringRes.kt` 提供 `aiString()`（无 Context 处取字符串），
+  新增 17 条 × 4 语言
+
+**七、⚠️ 本版本仍未本地化的部分（有意为之）**
+
+工具**返回给模型的正文**（`AIToolSupport` / 各工具的返回值、参数 description）仍是中文。
+这些内容是给模型读的诊断数据，模型会用自己的话转述给用户；
+把它们全部翻译既没有收益，也会让工具输出与日志 / 路径等原文对不上。
+
+**八、兼容性**
+
+- 未改动认证、渲染器、下载、实例管理内部实现
+- 未改动启动器通用设置页面
+- 27.1.0 没有历史记录功能，升级后从新对话开始
 
 ### 27.1.0 全局 AI Agent ✅
 
@@ -696,6 +768,10 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 作用 |
 |---|---|
+| `ai/AIModelRepository.kt` | 模型列表统一入口（27.1.1 抽出，消除两处重复） |
+| `ai/AIStringRes.kt` | 无 Context 处取本地化字符串（27.1.1） |
+| `ai/conversation/AIConversation.kt` | 对话模型 + 侧边栏摘要模型（27.1.1） |
+| `ai/conversation/AIConversationStore.kt` | 对话持久化（一段对话一个 JSON + 索引）（27.1.1） |
 | `ai/AISettings.kt` | AI 独立配置（Provider / Key / Model / BaseUrl / 权限模式） |
 | `ai/AIPermissionMode.kt` | 完全控制 / 操作确认 |
 | `ai/model/AIMessage.kt` | 与 Provider 无关的统一消息模型 |

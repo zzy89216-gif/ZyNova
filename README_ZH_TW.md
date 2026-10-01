@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
+[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -33,6 +33,20 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 27.1.1 主要內容
+
+- **移除工具呼叫次數上限。** 以前 12 輪就停，現在**不設上限**，
+  Agent 會一直做到模型自己認為完成為止，你隨時可以按「停止」。
+  唯一保留的是**重複呼叫保護**：同一個工具用**完全相同的參數**重複超過 6 次才會判定為死迴圈並停止。
+- **歷史對話 + 側邊欄。** 對話會自動存在本機，重開啟動器還在。
+  從左上角拉開側邊欄，可以查看、切換、刪除或新增對話。
+- **介面優化。** 工具執行期間會顯示「執行中」（安裝模組不再像卡死）、
+  自動捲動只在你已經貼底時跟隨、可以用鍵盤的送出鍵、清空對話會先二次確認。
+- **修復。** 按「停止」現在能立刻中斷串流；`read_log` 無法再用 `../` 讀取允許目錄之外的檔案；
+  超大日誌不再有記憶體爆掉的風險；切換對話不會再把舊訊息寫進新對話。
+- **在地化。** 使用者可見的 AI 錯誤訊息全部翻譯（英 / 簡 / 繁 / 日），
+  而且助手會**用你提問的語言**回答。
 
 ## ✨ 27.1.0 主要內容
 

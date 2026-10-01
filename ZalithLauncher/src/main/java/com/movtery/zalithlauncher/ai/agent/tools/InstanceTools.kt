@@ -21,7 +21,6 @@ package com.movtery.zalithlauncher.ai.agent.tools
 import android.os.Build
 import com.movtery.zalithlauncher.ai.agent.AITool
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
-import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.context.GlobalContext
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager

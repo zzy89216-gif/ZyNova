@@ -20,7 +20,6 @@ package com.movtery.zalithlauncher.ai.agent.tools
 
 import com.movtery.zalithlauncher.ai.agent.AITool
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
-import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.path.PathManager
 import java.io.File
@@ -211,20 +210,30 @@ internal fun logTools(): List<AITool> = listOf(
     },
 )
 
-/** 在启动器日志 / 原生日志目录里按名字找日志；也接受允许范围内的绝对路径 */
+/**
+ * 在启动器日志 / 原生日志目录里按名字找日志；也接受允许范围内的绝对路径。
+ *
+ * ⚠️ 安全要点：**不能** 用 `File(logDir, name)` 直接拼路径。
+ * 如果 `name` 里带 `../`（例如 `../../../etc/hosts`），拼出来的路径会逃出日志目录
+ * 并且**绕过允许目录白名单**。因此这里统一走
+ * [AIToolSupport.resolveInside] 做规范化 + 白名单校验。
+ */
 private fun locateLog(name: String): File? {
-    val direct = File(name)
-    if (direct.isAbsolute) {
-        return runCatching { AIToolSupport.resolveInside(name) }.getOrNull()
-    }
-    val candidates = listOf(
-        File(PathManager.DIR_LAUNCHER_LOGS, name),
-        File(PathManager.DIR_NATIVE_LOGS, name),
+    /** 规范化并校验；越界或非法直接返回 null（不再抛给上层） */
+    fun safe(base: File): File? =
+        runCatching { AIToolSupport.resolveInside(name, base) }.getOrNull()
+
+    if (File(name).isAbsolute) return safe(PathManager.DIR_LAUNCHER_LOGS)
+
+    val candidates = listOfNotNull(
+        safe(PathManager.DIR_LAUNCHER_LOGS),
+        safe(PathManager.DIR_NATIVE_LOGS),
     )
     candidates.firstOrNull { it.exists() }?.let { return it }
 
-    //名字不完全匹配时，按模糊匹配找最近的
-    return candidates
+    // 名字不完全匹配时，按模糊匹配找最近的。
+    // 这一步只在**已列出的文件名**里找，不做路径拼接，因此是安全的。
+    return listOf(PathManager.DIR_LAUNCHER_LOGS, PathManager.DIR_NATIVE_LOGS)
         .flatMap { dir -> dir.listFiles()?.toList().orEmpty() }
         .filter { it.isFile }
         .filter { it.name.contains(name, ignoreCase = true) }

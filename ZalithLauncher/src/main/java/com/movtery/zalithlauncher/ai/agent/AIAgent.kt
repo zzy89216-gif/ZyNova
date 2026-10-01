@@ -18,6 +18,8 @@
 
 package com.movtery.zalithlauncher.ai.agent
 
+import com.movtery.zalithlauncher.ai.aiString
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.AIPermissionMode
 import com.movtery.zalithlauncher.ai.model.AIMessage
 import com.movtery.zalithlauncher.ai.model.AIRole
@@ -66,11 +68,24 @@ sealed interface AgentEvent {
  * 流程：
  * 1. 把当前对话发给模型（带工具定义），流式接收
  * 2. 若模型返回工具调用 → 逐个执行（受权限模式约束）→ 结果作为 TOOL 消息回灌
- * 3. 回到第 1 步，直到模型不再调用工具、或达到 [maxSteps] 上限
+ * 3. 回到第 1 步，直到模型不再调用工具
+ *
+ * ⚠️ **没有工具调用轮数上限**：Agent 会一直做到模型自己认为完成为止。
+ * 用户随时可以点「停止」中止（协程取消）。
+ *
+ * 唯一的保护是「重复调用保护」：如果模型**用完全相同的参数反复调用同一个工具**
+ * 超过 [MAX_IDENTICAL_CALLS] 次，说明它卡死了，此时才会停止并说明原因。
+ * 这不是步数限制——正常的多步任务（调不同工具、或参数不同）不会触发。
  *
  * @param conversation 初始对话（user/assistant/tool 消息，**不含**系统提示）
  */
 object AIAgent {
+
+    /**
+     * 同一个工具 + 完全相同的参数，最多允许重复执行的次数。
+     * 超过说明模型陷入死循环，停止以免无限消耗额度。
+     */
+    private const val MAX_IDENTICAL_CALLS = 6
 
     fun run(
         providerType: AIProviderType,
@@ -82,7 +97,6 @@ object AIAgent {
         conversation: List<AIMessage>,
         context: AIToolContext,
         permissionMode: AIPermissionMode,
-        maxSteps: Int,
         toolNames: List<String>? = null,
     ): Flow<AgentEvent> = flow {
         val provider = AIProviders.get(providerType)
@@ -91,15 +105,10 @@ object AIAgent {
             .map { it.spec }
 
         val history = conversation.toMutableList()
-        var step = 0
+        /** 本次运行中「工具名 + 参数」的出现次数，用于识别死循环 */
+        val callSignatures = mutableMapOf<String, Int>()
 
         while (true) {
-            if (step >= maxSteps) {
-                emit(AgentEvent.Failed("已达到工具调用轮数上限（$maxSteps 轮），已停止。可以继续追问让它接着做。"))
-                return@flow
-            }
-            step++
-
             val request = AIChatRequest(
                 apiKey = apiKey,
                 baseUrl = baseUrl,
@@ -156,12 +165,29 @@ object AIAgent {
             }
 
             val results = mutableListOf<AIToolResult>()
+            var runaway: String? = null
+
             for (call in calls) {
+                //重复调用保护：同一个工具 + 完全相同的参数反复出现 → 模型卡死了
+                val signature = "${call.name}\u0000${call.arguments}"
+                val times = (callSignatures[signature] ?: 0) + 1
+                callSignatures[signature] = times
+                if (times > MAX_IDENTICAL_CALLS) {
+                    runaway = aiString(R.string.ai_error_runaway, call.name, times)
+                    break
+                }
+
                 emit(AgentEvent.ToolStarted(call))
                 val result = executeTool(call, context, permissionMode)
                 results += result
                 emit(AgentEvent.ToolFinished(result))
             }
+
+            runaway?.let {
+                emit(AgentEvent.Failed(it))
+                return@flow
+            }
+
             history += AIMessage(
                 id = UUID.randomUUID().toString(),
                 role = AIRole.TOOL,
@@ -185,7 +211,7 @@ object AIAgent {
             ?: return AIToolResult(
                 toolCallId = call.id,
                 name = call.name,
-                content = "没有名为 `${call.name}` 的工具。可用工具请参考系统提示中的清单。",
+                content = aiString(R.string.ai_error_no_tool, call.name),
                 isError = true,
             )
 
@@ -196,7 +222,7 @@ object AIAgent {
             return AIToolResult(
                 toolCallId = call.id,
                 name = call.name,
-                content = "参数不是合法 JSON：${call.arguments.take(300)}（${e.message}）",
+                content = aiString(R.string.ai_error_bad_arguments, call.arguments.take(300), e.message.orEmpty()),
                 isError = true,
             )
         }
@@ -210,7 +236,7 @@ object AIAgent {
                 return AIToolResult(
                     toolCallId = call.id,
                     name = call.name,
-                    content = "用户拒绝执行该操作（权限模式：操作确认）。可以改用只读方式排查，或询问用户是否允许。",
+                    content = aiString(R.string.ai_error_denied),
                     isError = true,
                     writeOperation = true,
                 )
@@ -222,7 +248,7 @@ object AIAgent {
             AIToolResult(
                 toolCallId = call.id,
                 name = call.name,
-                content = output.ifBlank { "（执行成功，无输出）" },
+                content = output.ifBlank { aiString(R.string.ai_error_empty_output) },
                 writeOperation = tool.risk != AIToolRisk.READ,
             )
         } catch (e: CancellationException) {
@@ -231,7 +257,7 @@ object AIAgent {
             AIToolResult(
                 toolCallId = call.id,
                 name = call.name,
-                content = "执行失败：${e.message ?: e::class.simpleName}",
+                content = aiString(R.string.ai_error_tool_failed, e.message ?: e::class.simpleName.orEmpty()),
                 isError = true,
                 writeOperation = tool.risk != AIToolRisk.READ,
             )

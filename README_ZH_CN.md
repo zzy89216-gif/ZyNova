@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
+[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,7 +29,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.1.0**。这一阶段的核心目标是：
+当前版本 **27.1.1**。这一阶段的核心目标是：
 
 > **在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 > 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
@@ -38,7 +38,8 @@
 
 - **渲染器体系**（内置 Ironized Zink / GL4ES / MobileGlues，默认 Ironized Zink）
 - **Microsoft（正版）账号登录**（OAuth 2.0 设备代码流，无需 Client Secret）
-- **全局 AI Agent**（Provider 可扩展 / 模型从服务商动态获取 / 流式对话 / 25 个可真正执行操作的工具）
+- **全局 AI Agent**（Provider 可扩展 / 模型从服务商动态获取 / 流式对话 / 25 个可真正执行操作的工具 /
+  **历史对话与侧边栏** / **不限制工具调用轮数**）
 - 统一资源管理核心（Resource Management Core）
 - 资源来源 Provider 体系（Modrinth / CurseForge）
 - 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
@@ -389,6 +390,22 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 ## 🚀 Release
 
 当前版本：
+
+**ZyNova 27.1.1**
+
+27.1.1 在 27.1.0 的基础上做了这些事：
+
+- **移除 Agent 工具调用的轮数上限**：以前 12 轮就停，现在**不设上限**，
+  做到模型自己认为完成为止；随时可点「停止」。
+  唯一保留的是**重复调用保护**（同一工具 + 完全相同参数超过 6 次才判定为死循环）
+- **历史对话 + 侧边栏**：对话自动保存在本机，左上角拉出侧边栏可查看 / 切换 / 删除 / 新建
+- **UI 优化**：工具执行中显示状态（不再像卡死）、自动滚动只在贴底时跟随并改为瞬时、
+  键盘可发送、清空与删除加二次确认、**API Key 默认以密码显示**、模型列表可筛选
+- **修复**：点「停止」不能及时中断（SSE 阻塞读）、`read_log` 路径穿越、大日志 OOM、
+  切换对话可能串档、非中文用户收到中文回复
+- **代码质量**：删除死代码、抽出 `AIModelRepository`、错误信息全部本地化（17 条 × 4 语言）
+
+> 27.1.0 的内容（全局 AI Agent）作为历史保留在下方。
 
 **ZyNova 27.1.0**
 
@@ -757,7 +774,15 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 27.1.0（当前版本）
+### 27.1.1（当前版本）
+
+- [x] **移除 Agent 工具调用的轮数上限**（改为「重复调用保护」，正常多步任务不受影响）
+- [x] **历史对话与侧边栏**：对话自动保存在本机，可查看 / 切换 / 删除 / 新建
+- [x] UI 优化：工具执行状态、自动滚动行为、键盘发送、二次确认、API Key 遮罩、模型筛选
+- [x] 修复：SSE 停止不生效、`read_log` 路径穿越、大日志 OOM、切换对话串档、回复语言
+- [x] 代码质量：清理死代码、抽出 `AIModelRepository`、用户可见错误信息全量本地化
+
+### 27.1.0
 
 - [x] **全局 AI Agent**：主界面顶部 AI 入口，点击直达聊天界面（聊天与 Agent 同一入口）
 - [x] AI 配置独立于启动器通用设置：Provider（OpenAI / Anthropic，可扩展）/

@@ -24,6 +24,7 @@ import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.path.PathManager
 import java.io.File
+import java.io.RandomAccessFile
 
 /**
  * 工具实现的公共支撑：实例解析、路径安全、文本格式化。
@@ -142,18 +143,79 @@ internal object AIToolSupport {
         return sb.toString()
     }
 
-    /** 读取文本文件（限制大小，避免把日志整份塞进上下文）*/
+    /**
+     * 读取文本文件。
+     *
+     * ⚠️ **不要**直接 `file.readText()`：日志动辄几百 MB，
+     * 整份读进内存会直接把 App 干成 OOM。
+     * 这里按需要只读「头部」或「尾部」的一段字节：
+     * - 文件不大 → 还是整份读，行为与以前一致
+     * - 文件很大 → 只读需要的那一段（tail 模式用 RandomAccessFile 定位到末尾）
+     */
     fun readText(file: File, maxChars: Int = 40_000, tailMode: Boolean = false): String {
         if (!file.exists()) return "文件不存在：${file.absolutePath}"
         if (file.isDirectory) return "这是一个目录，不是文件：${file.absolutePath}"
-        val text = file.readText()
-        if (text.length <= maxChars) return text
-        return if (tailMode) {
-            "（文件较大，仅显示最后 $maxChars 字符）\n" + text.takeLast(maxChars)
-        } else {
-            text.take(maxChars) + "\n…（已截断，仅显示前 $maxChars 字符）"
+
+        val length = file.length()
+        //UTF-8 中文最多 4 字节/字符，留足余量，保证解码后至少能凑够 maxChars 个字符
+        val maxBytes = (maxChars.toLong() * 4).coerceAtLeast(64L * 1024)
+
+        //① 小文件：整份读，并用原有方式提示截断
+        if (length <= maxBytes) {
+            val text = runCatching { file.readText() }.getOrElse { e ->
+                return "读取失败：${e.message ?: e::class.simpleName}"
+            }
+            if (text.length <= maxChars) return text
+            return if (tailMode) {
+                "（文件较大，仅显示最后 $maxChars 字符）\n" + text.takeLast(maxChars)
+            } else {
+                text.take(maxChars) + "\n…（已截断，仅显示前 $maxChars 字符）"
+            }
         }
+
+        //② 大文件：只读一段，避免 OOM
+        val chunk = runCatching {
+            if (tailMode) readTailBytes(file, maxBytes) else readHeadBytes(file, maxBytes)
+        }.getOrElse { e ->
+            return "读取失败：${e.message ?: e::class.simpleName}"
+        }
+
+        val note = if (tailMode) {
+            "（文件较大：${humanSize(length)}，仅显示最后 $maxChars 字符）"
+        } else {
+            "（文件较大：${humanSize(length)}，仅显示前 $maxChars 字符）"
+        }
+        val body = if (chunk.length <= maxChars) chunk
+        else if (tailMode) chunk.takeLast(maxChars) else chunk.take(maxChars)
+
+        return "$note\n$body"
     }
+
+    /** 读取文件开头的若干字节（不使用 readNBytes：Android 低版本没有） */
+    private fun readHeadBytes(file: File, maxBytes: Long): String =
+        file.inputStream().use { input ->
+            val buf = ByteArray(maxBytes.toInt())
+            var read = 0
+            while (read < buf.size) {
+                val n = input.read(buf, read, buf.size - read)
+                if (n <= 0) break
+                read += n
+            }
+            String(buf, 0, read, Charsets.UTF_8).trimStartReplacement()
+        }
+
+    /** 读取文件末尾的若干字节（定位到末尾，不读前面） */
+    private fun readTailBytes(file: File, maxBytes: Long): String =
+        RandomAccessFile(file, "r").use { raf ->
+            val start = (raf.length() - maxBytes).coerceAtLeast(0L)
+            raf.seek(start)
+            val buf = ByteArray((raf.length() - start).toInt())
+            raf.readFully(buf)
+            String(buf, Charsets.UTF_8).trimStartReplacement()
+        }
+
+    /** 按字节截断 UTF-8 可能切在多字节字符中间，去掉开头产生的替换字符 */
+    private fun String.trimStartReplacement(): String = trimStart('\uFFFD')
 
     /** 目录体积统计 */
     fun folderFileCount(dir: File): Int =

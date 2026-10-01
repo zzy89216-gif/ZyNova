@@ -18,8 +18,12 @@
 
 package com.movtery.zalithlauncher.ai.provider
 
+import com.movtery.zalithlauncher.ai.aiString
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.path.createOkHttpClientBuilder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -55,8 +59,6 @@ private val AI_CLIENT: OkHttpClient by lazy {
 }
 
 internal val AI_JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
-internal val AI_SSE_MEDIA = "text/event-stream".toMediaType()
-
 /**
  * 解析服务端返回的 JSON；失败时抛出可读异常
  */
@@ -81,35 +83,13 @@ internal fun parseHttpError(code: Int, body: String): String {
     }.getOrNull()?.takeIf { it.isNotBlank() }
 
     val head = when (code) {
-        401, 403 -> "API Key 无效或没有权限（HTTP $code）"
-        404 -> "接口地址或模型不存在（HTTP 404）"
-        429 -> "请求过于频繁或额度不足（HTTP 429）"
-        in 500..599 -> "服务端错误（HTTP $code）"
-        else -> "请求失败（HTTP $code）"
+        401, 403 -> aiString(R.string.ai_http_error_auth, code)
+        404 -> aiString(R.string.ai_http_error_not_found, code)
+        429 -> aiString(R.string.ai_http_error_rate_limited, code)
+        in 500..599 -> aiString(R.string.ai_http_error_server, code)
+        else -> aiString(R.string.ai_http_error_generic, code)
     }
-    return if (detail != null) "$head：$detail" else head
-}
-
-/**
- * 发起一次 POST JSON 请求，**返回完整响应体文本**（用于取模型列表这类一次性请求）。
- */
-internal suspend fun postJsonForText(
-    url: String,
-    headers: Map<String, String>,
-    bodyJson: JsonObject,
-): String {
-    return kotlinx.coroutines.withContext(Dispatchers.IO) {
-        val req = Request.Builder()
-            .url(url)
-            .post(AI_JSON.encodeToString(JsonObject.serializer(), bodyJson).toRequestBody(AI_JSON_MEDIA))
-            .apply { headers.forEach { (k, v) -> header(k, v) } }
-            .build()
-        AI_CLIENT.newCall(req).execute().use { resp ->
-            val text = resp.body?.string().orEmpty()
-            if (!resp.isSuccessful) throw IOException(parseHttpError(resp.code, text))
-            text
-        }
-    }
+    return if (detail != null) "$head: $detail" else head
 }
 
 /** 发起一次 GET 请求，返回完整响应体文本 */
@@ -159,7 +139,16 @@ internal fun postJsonSse(
             val errText = resp.body?.string().orEmpty()
             throw IOException(parseHttpError(resp.code, errText))
         }
-        val source = resp.body?.source() ?: throw IOException("响应体为空")
+
+        // ⚠️ 关键：SSE 是**阻塞读**。协程被取消（用户点「停止」）时，
+        // 卡在 readUtf8Line() 里的线程不会自己醒过来——最多要等读超时（5 分钟）才会退出。
+        // 因此在协程完成/取消时主动关闭 response，让阻塞的读立刻抛异常退出。
+        val active = resp
+        currentCoroutineContext()[Job]?.invokeOnCompletion {
+            runCatching { active.close() }
+        }
+
+        val source = active.body?.source() ?: throw IOException("响应体为空")
         while (true) {
             val line = source.readUtf8Line() ?: break
             if (line.isEmpty()) continue

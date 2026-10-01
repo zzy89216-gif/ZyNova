@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
+[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -34,6 +34,23 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 27.1.1
+
+- **No more tool-call limit.** The agent used to stop after 12 rounds; now it keeps working until
+  the model itself decides it is done, and you can press **Stop** at any time. The only guard left
+  is a *repeat guard*: if the same tool is called with exactly the same arguments more than six
+  times, it is treated as a loop and stopped.
+- **Conversation history with a sidebar.** Chats are saved on your device and survive restarts.
+  Pull the sidebar from the top-left corner to review, switch, delete or start a new conversation.
+- **UI polish.** A running tool is now shown while it works (long installs no longer look like a
+  freeze), auto-scroll only follows when you are already at the bottom, you can send from the
+  keyboard, and clearing a chat asks for confirmation first.
+- **Fixed.** Pressing *Stop* now interrupts the stream immediately; `read_log` can no longer be
+  tricked into reading files outside the allowed directories; very large logs no longer risk an
+  out-of-memory crash; switching conversations can no longer write old messages into the new one.
+- **Localisation.** All user-visible AI error messages are now translated
+  (English / 简体中文 / 繁體中文 / 日本語), and the assistant replies in the language you write in.
 
 ## ✨ Highlights of 27.1.0
 

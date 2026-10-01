@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ai.model
 
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
 /**
@@ -26,6 +27,7 @@ import java.util.UUID
  * 这是**与 Provider 无关**的统一模型：各 Provider 在发送前自行映射成
  * OpenAI 的 `user/assistant/tool` 或 Anthropic 的 `content block`。
  */
+@Serializable
 enum class AIRole {
     SYSTEM,
     USER,
@@ -37,6 +39,7 @@ enum class AIRole {
 /**
  * 一次工具调用（模型请求执行某个 [com.movtery.zalithlauncher.ai.agent.AITool]）
  */
+@Serializable
 data class AIToolCall(
     /** Provider 给出的调用 ID，回灌结果时必须原样带上 */
     val id: String,
@@ -49,6 +52,7 @@ data class AIToolCall(
 /**
  * 一次工具执行结果
  */
+@Serializable
 data class AIToolResult(
     val toolCallId: String,
     val name: String,
@@ -57,6 +61,13 @@ data class AIToolResult(
     val isError: Boolean = false,
     /** 该工具是否属于写操作（用于 UI 标记与审计）*/
     val writeOperation: Boolean = false,
+    /**
+     * 是否仍在执行中。
+     *
+     * 这是**只在界面上存在的中间态**：Agent 会在工具开始时先发一条 running 的消息，
+     * 执行完再就地替换成真正的结果。落盘前会被清掉。
+     */
+    val running: Boolean = false,
 )
 
 /**
@@ -65,6 +76,7 @@ data class AIToolResult(
  * 同时承载「纯文本」「模型要求调用工具」「工具执行结果」三种形态，
  * 这样 UI 只需要渲染 [AIMessage] 列表，不必关心 Provider 差异。
  */
+@Serializable
 data class AIMessage(
     val id: String = UUID.randomUUID().toString(),
     val role: AIRole,

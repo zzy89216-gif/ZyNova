@@ -20,26 +20,32 @@ package com.movtery.zalithlauncher.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.movtery.zalithlauncher.ai.AIPermissionMode
+import com.movtery.zalithlauncher.context.GlobalContext
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.agent.AIAgent
 import com.movtery.zalithlauncher.ai.agent.AIToolContext
 import com.movtery.zalithlauncher.ai.agent.AIToolRegistry
 import com.movtery.zalithlauncher.ai.agent.AgentEvent
+import com.movtery.zalithlauncher.ai.conversation.AIConversation
+import com.movtery.zalithlauncher.ai.conversation.AIConversationMeta
+import com.movtery.zalithlauncher.ai.conversation.AIConversationStore
 import com.movtery.zalithlauncher.ai.model.AIMessage
-import com.movtery.zalithlauncher.ai.model.AIModelInfo
 import com.movtery.zalithlauncher.ai.model.AIRole
 import com.movtery.zalithlauncher.ai.model.AIToolResult
-import com.movtery.zalithlauncher.ai.provider.AIProviders
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 /**
@@ -61,15 +67,29 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    // ── 模型列表 ──────────────────────────────────────────────────
-    private val _models = MutableStateFlow<List<AIModelInfo>>(emptyList())
-    val models: StateFlow<List<AIModelInfo>> = _models.asStateFlow()
+    // ── 历史对话（侧边栏用）────────────────────────────────────────
+    private val _conversations = MutableStateFlow<List<AIConversationMeta>>(emptyList())
+    val conversations: StateFlow<List<AIConversationMeta>> = _conversations.asStateFlow()
 
-    private val _loadingModels = MutableStateFlow(false)
-    val loadingModels: StateFlow<Boolean> = _loadingModels.asStateFlow()
+    /** 当前正在看的对话 id */
+    private val _currentConversationId = MutableStateFlow<String?>(null)
+    val currentConversationId: StateFlow<String?> = _currentConversationId.asStateFlow()
 
-    private val _modelError = MutableStateFlow<String?>(null)
-    val modelError: StateFlow<String?> = _modelError.asStateFlow()
+    /** 当前对话（含标题与时间戳）。只在 IO 线程写，@Volatile 保证可见性 */
+    @Volatile
+    private var currentConversation: AIConversation? = null
+
+    /** 串行化落盘，避免多次保存互相覆盖 */
+    private val persistMutex = Mutex()
+
+    /**
+     * 落盘专用的单并发派发器。
+     *
+     * ⚠️ 必须声明在 `init` 之前：Kotlin 的属性按声明顺序初始化，
+     * 如果 `init` 里的代码先碰到它，读到的会是未初始化的 null 而直接 NPE。
+     * 单并发还能保证多次保存**按调用顺序**执行。
+     */
+    private val persistDispatcher = Dispatchers.IO.limitedParallelism(1)
 
     // ── 「操作确认」模式下的待确认请求 ────────────────────────────
     private val _pendingConfirm = MutableStateFlow<PendingConfirm?>(null)
@@ -77,6 +97,26 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
 
     private var runJob: Job? = null
     private var confirmDeferred: CompletableDeferred<Boolean>? = null
+
+    init {
+        // 打开最近一次对话；如果没有就新建一个。
+        // 读文件放到 IO 上，别在 ViewModel 构造时卡主线程。
+        viewModelScope.launch(Dispatchers.IO) {
+            val latest = AIConversationStore.listMetas().firstOrNull()
+            val conv = latest?.let { AIConversationStore.load(it.id) }
+            withContext(Dispatchers.Main) {
+                if (conv != null) {
+                    currentConversation = conv
+                    _currentConversationId.value = conv.id
+                    _messages.value = conv.messages.map { it.copy(streaming = false) }
+                    _conversations.value = AIConversationStore.listMetas()
+                } else {
+                    newConversation()
+                }
+            }
+        }
+    }
+
 
     /**
      * 真正启动游戏。
@@ -95,21 +135,22 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
 
         val providerType = AISettings.provider.getValue()
         if (!AISettings.hasKey(providerType)) {
-            _error.value = "还没有配置 ${providerType.displayName} 的 API Key，请点右上角进入 AI 设置。"
+            _error.value = GlobalContext.getString(R.string.ai_error_no_api_key, providerType.displayName)
             return
         }
         if (!AISettings.hasModel()) {
-            _error.value = "还没有选择模型，请点右上角进入 AI 设置并拉取模型列表。"
+            _error.value = GlobalContext.getString(R.string.ai_error_no_model)
             return
         }
 
         _error.value = null
 
-        // 用户消息立刻上屏
+        // 用户消息立刻上屏，并马上落盘（万一后面崩了，用户的话不会丢）
         val userMessage = AIMessage(role = AIRole.USER, text = text)
         val conversation = _messages.value + userMessage
         _messages.value = conversation
         _busy.value = true
+        persistAsync()
 
         runJob = viewModelScope.launch {
             var currentAssistantId: String? = null
@@ -125,7 +166,6 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                     conversation = conversation,
                     context = buildToolContext(),
                     permissionMode = AISettings.permissionMode.getValue(),
-                    maxSteps = AISettings.maxAgentSteps.getValue(),
                 ).collect { event ->
                     when (event) {
                         is AgentEvent.TextDelta -> {
@@ -139,9 +179,8 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                                 currentAssistantId = msg.id
                                 _messages.value = _messages.value + msg
                             } else {
-                                _messages.value = _messages.value.map {
-                                    if (it.id == id) it.copy(text = it.text + event.text) else it
-                                }
+                                //逐 token 更新：只动这一条，避免每个 token 都遍历并重建整个列表
+                                replaceMessage(id) { it.copy(text = it.text + event.text) }
                             }
                         }
 
@@ -154,26 +193,27 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                                 currentAssistantId = msg.id
                                 _messages.value = _messages.value + msg
                             } else {
-                                _messages.value = _messages.value.map {
-                                    if (it.id == id) {
-                                        it.copy(
-                                            text = finished.text.ifBlank { it.text },
-                                            toolCalls = finished.toolCalls,
-                                            streaming = false,
-                                        )
-                                    } else it
+                                replaceMessage(id) {
+                                    it.copy(
+                                        text = finished.text.ifBlank { it.text },
+                                        toolCalls = finished.toolCalls,
+                                        streaming = false,
+                                    )
                                 }
                             }
                             currentAssistantId = null
+                            //一轮结束：落盘
+                            persistAsync()
                         }
 
                         is AgentEvent.ToolFinished -> {
                             if (AISettings.showToolCalls.getValue()) {
-                                _messages.value = _messages.value + AIMessage(
-                                    role = AIRole.TOOL,
-                                    toolResults = listOf(event.result),
-                                )
+                                replaceMessage(event.result.toolCallId) { old ->
+                                    old.copy(toolResults = listOf(event.result))
+                                }
                             }
+                            // 工具跑完是一个安全的落盘点
+                            persistAsync()
                         }
 
                         is AgentEvent.Failed -> {
@@ -183,8 +223,24 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                             )
                         }
 
-                        // 工具开始执行：结果出来时会单独发一条 TOOL 消息，这里不用处理
-                        is AgentEvent.ToolStarted -> Unit
+                        // 工具开始执行：先放一条「运行中」的消息，
+                        // 否则安装模组这类耗时操作期间界面完全没有反馈，看起来像卡死
+                        is AgentEvent.ToolStarted -> {
+                            if (AISettings.showToolCalls.getValue()) {
+                                _messages.value = _messages.value + AIMessage(
+                                    id = event.call.id,
+                                    role = AIRole.TOOL,
+                                    toolResults = listOf(
+                                        AIToolResult(
+                                            toolCallId = event.call.id,
+                                            name = event.call.name,
+                                            content = "",
+                                            running = true,
+                                        )
+                                    ),
+                                )
+                            }
+                        }
 
                         AgentEvent.Done -> Unit
                     }
@@ -192,11 +248,12 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
             } catch (e: Exception) {
                 _messages.value = _messages.value + AIMessage(
                     role = AIRole.ASSISTANT,
-                    error = e.message ?: e::class.simpleName ?: "未知错误",
+                    error = e.message ?: e::class.simpleName ?: GlobalContext.getString(R.string.ai_error_unknown),
                 )
             } finally {
                 _busy.value = false
                 _pendingConfirm.value = null
+                persistAsync()
             }
         }
     }
@@ -209,13 +266,132 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
         confirmDeferred = null
         _pendingConfirm.value = null
         _busy.value = false
+        persistAsync()
     }
 
-    /** 清空对话 */
+    // ─────────────────────────────────────────────────────────────
+    //  历史对话（侧边栏）
+    // ─────────────────────────────────────────────────────────────
+
+    /** 新建一段对话 */
+    fun newConversation() {
+        stop()
+        val conv = AIConversation()
+        currentConversation = conv
+        _currentConversationId.value = conv.id
+        _messages.value = emptyList()
+        _error.value = null
+        refreshConversations()
+    }
+
+    /** 切换到指定的历史对话 */
+    fun openConversation(id: String) {
+        if (_currentConversationId.value == id) return
+        // 先把当前对话存好，再切走（否则旧消息会丢）
+        stop()
+        viewModelScope.launch(Dispatchers.IO) {
+            val conv = AIConversationStore.load(id)
+            withContext(Dispatchers.Main) {
+                if (conv == null) {
+                    // 文件不在了（被清理/损坏）→ 刷新列表并保持当前对话
+                    _error.value = GlobalContext.getString(R.string.ai_error_conversation_missing)
+                    refreshConversations()
+                    return@withContext
+                }
+                currentConversation = conv
+                _currentConversationId.value = conv.id
+                // 载入时把 streaming 清掉，避免重新打开后还显示「正在输入」
+                _messages.value = conv.messages.map { it.copy(streaming = false) }
+                _error.value = null
+            }
+        }
+    }
+
+    /** 删除一段历史对话 */
+    fun deleteConversation(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            AIConversationStore.delete(id)
+            if (_currentConversationId.value == id) {
+                val next = AIConversationStore.listMetas().firstOrNull()
+                withContext(Dispatchers.Main) {
+                    if (next != null) openConversation(next.id) else newConversation()
+                }
+            } else {
+                withContext(Dispatchers.Main) { refreshConversations() }
+            }
+        }
+    }
+
+    /** 清空当前对话的消息（对话本身保留在侧边栏里） */
     fun clear() {
         stop()
         _messages.value = emptyList()
         _error.value = null
+        persistAsync()
+    }
+
+    private fun refreshConversations() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val metas = AIConversationStore.listMetas()
+            withContext(Dispatchers.Main) { _conversations.value = metas }
+        }
+    }
+
+    /**
+     * 把当前对话异步落盘。
+     *
+     * 只在「安全点」调用（用户发送、一轮结束、工具跑完、停止/清空），
+     * **不会每个 token 都写文件**。
+     * 快照在锁内重新读取，所以即使多次保存排队，最后写入的也一定是最新状态。
+     */
+    private fun persistAsync() {
+        //⚠️ 关键：快照必须在**调用时**就捕获。
+        //   如果等协程真正跑起来再去读 currentConversation，
+        //   中间发生「切换对话」就会把旧消息写进新对话的 id 下。
+        val conv = currentConversation ?: return
+        val messages = _messages.value
+        if (messages.isEmpty()) return
+
+        viewModelScope.launch(persistDispatcher) {
+            persistMutex.withLock {
+                val title = conv.title.ifBlank {
+                    messages.firstOrNull { it.role == AIRole.USER }
+                        ?.text
+                        ?.let { AIConversation.titleFrom(it) }
+                        .orEmpty()
+                }
+                val updated = conv.copy(
+                    title = title,
+                    updatedAt = System.currentTimeMillis(),
+                    //落盘时清掉「正在输入」与「工具执行中」这两个界面中间态，
+                    //否则重新打开对话会看到永远转不完的圈
+                    messages = messages.map { msg ->
+                        msg.copy(
+                            streaming = false,
+                            toolResults = msg.toolResults.map { r ->
+                                if (r.running) r.copy(running = false) else r
+                            },
+                        )
+                    }.filterNot { it.isEmpty },
+                )
+                AIConversationStore.save(updated)
+                //只有当前还停在这段对话时才刷新侧边栏，避免切走后被覆盖
+                if (currentConversation?.id == updated.id) {
+                    currentConversation = updated
+                }
+                _conversations.value = AIConversationStore.listMetas()
+            }
+        }
+    }
+
+    /** 按 id 就地替换一条消息（流式/工具更新用，避免整表复制） */
+    private fun replaceMessage(id: String, transform: (AIMessage) -> AIMessage) {
+        val list = _messages.value
+        val index = list.indexOfFirst { it.id == id }
+        if (index < 0) return
+        val newList = list.toMutableList()
+        newList[index] = transform(newList[index])
+        _messages.value = newList
     }
 
     fun dismissError() {
@@ -227,47 +403,6 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
         confirmDeferred?.complete(approved)
         confirmDeferred = null
         _pendingConfirm.value = null
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    //  模型列表：从 Provider 动态拉取，绝不硬编码
-    // ─────────────────────────────────────────────────────────────
-
-    fun loadModels() {
-        val providerType = AISettings.provider.getValue()
-        val key = AISettings.getKey(providerType)
-        if (key.isBlank()) {
-            _modelError.value = "请先填写 ${providerType.displayName} 的 API Key。"
-            return
-        }
-        if (_loadingModels.value) return
-
-        _loadingModels.value = true
-        _modelError.value = null
-
-        viewModelScope.launch {
-            runCatching {
-                AIProviders.get(providerType).listModels(key, AISettings.getBaseUrl(providerType))
-            }.onSuccess { list ->
-                _models.value = list
-                if (list.isEmpty()) {
-                    _modelError.value = "接口没有返回任何可用模型。"
-                } else if (AISettings.model.getValue().isBlank() ||
-                    list.none { it.id == AISettings.model.getValue() }
-                ) {
-                    //默认选中第一个，用户也可以自己换
-                    AISettings.model.save(list.first().id)
-                }
-            }.onFailure { e ->
-                _models.value = emptyList()
-                _modelError.value = e.message ?: "拉取模型列表失败。"
-            }
-            _loadingModels.value = false
-        }
-    }
-
-    fun selectModel(modelId: String) {
-        AISettings.model.save(modelId)
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -320,7 +455,7 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
             appendLine("2. 涉及「删除」这类不可逆操作前，先说清楚你要删什么；用户已明确要求时可直接执行。")
             appendLine("3. 修改配置文件前先读一遍，只做最小必要改动。")
             appendLine("4. 每次工具失败后要读错误信息并调整做法，不要重复同样的调用。")
-            appendLine("5. 用中文回答，简洁直接，不要复述工具返回的原始内容。")
+            appendLine("5. **用与用户提问相同的语言回答**（用户用中文就问中文，用英文就回英文），简洁直接，不要复述工具返回的原始内容。")
         }
     }
 }

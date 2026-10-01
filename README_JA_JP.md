@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.0)
+[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -34,6 +34,23 @@
 - Discord: <https://discord.gg/QwPpZQHrTa>（永続招待リンク）
 
 ---
+
+## ✨ 27.1.1 のハイライト
+
+- **ツール呼び出しの回数制限を撤廃。** 以前は 12 ラウンドで停止していましたが、
+  現在は**上限なし**で、モデル自身が完了と判断するまで動き続けます。
+  いつでも「停止」を押せます。唯一残したのは**重複呼び出しガード**で、
+  同じツールを**まったく同じ引数**で 6 回より多く呼んだ場合のみループと判断して停止します。
+- **会話履歴 + サイドバー。** 会話は端末内に自動保存され、再起動後も残ります。
+  左上からサイドバーを開き、確認・切り替え・削除・新規作成ができます。
+- **UI の改善。** ツール実行中は「実行中」を表示（MOD のインストールが固まったように見えなくなりました）、
+  自動スクロールは最下部にいるときだけ追従、キーボードの送信キーに対応、
+  会話のクリアには確認を追加。
+- **修正。** 「停止」が即座にストリームを中断するようになりました。`read_log` が `../` で
+  許可ディレクトリ外を読むことはできなくなりました。巨大なログでもメモリ不足になりません。
+  会話の切り替えで古いメッセージが新しい会話に書き込まれることもなくなりました。
+- **ローカライズ。** ユーザーに見える AI のエラーはすべて翻訳（英語 / 簡体中文 / 繁体中文 / 日本語）、
+  アシスタントは**あなたが書いた言語**で答えます。
 
 ## ✨ 27.1.0 のハイライト
 

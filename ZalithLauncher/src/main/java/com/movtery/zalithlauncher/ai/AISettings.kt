@@ -62,9 +62,6 @@ object AISettings : SettingsRegistry() {
     /** 采样温度 */
     val temperature = floatSetting("aiTemperature", 0.7f, 0f..2f)
 
-    /** 单轮对话最多允许的 Agent 工具调用轮数，避免模型死循环 */
-    val maxAgentSteps = intSetting("aiMaxAgentSteps", 12, 1..64)
-
     /** 是否在聊天流里显示工具调用过程 */
     val showToolCalls = boolSetting("aiShowToolCalls", true)
 

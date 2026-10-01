@@ -18,20 +18,27 @@
 
 package com.movtery.zalithlauncher.ai.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -43,21 +50,27 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.movtery.zalithlauncher.ui.toAndroidString
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.ai.AIModelRepository
 import com.movtery.zalithlauncher.ai.AIPermissionMode
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.model.AIModelInfo
 import com.movtery.zalithlauncher.ai.provider.AIProviders
-import com.movtery.zalithlauncher.ai.provider.AIProviderType
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.RadioCard
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
+import com.movtery.zalithlauncher.ui.toAndroidString
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import kotlinx.coroutines.launch
 
@@ -80,13 +93,22 @@ fun AIConfigScreen(
 
     var apiKey by remember(provider) { mutableStateOf(AISettings.getKey(provider)) }
     var baseUrl by remember(provider) { mutableStateOf(AISettings.getBaseUrl(provider)) }
+    var showKey by remember { mutableStateOf(false) }
 
-    var models by remember { mutableStateOf<List<AIModelInfo>>(emptyList()) }
+    var models by remember(provider) { mutableStateOf<List<AIModelInfo>>(emptyList()) }
+    var modelFilter by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
 
     val selectedModel = AISettings.model.state
     val permissionMode = AISettings.permissionMode.state
+
+    // 切换 Provider 时清掉上一家的模型列表，避免列表与 Provider 对不上
+    LaunchedEffect(provider) {
+        models = emptyList()
+        modelFilter = ""
+        message = null
+    }
 
     BaseScreen(
         screenKey = key,
@@ -98,7 +120,7 @@ fun AIConfigScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // ── 1. Provider ───────────────────────────────────────
+            // ── 1. AI Provider ────────────────────────────────────
             BackgroundCard {
                 SectionTitle(stringResource(R.string.ai_config_provider))
                 AIProviders.available.forEach { type ->
@@ -107,7 +129,7 @@ fun AIConfigScreen(
                         text = type.displayName,
                         onClick = {
                             if (provider != type) {
-                                // 切 Provider 时保存当前输入，并清空已选模型
+                                // 先保存当前输入的 Key / Base URL，再切走
                                 AISettings.saveKey(provider, apiKey)
                                 AISettings.saveBaseUrl(provider, baseUrl)
                                 AISettings.switchProvider(type)
@@ -120,11 +142,11 @@ fun AIConfigScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // ── 2. API Key / 4. Base URL ──────────────────────────
+            // ── 2. API Key ────────────────────────────────────────
             BackgroundCard {
                 SectionTitle(stringResource(R.string.ai_config_api_key))
 
-                SmallOutlinedEditField(
+                OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = apiKey,
                     onValueChange = {
@@ -134,17 +156,36 @@ fun AIConfigScreen(
                     label = { Text(stringResource(R.string.ai_config_api_key)) },
                     placeholder = { Text(stringResource(R.string.ai_config_api_key_hint)) },
                     singleLine = true,
+                    //默认把 Key 遮住：截图 / 旁人瞄一眼都不会泄露
+                    visualTransformation = if (showKey) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    trailingIcon = {
+                        IconButton(onClick = { showKey = !showKey }) {
+                            Icon(
+                                painter = painterResource(
+                                    if (showKey) R.drawable.ic_visibility_off_outlined
+                                    else R.drawable.ic_visibility_outlined
+                                ),
+                                contentDescription = stringResource(
+                                    if (showKey) R.string.ai_config_key_hide
+                                    else R.string.ai_config_key_show
+                                )
+                            )
+                        }
+                    },
                 )
 
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(R.string.ai_config_api_key_note),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                HintText(stringResource(R.string.ai_config_api_key_note))
+            }
 
-                Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
+            // ── 3. Base URL ───────────────────────────────────────
+            BackgroundCard {
                 SectionTitle(stringResource(R.string.ai_config_base_url))
                 SmallOutlinedEditField(
                     modifier = Modifier.fillMaxWidth(),
@@ -157,17 +198,12 @@ fun AIConfigScreen(
                     placeholder = { Text(provider.defaultBaseUrl) },
                     singleLine = true,
                 )
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(R.string.ai_config_base_url_note),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                HintText(stringResource(R.string.ai_config_base_url_note))
             }
 
             Spacer(Modifier.height(12.dp))
 
-            // ── 3. Model（动态获取，不硬编码）──────────────────────
+            // ── 4. Model（动态获取，不硬编码）──────────────────────
             BackgroundCard {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -178,10 +214,7 @@ fun AIConfigScreen(
                         modifier = Modifier.weight(1f)
                     )
                     if (loading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp
-                        )
+                        CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                         Spacer(Modifier.width(8.dp))
                     }
                     TextButton(
@@ -191,21 +224,16 @@ fun AIConfigScreen(
                             message = null
                             scope.launch {
                                 runCatching {
-                                    AIProviders.get(provider).listModels(apiKey, baseUrl)
+                                    AIModelRepository.fetchAndEnsureSelection(provider)
                                 }.onSuccess { list ->
                                     models = list
-                                    if (list.isEmpty()) {
-                                        message = "接口没有返回任何可用模型。"
-                                    } else {
-                                        // 默认选中第一个，用户也可以自己换
-                                        if (selectedModel.isBlank() || list.none { it.id == selectedModel }) {
-                                            AISettings.model.save(list.first().id)
-                                        }
-                                        message = null
-                                    }
+                                    message = if (list.isEmpty()) {
+                                        context.getString(R.string.ai_config_models_empty_from_api)
+                                    } else null
                                 }.onFailure { e ->
                                     models = emptyList()
-                                    message = e.message ?: "拉取模型列表失败。"
+                                    message = e.message
+                                        ?: context.getString(R.string.ai_config_models_fetch_failed)
                                 }
                                 loading = false
                             }
@@ -224,19 +252,48 @@ fun AIConfigScreen(
                 }
 
                 if (models.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.ai_config_models_empty),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    HintText(stringResource(R.string.ai_config_models_empty))
                 } else {
-                    models.forEach { model ->
-                        RadioCard(
-                            selected = selectedModel == model.id,
-                            text = model.displayName,
-                            onClick = { AISettings.model.save(model.id) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    // 模型可能很多，给一个过滤框；列表本身限高，避免把整页撑得很长
+                    SmallOutlinedEditField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = modelFilter,
+                        onValueChange = { modelFilter = it },
+                        label = { Text(stringResource(R.string.ai_config_model_filter)) },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(6.dp))
+
+                    val shown = remember(models, modelFilter) {
+                        if (modelFilter.isBlank()) models
+                        else models.filter { it.id.contains(modelFilter, ignoreCase = true) }
+                    }
+
+                    if (shown.isEmpty()) {
+                        HintText(stringResource(R.string.ai_config_model_filter_empty))
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 320.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                shown.forEach { model ->
+                                    RadioCard(
+                                        selected = selectedModel == model.id,
+                                        text = model.displayName,
+                                        onClick = { AISettings.model.save(model.id) },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -254,16 +311,13 @@ fun AIConfigScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(
+                HintText(
+                    stringResource(
                         if (permissionMode == AIPermissionMode.FULL_CONTROL)
                             R.string.ai_config_permission_full_note
                         else
                             R.string.ai_config_permission_confirm_note
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
             }
 
@@ -279,5 +333,15 @@ private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
         text = text,
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+private fun HintText(text: String) {
+    Text(
+        modifier = Modifier.padding(top = 4.dp),
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
