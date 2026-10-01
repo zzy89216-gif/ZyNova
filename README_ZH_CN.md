@@ -644,6 +644,10 @@ ZyNova 项目有一个比较特殊的工作方式：
 
 ## 🤖 AI Agent 辅助开发
 
+> ℹ️ 本节说的是**开发 ZyNova 时**使用的 AI Agent（工程辅助）。
+> 启动器**内置的** AI Agent 功能是另一回事，见上方
+> [主要功能与修改](#-主要功能与修改) 与 [Release](#-release)。
+
 ZyNova 的开发过程中大量使用 AI Agent 辅助实际工程工作。
 
 AI Agent 参与的工作包括：
