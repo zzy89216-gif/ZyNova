@@ -1515,7 +1515,7 @@
     <string name="settings_renderer_ironized_preset_max_compat_tagline">Run everything — versions, shaders &amp; mods</string>
     <string name="settings_renderer_ironized_preset_max_compat_note">All versions (1.8 → 26.x) · Shaders: full + heavy packs</string>
     <string name="settings_renderer_ironized_gl_version_title">OpenGL version</string>
-    <string name="settings_renderer_ironized_gl_version_summary">Higher means newer Minecraft and shaders; 4.6 is best for Sodium on 26.x.</string>
+    <string name="settings_renderer_ironized_gl_version_summary">All four official presets use 4.6. If your GPU driver does not translate Vulkan to Zink 4.6 correctly (broken picture / refuses to start), lower it here to 4.5, 4.3 or 3.3. Changing this only affects the OpenGL version, not the other preset parameters.</string>
     <string name="settings_renderer_ironized_threaded_gl_title">Threaded GL</string>
     <string name="settings_renderer_ironized_threaded_gl_summary">mesa_glthread — offloads GL to a worker thread; higher FPS</string>
     <string name="settings_renderer_ironized_big_core_title">Big-core affinity</string>
@@ -1605,4 +1605,14 @@
     <string name="ai_error_tool_failed">Failed: %1$s</string>
     <string name="ai_untitled_conversation">New conversation</string>
     <string name="ai_tool_write">write</string>
+    <string name="ai_privacy_title">Where does your data go?</string>
+    <string name="ai_privacy_message">When the AI features are on, the following is **sent to the AI provider you configured** (OpenAI / Anthropic / your own base URL):\n\n· game logs and crash reports\n· mod lists and instance information\n· configuration file contents\n· the text you type\n\nTool calls and their results are sent as well.\n\n**ZyNova does not store or relay any of this**, and your API key stays on this device. If you use a third-party relay, please check its privacy policy.</string>
+    <string name="ai_privacy_confirm">Got it</string>
+    <string name="ai_audit_title">Operation audit</string>
+    <string name="ai_audit_note">Records every write operation the AI performs (changing settings, writing files, deleting mods, installing resources, …) so you can review it later.</string>
+    <string name="ai_audit_view">View records (%1$d)</string>
+    <string name="ai_audit_export">Export</string>
+    <string name="ai_audit_clear">Clear</string>
+    <string name="ai_audit_empty">No write operations recorded yet.</string>
+    <string name="ai_audit_share_failed">Could not share the exported file.</string>
 </resources>

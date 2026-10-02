@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
+[![Release](https://img.shields.io/badge/Release-27.1.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.2)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -34,6 +34,23 @@
 - Discord: <https://discord.gg/QwPpZQHrTa>（永続招待リンク）
 
 ---
+
+## ✨ 27.1.2 のハイライト
+
+- **上流の Client ID を削除しました（Git 履歴からも）。** 上流 ZalithLauncher2 プロジェクトの
+  要請により、その Microsoft アプリ登録 ID は本リポジトリのどこにも存在しなくなり、
+  履歴も改訂して完全に除去しました（3 コミットを削除、全オブジェクト走査で 0 件）。
+  **そのためすべてのコミットハッシュとタグが変わっています**。古いクローンは取得し直してください。
+- **AI：データの送信先が分かるようになりました。** AI 設定を初めて開いたときに、
+  ゲームログ・MOD 一覧・設定ファイルの内容・入力したテキストが設定したプロバイダーに
+  送信されること、ZyNova は保存も中継もしないこと、API キーは端末内に留まることを説明します。
+- **AI：書き込み操作の監査ログ。** Agent の書き込み操作をすべてローカルに記録し
+  （時刻・ツール・リスク・引数・結果）、AI 設定から確認・エクスポートできます。
+- **Agent の権限モードの既定値を「操作確認」に変更。** 新しいユーザーは、
+  AI が設定変更・MOD 削除・ファイル書き込み・リソース導入を行う前に確認を求められます。
+- **Ironized Zink の OpenGL バージョン選択を復活**（4.6 / 4.5 / 4.3 / 3.3）。
+  4 つの公式プリセットはすべて 4.6 で、Vulkan→Zink 4.6 の変換が不完全なドライバーの端末には
+  下げる手段がありませんでした。残り 12 個の低レベルパラメータは非公開のままです。
 
 ## ✨ 27.1.1 のハイライト
 
@@ -94,7 +111,7 @@
 | | 表示名 | Client ID | Mojang 許可リスト | 本ビルドでの使用 |
 |---|---|---|---|---|
 | **ZyNova 自身のアプリ登録** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **承認済み（2026-09-30）** | ✅ **使用中** |
-| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | `（已移除）` | ✅ 承認済み | ❌ 未使用（26.4.0 / 26.4.1 で使用） |
+| **ZalithLauncher2 のアプリ登録** | ZalithLauncher（上流） | （削除済み） | ✅ 承認済み | ❌ 未使用（26.4.0 / 26.4.1 で使用） |
 
 - **Minecraft のアプリケーション許可リストに載っているアプリ登録だけ**が正規サインインを
   完了できます。そうでない場合、`POST /authentication/login_with_xbox` は

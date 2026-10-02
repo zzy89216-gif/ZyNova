@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.Zink
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.applyIronizedZinkPreset
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ironizedZinkOptions
@@ -75,6 +76,25 @@ fun IronizedZinkConfigCards(modifier: Modifier = Modifier) {
                 //选择预设 = 一次性写入整组参数（面板不再提供单独参数调整）
                 AllSettings.applyIronizedZinkPreset(preset)
             }
+        )
+
+        // #13：恢复「OpenGL 版本」下拉。
+        //
+        // 4 个官方预设的 glVersion 都是 4.6。某些 GPU 驱动对 Vulkan→Zink 的 4.6 转译并不完整，
+        // 此时用户需要一个把 OpenGL 版本降到 4.5 / 4.3 / 3.3 的「逃生口」；
+        // 26.4.0 收敛参数时把这个入口一并删掉了，老设备用户就无处可调。
+        //
+        // 这里**只恢复这一个参数**，其余 12 个底层开关保持不暴露，
+        // 面板复杂度只多一张卡，方向（不暴露底层参数）没有被破坏。
+        ListSettingsCard(
+            modifier = Modifier.fillMaxWidth(),
+            position = CardPosition.Single,
+            unit = AllSettings.ironizedZinkGlVersion,
+            items = Zink.GL_VERSIONS,
+            title = stringResource(R.string.settings_renderer_ironized_gl_version_title),
+            summary = stringResource(R.string.settings_renderer_ironized_gl_version_summary),
+            getItemText = { it },
+            getItemId = { it }
         )
 
         //仅当老用户残留了已知有问题的参数组合时提示；重新选择任意预设即可恢复

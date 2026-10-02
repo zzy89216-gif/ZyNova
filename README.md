@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
+[![Release](https://img.shields.io/badge/Release-27.1.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.2)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -34,6 +34,25 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 - Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
 
 ---
+
+## ✨ Highlights of 27.1.2
+
+- **The upstream Client ID is gone — including from the Git history.** At the upstream
+  ZalithLauncher2 project's request, their Microsoft application registration ID no longer appears
+  anywhere in this repository, and the history has been rewritten to purge it (3 commits removed;
+  a full object scan now returns zero hits). **All commit hashes and tags have therefore changed**,
+  so old clones must be fetched again.
+- **AI: you can now see where your data goes.** The first time you open the AI settings, the app
+  explains that game logs, mod lists, configuration contents and the text you type are sent to the
+  provider you configured, that ZyNova neither stores nor relays them, and that your API key stays
+  on this device.
+- **AI: operation audit log.** Every write operation the agent performs is recorded locally
+  (time, tool, risk, arguments, result) and can be reviewed or exported from the AI settings.
+- **The agent permission mode now defaults to "confirm each operation"**, so a brand-new user is
+  asked before the AI changes settings, deletes mods, writes files or installs resources.
+- **The OpenGL version selector is back** for Ironized Zink (4.6 / 4.5 / 4.3 / 3.3). All four
+  official presets use 4.6, and devices whose drivers translate Vulkan to Zink 4.6 imperfectly had
+  no way to lower it. The other twelve low-level parameters stay hidden.
 
 ## ✨ Highlights of 27.1.1
 
@@ -90,7 +109,7 @@ independently.** The two registrations involved are:
 | | Display name | Client ID | Mojang allow list | Used by this build |
 |---|---|---|---|---|
 | **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **approved (2026-09-30)** | ✅ yes |
-| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | `（已移除）` | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
+| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | (removed) | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
 
 - Only an application registration that is on **Minecraft's application allow list** can complete
   premium sign-in. Otherwise `POST /authentication/login_with_xbox` answers

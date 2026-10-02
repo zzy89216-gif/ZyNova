@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
+[![Release](https://img.shields.io/badge/Release-27.1.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.2)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -33,6 +33,23 @@
 - Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
 
 ---
+
+## ✨ 27.1.2 主要內容
+
+- **移除上游 Client ID，並改寫 Git 歷史。** 應上游 ZalithLauncher2 專案的要求，
+  其 Microsoft 應用註冊 ID 已不再出現在本倉庫的任何位置，
+  且歷史已被改寫以徹底清除（移除 3 個提交；全物件掃描 0 命中）。
+  **因此所有提交雜湊與 tag 都已改變**，舊的複製需要重新拉取。
+- **AI：現在能看到資料流向。** 首次開啟 AI 設定時會說明：
+  遊戲日誌、模組清單、設定檔內容與你輸入的文字都會傳送給你設定的服務商，
+  ZyNova 不儲存也不轉送，API Key 只留在本機。
+- **AI：寫入操作稽核記錄。** Agent 的每一次寫入操作都會在本地留下記錄
+  （時間、工具、風險等級、參數、結果），可在 AI 設定中查看或匯出。
+- **Agent 權限模式預設改為「操作確認」**，全新使用者在 AI 改設定、刪模組、
+  寫檔案或裝資源之前都會被詢問一次。
+- **恢復 OpenGL 版本選擇**（Ironized Zink，4.6 / 4.5 / 4.3 / 3.3）。
+  4 個官方預設都使用 4.6，而驅動對 Vulkan→Zink 4.6 轉譯不完整的裝置原本無處可調。
+  其餘 12 個底層參數仍然不暴露。
 
 ## ✨ 27.1.1 主要內容
 
@@ -82,7 +99,7 @@
 | | 顯示名稱 | Client ID | Mojang 允許名單 | 本版本是否使用 |
 |---|---|---|---|---|
 | **ZyNova 自己的應用註冊** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **已獲批准（2026-09-30）** | ✅ **正在使用** |
-| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | `（已移除）` | ✅ 已獲批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+| **ZalithLauncher2 的應用註冊** | ZalithLauncher（上游） | （已從本倉庫移除） | ✅ 已獲批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
 
 - **只有處於 Minecraft 應用程式允許名單中的應用註冊**才能完成正版登入；
   否則 `POST /authentication/login_with_xbox` 會回傳

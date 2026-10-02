@@ -1497,7 +1497,7 @@
     <string name="settings_renderer_ironized_preset_max_compat_tagline">什么都能跑 —— 版本、光影与模组</string>
     <string name="settings_renderer_ironized_preset_max_compat_note">全部版本（1.8 → 26.x）· 光影：完整 + 重度光影包</string>
     <string name="settings_renderer_ironized_gl_version_title">OpenGL 版本</string>
-    <string name="settings_renderer_ironized_gl_version_summary">越高越能支持更新的 Minecraft 与光影；26.x 上用 Sodium 建议 4.6。</string>
+    <string name="settings_renderer_ironized_gl_version_summary">4 个官方预设都使用 4.6。如果你的 GPU 驱动对 Vulkan→Zink 的 4.6 转译不完整（画面异常或进不去），可以在这里降到 4.5 / 4.3 / 3.3。改动此项只影响 OpenGL 版本，不动其它预设参数。</string>
     <string name="settings_renderer_ironized_threaded_gl_title">线程化 GL</string>
     <string name="settings_renderer_ironized_threaded_gl_summary">mesa_glthread —— 把 GL 调用卸载到工作线程，帧率更高</string>
     <string name="settings_renderer_ironized_big_core_title">绑定大核</string>
@@ -1587,4 +1587,14 @@
     <string name="ai_error_tool_failed">执行失败：%1$s</string>
     <string name="ai_untitled_conversation">新对话</string>
     <string name="ai_tool_write">写操作</string>
+    <string name="ai_privacy_title">关于数据流向</string>
+    <string name="ai_privacy_message">启用 AI 功能后，以下内容会**发送到你配置的 AI 服务商**（OpenAI / Anthropic / 你填写的自定义地址）：\n\n· 游戏日志与崩溃报告\n· 模组列表与实例信息\n· 配置文件内容\n· 你输入的文字\n\nAI 产生的工具调用与执行结果也会一并发送。\n\n**ZyNova 不存储、不中转这些内容**，API Key 只保存在本机。如果你填写的是第三方中转服务，请注意其隐私政策。</string>
+    <string name="ai_privacy_confirm">我知道了</string>
+    <string name="ai_audit_title">操作审计</string>
+    <string name="ai_audit_note">记录 AI 执行的每一次写操作（改设置、写文件、删模组、装资源等），方便事后核对。</string>
+    <string name="ai_audit_view">查看记录（%1$d 条）</string>
+    <string name="ai_audit_export">导出</string>
+    <string name="ai_audit_clear">清空</string>
+    <string name="ai_audit_empty">还没有写操作记录。</string>
+    <string name="ai_audit_share_failed">无法分享导出文件。</string>
 </resources>

@@ -28,7 +28,7 @@
 | | 显示名称 | Client ID | 当前是否使用 |
 |---|---|---|---|
 | **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **当前使用** |
-| **ZalithLauncher2 的应用注册（上游）** | ZalithLauncher | `（已移除）` | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+| **ZalithLauncher2 的应用注册（上游）** | ZalithLauncher | （已从本仓库移除） | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
 
 原因：**只有进入 Minecraft 应用程序允许名单的应用注册才能访问 Minecraft Services**，
 否则会在 `login_with_xbox` 收到 `HTTP 403 Invalid app registration`。

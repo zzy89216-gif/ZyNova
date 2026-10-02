@@ -34,6 +34,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,6 +61,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.ai.audit.AIAuditLog
+import com.movtery.zalithlauncher.ai.audit.AIAuditRecord
+import com.movtery.zalithlauncher.utils.file.shareFile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.movtery.zalithlauncher.ai.AIModelRepository
 import com.movtery.zalithlauncher.ai.AIPermissionMode
 import com.movtery.zalithlauncher.ai.AISettings
@@ -102,6 +108,22 @@ fun AIConfigScreen(
 
     val selectedModel = AISettings.model.state
     val permissionMode = AISettings.permissionMode.state
+
+    // #12：写操作审计
+    var auditCount by remember { mutableStateOf(0) }
+    var auditRecords by remember { mutableStateOf<List<AIAuditRecord>>(emptyList()) }
+    var showAudit by remember { mutableStateOf(false) }
+    var auditMessage by remember { mutableStateOf<String?>(null) }
+
+    // #10：首次打开时说明「内容会发往你配置的服务商」，确认后不再打扰
+    var showPrivacyNotice by remember {
+        mutableStateOf(!AISettings.privacyNoticeShown.getValue())
+    }
+
+    fun dismissPrivacyNotice() {
+        AISettings.privacyNoticeShown.save(true)
+        showPrivacyNotice = false
+    }
 
     // 切换 Provider 时清掉上一家的模型列表，避免列表与 Provider 对不上
     LaunchedEffect(provider) {
@@ -321,8 +343,122 @@ fun AIConfigScreen(
                 )
             }
 
+            Spacer(Modifier.height(12.dp))
+
+            // ── #12 操作审计 ──────────────────────────────────────
+            BackgroundCard {
+                SectionTitle(stringResource(R.string.ai_audit_title))
+                HintText(stringResource(R.string.ai_audit_note))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TextButton(onClick = {
+                        auditRecords = AIAuditLog.readAll()
+                        showAudit = true
+                    }) {
+                        Text(stringResource(R.string.ai_audit_view, auditCount))
+                    }
+                    TextButton(onClick = {
+                        runCatching { AIAuditLog.exportToFile() }
+                            .onSuccess { file ->
+                                auditMessage = null
+                                shareFile(
+                                    context = context,
+                                    file = file,
+                                    cantProcess = {
+                                        auditMessage = context.getString(
+                                            R.string.ai_audit_share_failed
+                                        )
+                                    }
+                                )
+                            }
+                            .onFailure { e ->
+                                auditMessage = e.message
+                            }
+                    }) {
+                        Text(stringResource(R.string.ai_audit_export))
+                    }
+                }
+
+                auditMessage?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
             Spacer(Modifier.height(24.dp))
         }
+    }
+
+    // 审计记录变化时刷新条数（放到 IO 上，别卡主线程）
+    LaunchedEffect(showAudit) {
+        auditCount = withContext(Dispatchers.IO) { AIAuditLog.count() }
+    }
+
+    // ── #12 审计记录查看 ─────────────────────────────────────────
+    if (showAudit) {
+        AlertDialog(
+            onDismissRequest = { showAudit = false },
+            title = { Text(stringResource(R.string.ai_audit_title)) },
+            text = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 420.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = if (auditRecords.isEmpty()) {
+                            stringResource(R.string.ai_audit_empty)
+                        } else {
+                            auditRecords.joinToString("\n") { it.toText() }
+                        },
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    AIAuditLog.clear()
+                    auditRecords = emptyList()
+                    auditCount = 0
+                    showAudit = false
+                }) {
+                    Text(
+                        text = stringResource(R.string.ai_audit_clear),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAudit = false }) {
+                    Text(stringResource(R.string.generic_cancel))
+                }
+            }
+        )
+    }
+
+    // ── #10 数据流向说明（只在首次打开时弹一次）──────────────────
+    if (showPrivacyNotice) {
+        AlertDialog(
+            onDismissRequest = { dismissPrivacyNotice() },
+            title = { Text(stringResource(R.string.ai_privacy_title)) },
+            text = {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    Text(
+                        text = stringResource(R.string.ai_privacy_message),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { dismissPrivacyNotice() }) {
+                    Text(stringResource(R.string.ai_privacy_confirm))
+                }
+            }
+        )
     }
 }
 

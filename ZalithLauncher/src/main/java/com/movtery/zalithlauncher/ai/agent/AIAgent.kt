@@ -19,6 +19,8 @@
 package com.movtery.zalithlauncher.ai.agent
 
 import com.movtery.zalithlauncher.ai.aiString
+import com.movtery.zalithlauncher.ai.audit.AIAuditLog
+import com.movtery.zalithlauncher.ai.audit.AIAuditStatus
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.AIPermissionMode
 import com.movtery.zalithlauncher.ai.model.AIMessage
@@ -233,6 +235,14 @@ object AIAgent {
                 context.confirm(call.name, describe(call, args))
             }.getOrDefault(false)
             if (!approved) {
+                // #12：写操作被拒绝也要留痕
+                AIAuditLog.append(
+                    tool = call.name,
+                    risk = tool.risk.name,
+                    args = args.toString(),
+                    status = AIAuditStatus.DENIED,
+                    detail = "用户拒绝执行",
+                )
                 return AIToolResult(
                     toolCallId = call.id,
                     name = call.name,
@@ -243,23 +253,46 @@ object AIAgent {
             }
         }
 
+        // #12：只对写操作类工具做审计，只读工具不记录（否则日志会被刷满）
+        val audited = tool.risk != AIToolRisk.READ
+
         return try {
             val output = tool.execute(args, context)
+            val content = output.ifBlank { aiString(R.string.ai_error_empty_output) }
+            if (audited) {
+                AIAuditLog.append(
+                    tool = call.name,
+                    risk = tool.risk.name,
+                    args = args.toString(),
+                    status = AIAuditStatus.SUCCESS,
+                    detail = content,
+                )
+            }
             AIToolResult(
                 toolCallId = call.id,
                 name = call.name,
-                content = output.ifBlank { aiString(R.string.ai_error_empty_output) },
-                writeOperation = tool.risk != AIToolRisk.READ,
+                content = content,
+                writeOperation = audited,
             )
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            val content = aiString(R.string.ai_error_tool_failed, e.message ?: e::class.simpleName.orEmpty())
+            if (audited) {
+                AIAuditLog.append(
+                    tool = call.name,
+                    risk = tool.risk.name,
+                    args = args.toString(),
+                    status = AIAuditStatus.ERROR,
+                    detail = content,
+                )
+            }
             AIToolResult(
                 toolCallId = call.id,
                 name = call.name,
-                content = aiString(R.string.ai_error_tool_failed, e.message ?: e::class.simpleName.orEmpty()),
+                content = content,
                 isError = true,
-                writeOperation = tool.risk != AIToolRisk.READ,
+                writeOperation = audited,
             )
         }
     }

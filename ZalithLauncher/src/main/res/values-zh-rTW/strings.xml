@@ -1474,4 +1474,16 @@
     <string name="ai_error_tool_failed">執行失敗：%1$s</string>
     <string name="ai_untitled_conversation">新對話</string>
     <string name="ai_tool_write">寫入操作</string>
+    <string name="ai_privacy_title">關於資料流向</string>
+    <string name="ai_privacy_message">啟用 AI 功能後，以下內容會**傳送給你設定的 AI 服務商**（OpenAI / Anthropic / 你填寫的自訂位址）：\n\n· 遊戲日誌與崩潰報告\n· 模組清單與實例資訊\n· 設定檔內容\n· 你輸入的文字\n\nAI 產生的工具呼叫與執行結果也會一併傳送。\n\n**ZyNova 不儲存、不轉送這些內容**，API Key 只保存在本機。如果你填寫的是第三方轉送服務，請注意其隱私政策。</string>
+    <string name="ai_privacy_confirm">我知道了</string>
+    <string name="ai_audit_title">操作稽核</string>
+    <string name="ai_audit_note">記錄 AI 執行的每一次寫入操作（改設定、寫檔案、刪模組、裝資源等），方便事後核對。</string>
+    <string name="ai_audit_view">查看記錄（%1$d 筆）</string>
+    <string name="ai_audit_export">匯出</string>
+    <string name="ai_audit_clear">清空</string>
+    <string name="ai_audit_empty">還沒有寫入操作記錄。</string>
+    <string name="ai_audit_share_failed">無法分享匯出檔案。</string>
+    <string name="settings_renderer_ironized_gl_version_title">OpenGL 版本</string>
+    <string name="settings_renderer_ironized_gl_version_summary">4 個官方預設都使用 4.6。如果你的 GPU 驅動對 Vulkan→Zink 的 4.6 轉譯不完整（畫面異常或進不去），可以在這裡降到 4.5 / 4.3 / 3.3。改動此項只影響 OpenGL 版本，不動其它預設參數。</string>
 </resources>

@@ -23,10 +23,78 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.1.1**（`launcher_version_code=270101`）
+**当前版本：27.1.2**（`launcher_version_code=270102`）
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.1.2 清理上游 Client ID（含改写历史）+ 处理 5 个议题 ✅
+
+**一、本版本做了什么**
+
+处理仓库里 5 个开放议题：#9 上游 Client ID、#10 数据流向说明、
+#11 权限默认值、#12 写操作审计、#13 OpenGL 版本下拉。
+
+**二、议题 #9：移除上游 Client ID 并改写 Git 历史（最重要）**
+
+- 上游 ZalithLauncher2 在议题中正式要求：移除其 Client ID，并从提交记录中清除
+- 本仓库当时的现状：**代码早已不再使用**（27.1.0 起用的是 ZyNova 自己的注册），
+  但**文档与提交历史里仍有残留**
+- 处理方式：
+  1. `git filter-repo --replace-text` 把该 ID 从**所有历史提交**中替换为「（已移除）」
+  2. 之后手动润色各语言文档的措辞（英文 / 日文 / 繁中分别用对应语言）
+  3. `git push --force origin main` + `git push --force --tags origin`
+- 影响范围：
+  - 含该 ID 的提交共 **3 个**：`521bd13`、`4d8e615`、`5364bd8`（旧哈希）
+  - **所有提交哈希与 tag 全部改变**（v26.1.0 及以后；v2.5 / v2.5.1 未受影响）
+  - 对全部 Git 对象的直接扫描：**0 命中**
+- ⚠️ **教训**：从外部 APK 反编译得到的标识符（即使不是密钥）不应落到文档与提交历史里。
+  以后 AI 辅助开发过程中产生的这类内容，必须在提交前清理
+
+**三、议题 #10：AI 数据流向说明**
+
+- 新增设置项 `aiPrivacyNoticeShown`（默认 false）
+- AI 配置页**首次打开**时弹一次说明：日志 / 模组列表 / 配置内容 / 用户输入
+  会发送到用户配置的服务商；ZyNova 不存储不中转；API Key 只在本机
+- 确认或关闭后写入标志，不再重复弹出
+
+**四、议题 #11：权限模式默认值**
+
+- `AISettings.permissionMode` 默认值 `FULL_CONTROL` → `CONFIRM`
+- 已有用户保存过的值不受影响（只改默认值）
+- 配合 27.1.1 移除轮数上限后的风险面，新用户默认每一次写操作都要确认
+
+**五、议题 #12：写操作审计日志**
+
+| 文件 | 作用 |
+|---|---|
+| `ai/audit/AIAuditLog.kt` | `AIAuditRecord` 模型 + 追加 / 读取 / 导出 / 清空 |
+| `ai/agent/AIAgent.kt` | 在 `executeTool()` 里挂接（只记 WRITE / DANGEROUS） |
+
+- 存储：`ai_conversations/audit.jsonl`，一行一条 JSON（追加写）
+- 超过 2 MB 自动裁剪为最近 2000 条
+- **导出**：写到 `DIR_FILES_EXTERNAL`（不是 `filesDir`！）
+  —— `provider_paths.xml` 没声明 `filesDir`，放那里 FileProvider 取不到 URI，分享会失败
+- 界面：AI 配置页「操作审计」卡片 → 查看记录 / 导出（`shareFile`）/ 清空
+
+**六、议题 #13：恢复「OpenGL 版本」下拉**
+
+- `Zink.GL_VERSIONS`（4.6 / 4.5 / 4.3 / 3.3）与 `AllSettings.ironizedZinkGlVersion`
+  **一直存在**，26.4.0 只是删掉了界面入口
+- 在 `IronizedZinkConfigCards.kt` 里用 `ListSettingsCard(unit = ironizedZinkGlVersion, ...)` 恢复
+- **只恢复这一个参数**，其余 12 个底层开关仍不暴露，方向没有被破坏
+
+**七、修复**
+
+- 「操作确认」弹窗会盖在其它页面上：
+  NavDisplay 转场期间旧页面仍会被 compose。已在 `AIChatScreen` 加
+  `currentKey is NormalNavKey.AIChat` 判断，只在确实停留时弹
+
+**八、兼容性**
+
+- 未改动认证流程与渲染器内部实现（#13 只恢复了界面入口）
+- 老用户已保存的 Ironized Zink 取值不受影响
+- ⚠️ Git 历史已改写，所有提交哈希与 tag 变化，旧克隆需重新拉取
 
 ### 27.1.1 Agent 无轮数上限 + 历史对话 + 缺陷修复 ✅
 
@@ -192,7 +260,7 @@
 | | 显示名称 | Client ID | 26.4.0 / 26.4.1 | 26.4.2 |
 |---|---|---|---|---|
 | **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ❌ 未使用 | ✅ **正在使用** |
-| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ✅ 曾使用 | ❌ 不再使用 |
+| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | （已从本仓库移除） | ✅ 曾使用 | ❌ 不再使用 |
 
 **2）应用图标更换（涉及文件）**
 
@@ -327,7 +395,7 @@ HTTP 403
 
 | | 显示名称 | Client ID | 所属项目 | Mojang 允许名单（26.4.1 当时） | 26.4.1 的状态 |
 |---|---|---|---|---|---|
-| **上游应用注册** | ZalithLauncher | `（已移除）` | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 正在使用它构建** |
+| **上游应用注册** | ZalithLauncher | （已从本仓库移除） | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 正在使用它构建** |
 | **本项目的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ZyNova | ⏳ 当时仍在审核 | ❌ 已保留但**未使用** |
 
 - **ZyNova 自己的 Entra 应用（当前未生效）**：支持账户类型「所有 Microsoft 帐户用户」，
@@ -768,6 +836,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 作用 |
 |---|---|
+| `ai/audit/AIAuditLog.kt` | Agent 写操作审计日志（27.1.2） |
 | `ai/AIModelRepository.kt` | 模型列表统一入口（27.1.1 抽出，消除两处重复） |
 | `ai/AIStringRes.kt` | 无 Context 处取本地化字符串（27.1.1） |
 | `ai/conversation/AIConversation.kt` | 对话模型 + 侧边栏摘要模型（27.1.1） |

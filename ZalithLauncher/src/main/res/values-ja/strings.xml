@@ -1205,4 +1205,16 @@
     <string name="ai_error_tool_failed">実行に失敗しました：%1$s</string>
     <string name="ai_untitled_conversation">新しい会話</string>
     <string name="ai_tool_write">書き込み</string>
+    <string name="ai_privacy_title">データの送信先について</string>
+    <string name="ai_privacy_message">AI 機能を有効にすると、以下が**設定した AI プロバイダー**（OpenAI / Anthropic / 独自の Base URL）に送信されます：\n\n· ゲームログとクラッシュレポート\n· MOD 一覧とインスタンス情報\n· 設定ファイルの内容\n· 入力したテキスト\n\nツール呼び出しとその結果も送信されます。\n\n**ZyNova はこれらを保存も中継もしません**。API キーは端末内にのみ保存されます。サードパーティの中継サービスを使う場合は、そのプライバシーポリシーをご確認ください。</string>
+    <string name="ai_privacy_confirm">了解しました</string>
+    <string name="ai_audit_title">操作の監査</string>
+    <string name="ai_audit_note">AI が行った書き込み操作（設定変更・ファイル書き込み・MOD 削除・リソース導入など）を記録し、後から確認できます。</string>
+    <string name="ai_audit_view">記録を表示（%1$d 件）</string>
+    <string name="ai_audit_export">エクスポート</string>
+    <string name="ai_audit_clear">クリア</string>
+    <string name="ai_audit_empty">まだ書き込み操作の記録はありません。</string>
+    <string name="ai_audit_share_failed">エクスポートしたファイルを共有できませんでした。</string>
+    <string name="settings_renderer_ironized_gl_version_title">OpenGL バージョン</string>
+    <string name="settings_renderer_ironized_gl_version_summary">4 つの公式プリセットはすべて 4.6 を使用します。GPU ドライバーが Vulkan→Zink の 4.6 を正しく変換できない場合（描画の乱れ／起動しない）は、ここで 4.5 / 4.3 / 3.3 に下げられます。この項目だけを変更しても他のプリセットパラメータには影響しません。</string>
 </resources>

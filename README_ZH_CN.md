@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.1)
+[![Release](https://img.shields.io/badge/Release-27.1.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.2)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,7 +29,7 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.1.1**。这一阶段的核心目标是：
+当前版本 **27.1.2**。这一阶段的核心目标是：
 
 > **在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 > 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
@@ -391,6 +391,24 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 当前版本：
 
+**ZyNova 27.1.2**
+
+27.1.2 处理了仓库里的 **5 个开放议题**：
+
+- **🔐 移除上游 ZalithLauncher2 的 Client ID，并改写 Git 历史**（议题 #9）
+  - 应上游项目的要求，本仓库不再保留其应用注册 ID；
+    含该 ID 的 **3 个提交已被彻底清除**，全对象扫描 0 命中
+  - ⚠️ **所有提交哈希与 tag 因此全部改变**，旧克隆需重新拉取
+- **✨ AI 数据流向说明**（议题 #10）：首次打开 AI 配置页时说明
+  「日志 / 模组 / 配置 / 你的输入会发往你配置的服务商，ZyNova 不存储不中转，Key 只在本机」
+- **✨ 写操作审计日志**（议题 #12）：Agent 每次写操作都本地留痕
+  （时间 / 工具 / 风险 / 参数 / 结果），可查看、可导出为文本
+- **🔄 Agent 权限模式默认改为「操作确认」**（议题 #11）：
+  新用户在被改动设置之前会先收到确认框
+- **🔄 恢复「OpenGL 版本」下拉**（议题 #13，4.6 / 4.5 / 4.3 / 3.3）：
+  4 个官方预设都是 4.6，驱动转译不完整的老设备原本无处可调；其余 12 个底层参数仍不暴露
+- **🐛 修复**：「操作确认」弹窗会盖在其它页面上的问题
+
 **ZyNova 27.1.1**
 
 27.1.1 在 27.1.0 的基础上做了这些事：
@@ -448,7 +466,7 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 | | 显示名称 | Client ID | Mojang 允许名单 | 本版本是否使用 |
 |---|---|---|---|---|
 | **ZyNova 自己的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **已获批准（2026-09-30）** | ✅ **正在使用** |
-| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | `（已移除）` | ✅ 已获批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+| **ZalithLauncher2 的应用注册** | ZalithLauncher（上游） | （已从本仓库移除） | ✅ 已获批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
 
 - **只有处于 Minecraft 应用程序允许名单中的应用注册**才能完成正版登录；
   否则 `POST /authentication/login_with_xbox` 会返回
@@ -774,7 +792,16 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 27.1.1（当前版本）
+### 27.1.2（当前版本）
+
+- [x] **移除上游 Client ID 并改写 Git 历史**（3 个提交清除，全对象扫描 0 命中）
+- [x] AI 配置页首次打开时的**数据流向说明**
+- [x] Agent **写操作审计日志**（可查看 / 导出 / 清空）
+- [x] Agent 权限模式**默认值改为「操作确认」**
+- [x] **恢复「OpenGL 版本」下拉**（4.6 / 4.5 / 4.3 / 3.3）
+- [x] 修复「操作确认」弹窗会盖在其它页面上的问题
+
+### 27.1.1
 
 - [x] **移除 Agent 工具调用的轮数上限**（改为「重复调用保护」，正常多步任务不受影响）
 - [x] **历史对话与侧边栏**：对话自动保存在本机，可查看 / 切换 / 删除 / 新建

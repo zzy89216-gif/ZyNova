@@ -121,6 +121,11 @@ fun AIChatScreen(
         }
     }
 
+    // 当前是否**真的**停在 AI 聊天屏幕上。
+    // NavDisplay 在转场期间会把旧页面一起 compose，如果不加这个判断，
+    // 用户切到别的页面时「操作确认」弹窗还会突然冒出来盖在别的界面上。
+    val isCurrentScreen = backStackViewModel.mainScreen.currentKey is NormalNavKey.AIChat
+
     var input by remember { mutableStateOf("") }
     var drawerOpen by remember { mutableStateOf(false) }
     var showClearConfirm by remember { mutableStateOf(false) }
@@ -375,7 +380,8 @@ fun AIChatScreen(
     }
 
     // ── 「操作确认」模式的确认弹窗 ────────────────────────────
-    pendingConfirm?.let { pending ->
+    // 只有在用户确实停留在本页面时才弹；否则等他们回来再弹（也可以直接点停止）
+    pendingConfirm?.takeIf { isCurrentScreen }?.let { pending ->
         AlertDialog(
             onDismissRequest = { viewModel.resolveConfirm(false) },
             title = { Text(stringResource(R.string.ai_confirm_title)) },

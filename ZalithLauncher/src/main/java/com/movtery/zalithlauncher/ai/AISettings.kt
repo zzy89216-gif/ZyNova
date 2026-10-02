@@ -55,8 +55,15 @@ object AISettings : SettingsRegistry() {
     val anthropicBaseUrl = stringSetting("aiAnthropicBaseUrl", AIProviderType.ANTHROPIC.defaultBaseUrl)
 
     // ── 5. Agent 权限模式 ─────────────────────────────────────────
-    /** 工具调用权限：完全控制 / 操作确认 */
-    val permissionMode = enumSetting("aiPermissionMode", AIPermissionMode.FULL_CONTROL)
+    /**
+     * 工具调用权限：完全控制 / 操作确认
+     *
+     * ⚠️ 默认值是 [AIPermissionMode.CONFIRM]（操作确认）。
+     * 理由：Agent 能改 118 项设置、删模组、写文件、装资源，
+     * 而「完全控制 + 无轮数上限」的组合下，模型若陷入循环用户可能来不及注意。
+     * 每次写操作弹一次确认是最便宜的保险；用户信任建立后可自行切到「完全控制」。
+     */
+    val permissionMode = enumSetting("aiPermissionMode", AIPermissionMode.CONFIRM)
 
     // ── 其它 ──────────────────────────────────────────────────────
     /** 采样温度 */
@@ -64,6 +71,13 @@ object AISettings : SettingsRegistry() {
 
     /** 是否在聊天流里显示工具调用过程 */
     val showToolCalls = boolSetting("aiShowToolCalls", true)
+
+    /**
+     * 是否已经向用户展示过「数据会发往你配置的 AI 服务商」这段说明。
+     *
+     * 只在 AI 配置页**首次**打开时弹一次，之后不再打扰。
+     */
+    val privacyNoticeShown = boolSetting("aiPrivacyNoticeShown", false)
 
     // ── 便捷读取 ──────────────────────────────────────────────────
 
