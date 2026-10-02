@@ -54,238 +54,28 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
   official presets use 4.6, and devices whose drivers translate Vulkan to Zink 4.6 imperfectly had
   no way to lower it. The other twelve low-level parameters stay hidden.
 
-## ✨ Highlights of 27.1.1
+> 📜 Full version history: [CHANGELOG.md](CHANGELOG.md)
 
-- **No more tool-call limit.** The agent used to stop after 12 rounds; now it keeps working until
-  the model itself decides it is done, and you can press **Stop** at any time. The only guard left
-  is a *repeat guard*: if the same tool is called with exactly the same arguments more than six
-  times, it is treated as a loop and stopped.
-- **Conversation history with a sidebar.** Chats are saved on your device and survive restarts.
-  Pull the sidebar from the top-left corner to review, switch, delete or start a new conversation.
-- **UI polish.** A running tool is now shown while it works (long installs no longer look like a
-  freeze), auto-scroll only follows when you are already at the bottom, you can send from the
-  keyboard, and clearing a chat asks for confirmation first.
-- **Fixed.** Pressing *Stop* now interrupts the stream immediately; `read_log` can no longer be
-  tricked into reading files outside the allowed directories; very large logs no longer risk an
-  out-of-memory crash; switching conversations can no longer write old messages into the new one.
-- **Localisation.** All user-visible AI error messages are now translated
-  (English / 简体中文 / 繁體中文 / 日本語), and the assistant replies in the language you write in.
-
-## ✨ Highlights of 27.1.0
-
-- **A global AI Agent.** A new **AI** button sits next to the file entry in the top bar and opens
-  the chat screen directly — there is no separate AI home page. Chat and Agent are **the same
-  entry point**: ask *"why won't this instance launch?"* and it goes and reads the logs; then say
-  *"fix it for me"* and it **calls tools and actually does it**, instead of writing you a tutorial.
-- **The AI can really act on your launcher.** 25 tools, all built on top of the launcher's existing
-  systems: instances, real mod metadata, enabling / disabling / deleting mods, resource packs,
-  shaders, saves, files, logs, crash reports, **118 launcher settings**, resource search and install
-  (including recursive installation of required dependencies), and **actually launching the game**.
-- **AI settings are completely separate from the launcher settings.** Provider
-  (OpenAI / Anthropic, extensible), your own API key (stored locally only), model selection
-  **fetched dynamically from the provider — no model name is hard-coded anywhere**, a customisable
-  base URL, and an agent permission mode (full control / confirm each operation).
-- **Fixed: silent failures when auto-installing dependencies.** Five separate defects all produced
-  the same symptom — the UI said "installed successfully", and the game then crashed because a
-  required dependency had never been installed.
-
-## ✨ Highlights of 26.4.2
-
-- **Premium sign-in now uses ZyNova's own Microsoft application registration.** The 26.4.0 and
-  26.4.1 builds had to borrow the registration of the **upstream ZalithLauncher2 project**, because
-  only a registration that is on Minecraft's application allow list may talk to Minecraft Services.
-  From 26.4.2 on, the launcher is built with **ZyNova's own registration**.
-- **New app icon.** Every icon variant was replaced with the new ZyNova artwork: the
-  **adaptive icon** (background / foreground / monochrome layers), the **legacy square and round
-  icons** at all densities, and the **Google Play 512×512 icon**. The artwork sits inside the
-  adaptive icon's visible area, so the character and the `ZyNova` wordmark stay **fully visible
-  and uncropped**. The in-app extraction screen shown on first launch is **left untouched**.
-
-### ℹ️ Which Microsoft application is used for sign-in
-
+## ℹ️ Which Microsoft application is used for sign-in
 **ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
-independently.** The two registrations involved are:
+independently.**
 
 | | Display name | Client ID | Mojang allow list | Used by this build |
 |---|---|---|---|---|
-| **ZyNova's own app registration** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **approved (2026-09-30)** | ✅ yes |
-| **ZalithLauncher2's app registration** | ZalithLauncher (upstream) | (removed) | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
+| **ZyNova's own** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **approved (2026-09-30)** | ✅ yes |
+| **ZalithLauncher2's** | ZalithLauncher (upstream) | (removed) | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
 
-- Only an application registration that is on **Minecraft's application allow list** can complete
-  premium sign-in. Otherwise `POST /authentication/login_with_xbox` answers
-  `403 Invalid app registration, see https://aka.ms/AppRegInfo`, no matter how OAuth, Xbox Live and
-  XSTS went.
-- ✅ **ZyNova's own registration is on that allow list.** The Mojang Enforcement AppID review was
-  completed on **2026-09-30** and stated that the submission in that batch
-  *"met the required criteria and have been approved for our allow list"*.
-  **Premium sign-in therefore works with the current builds — ZyNova no longer borrows the
-  upstream project's registration.**
-- The Client ID is **injected at build time** through the repository secret `OAUTH_CLIENT_ID`;
-  it is never hard-coded in the source. Its priority is
-  **environment variable (CI secret) > `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**.
-- **What you will see:** the sign-in appears in your Microsoft account's
-  *Connected apps / Apps and devices* page under the display name listed above.
-- Still required: **public client + Client ID only**. No Client Secret, no redirect URI, no SHA-1.
+- Only a registration that is on **Minecraft's application allow list** can complete premium
+  sign-in; otherwise `POST /authentication/login_with_xbox` answers
+  `403 Invalid app registration`, no matter how OAuth, Xbox Live and XSTS went.
+- ✅ **ZyNova's own registration is on that allow list** — the Mojang Enforcement AppID review was
+  completed on **2026-09-30**. Premium sign-in works with the current builds, and ZyNova no longer
+  borrows the upstream project's registration.
+- Still required: **public client + Client ID only** — no Client Secret, no redirect URI, no SHA-1.
+  The ID is injected at build time through the repository secret `OAUTH_CLIENT_ID`; it is never
+  hard-coded in the source.
 
-## ✨ Highlights of 26.4.1
-
-- **Microsoft (premium) sign-in works again.** 26.4.0 could stop at the Minecraft Services
-  step after Microsoft OAuth, Xbox Live and XSTS had all succeeded, and the real cause turned
-  out to be a **Mojang-side application allow list** — Minecraft Services answered
-  `403 Invalid app registration, see https://aka.ms/AppRegInfo`. Nothing was wrong with the
-  code, the Entra configuration, the IP, the network, the request rate or the account.
-  26.4.1 shipped with a **Microsoft application registration that Mojang has already approved**,
-  so premium sign-in completed; 26.4.2 moves to ZyNova's own registration (see above).
-- **A failed sign-in no longer loses the real error.** Previously the log only ever showed an
-  exception whose `message` was permanently `null` (`il6: null`) — the HTTP status code and the
-  server's response body were never recorded, and **every** HTTP 403 was reported in the UI as
-  "The current IP address has been blocked from logging in". The launcher now logs the request URL,
-  the real HTTP status code, the response body (the non-2xx error JSON, which never contains an
-  `access_token`) and the full stack trace for both `login_with_xbox` and `getPlayerProfile`.
-- **403 is no longer misattributed.** Minecraft Services uses 403 for two very different things:
-  `BLOCKED_IP` and `Invalid app registration`. The two are now told apart by the response body,
-  and the second one gets its own message instead of sending users off to change their network.
-
-## ✨ Highlights of 26.4.0
-
-- **Microsoft (premium) sign-in is back**: the account login menu offers **Microsoft** again.
-  It uses the OAuth 2.0 **device code flow** — the launcher fetches a device code, copies it to
-  the clipboard, opens the verification page, and then polls for the token.
-  The authentication backend was never removed: 26.1.0 only cut the UI and ViewModel wiring,
-  which this release restores. **No Client Secret, no redirect URI and no SHA-1 are required**,
-  and the public OAuth Client ID ships inside the APK as designed.
-- **Fixed the empty "Category" filter on the download page** (Issue #6):
-  under the default "All platforms" mode the category list now follows the reference source
-  (CurseForge) instead of being cleared, and the category condition is only sent to that source,
-  so a category ID is never handed to a source it does not belong to.
-  When more than one source is queried the filter title says so, e.g. "Category (CurseForge only)".
-- **Fixed the missing resource-type badge on result cards** (Issue #6):
-  the search result list failed to pass the `classes` argument down to the card layout, so the
-  mod / resource pack / shader / world / modpack badge never rendered — while the detail page,
-  which did pass it, showed the badge correctly.
-- **Ironized Zink now exposes only its 4 official presets** (Issue #7):
-  the OpenGL version dropdown and the 12 parameter switches were removed, so ordinary users no
-  longer have to tune low-level parameters. Selecting a preset still writes the whole parameter set.
-  ⚠️ All four presets pin the OpenGL version to 4.6, so new users can no longer lower it to
-  4.5 / 4.3 / 3.3; values already saved by users who tuned parameters during 26.3.0 keep working.
-
-## ✨ Highlights of 26.3.0
-
-- **Renderer overhaul — only three built-in renderers remain**:
-  **Ironized Zink** (now the default), **GL4ES** and **MobileGlues**.
-  Removed: Krypton Wrapper (NG-GL4ES), Kopper Zink, VirGL, Freedreno and Panfrost,
-  together with the native libraries that only they used.
-- **Ironized Zink is fully integrated**: all **13 tunable parameters** and the
-  **4 official presets** (Potato / Performance / Default / Max Compatibility),
-  ported from upstream (by GoyDevv, GPL-3.0). Selecting it in **Settings → Renderer**
-  immediately expands the configuration panel right below.
-  *(26.4.0 later reduced that panel to the 4 presets only — see the highlights above.)*
-- **Default renderer is now Ironized Zink with the Default preset.**
-- **Fixed cards drifting while scrolling the home page** — the page scroll was being
-  mistaken for a reorder "make way" shift, so every card animated itself out of place.
-- **One universal APK only** (all four ABIs in a single build, code obfuscation kept).
-- **Per-component license notices** — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-- **External renderer plugins are unaffected**: FCL / Zalith renderer plugins and
-  `fclPlugin_V2` plugins can still add more renderers to the list.
-
-## ✨ Highlights of 26.2.6
-
-- **Fixed** cards being pushed to the wrong place after drag reordering
-  (the offset modifier was applied inside `clip` / `background`, and an interrupted
-  make-way animation could leave a permanent offset behind)
-- **Changed**: the action menu can now be **long-pressed and dragged to either side of the screen**
-  (ported from upstream ZalithLauncher2: the menu lifts, follows the finger, previews the dock side
-  and settles there, with the content area making way; the side is remembered)
-- **Fixed** the right menu layout being restored to the upstream arrangement
-
-## ✨ Highlights of 26.2.5
-
-- **Fixed** the visible frame around cards on the card home page: the card used to stack
-  several layers (rounded fill + scaled graphics layer + shadow), which made the padding ring
-  look darker than the content area — the card now has a single background layer, no shadow
-- **New**: long-press **drag to reorder** on the card home page —
-  version cards, the worlds / servers inside a card, and the three blocks of the right menu
-  (account avatar / version row / launch button) can be dragged into any order,
-  and the order is remembered
-
-## ✨ Highlights of 26.2.4
-
-Two new reports were handled in this release:
-
-- **Fixed** the card home page ignoring the *Background Element Opacity* setting:
-  the card colour was hard-coded with `cardColor(false)`, which opts out of being influenced
-  by the custom background, so the cards stayed fully opaque while every other page followed the setting
-- **New**: an adjustable **Card Size** for the card home page
-  (Settings → Launcher → Home Page → Card Size, 70%–140%, default 100% which keeps the original look)
-
-## ✨ Highlights of 26.2.3
-
-This release fixes the resource download flow for **everything except mods**
-(modpacks, resource packs, worlds and shaders):
-
-- **Fixed** resource pack / shader / world searches returning almost nothing:
-  the mod-loader filter was being applied to resource types that are not categorised by loader
-- **Fixed** the aggregated search total page count collapsing to 0 (the UI showed "1 / 0" and could not page)
-- **Fixed** the *All* platform option querying sources that do not support the selected resource type
-  (worlds do not exist on Modrinth)
-- **Fixed** CurseForge being completely unreachable when no API key is configured
-  (the MCIM mirror is now kept as a source in that case)
-- **Fixed** the dead category filter on worlds, and leftover `.zip` files when unpacking a world fails
-
-## ✨ Highlights of 26.2.2
-
-This release focuses on fixing issues reported by users:
-
-- **Removed** the *⚠️ Extreme* glass level and simplified the glass effect into
-  **Off / Enable Dynamic Glass** — the extreme level blurred the text layer along with the
-  background, making the UI font look blurry
-- **Fixed** the one-tap install occasionally failing with
-  `No compatible version found for this instance`: after switching the search platform, the
-  mod-loader filter was silently dropped, so results included assets for other loaders
-- **Improved** install failures: messages are now localized and include the target instance's
-  Minecraft version and mod loader
-- **Fixed** required dependencies no longer being dropped silently — unresolved prerequisites
-  are logged and reported
-- **Fixed** the Discord invite links: the old temporary invite expired and was replaced with a
-  permanent one
-
-## ✨ Highlights of 26.2.1
-
-- **Reworked**: the *⚠️ Extreme* glass level now uses a real GPU shader
-  (multi-sample blur + wave-based refraction/distortion) instead of barely visible gradients
-- **Fixed**: search-result cards now provide a one-tap install button
-- **Fixed**: the mod loader is now selected automatically from the current instance
-- **Home screen**: reorganized into **per-version modules**, each listing its own worlds and servers
-- **New**: an **All** platform option that merges CurseForge and Modrinth results into one list
-- **Changed**: default sort order is now **Total Downloads**
-
-### Highlights of 26.2.0
-
-- **Fixed**: resource installation context being lost when entering the download center
-  from *Version Settings → resource management* (the `@Transient` field on a NavKey was
-  silently dropped by Navigation3's saveable serialization)
-- **Improved**: resource search now automatically filters by the current instance's
-  Minecraft version — no need to pick the version manually
-- **New**: a **⚠️ Extreme** glass level (with a performance warning before enabling)
-
-### Highlights of 26.1.0
-
-The goal of this release is to further move away from the legacy logic of ZalithLauncher2,
-and to establish ZyNova's own resource management, download, home screen and UI foundation.
-
-> **Context First. Less Steps.**
-
-| Feature | Status |
-|---|:---:|
-| Card-style home screen (recent versions / local worlds / servers) | ✅ |
-| Unified Resource Management Core | ✅ |
-| Resource Providers (Modrinth / CurseForge) | ✅ |
-| Unified Download Manager (queue / concurrency / resume / retry / verification) | ✅ |
-| Minimal resource installation (context-aware) | ✅ |
-| Glass UI with two levels (Off / Enable Dynamic Glass; the former Standard / Enhanced / Extreme levels were removed in 26.2.2) | ✅ |
-| Vulkan detection and compatibility for Minecraft 26.4 Snapshot 1 | ✅ |
-| Launcher updates via ZyNova's own GitHub Releases | ✅ |
-| On-demand loading and performance strategy | ✅ |
+## 🛠️ Features
 
 ### Renderers
 

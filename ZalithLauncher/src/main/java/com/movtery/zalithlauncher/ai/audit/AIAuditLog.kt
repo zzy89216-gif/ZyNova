@@ -74,8 +74,11 @@ data class AIAuditRecord(
         return "[$ts] $tool ($risk) → $statusText\n    参数: $args\n    结果: $detail"
     }
 
-    private companion object {
-        val TIME_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    //⚠️ 这里**不能**写 `private companion object`：
+    //   kotlinx.serialization 会把 `serializer()` 生成到 companion 上，
+    //   companion 一旦是 private，外面的 AIAuditLog 就调不到 AIAuditRecord.serializer()
+    companion object {
+        private val TIME_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     }
 }
 
