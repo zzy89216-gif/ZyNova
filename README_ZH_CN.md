@@ -111,6 +111,25 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 
 ---
 
+## ℹ️ 正版登录用的是哪个微软应用
+
+**ZyNova 是 ZalithLauncher2 的非官方分支，两者是各自独立维护的不同项目。**
+
+| | 显示名称 | Client ID | Mojang 允许名单 | 本版本是否使用 |
+|---|---|---|---|---|
+| **ZyNova 自己的** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **已获批准（2026-09-30）** | ✅ **正在使用** |
+| **ZalithLauncher2 的** | ZalithLauncher（上游） | （已从本仓库移除） | ✅ 已获批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+
+- **只有处于 Minecraft 应用程序允许名单中的应用注册**才能完成正版登录；
+  否则 `POST /authentication/login_with_xbox` 会返回
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`
+- ✅ **ZyNova 自己的注册已在该名单中**：Mojang Enforcement 已于 **2026-09-30**
+  完成 AppID 审核，**当前版本的正版登录可以正常完成**，也不再借用上游项目的注册
+- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1；
+  Client ID 通过仓库 Secret `OAUTH_CLIENT_ID` **在构建时注入**，不写死在源码中
+
+---
+
 ## 🎨 UI 与视觉体验
 
 ZyNova 对原有启动器的界面与交互做了较大范围的重新设计，而不是简单改个名字：
