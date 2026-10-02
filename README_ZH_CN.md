@@ -123,12 +123,11 @@ ZyNova 对原有启动器的界面与交互做了较大范围的重新设计，�
 
 ## 🧩 渲染器
 
-
 26.3.0 起重做渲染器体系。**启动器内置的渲染器只保留三个**：
 
 | 渲染器 | 说明 | 配置 |
 |---|---|---|
-| **Ironized Zink**（默认） | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6 | **4 个官方预设**（26.4.0 起面板只提供预设，见下） |
+| **Ironized Zink**（默认） | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6 | **4 个官方预设** + OpenGL 版本下拉 |
 | **GL4ES** | 经典 OpenGL 转译层 | 保持默认 |
 | **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | 保持上游默认 |
 
@@ -141,13 +140,13 @@ ZyNova 对原有启动器的界面与交互做了较大范围的重新设计，�
 | **Default** | 均衡 Zink + 光影（**默认**） | 1.16.x → 最新 | 完整（Iris / OptiFine） |
 | **Max Compatibility** | 什么都能跑 | 全部版本 | 完整 + 重度光影包 |
 
-**26.4.0 起，面板只提供上面 4 个预设**：OpenGL 版本下拉与 12 个单独参数开关已被移除，
+**26.4.0 起，面板只提供上面 4 个预设**：12 个单独参数开关已被移除，
 普通用户不再需要手动调整底层参数。选择预设仍会一次性写入整组参数。
 
-> ⚠️ 4 个预设的 OpenGL 版本都是 **4.6**。移除版本下拉后，**新用户无法再把 OpenGL 版本
-> 降到 4.5 / 4.3 / 3.3**；而在 26.3.0 期间手动改过参数的老用户，其已保存的取值仍会继续
-> 生效（依旧会被注入为环境变量），但已无法在界面上修改 —— 重新选择任意预设即可把全部
-> 参数一次性写回受支持的组合。
+> ℹ️ 4 个预设的 OpenGL 版本都是 **4.6**。如果驱动对 Vulkan→Zink 的 4.6 转译不完整
+> （画面异常或进不去），可以在面板下方的「**OpenGL 版本**」下拉里降到 4.5 / 4.3 / 3.3
+> —— 该下拉在 26.4.0 曾被移除，**27.1.2 起已恢复**。
+> 改动此项只影响 OpenGL 版本，不动其它预设参数。
 
 在 **设置 → 渲染器** 里选中 Ironized Zink 后，**下方会立刻展开预设面板**。
 
@@ -181,12 +180,11 @@ ZyNova 使用独立的应用名称以及独立的应用签名。
 
 如果之后希望重新使用 ZalithLauncher2，也可以重新下载安装原项目。
 
-> ⚠️ **注意：安装可以共存，但「正版登录」所用的微软应用注册是同一个。**
+> ℹ️ **注意：安装可以共存，而正版登录使用的是 ZyNova 自己的应用注册。**
 > ZyNova 是 ZalithLauncher2 的非官方分支，两者是**不同项目**；
-> 但 ZyNova 当前用于正版登录的 Microsoft 应用注册**属于上游 ZalithLauncher2**
-> （因为只有进入 Mojang 允许名单的应用才能访问 Minecraft Services）。
-> 因此在微软账号的「已连接的应用」中会看到 **ZalithLauncher**，而不是 ZyNova。
-> 详见下方 [Release → 正版登录用的是哪个微软应用](#-release)。
+> 从 26.4.2 起，正版登录改用 **ZyNova 自己申请、并已获 Mojang 允许名单批准的**
+> Microsoft 应用注册（见上方「正版登录用的是哪个微软应用」）。
+> 因此在微软账号的「已连接的应用」中看到的是 **ZyNova Launcher**，而不是 ZalithLauncher。
 
 ---
 
@@ -480,7 +478,7 @@ ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同�
 | 组件 | 许可证 |
 |---|---|
 | ZyNova Launcher（本项目自身） | **GPL-3.0** |
-| ZalithLauncher2（上游，ZyNova 基于其开发） | **GPL-3.0**（上游另有 GPLv3 第 7 条附加条款，见 `README.md` / `README_ZH_TW.md` / `README_JA_JP.md` 的「附加条款」小节） |
+| ZalithLauncher2（上游，ZyNova 基于其开发） | **GPL-3.0**（上游另有 GPLv3 第 7 条附加条款，见本文件及各 README 的「附加条款」小节） |
 | Ironized Zink（GoyDevv） | **GPL-3.0** |
 | MobileGlues（MobileGL-Dev） | **LGPL-2.1** |
 | GL4ES（gl4es_extra_extra / PojavLauncherTeam） | **MIT** |
@@ -495,7 +493,7 @@ ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同�
   Zalith Launcher / MovTery 的版权声明 —— 这是 GPL-3.0 的要求，**不会删除**
 - 上游 ZalithLauncher2 依据 GPLv3 第 7 条提出的附加条款（分发修改版时需更名以区别于原版、
   且不得移除程序显示的版权声明）同样适用；本项目已在启动器「关于」页面标注
-  「非官方修改版本」，并在 `README.md` / `README_ZH_TW.md` / `README_JA_JP.md` 中完整转录该附加条款
+  「非官方修改版本」，并在四份 README 中完整转录该附加条款
 - 完整声明（含各预编译二进制的来源与对应源码获取方式）：
   [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 - 应用内「关于 → 开源许可」逐条列出各组件及其许可文本
@@ -503,6 +501,17 @@ ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同�
 - **MobileGlues** 以 LGPL-2.1 分发的是**未经修改**的预编译动态库：
   已与上游官方 release 内的同名二进制做 **SHA-256 比对，四个 ABI 全部一致**；
   其对应源码获取方式已在 `THIRD_PARTY_NOTICES.md` 中给出
+
+### 附加条款（依据 GPLv3 第 7 条）
+
+1. **分发本程序的修改版本时，必须合理地修改程序名称或版本号，以区别于原版。**
+   （依据 [GPLv3 第 7(c) 条](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374)）
+   - 修改版本的名称中**不得包含原程序名称「ZalithLauncher」或其缩写「ZL」，
+     也不得使用与官方名称足够相似、可能造成混淆的名称**
+   - 所有修改版本**必须在程序启动画面或主界面明确标注「非官方修改版本」**
+   - 程序的应用名称可在 [gradle.properties](./ZalithLauncher/gradle.properties) 中修改
+2. **不得移除程序所显示的版权声明。**
+   （依据 [GPLv3 第 7(b) 条](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370)）
 
 ---
 
@@ -535,6 +544,7 @@ ZyNova 从一个最初的界面与功能需求开始，逐渐发展成为一个�
 - 独立源码仓库
 - 完整 Android 工程
 - Kotlin / Java / C / NDK
+- **全局 AI Agent**（Provider 可扩展 / 25 个可真正执行操作的工具 / 历史对话与侧边栏 / 写操作审计 / 数据流向说明）
 - 统一资源管理核心
 - 资源来源 Provider 体系
 - 统一下载管理器

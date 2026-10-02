@@ -119,7 +119,7 @@
 |---|---|
 | `ai/conversation/AIConversation.kt` | 对话模型 + 摘要模型；标题取第一条用户消息 |
 | `ai/conversation/AIConversationStore.kt` | 文件式持久化（一段对话一个 JSON + `index.json`） |
-| `ui/AIChatScreen.kt` 的 `ConversationSidebar` | 侧边栏（自绘，未用 Material3 Drawer） |
+| `ai/ui/AIChatScreen.kt` 的 `ConversationSidebar` | 侧边栏（自绘，未用 Material3 Drawer） |
 
 - 存储位置：`DIR_FILES_PRIVATE/ai_conversations/`
 - **为什么不用 Room**：现有库是账号 / 路径等实体，
@@ -395,21 +395,23 @@ HTTP 403
 
 | | 显示名称 | Client ID | 所属项目 | Mojang 允许名单（26.4.1 当时） | 26.4.1 的状态 |
 |---|---|---|---|---|---|
-| **上游应用注册** | ZalithLauncher | （已从本仓库移除） | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 正在使用它构建** |
+| **上游应用注册** | ZalithLauncher | （已从本仓库移除） | **ZalithLauncher2（上游）** | ✅ 已获批准 | ✅ **26.4.1 用的是它** |
 | **本项目的应用注册** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ZyNova | ⏳ 当时仍在审核 | ❌ 已保留但**未使用** |
 
-- **ZyNova 自己的 Entra 应用（当前未生效）**：支持账户类型「所有 Microsoft 帐户用户」，
-  已开启公共客户端流，**未创建 Client Secret**。
+- **ZyNova 自己的 Entra 应用（26.4.2 起为当前生效的注册）**：支持账户类型
+  「所有 Microsoft 帐户用户」，已开启公共客户端流，**未创建 Client Secret**。
   其租户 ID / 对象 ID 属于项目维护者的目录标识，**不写入本文档**，
   需要时请到维护者的 Entra 后台查看
 - **注入方式**：仓库 Secret **`OAUTH_CLIENT_ID`**，**构建时注入**，
   **不写进源码**；因此 `ZalithLauncher/gradle.properties` 里保留的是 ZyNova 自己的
-  那个（尚未获批），它只在 Secret 缺失时才会生效
+  那个作为兜底（该注册已于 2026-09-30 获批准），它只在 Secret 缺失时才会生效
 - **上游 ZalithLauncher2 的做法完全一致**：其仓库里同样是注释掉的
   `#oauth_client_id=xxx`，真实 ID 通过 CI Secret / `.oauth_client_id.txt` 在构建时注入。
-  上面这个 ID 是从 **ZalithLauncher2 2.6.1 的正式 APK** 中解出的
-  （`buildKeys` 的「Base64 → 字符码整数数组」混淆可以直接还原，
-  参见本文件第「附：如何从 APK 中还原 BuildKeys 字符串」一节）
+  关于 `buildKeys` 的混淆与还原方式（用于排查本启动器自身的构建产物），
+  参见本文件第「附：如何从 APK 中还原 BuildKeys 字符串」一节。
+- ⚠️ **不要再把第三方项目的应用标识写入本仓库**：
+  上游已就此前使用其 Client ID 一事提出正式要求，本仓库已做全量清理
+  （详见 27.1.2 章节）。任何从外部 APK 反解得到的标识符都属于该类内容。
 - **可预期的现象**：由于认证使用 ZalithLauncher2 的应用注册，
   用户微软账号的「已连接的应用 / 应用与设备」中会显示 **ZalithLauncher** 而非 ZyNova，
   **这是预期行为**，不是 bug
@@ -785,16 +787,17 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 ### 后续待办 ⬜
 
 1. **Boat 后端双端**：用户曾想接入 Boat 后端（像老版 FCL 一样），目前未开始。
-2. **AI 助手**：接入 OpenAI V1 接口，自动加模组写配置，未开始。
+2. ~~**AI 助手**~~ ✅ **已完成（27.1.0 – 27.1.2）**：
+   已实现**全局 AI Agent**——Provider（OpenAI / Anthropic，可扩展）、模型从服务商动态获取、
+   流式对话、历史对话与侧边栏、25 个可真正执行操作的工具（读日志 / 管模组 / 改 117 项设置 /
+   写文件 / 装资源 / 启动游戏）。比当初设想的「接入 OpenAI 接口 + 自动加模组写配置」范围大得多。
+   后续可继续扩充工具集。
 3. **自定义主页数据接口**：`HomeDataProvider` 已可作为统一数据入口，可继续开放给自定义主页。
 4. **键位优化、渲染优化**：用户提过，未深入做。
 5. **继续收敛 ZL2 遗留逻辑**：资源系统已统一，其他模块仍可能残留上游耦合。
-5.1 **Ironized Zink 的 OpenGL 版本不可在界面调整（26.4.0 的已知取舍）**：
-   - Issue #7 要求删除面板上全部单独参数控件，已照办；但 4 个官方预设的 `glVersion` **全都是 4.6**，
-     因此新用户再也无法把 OpenGL 版本降到 4.5 / 4.3 / 3.3
-   - 若日后收到「老设备 / 老光影需要更低 GL 版本」的反馈，可选做法：
-     恢复**仅** OpenGL 版本这一个下拉（其余 12 个开关保持删除），
-     或与上游确认后再决定是否给某个预设换更低的 GL 档（**不要擅自改上游预设取值**）
+5.1 ~~**Ironized Zink 的 OpenGL 版本不可在界面调整**~~ ✅ **已解决（27.1.2）**：
+   已恢复**仅** OpenGL 版本这一个下拉（4.6 / 4.5 / 4.3 / 3.3），其余 12 个开关保持删除。
+   实现见 27.1.2 章节；上游预设取值未被改动。
 6. **配置 `CURSEFORGE_API_KEY`（已知遗留，26.2.3 起已有兜底，维护者决定暂不处理）**：
    - 仓库的 Actions Secrets 里**没有配置** `CURSEFORGE_API_KEY`，
      所以打包出来的 APK 调 CurseForge 官方接口**必然返回 403**；
