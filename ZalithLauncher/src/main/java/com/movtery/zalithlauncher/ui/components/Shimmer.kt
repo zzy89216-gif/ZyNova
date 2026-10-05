@@ -33,12 +33,19 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import com.movtery.zalithlauncher.setting.AllSettings
 
 @Composable
 fun Modifier.infiniteShimmer(
     initialValue: Float = 0.3f,
     targetValue: Float = 0.6f
 ): Modifier {
+    //开启「减少动态效果」时不循环闪烁，固定在一个中间亮度，
+    //依然能表达「正在加载」，但不会持续闪动
+    if (AllSettings.launcherReduceMotion.state) {
+        return this.then(Modifier.alpha((initialValue + targetValue) / 2f))
+    }
+
     val infiniteTransition = rememberInfiniteTransition()
 
     //循环动画

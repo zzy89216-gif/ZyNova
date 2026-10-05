@@ -939,6 +939,8 @@
     <string name="settings_game_graphics_api_summary">设置 Minecraft 26.4 Snapshot 1 将使用的图形 API</string>
     <string name="settings_game_graphics_api_default">跟随游戏设置</string>
     <string name="settings_game_graphics_api_default_opengl">仅首次启动时设置为 OpenGL</string>
+    <string name="settings_game_graphics_api_auto_title">图形 API（自动）</string>
+    <string name="settings_game_graphics_api_auto_summary">已不需要手动选择：某个实例第一次启动时使用 OpenGL，之后跟随游戏自身的设置。是否需要该选项由版本发布时间判断，不写死版本号</string>
     <string name="settings_game_jvm_args_title">JVM 启动参数</string>
     <string name="settings_game_jvm_args_summary">启动 JVM 时，额外添加的 JVM 参数，不建议在没有把握的情况下进行修改，因为这很有可能导致崩溃</string>
     <string name="settings_game_show_log_automatic_title">自动显示日志</string>
@@ -1069,6 +1071,8 @@
     <string name="settings_launcher_language">语言</string>
     <string name="settings_launcher_full_screen_title">页面全屏化</string>
     <string name="settings_launcher_full_screen_summary">使启动器的页面全屏化，忽略刘海屏、挖孔屏等屏幕的安全区</string>
+    <string name="settings_launcher_reduce_motion_title">减少动态效果</string>
+    <string name="settings_launcher_reduce_motion_summary">关闭页面切换动画、动态玻璃的流动高光等持续动态效果。如果您对动效比较敏感，建议开启</string>
     <string name="settings_launcher_animate_speed_title">动画倍速</string>
     <string name="settings_launcher_animate_speed_summary">调整启动器的动画播放时长的倍速</string>
     <string name="settings_launcher_animate_extent_title">动画幅度</string>
@@ -1097,7 +1101,13 @@
     <string name="settings_launcher_liquid_glass_title">液态玻璃效果</string>
     <string name="settings_launcher_glass_level_off">关闭</string>
     <string name="settings_launcher_glass_level_on">启用动态玻璃</string>
-    <string name="settings_launcher_liquid_glass_summary">在毛玻璃之上叠加缓慢流动的高光与折射光晕，呈现 iOS 26 风格液态玻璃质感</string>
+    <string name="settings_launcher_glass_level_intense">⚠️ 强效（有光敏风险）</string>
+    <string name="settings_launcher_liquid_glass_summary">在毛玻璃之上叠加缓慢流动的高光与折射光晕，呈现 iOS 26 风格液态玻璃质感；强效档流速更快并伴随明暗脉动（有光敏风险）</string>
+    <string name="settings_launcher_photosensitivity_warning_title">启动时显示光敏性警告</string>
+    <string name="settings_launcher_photosensitivity_warning_summary">当玻璃效果为「强效」时，每次启动启动器都会显示一遍光敏性警告；未使用强效档时此开关不起作用</string>
+    <string name="photosensitivity_warning_title">⚠️ 光敏性警告</string>
+    <string name="photosensitivity_warning_summary">启动器提供了可选的「强效动态玻璃」效果，它会产生持续的明暗变化，可能让光敏性癫痫患者感到不适甚至发作。如果您对光线或动效敏感，请保持玻璃效果为关闭，或开启「减少动态效果」——「减少动态效果」会无条件压掉强效效果，让界面保持静止。</string>
+    <string name="photosensitivity_warning_disable">不再显示</string>
     <string name="settings_launcher_festivals_effects_title">持续型节日彩蛋效果</string>
     <string name="settings_launcher_festivals_effects_summary">在特定时间段显示持续型彩蛋效果</string>
     <string name="settings_launcher_home_page_title">主页</string>

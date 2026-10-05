@@ -38,8 +38,9 @@ import com.movtery.zalithlauncher.game.launch.MCOptions
 import com.movtery.zalithlauncher.game.launch.loadLanguage
 import com.movtery.zalithlauncher.game.sdl.SdlBridge
 import com.movtery.zalithlauncher.game.sdl.handleGamepadKeyEvent
-import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
+import com.movtery.zalithlauncher.game.version.installed.AutoGraphicsApi
 import com.movtery.zalithlauncher.game.version.installed.utils.isLowerVer
+import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersions
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
 import com.movtery.zalithlauncher.terracotta.Terracotta
@@ -54,6 +55,7 @@ import com.movtery.zalithlauncher.viewmodel.GamepadViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import org.libsdl.app.SDLActivity
 import org.lwjgl.glfw.CallbackBridge
 
@@ -115,19 +117,26 @@ class GameHandler(
             set("overrideWidth", screenSize.width.toString())
             set("overrideHeight", screenSize.height.toString())
 
-            val graphicsApi = version.getGraphicsApi()
-            val graphicsOption = "preferredGraphicsBackend"
-            when (graphicsApi) {
-                GraphicsApi.DEFAULT, GraphicsApi.DEFAULT_OPENGL -> {
-                    if (!containsKey(graphicsOption)) {
-                        set(graphicsOption, graphicsApi.option)
-                    }
+            //图形 API 全自动（27.2.0 起不再向用户提供手动选择）：
+            //· 这个实例第一次启动时使用 OpenGL —— options.txt 里还没有这个键，就是「第一次」
+            //· 之后完全跟随 Minecraft 游戏自身保存的设置，启动器不再覆盖
+            //  （游戏改过之后这个键就一直存在，因此不会被再次写入）
+            //· 老版本（Vulkan 时代之前）游戏内并没有该选项，直接跳过，保持 options.txt 干净
+            val graphicsOption = AutoGraphicsApi.OPTION_KEY
+            if (!containsKey(graphicsOption)) {
+                AutoGraphicsApi.firstLaunchOption(version)?.let { option ->
+                    set(graphicsOption, option)
                 }
-                else -> set(graphicsOption, graphicsApi.option)
             }
 
             loadLanguage(version.getVersionInfo()!!.minecraftVersion)
             save()
+        }
+
+        //每次启动游戏时自动检查一次 Minecraft 版本信息（含最新正式版与快照），
+        //清单本身有 1 天缓存，不会每次都联网；失败只记日志，绝不影响游戏启动
+        scope.launch {
+            MinecraftVersions.ensureUpToDate()
         }
 
         super.execute(surface, screenSize, scope)

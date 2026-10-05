@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.2)
+[![Release](https://img.shields.io/badge/Release-27.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.2.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -34,22 +34,27 @@
 
 ---
 
-## ✨ 27.1.2 主要內容
+## ✨ 27.2.0 主要內容
 
-- **移除上游 Client ID，並改寫 Git 歷史。** 應上游 ZalithLauncher2 專案的要求，
-  其 Microsoft 應用註冊 ID 已不再出現在本倉庫的任何位置，
-  且歷史已被改寫以徹底清除（移除 3 個提交；全物件掃描 0 命中）。
-  **因此所有提交雜湊與 tag 都已改變**，舊的複製需要重新拉取。
-- **AI：現在能看到資料流向。** 首次開啟 AI 設定時會說明：
-  遊戲日誌、模組清單、設定檔內容與你輸入的文字都會傳送給你設定的服務商，
-  ZyNova 不儲存也不轉送，API Key 只留在本機。
-- **AI：寫入操作稽核記錄。** Agent 的每一次寫入操作都會在本地留下記錄
-  （時間、工具、風險等級、參數、結果），可在 AI 設定中查看或匯出。
-- **Agent 權限模式預設改為「操作確認」**，全新使用者在 AI 改設定、刪模組、
-  寫檔案或裝資源之前都會被詢問一次。
-- **恢復 OpenGL 版本選擇**（Ironized Zink，4.6 / 4.5 / 4.3 / 3.3）。
-  4 個官方預設都使用 4.6，而驅動對 Vulkan→Zink 4.6 轉譯不完整的裝置原本無處可調。
-  其餘 12 個底層參數仍然不暴露。
+- **頁面轉場終於真的起作用了。** 轉場設定提供 *果凍彈跳 / 彈跳 / 切入*，
+  但每一個都被默默渲染成普通的交叉淡入淡出。現在每個選項都有真正的轉場，
+  而且十五個導覽介面共用同一套實作 —— 包括先前完全沒有轉場的檔案管理員。
+- **減少動效** —— 全新的無障礙開關，一次關閉所有動效：頁面轉場、階梯式進場動畫、
+  動態玻璃的流動高光與微光骨架，並把 Material 動效方案從 expressive 降級為 standard。
+  它是真正的關閉開關，而不只是縮短時長。
+- **全新的 ⚠️ 強烈動態玻璃等級，附光敏性警告。** 玻璃效果現在有三個等級：
+  關閉 / 動態玻璃 / **強烈（光敏性風險）**。強烈等級流動更快、更亮，並加入緩慢的亮度脈動。
+  與舊的「極致」等級不同，它只繪製漸層高光 —— 絕不模糊承載文字的圖層，因此文字保持清晰。
+  由於該等級確實帶有真實風險，啟動器**在使用期間每次啟動都會顯示光敏性警告**，
+  你可以在 *設定 → 啟動器* 中關閉該警告。
+- **卡片現在會回應觸控** —— 細緻的按下與放開縮放，透過共用的卡片元件一致套用
+  （在減少動效下完全略過）。
+- **圖形 API 全面自動化。** 手動的 OpenGL / Vulkan 選擇器已移除。實例首次啟動時使用 OpenGL，
+  之後啟動器就不再干預後端，讓遊戲自身的設定決定。某個版本是否需要這個選項，
+  取決於它的**發佈日期**，而非硬編碼的版本號 —— 第一個支援 Vulkan 的版本是
+  Minecraft 26.2-snapshot-1（2026-04-07）。版本中介資料會在每次啟動時檢查
+  （包括最新正式版與快照），且絕不會阻擋遊戲啟動。
+- **啟動畫面現在會淡入主畫面**，而不再使用預設的 Activity 動畫。
 
 > 📜 完整版本歷史請見 [CHANGELOG.md](CHANGELOG.md)
 

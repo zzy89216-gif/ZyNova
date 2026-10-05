@@ -58,6 +58,7 @@ import com.movtery.zalithlauncher.filemanager.ui.theme.fmBackgroundColor
 import com.movtery.zalithlauncher.filemanager.ui.theme.fmOnBackgroundColor
 import com.movtery.zalithlauncher.filemanager.viewmodel.FileManagerViewModel
 import com.movtery.zalithlauncher.filemanager.viewmodel.FmInitState
+import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
@@ -164,6 +165,9 @@ fun FileManagerRootScreen(
                             NavDisplay(
                                 modifier = Modifier.fillMaxSize(),
                                 backStack = backStack,
+                                //与启动器其余页面保持一致的转场（此前文件管理器是唯一没有转场的页面）
+                                transitionSpec = rememberTransitionSpec(),
+                                popTransitionSpec = rememberTransitionSpec(),
                                 entryProvider = entryProvider {
                                     entry<FmNavKey.FileManager> {
                                         saveableStateHolder.SaveableStateProvider("fm_main") {

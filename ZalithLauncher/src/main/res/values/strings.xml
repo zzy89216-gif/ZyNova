@@ -939,6 +939,8 @@
     <string name="settings_game_graphics_api_summary">Set the graphics API used by Minecraft 26.4 Snapshot 1</string>
     <string name="settings_game_graphics_api_default">Follow game settings</string>
     <string name="settings_game_graphics_api_default_opengl">Only set to OpenGL on first launch</string>
+    <string name="settings_game_graphics_api_auto_title">Graphics API (Automatic)</string>
+    <string name="settings_game_graphics_api_auto_summary">No longer needs to be chosen: an instance starts with OpenGL the first time it is launched, and afterwards the launcher follows the game\'s own setting. Whether a version needs this option at all is decided from its release date, not from a hard-coded version number</string>
     <string name="settings_game_jvm_args_title">JVM Arguments</string>
     <string name="settings_game_jvm_args_summary">Additional JVM arguments added when starting the JVM. Modifying these without proper knowledge is not recommended, as it may cause crashes</string>
     <string name="settings_game_show_log_automatic_title">Automatically Show Logs</string>
@@ -1069,6 +1071,8 @@
     <string name="settings_launcher_language">Language</string>
     <string name="settings_launcher_full_screen_title">Fullscreen Mode</string>
     <string name="settings_launcher_full_screen_summary">Make the launcher pages fullscreen, ignoring safe areas like notches and punch-holes</string>
+    <string name="settings_launcher_reduce_motion_title">Reduce Motion</string>
+    <string name="settings_launcher_reduce_motion_summary">Turn off page transitions, the flowing highlights of dynamic glass and other continuous effects. Recommended if you are sensitive to motion</string>
     <string name="settings_launcher_animate_speed_title">Animation Speed</string>
     <string name="settings_launcher_animate_speed_summary">Adjust the playback speed multiplier for launcher animations</string>
     <string name="settings_launcher_animate_extent_title">Animation Intensity</string>
@@ -1097,7 +1101,13 @@
     <string name="settings_launcher_liquid_glass_title">Liquid Glass Effect</string>
     <string name="settings_launcher_glass_level_off">Off</string>
     <string name="settings_launcher_glass_level_on">Enable Dynamic Glass</string>
-    <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look</string>
+    <string name="settings_launcher_glass_level_intense">⚠️ Intense (Photosensitivity Risk)</string>
+    <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look. The intense level flows faster and pulses in brightness (photosensitivity risk)</string>
+    <string name="settings_launcher_photosensitivity_warning_title">Photosensitivity Warning at Startup</string>
+    <string name="settings_launcher_photosensitivity_warning_summary">When the intense dynamic glass level is in use, show a photosensitivity warning on every launcher start. This switch has no effect while the intense level is off</string>
+    <string name="photosensitivity_warning_title">⚠️ Photosensitivity Warning</string>
+    <string name="photosensitivity_warning_summary">The launcher offers an optional intense dynamic glass effect with continuous changes in brightness, which may cause discomfort or seizures for people with photosensitive epilepsy. If you are sensitive to light or motion, keep the glass effect off or enable Reduce Motion — Reduce Motion always overrides the intense effect and keeps the launcher static.</string>
+    <string name="photosensitivity_warning_disable">Don\'t Show Again</string>
     <string name="settings_launcher_festivals_effects_title">Festival Easter Eggs</string>
     <string name="settings_launcher_festivals_effects_summary">Display persistent easter egg effects during specific time periods</string>
     <string name="settings_launcher_home_page_title">Home Page</string>

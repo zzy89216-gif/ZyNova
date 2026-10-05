@@ -330,10 +330,10 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        //玻璃效果：关闭 / 启用动态玻璃
+                        //玻璃效果：关闭 / 启用动态玻璃 / 强效动态玻璃
                         EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Bottom,
+                            position = CardPosition.Middle,
                             value = AllSettings.glassLevel.state,
                             entries = GlassLevel.entries,
                             title = stringResource(R.string.settings_launcher_liquid_glass_title),
@@ -343,6 +343,15 @@ fun LauncherSettingsScreen(
                             onRadioClick = { level ->
                                 AllSettings.glassLevel.save(level)
                             }
+                        )
+
+                        //光敏性警告：强效动态玻璃存在光敏风险，启动时提示一次
+                        SwitchSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Bottom,
+                            unit = AllSettings.launcherPhotosensitivityWarning,
+                            title = stringResource(R.string.settings_launcher_photosensitivity_warning_title),
+                            summary = stringResource(R.string.settings_launcher_photosensitivity_warning_summary)
                         )
                     }
                 }
@@ -543,9 +552,17 @@ fun LauncherSettingsScreen(
                         .fillMaxWidth()
                         .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
                 ) {
-                    IntSliderSettingsCard(
+                    SwitchSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Top,
+                        unit = AllSettings.launcherReduceMotion,
+                        title = stringResource(R.string.settings_launcher_reduce_motion_title),
+                        summary = stringResource(R.string.settings_launcher_reduce_motion_summary)
+                    )
+
+                    IntSliderSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
                         unit = AllSettings.launcherAnimateSpeed,
                         title = stringResource(R.string.settings_launcher_animate_speed_title),
                         summary = stringResource(R.string.settings_launcher_animate_speed_summary),

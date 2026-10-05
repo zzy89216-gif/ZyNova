@@ -29,6 +29,7 @@ import com.movtery.zalithlauncher.utils.file.readString
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.fetchStringFromUrls
 import com.movtery.zalithlauncher.utils.network.withRetry
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,6 +61,26 @@ object MinecraftVersions {
         }
         val versions = vm.versions.mapVersion()
         _allVersions.update { versions }
+    }
+
+    /**
+     * 启动游戏前的轻量检查：确保 Minecraft 版本信息是最新的
+     * （也就是「最新正式版」与「最新快照」是否已经同步）。
+     *
+     * 清单本身有 1 天的缓存，所以绝大多数情况下只是读一次本地文件；
+     * 任何失败都只记日志，**绝不抛出**——不能因为版本信息检查失败而影响游戏启动。
+     *
+     * 注意这里不能用 `runCatching`：它会连协程取消（CancellationException）一起吞掉，
+     * 破坏调用方的取消语义，所以单独放行取消异常。
+     */
+    suspend fun ensureUpToDate() {
+        try {
+            refreshVersions(force = false)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Logger.warning(TAG, "Failed to check the Minecraft version info", e)
+        }
     }
 
     /**

@@ -476,6 +476,23 @@ object AllSettings : SettingsRegistry() {
     val launcherSwapAnimateType = enumSetting("launcherSwapAnimateType", TransitionAnimationType.JELLY_BOUNCE)
 
     /**
+     * 减少动态效果（无障碍选项）
+     *
+     * 开启后会关闭页面切换动画、动态玻璃的流动高光、骨架屏闪烁等
+     * 持续或幅度较大的动态效果，只保留必要的静态反馈：
+     * 对动效敏感的用户可以彻底关掉这些效果，而不是逐个去调倍速。
+     */
+    val launcherReduceMotion = boolSetting("launcherReduceMotion", false)
+
+    /**
+     * 启动时显示光敏性警告
+     *
+     * 「强效动态玻璃」会产生持续的明暗变化，存在光敏风险，
+     * 因此每次启动都会提示一次；用户不再需要时可以在这里关掉。
+     */
+    val launcherPhotosensitivityWarning = boolSetting("launcherPhotosensitivityWarning", true)
+
+    /**
      * 启动器背景元素不透明度
      */
     val launcherBackgroundOpacity = intSetting("launcherBackgroundOpacity", 80, 20..100)

@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.ui.screens.content.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -49,7 +50,6 @@ import com.movtery.zalithlauncher.game.plugin.renderer_v2.RendererV2Data
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
 import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
-import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
 import com.movtery.zalithlauncher.path.URL_CLOUD_DRIVE_DRIVER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_CLOUD_RENDERER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_GITHUB_DRIVER_PLUGINS
@@ -66,6 +66,7 @@ import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.IntSliderSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.ListSettingsCard
+import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCardColumn
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 import com.movtery.zalithlauncher.utils.isAdrenoGPU
@@ -193,21 +194,28 @@ fun RendererSettingsScreen(
                         }
                     )
 
-                    ListSettingsCard(
+                    //图形 API（27.2.0 起改为全自动，不再提供手动选择）
+                    //首次启动某个实例时使用 OpenGL，之后跟随游戏自身的设置；
+                    //这里只做只读说明，让找不到入口的用户知道发生了什么
+                    SettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
-                        unit = AllSettings.graphicsApi,
-                        items = GraphicsApi.entries,
-                        title = stringResource(R.string.settings_game_graphics_api_title),
-                        summary = stringResource(R.string.settings_game_graphics_api_summary),
-                        getItemText = {
-                            when (it) {
-                                GraphicsApi.DEFAULT -> stringResource(R.string.settings_game_graphics_api_default)
-                                GraphicsApi.DEFAULT_OPENGL -> stringResource(R.string.settings_game_graphics_api_default_opengl)
-                                else -> it.displayName
-                            }
+                        position = CardPosition.Middle
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(all = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.settings_game_graphics_api_auto_title),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            Text(
+                                text = stringResource(R.string.settings_game_graphics_api_auto_summary),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                    )
+                    }
 
                     IntSliderSettingsCard(
                         modifier = Modifier.fillMaxWidth(),

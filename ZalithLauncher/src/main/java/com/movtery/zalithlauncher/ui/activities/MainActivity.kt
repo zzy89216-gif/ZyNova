@@ -32,6 +32,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
@@ -56,6 +58,7 @@ import com.movtery.zalithlauncher.notification.NotificationManager
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.path.URL_SUPPORT
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseAppCompatActivity
@@ -393,6 +396,33 @@ class MainActivity : BaseAppCompatActivity() {
                             }
                         )
                     }
+                }
+
+                //光敏性警告：**只有**启用了「强效动态玻璃」这个高风险档位时才有必要提示，
+                //而且只要该档位还开着，就每次启动都提示一遍；
+                //按「不再显示」会直接关掉对应的设置项（也可以稍后在「设置 → 启动器」里重新打开）
+                val photosensitivityWarning = rememberSaveable {
+                    mutableStateOf(
+                        AllSettings.launcherPhotosensitivityWarning.getValue() &&
+                                AllSettings.glassLevel.getValue() == GlassLevel.Intense
+                    )
+                }
+                if (photosensitivityWarning.value) {
+                    SimpleAlertDialog(
+                        title = stringResource(R.string.photosensitivity_warning_title),
+                        text = stringResource(R.string.photosensitivity_warning_summary),
+                        confirmText = stringResource(R.string.generic_confirm),
+                        dismissText = stringResource(R.string.photosensitivity_warning_disable),
+                        onConfirm = {
+                            //本次已知晓：只要「强效动态玻璃」还开着，下次启动仍会提示
+                            photosensitivityWarning.value = false
+                        },
+                        onDismiss = {
+                            //不再显示：关掉设置项，之后即便强效档仍开着也不再提示
+                            AllSettings.launcherPhotosensitivityWarning.save(false)
+                            photosensitivityWarning.value = false
+                        }
+                    )
                 }
 
                 //显示赞助支持的小弹窗

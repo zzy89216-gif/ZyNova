@@ -422,18 +422,16 @@ private fun <E: TitledNavKey> TopBar(
                 }
 
                 // AI 入口：与「文件」并排，点击直接进入聊天界面（不设独立的 AI 首页）
-                IconButton(
+                // 与「多人游戏 / 下载 / 设置」保持完全一致的交互反馈：
+                // 选中后展开深色胶囊背景并把板块文字一起带出来（原先只是一个没有反馈的图标）
+                TopBarRailItem(
+                    selected = inAIChatScreen,
+                    painter = painterResource(R.drawable.ic_ai_filled),
+                    text = stringResource(R.string.ai_title),
                     onClick = {
                         if (!inAIChatScreen) toAIChat()
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_ai_filled),
-                        contentDescription = stringResource(R.string.ai_title),
-                        tint = if (inAIChatScreen) MaterialTheme.colorScheme.primary
-                        else LocalContentColor.current
-                    )
-                }
+                    },
+                )
 
                 TopBarRailItem(
                     selected = inMultiplayerScreen,

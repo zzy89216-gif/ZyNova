@@ -677,9 +677,17 @@ fun ZalithLauncherTheme(
         LocalBackgroundViewModel provides backgroundViewModel,
         LocalFestivals provides festivals
     ) {
+        //开启「减少动态效果」时降级为标准的 Material 动效方案：
+        //Expressive 的弹性/过冲幅度更大，对动效敏感的用户应当可以避开
+        val motionScheme = if (AllSettings.launcherReduceMotion.state) {
+            MotionScheme.standard()
+        } else {
+            MotionScheme.expressive()
+        }
+
         MaterialExpressiveTheme(
             colorScheme = currentDisplayScheme,
-            motionScheme = MotionScheme.expressive(),
+            motionScheme = motionScheme,
             typography = AppTypography,
             content = content
         )

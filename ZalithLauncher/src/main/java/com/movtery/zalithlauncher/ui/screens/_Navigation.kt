@@ -20,16 +20,25 @@ package com.movtery.zalithlauncher.ui.screens
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.scene.Scene
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.utils.animation.BounceEasing
+import com.movtery.zalithlauncher.utils.animation.JellyBounce
 import com.movtery.zalithlauncher.utils.animation.TransitionAnimationType
 import com.movtery.zalithlauncher.utils.animation.getAnimateSpeed
 import kotlin.reflect.KClass
@@ -121,17 +130,61 @@ fun rememberSwapTween(): FiniteAnimationSpec<Float> {
 fun <T : Any> rememberTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform {
     val type = AllSettings.launcherSwapAnimateType.state
     val speed = AllSettings.launcherAnimateSpeed.state
-    return remember(type, speed) {
-        val tween: FiniteAnimationSpec<Float> = when (type) {
-            TransitionAnimationType.CLOSE -> snap()
-            else -> tween(durationMillis = (getAnimateSpeed() / 5) * 2)
-        }
+    val reduceMotion = AllSettings.launcherReduceMotion.state
+    return remember(type, speed, reduceMotion) {
+        if (reduceMotion || type == TransitionAnimationType.CLOSE) {
+            //关闭页面切换动画（手动选择「关闭」档，或开启了「减少动态效果」）
+            { ContentTransform(EnterTransition.None, ExitTransition.None) }
+        } else {
+            //与旧实现保持一致的时间换算：默认倍速下约 330ms
+            val durationMillis = ((getAnimateSpeed() / 5) * 2).coerceAtLeast(1)
+            val fadeSpec: FiniteAnimationSpec<Float> = tween(durationMillis = durationMillis)
 
-        {
-            ContentTransform(
-                fadeIn(animationSpec = tween),
-                fadeOut(animationSpec = tween),
-            )
+            when (type) {
+                TransitionAnimationType.SLICE_IN -> {
+                    //切入：新页面自右侧滑入，旧页面向左滑出
+                    val slideSpec: FiniteAnimationSpec<IntOffset> =
+                        tween(durationMillis = durationMillis, easing = FastOutSlowInEasing)
+
+                    {
+                        ContentTransform(
+                            fadeIn(animationSpec = fadeSpec) +
+                                    slideInHorizontally(animationSpec = slideSpec) { width -> width / 4 },
+                            fadeOut(animationSpec = fadeSpec) +
+                                    slideOutHorizontally(animationSpec = slideSpec) { width -> -width / 4 }
+                        )
+                    }
+                }
+
+                TransitionAnimationType.BOUNCE -> {
+                    val enterSpec: FiniteAnimationSpec<Float> =
+                        tween(durationMillis = durationMillis, easing = BounceEasing)
+
+                    {
+                        ContentTransform(
+                            fadeIn(animationSpec = fadeSpec) +
+                                    scaleIn(initialScale = 0.85f, animationSpec = enterSpec),
+                            fadeOut(animationSpec = fadeSpec) +
+                                    scaleOut(targetScale = 0.95f, animationSpec = fadeSpec)
+                        )
+                    }
+                }
+
+                else -> {
+                    //JELLY_BOUNCE（默认）：带轻微回弹的缩放入场
+                    val enterSpec: FiniteAnimationSpec<Float> =
+                        tween(durationMillis = durationMillis, easing = JellyBounce)
+
+                    {
+                        ContentTransform(
+                            fadeIn(animationSpec = fadeSpec) +
+                                    scaleIn(initialScale = 0.9f, animationSpec = enterSpec),
+                            fadeOut(animationSpec = fadeSpec) +
+                                    scaleOut(targetScale = 0.97f, animationSpec = fadeSpec)
+                        )
+                    }
+                }
+            }
         }
     }
 }

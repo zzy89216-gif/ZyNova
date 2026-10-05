@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.1.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.1.2)
+[![Release](https://img.shields.io/badge/Release-27.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.2.0)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,24 +35,33 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.1.2
+## ✨ Highlights of 27.2.0
 
-- **The upstream Client ID is gone — including from the Git history.** At the upstream
-  ZalithLauncher2 project's request, their Microsoft application registration ID no longer appears
-  anywhere in this repository, and the history has been rewritten to purge it (3 commits removed;
-  a full object scan now returns zero hits). **All commit hashes and tags have therefore changed**,
-  so old clones must be fetched again.
-- **AI: you can now see where your data goes.** The first time you open the AI settings, the app
-  explains that game logs, mod lists, configuration contents and the text you type are sent to the
-  provider you configured, that ZyNova neither stores nor relays them, and that your API key stays
-  on this device.
-- **AI: operation audit log.** Every write operation the agent performs is recorded locally
-  (time, tool, risk, arguments, result) and can be reviewed or exported from the AI settings.
-- **The agent permission mode now defaults to "confirm each operation"**, so a brand-new user is
-  asked before the AI changes settings, deletes mods, writes files or installs resources.
-- **The OpenGL version selector is back** for Ironized Zink (4.6 / 4.5 / 4.3 / 3.3). All four
-  official presets use 4.6, and devices whose drivers translate Vulkan to Zink 4.6 imperfectly had
-  no way to lower it. The other twelve low-level parameters stay hidden.
+- **Page transitions now actually do something.** The transition setting offered
+  *jelly bounce / bounce / slice in*, but every one of them was silently rendered as a plain
+  cross-fade. Each option now has a real transition, and all fifteen navigation surfaces share
+  one implementation — including the file manager, which previously had none.
+- **Reduce Motion** — a new accessibility switch that turns everything off at once: page
+  transitions, cascading entrance animations, the flowing highlights of dynamic glass and the
+  shimmer skeleton, and it downgrades the Material motion scheme from expressive to standard.
+  It is a real off switch, not just a shorter duration.
+- **A new ⚠️ intense dynamic-glass level, with a photosensitivity warning.** The glass effect now
+  has three levels: off / dynamic glass / **intense (photosensitivity risk)**. The intense level
+  flows faster, is brighter and adds a slow brightness pulse. Unlike the old "extreme" level it
+  only paints gradient highlights — it never blurs the layer that carries text, so text stays
+  sharp. Because that level does carry a real risk, the launcher shows a **photosensitivity
+  warning on every start while it is in use**, and you can turn that warning off in
+  *Settings → Launcher*.
+- **Cards now respond to touch** — a subtle press-and-release scale, applied consistently through
+  the shared card component (skipped entirely under Reduce Motion).
+- **The graphics API is fully automatic.** The manual OpenGL / Vulkan selector is gone. An
+  instance uses OpenGL the first time it is launched, and from then on the launcher leaves the
+  backend alone so the game's own setting wins. Whether a version needs that option at all is
+  decided from its **release date**, not from a hard-coded version number — the first
+  Vulkan-capable version was Minecraft 26.2-snapshot-1 (2026-04-07). Version metadata is checked
+  on every launch (including the latest release and snapshot) without ever blocking the game.
+- **The splash screen now fades into the main screen** instead of using the default activity
+  animation.
 
 > 📜 Full version history: [CHANGELOG.md](CHANGELOG.md)
 

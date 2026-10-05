@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.ui.activities
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -259,7 +260,14 @@ class SplashActivity : BaseAppCompatActivity() {
         val forward = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-        startActivity(forward)
+        //给「启动页 → 主界面」这一步加上淡入淡出：
+        //此前完全使用系统默认的 Activity 动画，是启动过程中最明显的一次画面跳变
+        val options = ActivityOptions.makeCustomAnimation(
+            this,
+            android.R.anim.fade_in,
+            android.R.anim.fade_out
+        )
+        startActivity(forward, options.toBundle())
         finish()
     }
 

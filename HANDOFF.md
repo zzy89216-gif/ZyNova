@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.1.2**（`launcher_version_code=270102`）
+**当前版本：27.2.0**（`launcher_version_code=270200`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,167 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.2.0 视觉体验升级 + 图形 API 全自动（处理 3 个议题）✅
+
+**一、本版本做了什么**
+
+按维护者要求处理了当时仓库里的 **全部 3 个开放议题**：
+
+| 议题 | 内容 | 落地方式 |
+|---|---|---|
+| **#14** | AI 图标点击动画与其它入口不一致 | 改用与 设置 / 下载 / 多人游戏 完全一致的 `TopBarRailItem` |
+| **#15** | 大型视觉体验升级（动效 / 转场 / 光敏性警告） | 真实转场 + 减少动态效果 + 强效动态玻璃 + 光敏性警告 + 按压反馈 + 启动淡入 |
+| **#16** | 简化图形 API 设置 | 删掉手动选择 UI，改为按**版本发布时间**全自动判定 |
+
+**二、议题 #14：AI 入口交互统一**
+
+问题：AI 图标是裸 `IconButton`，点下去没有任何反馈，进入聊天页后也不会像其它入口那样
+展开「深色胶囊 + 板块文字」。
+
+实现：`ui/screens/main/MainScreen.kt` 里把该 `IconButton` 换成 `TopBarRailItem`
+（`selected = inAIChatScreen`），与 多人游戏 / 下载 / 设置 三项完全同构。
+顺带清理了因此不再使用的 `GraphicsApi`、`LocalContentColor` 之外的导入。
+
+**三、议题 #15：视觉体验升级（本次落地的范围）**
+
+⚠️ 议题原文要求「先分析、不要一次性大规模重构」。本次**只做局部、可控的改动**，
+没有动 UI 架构、导航结构或任何游戏核心代码。
+
+1. **页面转场真正生效**（`ui/screens/_Navigation.kt` 的 `rememberTransitionSpec()`）
+   - **修复的真实缺陷**：`TransitionAnimationType` 有 回弹 / 弹跳 / 切入 三档，
+     但旧实现对**所有**档位都只返回 `fadeIn + fadeOut`，用户选了等于没选
+   - 现在：`JELLY_BOUNCE` → 阻尼缩放（`JellyBounce` 缓动）、
+     `BOUNCE` → Bounce 缩放、`SLICE_IN` → 横向滑入 + 淡入、`CLOSE` → 瞬时
+   - 15 处 `NavDisplay` 全部复用这一个函数，所以是**一处修改、全局统一**
+   - 文件管理器（`filemanager/ui/FileManagerRootScreen.kt`）此前是唯一没有传
+     `transitionSpec` 的 NavDisplay，本次一并接入
+2. **新增「减少动态效果」（Reduce Motion，无障碍）**
+   - 设置项：`AllSettings.launcherReduceMotion`（默认 `false`），
+     UI 在 设置 → 启动器 → 动画设置板块的**第一张卡**
+   - 生效范围（这是重点：**不是把时长调短，而是彻底不动**）：
+     - `getAnimateSpeed()` 返回 0、`getAdjustedDelayMillis()` 返回 0
+     - `isSwapAnimateClosed()` 变为 true（级联入场直接归零）
+     - `rememberTransitionSpec()` 返回 `EnterTransition.None` / `ExitTransition.None`
+     - 动态玻璃的流动高光不再叠加（`LauncherElements.glass()`）
+     - 骨架屏 `infiniteShimmer()` 不再循环闪烁，改为固定中间亮度
+     - `Theme.kt` 的 `MotionScheme` 由 `expressive()` 降级为 `standard()`
+     - 卡片按压反馈完全不缩放
+3. **新增「强效动态玻璃」档位 + 光敏性警告**
+   - `GlassLevel` 末尾新增 `Intense`（`setting/enums/GlassLevel.kt`），
+     玻璃效果变成 **关闭 / 启用动态玻璃 / ⚠️ 强效（有光敏风险）** 三档
+   - 强效档：高光流动从 9000/13000ms 加快到 3200/4600ms、亮度提高，
+     并叠加一层 1600ms 的明暗脉动（`liquidGlassHighlights(intense = true)`）
+   - **不要**把强效档和旧的「极致」档混为一谈：旧档用 `RuntimeShader` + `renderEffect`
+     模糊整个图层，把文字一起糊掉（issue #2）；强效档只用 `drawBehind` 画渐变高光，
+     **不碰 renderEffect**，所以不会模糊文字
+   - **启动光敏性警告**（`MainActivity.kt`）：
+     - 触发条件：`launcherPhotosensitivityWarning == true` **且** `glassLevel == Intense`
+       —— 也就是**只有真的在用高风险档位时才提示**
+     - 只要强效档还开着，**每次启动都会提示一遍**（没有「已确认」的永久状态）
+     - 弹窗「确认」= 本次已知晓；弹窗「不再显示」= 直接把
+       `launcherPhotosensitivityWarning` 关掉
+     - 设置 → 启动器 → 玻璃效果下方有对应开关，可以再打开
+       （未使用强效档时该开关不起作用）
+   - 「减少动态效果」开启时，强效档被**无条件降级**为静态毛玻璃
+4. **统一的卡片按压反馈**（`ui/components/BackgroundCard.kt` 的可点击重载）
+   - 按下缩小到 0.97、抬起回弹（120ms）；减少动态效果下不缩放
+   - 此前全项目只有 `ScalingActionButton`（`ui/components/Buttons.kt`）处理了按下状态
+5. **启动页 → 主界面淡入淡出**（`ui/activities/SplashActivity.kt` 的 `swapToMain()`）
+   - 用 `ActivityOptions.makeCustomAnimation(fade_in, fade_out)`，
+     此前这一步完全走系统默认 Activity 动画
+6. **光敏性判断的依据（写进文档以免以后被误改）**
+   - 本次**没有**制造快速闪烁、频闪或高频明暗切换，
+     唯一的明暗变化是强效档那层 1600ms 的缓慢脉动
+   - 之所以仍然加入警告：强效档属于「持续明暗变化」，
+     议题 #15 明确要求「只有在实际设计确实存在相关风险时才加入警告」，
+     而强效档确实存在该风险（且是用户主动开启的）
+   - 如果以后进一步加大闪烁强度，**必须**同步更新警告文案与触发条件
+
+**四、议题 #16：图形 API 全自动**
+
+- **删除的两处 UI**：
+  - 全局：`RendererSettingsScreen.kt` 的图形 API `ListSettingsCard`
+    → 换成一张**只读说明卡**（用 `SettingsCard` 的 content 重载手写，不引入新组件）
+  - 实例级：`VersionConfigScreen.kt` 的图形 API `ListSettingsCard` → 直接删除
+  - 两处的 `GraphicsApi` import 同步清理
+- **新的自动逻辑**：新增 `game/version/installed/AutoGraphicsApi.kt`
+  - `OPTION_KEY = "preferredGraphicsBackend"`（写入 `options.txt` 的键名）
+  - `VULKAN_BACKEND_SINCE_DATE = "2026-04-07"`：
+    首个带 Vulkan 后端的版本 **Minecraft 26.2-snapshot-1** 的发布时间
+    （数据版本 4883）。**只比较日期，不比较版本号** ——
+    这样 Mojang 改版本命名规则也不会影响判断
+  - `firstLaunchOption(version)`：只有「Vulkan 时代」的版本才返回 `"opengl"`，
+    更老的版本返回 `null`（游戏内根本没有这个选项，写进去只会污染 options.txt）
+  - `getReleaseDate()` 的取值优先级（**全程只读本地，绝不为一个时间戳联网**）：
+    1. 已安装版本自己的 `<版本名>.json` 里的 `releaseTime`
+    2. 内存里已加载的版本清单 → 本地缓存的 `minecraft_versions.json`
+    3. 都拿不到时，退回 `Version.hasVulkanBackend()`（读客户端 Jar 的 `world_version`）
+- **启动逻辑**（`game/launch/handler/GameHandler.kt`）：
+  ```kotlin
+  val graphicsOption = AutoGraphicsApi.OPTION_KEY
+  if (!containsKey(graphicsOption)) {
+      AutoGraphicsApi.firstLaunchOption(version)?.let { set(graphicsOption, it) }
+  }
+  ```
+  - **「第一次启动」的判据就是 `options.txt` 里还没有这个键**：
+    这是刻意的 —— 游戏一旦保存过自己的设置，该键就存在，启动器从此不再覆盖，
+    正好对应「后续启动跟随游戏自身设置」。因此**不需要**再引入
+    `graphicsApiInitialized` 之类的持久化标志
+  - 同一处还加了「每次启动游戏时自动检查版本信息」（议题 #16 的第 3、4 条）：
+    `scope.launch { MinecraftVersions.ensureUpToDate() }`，
+    新增的 `MinecraftVersions.ensureUpToDate()` 只做 `runCatching { refreshVersions(false) }`，
+    **任何失败都只记日志，不会阻塞游戏启动**
+- **保留但不再读取的东西（旧配置兼容，不要删）**：
+  - `GraphicsApi` 枚举、`VersionConfig.graphicsApi` 字段（含 Parcel / GSON 处理）
+  - `AllSettings.graphicsApi`、`Version.getGraphicsApi()`
+  - 理由与红旗 9 同类：删掉枚举常量会让 `VersionConfig` 的 Parcel
+    **ordinal 序号错位**（`writeInt(graphicsApi?.ordinal ?: -1)`），
+    删掉设置定义则会让旧 MMKV 值变成孤儿。保留定义、停止读取是代价最小的做法
+- **顺带澄清的一处长期混用：「Vulkan 后端的起点」≠「Vulkan 要求档案」**
+  - 首个**带 Vulkan 后端**的版本是 `26.2-snapshot-1`
+    （数据版本 4883，官方清单里的 `releaseTime` 为 `2026-04-07T11:52:43+00:00`）
+    —— 这是图形 API 自动判定所使用的起点，也是 `Version.kt` 里
+    `VULKAN_RUNTIME_WORLD_VERSION = 4883` 那行注释的依据
+  - `utils/device/VulkanRequirement.kt` 里的 `MC_26_4_SNAPSHOT_1` 描述的是
+    **`26.4 Snapshot 1` 的要求档案**（需要哪些扩展与特性），与上一条并不冲突，
+    本次**未改动**它，也没有改 Vulkan 检测页的文案
+  - 本次去掉版本号的只有**图形 API 相关文案**：改用新键
+    `settings_game_graphics_api_auto_title` / `_auto_summary`（只提供了默认语言与
+    `zh-rCN`，其余语言按 Android 规则回退英文），
+    旧的 `settings_game_graphics_api_default*` 已无人引用但**保留**
+    （避免动到 12 个语言文件；以后清理时请注意它们确实不再被代码引用）
+
+**五、本次涉及的文件**
+
+新增：
+
+| 文件 | 作用 |
+|---|---|
+| `game/version/installed/AutoGraphicsApi.kt` | 图形 API 全自动策略（按发布时间判定 + 本地元数据取值） |
+
+修改（按议题）：
+
+| 议题 | 文件 |
+|---|---|
+| #14 | `ui/screens/main/MainScreen.kt` |
+| #15 | `ui/screens/_Navigation.kt`、`utils/animation/AnimationUtils.kt`、`setting/AllSettings.kt`、`setting/enums/GlassLevel.kt`、`ui/screens/content/elements/LauncherElements.kt`、`ui/components/Shimmer.kt`、`ui/theme/Theme.kt`、`ui/components/BackgroundCard.kt`、`ui/activities/MainActivity.kt`、`ui/activities/SplashActivity.kt`、`ui/screens/content/settings/LauncherSettingsScreen.kt`、`filemanager/ui/FileManagerRootScreen.kt`、`res/values/strings.xml`、`res/values-zh-rCN/strings.xml` |
+| #16 | `game/launch/handler/GameHandler.kt`、`game/versioninfo/MinecraftVersions.kt`、`ui/screens/content/settings/RendererSettingsScreen.kt`、`ui/screens/content/versions/VersionConfigScreen.kt`、`game/version/installed/AutoGraphicsApi.kt`（新增） |
+
+**六、下次接手时值得继续做的（本次刻意没做）**
+
+- 议题 #15 只是一次局部落地，**没有**做议题里提到的「启动流程重新设计」「整体视觉语言统一」
+  「针对每个页面做差异化转场」（Navigation3 支持在 `entry(metadata = ...)` 上写 per-page 转场）
+- 仍未被「减少动态效果」覆盖的动效：`Switch` 的拇指旋转、
+  `MenuButtonLayout` 的入场缩放、主题切换的圆形遮罩
+  （`ui/theme/components/activeMaskView.kt`，800ms）、
+  以及约 25 处直接调用 `animateFloatAsState` / `animateDpAsState` 而未走
+  `getAnimateTween()` 的动画。要继续收敛，应当给它们加一个统一的动效入口
+- 本次**没有**读取系统级的「移除动画」设置
+  （`Settings.Global.ANIMATOR_DURATION_SCALE` / `areAnimatorsEnabled`）。
+  如果要做，建议与 `launcherReduceMotion` 合并成一个统一的判定函数
+- `VulkanRequirements.CURRENT` 仍然是单例写死（`utils/device/VulkanRequirement.kt`）。
+  本次只统一了文档与文案的记述，**没有**改这个档案的行为（避免牵动 native 检查链路）
 
 ### 27.1.2 清理上游 Client ID（含改写历史）+ 处理 5 个议题 ✅
 
@@ -804,6 +965,21 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 5.1 ~~**Ironized Zink 的 OpenGL 版本不可在界面调整**~~ ✅ **已解决（27.1.2）**：
    已恢复**仅** OpenGL 版本这一个下拉（4.6 / 4.5 / 4.3 / 3.3），其余 12 个开关保持删除。
    实现见 27.1.2 章节；上游预设取值未被改动。
+5.2 **视觉体验升级（议题 #15）只落地了第一部分** ⬜：
+   27.2.0 已做：真实页面转场、减少动态效果、强效动态玻璃 + 光敏性警告、
+   卡片按压反馈、启动页淡入。**尚未做**：启动流程重新设计、整体视觉语言（圆角 / 间距 /
+   字体层级 / 状态色）统一、per-page 差异化转场（Navigation3 的
+   `entry(metadata = ...)` 支持）、把剩余约 25 处未走 `getAnimateTween()` 的动画
+   收敛到统一动效入口、读取系统级「移除动画」设置。
+5.3 ~~**图形 API 需要用户手动选择**~~ ✅ **已解决（27.2.0）**：
+   手动选择 UI 已移除，改为按**版本发布时间**自动判定（见 27.2.0 章节）。
+   保留 `GraphicsApi` 枚举与旧配置字段仅为兼容，**不要再把它接回启动逻辑**。
+5.4 **`VulkanRequirements.CURRENT` 仍是写死的单例** ⬜：
+   `utils/device/VulkanRequirement.kt` 只有一份 `MC_26_4_SNAPSHOT_1` 要求档案。
+   27.2.0 **没有**改它的行为、也没有改 Vulkan 检测页的文案，
+   只是把「图形 API 自动判定用 26.2-snapshot-1 作为 Vulkan 后端起点」这件事写清楚
+   （详见 27.2.0 章节）。要支持多档要求时应改成 `List<VulkanRequirement>` +
+   按发布时间选择，注意别碰 `VulkanCapabilities` 的构造参数（native 反射依赖）。
 6. **配置 `CURSEFORGE_API_KEY`（已知遗留，26.2.3 起已有兜底，维护者决定暂不处理）**：
    - 仓库的 Actions Secrets 里**没有配置** `CURSEFORGE_API_KEY`，
      所以打包出来的 APK 调 CurseForge 官方接口**必然返回 403**；
@@ -845,6 +1021,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 作用 |
 |---|---|
+| `game/version/installed/AutoGraphicsApi.kt` | 图形 API 全自动策略：按**版本发布时间**判定是否需要图形后端选项 + 只读本地取值（27.2.0） |
 | `ai/audit/AIAuditLog.kt` | Agent 写操作审计日志（27.1.2） |
 | `ai/AIModelRepository.kt` | 模型列表统一入口（27.1.1 抽出，消除两处重复） |
 | `ai/AIStringRes.kt` | 无 Context 处取本地化字符串（27.1.1） |
@@ -877,7 +1054,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `game/download/resources/ResourceManager.kt` | 资源管理核心统一流程入口 |
 | `game/home/HomeDataProvider.kt` | 主页统一数据访问接口 |
 | `ui/screens/main/card_home/CardHomePage.kt` | 卡片式主页 |
-| `setting/enums/GlassLevel.kt` | 玻璃效果两档枚举（26.2.2 由三档简化） |
+| `setting/enums/GlassLevel.kt` | 玻璃效果枚举（26.2.2 由三档简化为两档；27.2.0 追加 `Intense` 强效档） |
 | `upgrade/ZyNovaRelease.kt` | ZyNova 自有更新体系数据模型 + ABI 自动挑选 |
 | `utils/device/VulkanRequirement.kt` | Minecraft 的 Vulkan 要求档案 |
 | `utils/device/VulkanCheckResult.kt` | Vulkan 三态检测结果模型 |
@@ -1485,8 +1662,8 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**26.4.0**
-- 历史版本：26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**27.2.0**
+- 历史版本：27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
@@ -1595,4 +1772,5 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-09-28（26.4.0 已开发完成：恢复正版登录入口 + 修复 Issue #6 / #7）
+**最后更新**：2026-10-05（27.2.0 已开发完成：处理议题 #14 / #15 / #16 ——
+AI 入口交互统一、视觉体验升级与光敏性警告、图形 API 全自动）

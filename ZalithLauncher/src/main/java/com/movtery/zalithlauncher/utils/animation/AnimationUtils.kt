@@ -31,19 +31,33 @@ import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.setting.AllSettings
 
 /**
- * 获取动画的持续时长
+ * 是否开启了「减少动态效果」
+ *
+ * 这是无障碍层面的总开关：开启后所有由本文件驱动的动画都会退化为「瞬间完成」，
+ * 页面切换、入场动画、动态玻璃高光、骨架屏闪烁等也会一并关闭。
  */
-fun getAnimateSpeed(): Int = calculateAnimationTime(
-    AllSettings.launcherAnimateSpeed.state,
-    1500,
-    0.1f
-)
+fun isReduceMotion(): Boolean = AllSettings.launcherReduceMotion.state
+
+/**
+ * 获取动画的持续时长
+ *
+ * 开启「减少动态效果」时直接返回 0，让所有消费该时长的动画立即结束。
+ */
+fun getAnimateSpeed(): Int {
+    if (isReduceMotion()) return 0
+    return calculateAnimationTime(
+        AllSettings.launcherAnimateSpeed.state,
+        1500,
+        0.1f
+    )
+}
 
 /**
  * 获取根据动画倍速调整后的 delayMillis
  */
 fun getAdjustedDelayMillis(baseDelayMillis: Int): Int {
     if (baseDelayMillis == 0) return 0
+    if (isReduceMotion()) return 0
     val adjustedAnimationTime = calculateAnimationTime(
         AllSettings.launcherAnimateSpeed.state,
         baseDelayMillis
@@ -53,8 +67,11 @@ fun getAdjustedDelayMillis(baseDelayMillis: Int): Int {
 
 /**
  * 页面切换动画是否关闭
+ *
+ * 「减少动态效果」与手动选择「关闭」档等效。
  */
-fun isSwapAnimateClosed() = AllSettings.launcherSwapAnimateType.state == TransitionAnimationType.CLOSE
+fun isSwapAnimateClosed(): Boolean =
+    isReduceMotion() || AllSettings.launcherSwapAnimateType.state == TransitionAnimationType.CLOSE
 
 fun <E> getAnimateTween(
     delayMillis: Int = 0

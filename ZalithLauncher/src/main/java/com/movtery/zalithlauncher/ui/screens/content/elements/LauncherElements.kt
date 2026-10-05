@@ -660,32 +660,45 @@ private fun Modifier.glass(
         }
     )
 
-    //玻璃效果：默认关闭；开启后叠加缓慢流动的动态高光（26.2.2 起仅「关闭 / 启用动态玻璃」两档）
+    //玻璃效果：默认关闭；开启后叠加流动的动态高光（26.2.2 起简化为「关闭 / 启用 / 强效」三档）
+    //开启「减少动态效果」时一律退化为静态毛玻璃：这是全应用唯一常驻的无限动画，
+    //对动效敏感的用户不应该为了关掉它而被迫放弃整个玻璃质感
+    val reduceMotion = AllSettings.launcherReduceMotion.state
     return when (glassLevel) {
         GlassLevel.Off -> blurred
-        GlassLevel.On -> blurred.liquidGlassHighlights()
+        GlassLevel.On -> if (reduceMotion) blurred else blurred.liquidGlassHighlights(intense = false)
+        GlassLevel.Intense -> if (reduceMotion) blurred else blurred.liquidGlassHighlights(intense = true)
     }
 }
 
 /**
  * 液态玻璃动态高光效果
  *
- * 在毛玻璃模糊的基础上，叠加缓慢流动的高光与折射光晕，
+ * 在毛玻璃模糊的基础上，叠加流动的高光与折射光晕，
  * 模拟 iOS 26 风格的液态玻璃质感。
  *
- * 只有「启用动态玻璃」档位才会叠加这一层；「关闭」档位完全不叠加，
+ * 只有「启用 / 强效动态玻璃」档位才会叠加这一层；「关闭」档位完全不叠加，
  * 从而避免持续的高 GPU 负载。
+ *
+ * @param intense 强效档：高光流速更快、更亮，并额外叠加一层整体明暗脉动。
+ *   ⚠️ 该档位存在**光敏风险**，因此必须由用户主动选择，
+ *   并且会被「减少动态效果」无条件压掉（见 [glass] 的调用点）。
+ *   注意：这里只用 drawBehind 画渐变高光，**不碰 renderEffect**，
+ *   所以不会重现旧「极致」档把文字一起模糊的问题（issue #2）。
  */
 @Composable
-private fun Modifier.liquidGlassHighlights(): Modifier {
+private fun Modifier.liquidGlassHighlights(intense: Boolean = false): Modifier {
     val transition = rememberInfiniteTransition(label = "liquidGlassHighlights")
 
-    // 主高光条沿对角线缓慢流动
+    // 主高光条沿对角线流动
     val highlightShift by transition.animateFloat(
         initialValue = -1f,
         targetValue = 2f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 9000, easing = LinearEasing),
+            animation = tween(
+                durationMillis = if (intense) 3200 else 9000,
+                easing = LinearEasing
+            ),
             repeatMode = RepeatMode.Restart
         ),
         label = "liquidGlassHighlightShift"
@@ -696,21 +709,42 @@ private fun Modifier.liquidGlassHighlights(): Modifier {
         initialValue = 2f,
         targetValue = -1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 13000, easing = LinearEasing),
+            animation = tween(
+                durationMillis = if (intense) 4600 else 13000,
+                easing = LinearEasing
+            ),
             repeatMode = RepeatMode.Restart
         ),
         label = "liquidGlassSecondaryShift"
     )
 
-    return this.drawGlassHighlights(highlightShift, secondaryShift)
+    // 强效档专属：整层明暗脉动，让玻璃「呼吸」起来
+    val pulse = if (intense) {
+        val pulseState = transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 1600, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "liquidGlassPulse"
+        )
+        pulseState.value
+    } else {
+        0f
+    }
+
+    return this.drawGlassHighlights(highlightShift, secondaryShift, intense, pulse)
 }
 
 /**
- * 绘制玻璃高光带（「启用动态玻璃」档位使用）
+ * 绘制玻璃高光带（「启用 / 强效动态玻璃」档位使用）
  */
 private fun Modifier.drawGlassHighlights(
     primaryShift: Float,
-    secondaryShift: Float
+    secondaryShift: Float,
+    intense: Boolean = false,
+    pulse: Float = 0f
 ): Modifier = this.drawBehind {
     val w = size.width
     val h = size.height
@@ -723,8 +757,8 @@ private fun Modifier.drawGlassHighlights(
         brush = Brush.linearGradient(
             colors = listOf(
                 Color.Transparent,
-                Color.White.copy(alpha = 0.35f),
-                Color.White.copy(alpha = 0.10f),
+                Color.White.copy(alpha = if (intense) 0.55f else 0.35f),
+                Color.White.copy(alpha = if (intense) 0.18f else 0.10f),
                 Color.Transparent
             ),
             start = primaryStart,
@@ -739,13 +773,28 @@ private fun Modifier.drawGlassHighlights(
         brush = Brush.linearGradient(
             colors = listOf(
                 Color.Transparent,
-                Color.White.copy(alpha = 0.16f),
+                Color.White.copy(alpha = if (intense) 0.30f else 0.16f),
                 Color.Transparent
             ),
             start = secondaryStart,
             end = secondaryEnd
         )
     )
+
+    // 强效档：整体明暗脉动（唯一带有明确光敏风险的一层）
+    if (intense && pulse > 0f) {
+        drawRect(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.07f * pulse),
+                    Color.Transparent,
+                    Color.White.copy(alpha = 0.07f * pulse)
+                ),
+                start = Offset(0f, 0f),
+                end = Offset(w, h)
+            )
+        )
+    }
 }
 
 @Composable

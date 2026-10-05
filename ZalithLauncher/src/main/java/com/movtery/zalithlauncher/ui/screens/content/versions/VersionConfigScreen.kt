@@ -46,7 +46,6 @@ import com.movtery.zalithlauncher.game.multirt.RuntimesManager
 import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.support.touch_controller.VibrationHandler
-import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionConfig
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -242,34 +241,9 @@ private fun VersionConfigs(
             }
         )
 
-        val graphicsApis = GraphicsApi.entries
-        val defaultGraphicsTitle = stringResource(R.string.settings_game_graphics_api_default)
-        val defaultOpenGLTitle = stringResource(R.string.settings_game_graphics_api_default_opengl)
-        val graphicsApisList = getIDList(graphicsApis) {
-            val title = when (it) {
-                GraphicsApi.DEFAULT -> defaultGraphicsTitle
-                GraphicsApi.DEFAULT_OPENGL -> defaultOpenGLTitle
-                else -> it.displayName
-            }
-            IDItem(it.name, title)
-        }
-        ListSettingsCard(
-            modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Middle,
-            items = graphicsApisList,
-            currentId = config.graphicsApi?.name ?: "",
-            defaultId = "",
-            title = stringResource(R.string.settings_game_graphics_api_title),
-            summary = stringResource(R.string.settings_game_graphics_api_summary),
-            getItemText = { it.title },
-            getItemId = { it.id },
-            onValueChange = { item ->
-                if (config.graphicsApi?.name != item.id) {
-                    config.graphicsApi = GraphicsApi.entries.find { it.name == item.id }
-                    config.saveOrShowError(submitError)
-                }
-            }
-        )
+        //图形 API 不再由用户手动选择（27.2.0 起）：
+        //首次启动该实例时由启动器写入 OpenGL，之后完全跟随游戏自身的设置，
+        //因此这里不再提供任何选项
 
         val controls by ControlManager.dataList.collectAsStateWithLifecycle()
         val controlsIdList = getIDList(controls.filter { it.isSupport }) {

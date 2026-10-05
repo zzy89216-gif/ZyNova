@@ -18,7 +18,11 @@
 
 package com.movtery.zalithlauncher.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,10 +33,13 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
 import com.movtery.zalithlauncher.ui.theme.cardColor
@@ -92,14 +99,30 @@ fun BackgroundCard(
     enabled: Boolean = true,
     content: @Composable @UiComposable ColumnScope.() -> Unit
 ) {
+    //统一的卡片按压反馈：按下时轻微缩小，抬起后回弹，
+    //让「我刚点的这一下已经生效了」有一个直观的视觉回应。
+    //开启「减少动态效果」时完全不缩放（不只是把时长改短）。
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val reduceMotion = AllSettings.launcherReduceMotion.state
+    val scale by animateFloatAsState(
+        targetValue = if (pressed && enabled && !reduceMotion) 0.97f else 1f,
+        animationSpec = tween(durationMillis = 120),
+        label = "BackgroundCardPressScale"
+    )
+
     Card(
-        modifier = modifier,
+        modifier = modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        },
         shape = shape,
         colors = colors,
         elevation = elevation,
         border = border,
         onClick = onClick,
         enabled = enabled,
+        interactionSource = interactionSource,
     ) {
         Column(
             modifier = Modifier.backgroundGlass(blur, colors.containerColor, influencedByBackground),
