@@ -33,7 +33,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.scene.Scene
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -132,59 +131,71 @@ fun <T : Any> rememberTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>
     val speed = AllSettings.launcherAnimateSpeed.state
     val reduceMotion = AllSettings.launcherReduceMotion.state
     return remember(type, speed, reduceMotion) {
-        if (reduceMotion || type == TransitionAnimationType.CLOSE) {
-            //关闭页面切换动画（手动选择「关闭」档，或开启了「减少动态效果」）
-            { ContentTransform(EnterTransition.None, ExitTransition.None) }
-        } else {
-            //与旧实现保持一致的时间换算：默认倍速下约 330ms
-            val durationMillis = ((getAnimateSpeed() / 5) * 2).coerceAtLeast(1)
-            val fadeSpec: FiniteAnimationSpec<Float> = tween(durationMillis = durationMillis)
+        //与旧实现保持一致的时间换算：默认倍速下约 330ms
+        val durationMillis = ((getAnimateSpeed() / 5) * 2).coerceAtLeast(1)
 
-            when (type) {
+        //⚠️ 注意这里的写法：每个分支都必须是「以 lambda 开头」的块，
+        //不要在 lambda 前面写 `val spec = tween(...)` 之类的调用 ——
+        //Kotlin 会把紧跟其后的 `{ ... }` 解析成那个调用的**尾随 lambda**，
+        //lambda 里的局部变量就会解析不到（曾因此导致编译失败）。
+        //所以动画参数统一在 lambda 内部构造（构造 tween 只是创建一个数据类，开销可忽略）。
+        val transform: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
+            if (reduceMotion || type == TransitionAnimationType.CLOSE) {
+                //关闭页面切换动画（手动选择「关闭」档，或开启了「减少动态效果」）
+                { ContentTransform(EnterTransition.None, ExitTransition.None) }
+            } else when (type) {
+                //切入：新页面自右侧滑入，旧页面向左滑出
                 TransitionAnimationType.SLICE_IN -> {
-                    //切入：新页面自右侧滑入，旧页面向左滑出
-                    val slideSpec: FiniteAnimationSpec<IntOffset> =
-                        tween(durationMillis = durationMillis, easing = FastOutSlowInEasing)
-
                     {
                         ContentTransform(
-                            fadeIn(animationSpec = fadeSpec) +
-                                    slideInHorizontally(animationSpec = slideSpec) { width -> width / 4 },
-                            fadeOut(animationSpec = fadeSpec) +
-                                    slideOutHorizontally(animationSpec = slideSpec) { width -> -width / 4 }
+                            fadeIn(animationSpec = tween(durationMillis)) +
+                                    slideInHorizontally(
+                                        animationSpec = tween(durationMillis, easing = FastOutSlowInEasing)
+                                    ) { width -> width / 4 },
+                            fadeOut(animationSpec = tween(durationMillis)) +
+                                    slideOutHorizontally(
+                                        animationSpec = tween(durationMillis, easing = FastOutSlowInEasing)
+                                    ) { width -> -width / 4 }
                         )
                     }
                 }
 
+                //弹跳：Bounce 缓动的缩放入场
                 TransitionAnimationType.BOUNCE -> {
-                    val enterSpec: FiniteAnimationSpec<Float> =
-                        tween(durationMillis = durationMillis, easing = BounceEasing)
-
                     {
                         ContentTransform(
-                            fadeIn(animationSpec = fadeSpec) +
-                                    scaleIn(initialScale = 0.85f, animationSpec = enterSpec),
-                            fadeOut(animationSpec = fadeSpec) +
-                                    scaleOut(targetScale = 0.95f, animationSpec = fadeSpec)
+                            fadeIn(animationSpec = tween(durationMillis)) +
+                                    scaleIn(
+                                        initialScale = 0.85f,
+                                        animationSpec = tween(durationMillis, easing = BounceEasing)
+                                    ),
+                            fadeOut(animationSpec = tween(durationMillis)) +
+                                    scaleOut(
+                                        targetScale = 0.95f,
+                                        animationSpec = tween(durationMillis)
+                                    )
                         )
                     }
                 }
 
+                //JELLY_BOUNCE（默认）：带轻微回弹的缩放入场
                 else -> {
-                    //JELLY_BOUNCE（默认）：带轻微回弹的缩放入场
-                    val enterSpec: FiniteAnimationSpec<Float> =
-                        tween(durationMillis = durationMillis, easing = JellyBounce)
-
                     {
                         ContentTransform(
-                            fadeIn(animationSpec = fadeSpec) +
-                                    scaleIn(initialScale = 0.9f, animationSpec = enterSpec),
-                            fadeOut(animationSpec = fadeSpec) +
-                                    scaleOut(targetScale = 0.97f, animationSpec = fadeSpec)
+                            fadeIn(animationSpec = tween(durationMillis)) +
+                                    scaleIn(
+                                        initialScale = 0.9f,
+                                        animationSpec = tween(durationMillis, easing = JellyBounce)
+                                    ),
+                            fadeOut(animationSpec = tween(durationMillis)) +
+                                    scaleOut(
+                                        targetScale = 0.97f,
+                                        animationSpec = tween(durationMillis)
+                                    )
                         )
                     }
                 }
             }
-        }
+        transform
     }
 }
