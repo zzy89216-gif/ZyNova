@@ -66,6 +66,7 @@ import com.movtery.zalithlauncher.path.URL_DISCORD
 import com.movtery.zalithlauncher.path.URL_MCMOD
 import com.movtery.zalithlauncher.path.URL_PROJECT
 import com.movtery.zalithlauncher.path.URL_SUPPORT
+import com.movtery.zalithlauncher.path.URL_ZY_NOVA_SUPPORT
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedLazyColumn
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
@@ -147,6 +148,20 @@ fun AboutInfoScreen(
                                     Text(text = stringResource(R.string.about_launcher_discord))
                                 }
                             }
+                        )
+
+                        //ZyNova 自己的赞助入口
+                        //⚠️ 不要和下方致谢区「上游作者 MovTery」的赞助入口混用：
+                        //那一个用的是 URL_SUPPORT（上游作者的页面），属于必须保留的署名信息。
+                        LinkIconItem(
+                            icon = painterResource(R.drawable.ic_favorite_outlined),
+                            title = stringResource(R.string.about_sponsor),
+                            text = stringResource(
+                                R.string.about_launcher_sponsor_text,
+                                BuildKeys.LAUNCHER_NAME
+                            ),
+                            openLink = { openLink(URL_ZY_NOVA_SUPPORT) },
+                            useImage = false
                         )
                     }
                 }

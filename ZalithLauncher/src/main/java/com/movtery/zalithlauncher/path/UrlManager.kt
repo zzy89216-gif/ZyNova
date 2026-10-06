@@ -71,6 +71,17 @@ const val URL_DISCORD: String = "https://discord.gg/QwPpZQHrTa"
  */
 const val URL_ZY_NOVA_RELEASES: String = "$URL_PROJECT/releases"
 const val URL_ZY_NOVA_RELEASE_LATEST: String = "https://api.github.com/repos/zzy89216-gif/ZyNova/releases/latest"
+
+/**
+ * ZyNova 自己的赞助入口（爱发电）
+ *
+ * ⚠️ 不要和 [URL_SUPPORT] 混用：
+ * - 本常量 = **ZyNova 项目维护者**的赞助页面，用在「关于 → 项目维护者（zzy）」条目
+ * - [URL_SUPPORT] = **上游作者 MovTery** 的赞助页面，用在「关于 → 致谢 → 上游作者」条目，
+ *   属于必须保留的上游署名信息，**不要改成下面这个链接**
+ */
+const val URL_ZY_NOVA_SUPPORT: String = "https://afdian.com/a/hizzy"
+
 const val URL_SUPPORT: String = "https://ifdian.net/a/MovTery"
 const val URL_EASYTIER: String = "https://easytier.cn/"
 

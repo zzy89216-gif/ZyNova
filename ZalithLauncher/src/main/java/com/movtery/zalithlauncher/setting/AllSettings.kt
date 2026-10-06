@@ -40,6 +40,7 @@ import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
+import com.movtery.zalithlauncher.setting.enums.UiGeneration
 import com.movtery.zalithlauncher.ui.control.HotbarRule
 import com.movtery.zalithlauncher.ui.control.gamepad.JoystickMode
 import com.movtery.zalithlauncher.ui.control.mouse.CENTER_HOTSPOT
@@ -487,10 +488,17 @@ object AllSettings : SettingsRegistry() {
     /**
      * 启动时显示光敏性警告
      *
-     * 「强效动态玻璃」会产生持续的明暗变化，存在光敏风险，
-     * 因此每次启动都会提示一次；用户不再需要时可以在这里关掉。
+     * ⚠️ **自 27.3.0 起已废弃，不再被任何代码读取或写入。**
+     *
+     * 27.2.0 曾引入「强效动态玻璃」档（`GlassLevel.Intense`），它会产生持续的明暗脉动，
+     * 因此配套了这个启动警告。27.3.0 已把该档位连同警告一起移除，
+     * 应用内不再存在任何持续明暗变化，警告自然也不再需要。
+     *
+     * **定义必须保留**：这是旧配置兼容项 —— 删掉定义会让 MMKV 里的旧值成为孤儿，
+     * 一旦以后重新加上同名设置，读取类型不匹配会直接导致启动异常
+     * （与 [liquidGlass] 的处理方式一致，见交接文档「旧配置兼容」一节）。
      */
-    val launcherPhotosensitivityWarning = boolSetting("launcherPhotosensitivityWarning", true)
+    val launcherPhotosensitivityWarning = boolSetting("launcherPhotosensitivityWarning", false)
 
     /**
      * 启动器背景元素不透明度
@@ -516,6 +524,21 @@ object AllSettings : SettingsRegistry() {
      * 启动器液态玻璃效果
      */
     val glassLevel = enumSetting("glassLevel", GlassLevel.Off)
+
+    /**
+     * 界面世代（新版 / 旧版）
+     *
+     * 27.3.0 起提供两套并行的界面观感，用户可以**随时双向切换**：
+     * - [UiGeneration.Modern]（默认）：重新设计的字阶与形状体系
+     * - [UiGeneration.Classic]：与 27.3.0 之前完全一致的观感
+     *
+     * 老用户升级后默认拿到 [UiGeneration.Modern]（新观感），
+     * 想回到原来样子的话在「设置 → 启动器 → 界面世代」里切一下即可，
+     * 而且**切过去之后还能再切回来**。
+     *
+     * 读取方：`ui/theme/Theme.kt`（字阶 / 形状 / 动效方案）。
+     */
+    val uiGeneration = enumSetting("uiGeneration", UiGeneration.Modern)
 
     /**
      * 旧的液态玻璃开关（布尔值）

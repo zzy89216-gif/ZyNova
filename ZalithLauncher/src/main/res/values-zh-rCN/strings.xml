@@ -1101,13 +1101,11 @@
     <string name="settings_launcher_liquid_glass_title">液态玻璃效果</string>
     <string name="settings_launcher_glass_level_off">关闭</string>
     <string name="settings_launcher_glass_level_on">启用动态玻璃</string>
-    <string name="settings_launcher_glass_level_intense">⚠️ 强效（有光敏风险）</string>
-    <string name="settings_launcher_liquid_glass_summary">在毛玻璃之上叠加缓慢流动的高光与折射光晕，呈现 iOS 26 风格液态玻璃质感；强效档流速更快并伴随明暗脉动（有光敏风险）</string>
-    <string name="settings_launcher_photosensitivity_warning_title">启动时显示光敏性警告</string>
-    <string name="settings_launcher_photosensitivity_warning_summary">当玻璃效果为「强效」时，每次启动启动器都会显示一遍光敏性警告；未使用强效档时此开关不起作用</string>
-    <string name="photosensitivity_warning_title">⚠️ 光敏性警告</string>
-    <string name="photosensitivity_warning_summary">启动器提供了可选的「强效动态玻璃」效果，它会产生持续的明暗变化，可能让光敏性癫痫患者感到不适甚至发作。如果您对光线或动效敏感，请保持玻璃效果为关闭，或开启「减少动态效果」——「减少动态效果」会无条件压掉强效效果，让界面保持静止。</string>
-    <string name="photosensitivity_warning_disable">不再显示</string>
+    <string name="settings_launcher_liquid_glass_summary">在毛玻璃之上叠加缓慢流动的高光与折射光晕，呈现 iOS 26 风格液态玻璃质感</string>
+    <string name="settings_launcher_ui_generation_title">界面世代</string>
+    <string name="settings_launcher_ui_generation_summary">选择启动器的界面观感。新版是重新设计的界面（默认）；旧版恢复为之前的观感。两者可以随时来回切换。</string>
+    <string name="settings_launcher_ui_generation_modern">新版</string>
+    <string name="settings_launcher_ui_generation_classic">旧版</string>
     <string name="settings_launcher_festivals_effects_title">持续型节日彩蛋效果</string>
     <string name="settings_launcher_festivals_effects_summary">在特定时间段显示持续型彩蛋效果</string>
     <string name="settings_launcher_home_page_title">主页</string>
@@ -1302,6 +1300,7 @@
     <string name="about_acknowledgements_discord_community_text">欢迎加入 ZyNova 的 Discord 服务器反馈问题与交流</string>
     <string name="about_launcher_author_movtery_text">%s 的作者</string>
     <string name="about_launcher_project_link">项目地址</string>
+    <string name="about_launcher_sponsor_text">支持 %s 的持续开发</string>
     <string name="about_sponsor">赞助支持</string>
     <string name="about_acknowledgements_title">鸣谢</string>
     <string name="about_acknowledgements_pojav_text">%s 使用了 PojavLauncher 的启动后端</string>

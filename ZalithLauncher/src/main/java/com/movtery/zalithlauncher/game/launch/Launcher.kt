@@ -20,7 +20,6 @@ package com.movtery.zalithlauncher.game.launch
 
 import android.content.Context
 import android.os.Build
-import android.os.LocaleList
 import android.system.Os
 import android.util.ArrayMap
 import androidx.annotation.CallSuper
@@ -42,6 +41,7 @@ import com.movtery.zalithlauncher.setting.unit.getOrMin
 import com.movtery.zalithlauncher.utils.device.Architecture
 import com.movtery.zalithlauncher.utils.device.Architecture.ARCH_X86
 import com.movtery.zalithlauncher.utils.device.Architecture.is64BitsDevice
+import com.movtery.zalithlauncher.utils.isChinaMainland
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.getSystemDnsServerAddresses
 import com.movtery.zalithlauncher.utils.string.splitPreservingQuotes
@@ -260,12 +260,16 @@ abstract class Launcher(
                 ?.let { addAll(it) }
 
             // 按地区获取公共 DNS
-            if (LocaleList.getDefault().get(0).displayName != Locale.CHINA.displayName) {
-                add("1.1.1.1")
-                add("1.0.0.1")
-            } else {
+            // ⚠️ 不要用「应用语言」判断地区：ZyNova 支持应用内切换语言
+            // （AppCompatDelegate.setApplicationLocales），切到非中文语言会把国内用户误判成海外，
+            // 进而把游戏的 DNS 换成在部分网络下不可用的 Cloudflare。
+            // 项目里已有统一的地区判定 isChinaMainland()（按时区），这里直接复用它。
+            if (isChinaMainland()) {
                 add("223.5.5.5")
                 add("119.29.29.29")
+            } else {
+                add("1.1.1.1")
+                add("1.0.0.1")
             }
         }
     }

@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamicColorScheme
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.UiGeneration
 import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
 import com.movtery.zalithlauncher.ui.theme.components.activeMaskView
 import com.movtery.zalithlauncher.utils.festival.Festival
@@ -677,9 +678,17 @@ fun ZalithLauncherTheme(
         LocalBackgroundViewModel provides backgroundViewModel,
         LocalFestivals provides festivals
     ) {
+        //界面世代：新版（默认）/ 旧版。
+        //用户可以在「设置 → 启动器 → 界面世代」里随时双向切换，这里只负责按选择取对应的字阶与形状。
+        val uiGeneration = AllSettings.uiGeneration.state
+        val isClassic = uiGeneration == UiGeneration.Classic
+
         //开启「减少动态效果」时降级为标准的 Material 动效方案：
-        //Expressive 的弹性/过冲幅度更大，对动效敏感的用户应当可以避开
-        val motionScheme = if (AllSettings.launcherReduceMotion.state) {
+        //Expressive 的弹性/过冲幅度更大，对动效敏感的用户应当可以避开。
+        //新版界面本身也走标准动效 —— 苹果风的观感是干脆利落，没有回弹与过冲。
+        val motionScheme = if (
+            AllSettings.launcherReduceMotion.state || uiGeneration == UiGeneration.Modern
+        ) {
             MotionScheme.standard()
         } else {
             MotionScheme.expressive()
@@ -688,7 +697,9 @@ fun ZalithLauncherTheme(
         MaterialExpressiveTheme(
             colorScheme = currentDisplayScheme,
             motionScheme = motionScheme,
-            typography = AppTypography,
+            //字阶与形状都随界面世代切换，见 ui/theme/Type.kt 与 ui/theme/Shapes.kt
+            shapes = if (isClassic) ClassicShapes else ModernShapes,
+            typography = if (isClassic) ClassicTypography else ModernTypography,
             content = content
         )
     }

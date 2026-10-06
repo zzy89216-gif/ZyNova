@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.2.0**（`launcher_version_code=270200`）
+**当前版本：27.3.0**（`launcher_version_code=270300`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,119 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.3.0 认证入口调整 + 界面世代体系（处理议题 #17）✅
+
+**一、本版本做了什么（四件事）**
+
+1. **认证入口调整（议题 #17）**：默认隐藏离线 / 第三方认证，Microsoft 正版认证优先
+2. **界面世代体系**：新增「新版 / 旧版」切换 + 新版的字阶与形状体系
+3. **移除「强效动态玻璃」档与光敏性警告**
+4. **修复启动链路上「用应用语言判断地区」的缺陷**（会把国内用户的游戏 DNS 换掉）
+
+**二、议题 #17：认证入口调整**
+
+- 落地方式（**可逆的 UI 层开关**，不是删除）：
+  - 新增 `ui/screens/content/elements/AccountElements.kt` → `AuthEntryPolicy`
+    - `SHOW_LOCAL_ENTRY = false`：隐藏「离线登录」入口
+    - `SHOW_THIRD_PARTY_ENTRY = false`：隐藏「第三方认证」入口
+      （添加认证服务器按钮 + 已添加的服务器列表）
+    - `USE_LOGIN_MENU = 两者之或`：两个入口都隐藏时为 `false`
+  - `AccountManageScreen.kt` 新增私有 `openAddAccountEntry(actions)`：
+    - `USE_LOGIN_MENU == true` → 照旧打开登录菜单
+    - `USE_LOGIN_MENU == false` → **直接进入 Microsoft 登录说明弹窗**
+      （「添加账号」按钮与首登引导 `FirstLoginMenu.NORMAL` 都走这里）
+    - 顺带保留了 `isMicrosoftLogging()` 去重：已有设备代码流在跑时不再重复发起
+- **刻意没有动的东西**（议题明确要求保留）：
+  - 离线认证后端（`game/account/offline/`）、第三方认证后端（`game/account/auth_server/`、
+    `game/account/yggdrasil/`）
+  - 账号数据结构（`Account` / `AccountType` / `AccountsManager`）
+  - Microsoft OAuth 设备代码流（`MicrosoftAuthenticator.kt`）
+  - 会话续期、皮肤 / 披风、游戏启动链路
+- **升级兼容**：只改入口显隐，**不清理任何已有账号数据**；
+  升级前存在的离线 / 第三方账号仍会显示在账号列表中（走 `getAccountTypeName()`）
+- ⚠️ **以后要恢复入口**：把 `AuthEntryPolicy` 的两个开关改回 `true` 即可，
+  `openAddAccountEntry` 会自动回到「打开登录菜单」的分支，**不需要改调用点**
+
+**三、界面世代体系（本次 UI 重构的落点）**
+
+新增设置 `AllSettings.uiGeneration`（默认 `UiGeneration.Modern`），
+在 **设置 → 启动器 → 界面世代** 里切换，**两个方向都能切**。
+
+| 关注点 | 新版（Modern） | 旧版（Classic） |
+|---|---|---|
+| 字阶 | `ModernTypography`：标题 SemiBold、大字号负字距、标签 SemiBold | `ClassicTypography` = `Typography()`（Material 默认） |
+| 形状 | `ModernShapes`：8 / 12 / 16 / **22** / 30 dp | `ClassicShapes` = `Shapes()`（4 / 8 / 12 / 16 / 28） |
+| 动效 | `MotionScheme.standard()`（无回弹过冲） | `MotionScheme.expressive()` |
+
+- 生效位置：`ui/theme/Theme.kt` 的 `MaterialExpressiveTheme(...)` ——
+  **新增传入了 `shapes = ...`**（此前完全没有传 shapes，203 处 `MaterialTheme.shapes` 全是 Material 默认值）
+- 新增文件：
+  | 文件 | 作用 |
+  |---|---|
+  | `ui/theme/Shapes.kt` | 新版 / 经典两套形状体系 |
+  | `setting/enums/UiGeneration.kt` | 界面世代枚举（新版 / 旧版） |
+- `ui/theme/Type.kt` 由原本的 `val AppTypography = Typography()`（等于没定制）改为
+  `ModernTypography` / `ClassicTypography` 两套；**`AppTypography` 这个名字已不存在**，
+  以后不要再引用
+- ⚠️ **本次只做了「设计令牌层」这一步**：字阶 / 形状 / 动效已经是全局生效的，
+  但**没有逐屏重做布局与间距**（项目里 `.padding(` 有 520 处硬编码，全局改写风险远大于收益）。
+  后续要做「逐屏重做」时，请**继续走世代开关**，不要直接覆盖旧版的表现
+
+**四、移除「强效动态玻璃」与光敏性警告**
+
+- `GlassLevel` 回到两档：`Off` / `On`，`Intense` 枚举值**已删除**
+- `LauncherElements.kt`：`liquidGlassHighlights()` 去掉 `intense` 参数与那层 1600ms 明暗脉动；
+  `drawGlassHighlights()` 去掉 `intense` / `pulse` 参数，高光透明度固定为 0.35 / 0.10 / 0.16
+- `MainActivity.kt`：删除启动时的光敏性警告弹窗（连带清掉 `mutableStateOf` /
+  `rememberSaveable` 两个因此变成死导入的 import）
+- `LauncherSettingsScreen.kt`：删除「启动时显示光敏性警告」开关卡；
+  玻璃卡位置由 `Bottom` 改为 `Middle`（让位给新的「界面世代」卡）
+- 字符串：删除 `settings_launcher_glass_level_intense`、`settings_launcher_photosensitivity_*`、
+  `photosensitivity_warning_*`；并改写 `settings_launcher_liquid_glass_summary`
+  （**只存在于 `values` 与 `values-zh-rCN` 两个文件，所以删除是安全的**）
+- ⚠️ **旧配置兼容（关键）**：枚举按**名称**持久化，名称消失会**静默回退成默认值 `Off`**。
+  因此 `GlassLevel.LEGACY_ENABLED_NAMES` 新增了 `"Intense"`，
+  升级前用强效档的用户会**回退到「启用动态玻璃」而不是被关闭**
+- ⚠️ `AllSettings.launcherPhotosensitivityWarning` 的**定义保留**（默认值改为 `false`），
+  与 `liquidGlass` 同样属于「旧配置兼容项」，**不要删**
+
+**五、修复：启动链路上的「用应用语言判断地区」**
+
+`game/launch/Launcher.kt` → `buildResolvConfSet()` 原本是：
+
+```kotlin
+if (LocaleList.getDefault().get(0).displayName != Locale.CHINA.displayName) { /* Cloudflare */ }
+else { /* 223.5.5.5 / 119.29.29.29 */ }
+```
+
+- 问题：**应用内可以改语言**（`AppCompatDelegate.setApplicationLocales`），
+  界面切成非中文后国内用户会被判成海外 → 游戏的 DNS 被换成 Cloudflare →
+  部分网络下解析失败（启动 / 登录 / 多人游戏都受影响）
+- 修复：改用项目里已有的 `isChinaMainland()`（按时区），与镜像源 / 下载源 / Terracotta 保持一致
+- 这是 `LocalUtils.isChinaMainland()` 里那句注释
+  「应用内支持修改语言，不能再以语言来进行判断」所记录的教训在**启动链路上的遗漏点**
+- ⚠️ **同一文件里还有类似写法没有改**：`val overridableArguments` 里的
+  `put("user.country", Locale.getDefault().country)` 与 `game/launch/LanguageHelper.kt`
+  的 `getLanguage()` 同样依赖 `Locale.getDefault()`。
+  本次**刻意没动**（它们会实际影响游戏 JVM 的 locale，属于议题 #17 明确要求「暂不修改」的
+  「游戏运行核心」），留待单独评估
+
+**六、关于页新增 ZyNova 自己的赞助入口**
+
+- `path/UrlManager.kt` 新增 `URL_ZY_NOVA_SUPPORT = "https://afdian.com/a/hizzy"`（爱发电）
+- `AboutInfoScreen.kt`：在「关于 → 项目维护者（zzy）」条目下新增一个 `LinkIconItem`
+  （`ic_favorite_outlined` + `about_sponsor` + 新文案 `about_launcher_sponsor_text`）
+- ⚠️ **不要和 `URL_SUPPORT` 混用**：`URL_SUPPORT` 是**上游作者 MovTery** 的赞助页
+  （`ifdian.net/a/MovTery`），用在致谢区的上游作者卡片上，属于**必须保留的上游署名信息**
+
+**七、README 的赞助版块**
+
+- 四语言 README（`README.md` / `README_ZH_CN.md` / `README_ZH_TW.md` / `README_JA_JP.md`）
+  末尾新增「支持 ZyNova / Supporting ZyNova」版块
+- 图片放在 `assets/donate/`：`alipay.jpg`、`wechat.png`
+- ⚠️ 这两张图是**收款码**，属于维护者主动公开的内容；
+  **不要**把它们当成「密钥类」信息处理，但也不要挪到别处或替换成他人的收款码
 
 ### 27.2.0 视觉体验升级 + 图形 API 全自动（处理 3 个议题）✅
 
@@ -1021,6 +1134,8 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 作用 |
 |---|---|
+| `ui/theme/Shapes.kt` | 界面世代的形状体系（新版 `ModernShapes` / 经典 `ClassicShapes`）（27.3.0） |
+| `setting/enums/UiGeneration.kt` | 界面世代枚举：新版 / 旧版，可随时双向切换（27.3.0） |
 | `game/version/installed/AutoGraphicsApi.kt` | 图形 API 全自动策略：按**版本发布时间**判定是否需要图形后端选项 + 只读本地取值（27.2.0） |
 | `ai/audit/AIAuditLog.kt` | Agent 写操作审计日志（27.1.2） |
 | `ai/AIModelRepository.kt` | 模型列表统一入口（27.1.1 抽出，消除两处重复） |
@@ -1245,7 +1360,10 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 |---|---|
 | 数据库中已有的微软账号 | **保留** `AccountType.MICROSOFT` 与 `microsoftLogin`；26.1.0 只移除了「添加账号」入口，**26.4.0 已把该入口还原** |
 | `liquidGlass`（布尔开关） | 保留定义，并在 `loadAllSettings` 中一次性迁移为 `glassLevel = On` |
-| `glassLevel` 旧档位名（`Standard` / `Enhanced` / `Extreme`） | 26.2.2 起枚举只剩 `Off` / `On`；`loadAllSettings` 里的 `migrateLegacyGlassLevel()` **直接读原始字符串**并迁移为 `On`（**不能**先经过 `AllSettings.glassLevel` 读取，那样只会拿到默认值，用户原本的选择会丢失） |
+| `glassLevel` 旧档位名（`Standard` / `Enhanced` / `Extreme` / **`Intense`**） | 26.2.2 起枚举只剩 `Off` / `On`；`loadAllSettings` 里的 `migrateLegacyGlassLevel()` **直接读原始字符串**并迁移为 `On`（**不能**先经过 `AllSettings.glassLevel` 读取，那样只会拿到默认值，用户原本的选择会丢失）。**27.3.0 移除了 `Intense` 档，并把 `"Intense"` 加进了 `GlassLevel.LEGACY_ENABLED_NAMES`**：用强效档的老用户会回退到「启用动态玻璃」，而不是被静默关掉 |
+| `launcherPhotosensitivityWarning` | 27.3.0 移除光敏性警告后，**定义保留但不再读写**（默认值改为 `false`），与 `liquidGlass` 同属「旧配置兼容项」，**不要删** |
+| `uiGeneration`（界面世代） | 27.3.0 新增，默认 `Modern`。老用户没有这个键 → 取默认值，升级后直接看到新版界面；想回旧版在设置里切一下即可，**两个方向都能切** |
+| 离线 / 第三方认证入口 | 27.3.0 默认隐藏（`AuthEntryPolicy`），但**只改入口显隐**：已有账号数据、`AccountType` 取值与底层实现全部保留，升级不会清理任何旧账号 |
 | `lastIgnoredVersion`（整数） | 保留定义不再写入，新逻辑使用 `lastIgnoredVersionName`（字符串），避免存储类型冲突 |
 | `homePageType` | 新增 `Cards` 枚举值，旧值 `Blank / FromLocal / FromURL` 语义不变 |
 | `searchModPlatform` 等搜索平台 | 26.2.1 起新增 `SearchPlatform.ALL`，枚举名与旧 `Platform` 保持一致，旧值可直接反序列化 |
@@ -1420,6 +1538,14 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 仍然保留的禁令：**不要恢复 ZL2 更新链、资源中心的一键安装入口、BBSMC**。
    - **不要创建 Client Secret**：设备代码流是公共客户端，带 Secret 反而会破坏登录。
      只会用到公开的 `OAUTH_CLIENT_ID`，它必须随包分发。
+   - **27.3.0 起（议题 #17）**：**离线认证与第三方认证的「入口」默认隐藏**
+     （`AuthEntryPolicy.SHOW_LOCAL_ENTRY` / `SHOW_THIRD_PARTY_ENTRY`，都在
+     `ui/screens/content/elements/AccountElements.kt`）。
+     ⚠️ **隐藏的是入口，不是能力**：离线 / 第三方认证的**后端实现、账号数据结构、
+     已有账号数据**全部保留，**不要**因为「入口已经藏起来」就去删
+     `game/account/offline/`、`game/account/auth_server/`、`game/account/yggdrasil/`
+     或 `AccountType` 的任何取值 —— 那会让老用户的账号直接读不出来。
+     要重新开放入口，只把两个开关改回 `true` 即可，**不需要改任何调用点**。
 9. **不要为了「让预设成为唯一事实来源」而删除 `AllSettings` 里的 `ironizedZink*` 定义**：
    26.4.0 移除了面板上的 13 个参数控件，但 14 个设置项定义**必须保留**——
    `IronizedZinkSettings.kt` 仍在读写它们，删定义会导致 MMKV 读取类型不匹配。
@@ -1662,8 +1788,8 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**27.2.0**
-- 历史版本：27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**27.3.0**
+- 历史版本：27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
@@ -1772,5 +1898,8 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-05（27.2.0 已开发完成：处理议题 #14 / #15 / #16 ——
-AI 入口交互统一、视觉体验升级与光敏性警告、图形 API 全自动）
+**最后更新**：2026-10-06（27.3.0 已开发完成 —— 处理议题 #17：认证入口调整
+（默认隐藏离线 / 第三方认证入口，Microsoft 正版认证优先）；新增「界面世代」切换与
+新版字阶 / 形状体系；移除「强效动态玻璃」档与光敏性警告；
+修复启动链路上「用应用语言判断地区」导致游戏 DNS 被换掉的缺陷；
+关于页新增 ZyNova 自己的赞助入口，四语言 README 末尾新增赞助支持版块）

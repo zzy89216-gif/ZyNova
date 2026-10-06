@@ -1101,13 +1101,11 @@
     <string name="settings_launcher_liquid_glass_title">Liquid Glass Effect</string>
     <string name="settings_launcher_glass_level_off">Off</string>
     <string name="settings_launcher_glass_level_on">Enable Dynamic Glass</string>
-    <string name="settings_launcher_glass_level_intense">⚠️ Intense (Photosensitivity Risk)</string>
-    <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look. The intense level flows faster and pulses in brightness (photosensitivity risk)</string>
-    <string name="settings_launcher_photosensitivity_warning_title">Photosensitivity Warning at Startup</string>
-    <string name="settings_launcher_photosensitivity_warning_summary">When the intense dynamic glass level is in use, show a photosensitivity warning on every launcher start. This switch has no effect while the intense level is off</string>
-    <string name="photosensitivity_warning_title">⚠️ Photosensitivity Warning</string>
-    <string name="photosensitivity_warning_summary">The launcher offers an optional intense dynamic glass effect with continuous changes in brightness, which may cause discomfort or seizures for people with photosensitive epilepsy. If you are sensitive to light or motion, keep the glass effect off or enable Reduce Motion — Reduce Motion always overrides the intense effect and keeps the launcher static.</string>
-    <string name="photosensitivity_warning_disable">Don\'t Show Again</string>
+    <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look</string>
+    <string name="settings_launcher_ui_generation_title">Interface Style</string>
+    <string name="settings_launcher_ui_generation_summary">Choose how the launcher looks. Modern is the redesigned interface and the default; Classic restores the previous appearance. You can switch back and forth at any time.</string>
+    <string name="settings_launcher_ui_generation_modern">Modern</string>
+    <string name="settings_launcher_ui_generation_classic">Classic</string>
     <string name="settings_launcher_festivals_effects_title">Festival Easter Eggs</string>
     <string name="settings_launcher_festivals_effects_summary">Display persistent easter egg effects during specific time periods</string>
     <string name="settings_launcher_home_page_title">Home Page</string>
@@ -1302,6 +1300,7 @@
     <string name="about_acknowledgements_discord_community_text">Join the ZyNova Discord server for feedback and support</string>
     <string name="about_launcher_author_movtery_text">Author of %s</string>
     <string name="about_launcher_project_link">Project Link</string>
+    <string name="about_launcher_sponsor_text">Support the development of %s</string>
     <string name="about_sponsor">Sponsorship Support</string>
     <string name="about_acknowledgements_title">Acknowledgements</string>
     <string name="about_acknowledgements_pojav_text">%s uses the launch backend from PojavLauncher</string>

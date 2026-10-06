@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.2.0)
+[![Release](https://img.shields.io/badge/Release-27.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.3.0)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,7 +35,31 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.2.0
+## ✨ Highlights of 27.3.0
+
+- **Sign-in is now Microsoft-first.** The offline and third-party sign-in entries are hidden by
+  default, so *Add account* takes you straight to Microsoft sign-in instead of opening a menu with
+  a single option in it. This is a **UI-layer switch, not a removal**: the offline and third-party
+  backends, the account data structures and the Microsoft device-code flow are untouched, and
+  accounts you created before the update still show up and still launch the game.
+- **Interface Style — Modern / Classic, switchable both ways.** *Settings → Launcher → Interface
+  Style* lets you choose between the redesigned look and exactly the previous one, and you can
+  switch back and forth as often as you like. Modern reworks the type scale (semibold headings,
+  tighter tracking on large text), enlarges the corner radii (cards 16dp → 22dp, dialogs → 30dp)
+  and uses a standard motion scheme with no bounce or overshoot. One setting covers all 203
+  `MaterialTheme.shapes` call sites and every text level at once.
+- **The intense dynamic-glass level and its photosensitivity warning are gone.** Glass is back to
+  two levels (off / dynamic glass), and nothing in the launcher pulses, flashes or strobes any
+  more — so the warning is no longer needed either. If you were using the intense level you fall
+  back to **dynamic glass**, not to off.
+- **Fixed: changing the app language no longer changes the game's DNS.** The launcher used to
+  decide your region from the *app language*, so switching to a non-Chinese interface made it treat
+  users in mainland China as overseas and swap the game's DNS over to Cloudflare — which can break
+  name resolution depending on your network. It now uses the same timezone-based region check as
+  the rest of the app.
+- A **sponsor entry in About**, plus sponsor sections at the bottom of all four READMEs.
+
+### 27.2.0
 
 - **Page transitions now actually do something.** The transition setting offered
   *jelly bounce / bounce / slice in*, but every one of them was silently rendered as a plain
@@ -289,3 +313,20 @@ This software uses the following open source libraries:
 | StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [Link↗](https://github.com/MegatronKing/StringFog)                                 |
 | tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [Link↗](https://github.com/eclipse-tm4e/tm4e)                                      |
 | XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [Link↗](https://tukaani.org/xz/java.html)                                          |
+
+---
+
+## 💖 Supporting ZyNova
+
+ZyNova is maintained by **one person** and developed entirely on **a single Android phone** —
+there is no company, team, or funding behind it. If the launcher has been useful to you,
+a small tip is genuinely appreciated: it goes straight back into keeping the project alive.
+
+<p align="center">
+  <img src="assets/donate/alipay.jpg" width="220" alt="Alipay">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="WeChat Pay">
+</p>
+
+<p align="center"><sub>Alipay（支付宝）&nbsp;·&nbsp;WeChat Pay（微信支付）</sub></p>
+
+Donations are **completely optional**. Filing a bug report, improving a translation, or simply
+starring the repository helps just as much.

@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.2.0)
+[![Release](https://img.shields.io/badge/Release-27.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.3.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -34,7 +34,26 @@
 
 ---
 
-## ✨ 27.2.0 主要內容
+## ✨ 27.3.0 主要內容
+
+- **登入改以 Microsoft 正版為優先。** 離線與第三方登入的**入口預設隱藏**，
+  「新增帳號」會直接進入 Microsoft 登入，而不再先開一個只有一個選項的選單。
+  這是**可逆的 UI 層開關，不是移除**：離線 / 第三方後端、帳號資料結構、
+  Microsoft 裝置碼流程全部保持原樣，更新前建立的帳號依然會顯示、依然能啟動遊戲。
+- **介面世代 —— 新版 / 舊版，兩個方向都能切。** 在 *設定 → 啟動器 → 介面世代* 裡選擇
+  重新設計的外觀或與先前完全一致的外觀，而且可以隨時來回切換。新版重做了字階
+  （標題改為 SemiBold、大字縮緊字距）、放大圓角（卡片 16dp → 22dp、對話框 → 30dp），
+  並改用標準動效方案（沒有回彈與過衝）。一次設定即涵蓋全部 203 處
+  `MaterialTheme.shapes` 與所有文字層級。
+- **移除「強效動態玻璃」等級與其光敏性警告。** 玻璃效果回到兩個等級（關閉 / 啟用動態玻璃），
+  啟動器內不再有任何脈動、閃爍或頻閃，因此警告也不再需要。
+  原本使用強效等級的使用者會退回**啟用動態玻璃**，而不是被關閉。
+- **修正：切換應用程式語言不再改掉遊戲的 DNS。** 啟動器原本用*應用程式語言*判斷地區，
+  把介面切成非中文後，會讓中國大陸的使用者被誤判為海外，並把遊戲的 DNS 換成 Cloudflare，
+  在某些網路下會導致名稱解析失敗。現在改用與其他模組一致的**時區**判定。
+- **「關於」頁新增贊助入口**，四份 README 底部也新增贊助區塊。
+
+### 27.2.0
 
 - **頁面轉場終於真的起作用了。** 轉場設定提供 *果凍彈跳 / 彈跳 / 切入*，
   但每一個都被默默渲染成普通的交叉淡入淡出。現在每個選項都有真正的轉場，
@@ -268,3 +287,17 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 | StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [链接↗](https://github.com/MegatronKing/StringFog)                                 |
 | tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [链接↗](https://github.com/eclipse-tm4e/tm4e)                                      |
 | XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [链接↗](https://tukaani.org/xz/java.html)                                          |
+---
+
+## 💖 支持 ZyNova
+
+ZyNova 由**一個人**維護，全程只用**一部 Android 手機**開發，背後沒有公司、團隊，也沒有資金支援。
+如果這個啟動器幫到了你，歡迎請作者喝杯水 —— 這些支持會直接用在讓專案繼續活下去、繼續變好上。
+
+<p align="center">
+  <img src="assets/donate/alipay.jpg" width="220" alt="支付寶">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="微信支付">
+</p>
+
+<p align="center"><sub>支付寶&nbsp;·&nbsp;微信支付</sub></p>
+
+贊助**完全自願**。回報一個 Bug、改進一句翻譯，或者只是點一個 Star，幫助同樣大。

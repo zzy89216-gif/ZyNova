@@ -448,6 +448,40 @@ fun AccountItem(
     }
 }
 
+/**
+ * 认证入口策略
+ *
+ * ZyNova 以 **Microsoft（正版）认证**作为默认且主要的登录方式。
+ * 离线认证与第三方认证的**入口**默认不再向用户展示 ——
+ * 这两条路径无法通过 Microsoft / Minecraft 官方账号体系确认游戏许可，
+ * 继续作为公开、默认的认证引导存在合规风险。
+ *
+ * ⚠️ 这是**可逆的 UI 层开关**，不是删除。以下内容**全部保持原样**：
+ * - 底层认证实现（`game/account/offline`、`game/account/auth_server`、`game/account/yggdrasil`）
+ * - 账号数据结构、`AccountType` 取值与**已有账号数据**（升级不会清理旧账号）
+ * - Microsoft OAuth / 设备代码流（`MicrosoftAuthenticator`）
+ * - 会话续期、皮肤 / 披风与游戏启动链路
+ *
+ * 把下面的值改回 `true`，即可恢复对应入口。
+ */
+object AuthEntryPolicy {
+    /** 是否展示「离线登录」入口 */
+    val SHOW_LOCAL_ENTRY = false
+
+    /** 是否展示「第三方认证」入口（添加认证服务器 + 已添加的服务器列表） */
+    val SHOW_THIRD_PARTY_ENTRY = false
+
+    /**
+     * 是否仍把「登录菜单」作为「添加账号」的入口。
+     *
+     * 两个入口都隐藏时（默认），登录菜单里只剩 Microsoft 登录一项，
+     * 再让用户点开一层只有一个选项的菜单没有意义；
+     * 因此「添加账号」直接进入 Microsoft 登录说明弹窗
+     * （项目原则：Context First, Less Steps）。
+     */
+    val USE_LOGIN_MENU = SHOW_LOCAL_ENTRY || SHOW_THIRD_PARTY_ENTRY
+}
+
 @Composable
 fun LoginMenuDialog(
     onDismissRequest: () -> Unit,
@@ -505,61 +539,66 @@ fun LoginMenuDialog(
                                     onDismissRequest()
                                 }
                             )
-                            //离线登录
-                            LoginItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                title = stringResource(R.string.account_type_local),
-                                onClick = {
-                                    onLocalLogin()
-                                    onDismissRequest()
-                                }
-                            )
-                        }
-
-                        LazyColumn(
-                            modifier = Modifier.weight(1f),
-                            contentPadding = PaddingValues(
-                                start = 6.dp,
-                                top = 12.dp,
-                                end = 12.dp,
-                                bottom = 12.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            item {
-                                //添加认证服务器
-                                InfoLayoutTextItem(
+                            //离线登录（默认隐藏，见 AuthEntryPolicy）
+                            if (AuthEntryPolicy.SHOW_LOCAL_ENTRY) {
+                                LoginItem(
                                     modifier = Modifier.fillMaxWidth(),
-                                    title = stringResource(R.string.account_add_new_server_button),
-                                    showArrow = true,
+                                    title = stringResource(R.string.account_type_local),
                                     onClick = {
-                                        onAddAuthServer()
+                                        onLocalLogin()
                                         onDismissRequest()
                                     }
                                 )
                             }
+                        }
 
-                            items(authServers) { server ->
-                                LoginItem(
-                                    title = server.serverName,
-                                    icon = {
-                                        IconButton(
-                                            modifier = Modifier.size(22.dp),
-                                            onClick = {
-                                                onDeleteAuthServer(server)
-                                            }
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.ic_delete_outlined),
-                                                contentDescription = stringResource(R.string.generic_delete)
-                                            )
+                        //第三方认证（默认隐藏，见 AuthEntryPolicy）
+                        if (AuthEntryPolicy.SHOW_THIRD_PARTY_ENTRY) {
+                            LazyColumn(
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(
+                                    start = 6.dp,
+                                    top = 12.dp,
+                                    end = 12.dp,
+                                    bottom = 12.dp
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                item {
+                                    //添加认证服务器
+                                    InfoLayoutTextItem(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        title = stringResource(R.string.account_add_new_server_button),
+                                        showArrow = true,
+                                        onClick = {
+                                            onAddAuthServer()
+                                            onDismissRequest()
                                         }
-                                    },
-                                    onClick = {
-                                        onAuthServerLogin(server)
-                                        onDismissRequest()
-                                    }
-                                )
+                                    )
+                                }
+
+                                items(authServers) { server ->
+                                    LoginItem(
+                                        title = server.serverName,
+                                        icon = {
+                                            IconButton(
+                                                modifier = Modifier.size(22.dp),
+                                                onClick = {
+                                                    onDeleteAuthServer(server)
+                                                }
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_delete_outlined),
+                                                    contentDescription = stringResource(R.string.generic_delete)
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            onAuthServerLogin(server)
+                                            onDismissRequest()
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

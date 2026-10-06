@@ -86,6 +86,7 @@ import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountItem
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.AccountSkinOperation
+import com.movtery.zalithlauncher.ui.screens.content.elements.AuthEntryPolicy
 import com.movtery.zalithlauncher.ui.screens.content.elements.ChangeSkinDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.LocalLoginDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.LocalLoginOperation
@@ -187,9 +188,8 @@ fun AccountManageScreen(
     LaunchedEffect(Unit) {
         when (key.loginMenu) {
             FirstLoginMenu.NONE -> {}
-            FirstLoginMenu.NORMAL -> {
-                actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
-            }
+            //议题 #17：「添加账号」默认直接进入 Microsoft 正版登录
+            FirstLoginMenu.NORMAL -> openAddAccountEntry(actions)
         }
 
         viewModel.effect.collect { effect ->
@@ -349,10 +349,7 @@ private fun ActionsLayout(
         ScalingActionButton(
             modifier = Modifier
                 .fillMaxWidth(),
-            onClick = {
-                //直接打开登录菜单（微软账号 / 离线登录 / 认证服务器）
-                actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
-            }
+            onClick = { openAddAccountEntry(actions) }
         ) {
             MarqueeText(text = stringResource(R.string.account_add_new_account))
         }
@@ -407,6 +404,27 @@ private fun LoginMenuOperation(
                 }
             )
         }
+    }
+}
+
+/**
+ * 打开「添加账号」入口
+ *
+ * 议题 #17：ZyNova 以 Microsoft 正版认证作为默认登录方式，
+ * 默认不再展示离线 / 第三方认证入口，因此这里**直接进入 Microsoft 登录说明弹窗**，
+ * 少一层只有一个选项的菜单（项目原则：Context First, Less Steps）。
+ *
+ * 当 [AuthEntryPolicy.USE_LOGIN_MENU] 为 true（离线 / 第三方入口被重新启用）时，
+ * 自动恢复为原先的登录菜单，**不需要改动任何调用点**。
+ */
+private fun openAddAccountEntry(actions: AccountActions) {
+    if (AuthEntryPolicy.USE_LOGIN_MENU) {
+        actions.onIntent(AccountManageIntent.UpdateLoginMenuOp(LoginMenuOperation.Login))
+    } else if (!isMicrosoftLogging()) {
+        //已有微软登录任务在进行时，不再重复发起设备代码流
+        actions.onIntent(
+            AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.Tip)
+        )
     }
 }
 

@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.2.0)
+[![Release](https://img.shields.io/badge/Release-27.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.3.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -35,7 +35,32 @@
 
 ---
 
-## ✨ 27.2.0 のハイライト
+## ✨ 27.3.0 のハイライト
+
+- **サインインは Microsoft 正規アカウント優先になりました。** オフラインと第三者認証の
+  **入口は既定で非表示**になり、「アカウントを追加」は選択肢が 1 つだけのメニューを経由せず、
+  そのまま Microsoft サインインへ進みます。これは**取り消し可能な UI 層のスイッチであり、
+  削除ではありません**。オフライン / 第三者認証のバックエンド、アカウントのデータ構造、
+  Microsoft のデバイスコードフローはそのまま残り、更新前に作成したアカウントも
+  そのまま一覧に表示され、ゲームも起動できます。
+- **インターフェース世代 —— 新版 / 旧版、どちらにも切り替え可能。**
+  *設定 → ランチャー → インターフェース世代* で、再設計された外観と従来と完全に同じ外観を
+  選べます。何度でも往復できます。新版では字階を再設計し（見出しは SemiBold、大きな文字は
+  字間を詰める）、角丸を大きくし（カード 16dp → 22dp、ダイアログ → 30dp）、
+  バウンスやオーバーシュートのない標準モーションに変更しました。
+  1 か所の設定で 203 か所の `MaterialTheme.shapes` とすべての文字階層に反映されます。
+- **「強力な動的ガラス」段階とその光過敏性の警告を削除しました。** ガラス効果は
+  2 段階（オフ / 動的ガラス）に戻り、ランチャー内に脈動・点滅・ストロボは一切なくなったため、
+  警告も不要になりました。強力な段階を使っていた場合は**動的ガラス**に戻り、
+  オフにはなりません。
+- **修正：アプリの言語を切り替えてもゲームの DNS が変わらなくなりました。**
+  以前は*アプリの言語*で地域を判定していたため、非中国語の UI にすると中国本土の
+  ユーザーが海外と誤判定され、ゲームの DNS が Cloudflare に差し替えられていました。
+  現在は他のモジュールと同じ**タイムゾーン**による判定を使います。
+- **「アプリについて」にスポンサー入口**を追加し、4 つの README の末尾にも
+  スポンサーセクションを追加しました。
+
+### 27.2.0
 
 - **ページトランジションが実際に機能するようになりました。** トランジション設定には
   *ゼリーバウンス / バウンス / スライスイン*がありましたが、いずれも黙って単なる
@@ -290,3 +315,19 @@ git clone https://github.com/zzy89216-gif/ZyNova.git
 | StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [Link↗](https://github.com/MegatronKing/StringFog)                                 |
 | tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [Link↗](https://github.com/eclipse-tm4e/tm4e)                                      |
 | XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [Link↗](https://tukaani.org/xz/java.html)                                          |
+
+---
+
+## 💖 ZyNova を支援する
+
+ZyNova は**個人**が**Android スマートフォン 1 台だけ**で開発・保守しており、企業やチーム、資金の後ろ盾はありません。
+このランチャーが役に立ったと感じていただけたら、少額のご支援をいただけると嬉しいです。
+いただいた支援は、プロジェクトを続けていくためにそのまま使わせていただきます。
+
+<p align="center">
+  <img src="assets/donate/alipay.jpg" width="220" alt="Alipay（支付宝）">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="WeChat Pay（微信支付）">
+</p>
+
+<p align="center"><sub>Alipay（支付宝）&nbsp;·&nbsp;WeChat Pay（微信支付）</sub></p>
+
+ご支援は**まったくの任意**です。バグ報告や翻訳の改善、リポジトリへの Star だけでも十分に助かります。

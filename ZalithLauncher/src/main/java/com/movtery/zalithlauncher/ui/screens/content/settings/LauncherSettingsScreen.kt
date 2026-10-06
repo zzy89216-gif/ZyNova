@@ -87,6 +87,7 @@ import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
+import com.movtery.zalithlauncher.setting.enums.UiGeneration
 import com.movtery.zalithlauncher.setting.enums.applyLanguage
 import com.movtery.zalithlauncher.setting.unit.floatRange
 import com.movtery.zalithlauncher.ui.androidText
@@ -330,7 +331,8 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        //玻璃效果：关闭 / 启用动态玻璃 / 强效动态玻璃
+                        //玻璃效果：关闭 / 启用动态玻璃
+                        //27.3.0 起移除了「强效动态玻璃」档与配套的光敏性警告
                         EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Middle,
@@ -345,13 +347,20 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        //光敏性警告：强效动态玻璃存在光敏风险，启动时提示一次
-                        SwitchSettingsCard(
+                        //界面世代：新版（默认）/ 旧版
+                        //⚠️ 这里必须用带 `unit =` 的重载：它会自动 unit.save(...)，
+                        //而 `value =` 重载的 onRadioClick 默认是空实现，会导致「点了没反应」。
+                        //这是一个普通的枚举单选，**两个方向都能切**：
+                        //切到「旧版」之后必须还能切回「新版」，不要改成单向的「切换一次」交互。
+                        EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
                             position = CardPosition.Bottom,
-                            unit = AllSettings.launcherPhotosensitivityWarning,
-                            title = stringResource(R.string.settings_launcher_photosensitivity_warning_title),
-                            summary = stringResource(R.string.settings_launcher_photosensitivity_warning_summary)
+                            unit = AllSettings.uiGeneration,
+                            entries = UiGeneration.entries,
+                            title = stringResource(R.string.settings_launcher_ui_generation_title),
+                            summary = stringResource(R.string.settings_launcher_ui_generation_summary),
+                            getRadioText = { stringResource(it.textRes) },
+                            getRadioEnable = { true }
                         )
                     }
                 }
