@@ -367,7 +367,7 @@
     <string name="settings_renderer_auto_title">自動</string>
     <string name="settings_renderer_auto_summary">インスタンスごとに適切なレンダラーを自動で選択します。自分で選ぶ必要はありません。</string>
     <string name="settings_renderer_global_renderer_title">グローバルレンダラー</string>
-    <string name="settings_renderer_global_renderer_summary">グローバルデフォルトレンダラーはモバイルでも快適に動作するために動的ライブラリ変換レイヤーを利用しています</string>
+    <string name="settings_renderer_global_renderer_summary">既定で使用するレンダラーです。「自動」はインスタンスの Minecraft バージョンに合わせて自動で選択します（MobileGlues → Ironized Zink → GL4ES）。手動で指定した場合は常にその選択が優先されます</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan ドライバー</string>
     <string name="settings_renderer_from_plugins">%s プラグインから</string>
     <string name="settings_element_selected">現在の選択: %s</string>

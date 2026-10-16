@@ -900,7 +900,7 @@
     <string name="settings_tab_control_manage">控制管理</string>
     <string name="settings_tab_info_about">关于</string>
     <string name="settings_renderer_global_renderer_title">全局渲染器</string>
-    <string name="settings_renderer_global_renderer_summary">全局默认的渲染器，通过动态库转换层，确保游戏能在移动端运行</string>
+    <string name="settings_renderer_global_renderer_summary">默认使用的渲染器。「自动」会按实例的 Minecraft 版本自动挑选（MobileGlues → Ironized Zink → GL4ES）；手动指定则始终优先按你的选择</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驱动器</string>
     <string name="settings_renderer_env_title">环境变量：%s</string>
     <string name="settings_renderer_config_title">渲染器配置</string>
