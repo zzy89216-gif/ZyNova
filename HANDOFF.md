@@ -73,6 +73,12 @@
 - `Renderers.resolveIdentifier(preferred, mcVersion)`：
   - `preferred == "auto"` → 走 `AutoRenderer.pick()`
   - 否则走 `findCompatibleIdentifier()`（具体渲染器之间的兼容回退）
+  - ⚠️ **返回值一定是一个真实存在的渲染器标识符，绝不会是 `"auto"`**：
+    「自动」一个都挑不出来时（列表为空等），必须回退到列表首个真实渲染器。
+    若把 `"auto"` 原样返回出去，`setCurrentRenderer()` 会回退到列表首个，
+    而调用方 `GameLauncher.setRendererEnv()` 却按 `"auto"` 去取 env ——
+    `AutoRenderer.getRendererEnv()` 是空表、库名为空串，会把游戏启动搞坏。
+    （这个坑在 27.4.0 开发中实际踩到并修掉，见提交 `fix(renderer): resolveIdentifier 绝不返回 "auto"`）
 - `Renderers.getRenderersForSelection()`：**只在设置界面用**，返回 `[AutoRenderer] + renderers`。
   ⚠️ `getRenderers()` 仍然只返回真正的渲染器 —— 否则 `setCurrentRenderer()` 的
   「回退到列表首个」会被「自动」污染，把 `"auto"` 当成一个渲染器装上去。

@@ -86,6 +86,11 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
   name resolution depending on your network. It now uses the same timezone-based region check as
   the rest of the app.
 - A **sponsor entry in About**, plus sponsor sections at the bottom of all four READMEs.
+- **The intense dynamic-glass level and its photosensitivity warning were removed.** Glass went back
+  to two levels (off / dynamic glass), and nothing in the launcher pulses, flashes or strobes any
+  more — so the warning was no longer needed either. Anyone using the intense level fell back to
+  **dynamic glass**, not to off.
+  *(27.4.0 subsequently removed that level entirely — see the highlights above.)*
 
 ### 27.2.0
 
@@ -186,9 +191,10 @@ respects that choice and only falls back when it genuinely cannot run the versio
 | **Default** | Balanced Zink + shaders (**default**) | 1.16.x → latest | Full (Iris / OptiFine) |
 | **Max Compatibility** | Run everything | All versions | Full + heavy packs |
 
-Since **26.4.0** the panel exposes **the 4 presets** plus an **OpenGL version** dropdown below
-them. The 12 individual parameter switches were removed so that ordinary users do not have to
-tune low-level parameters. Picking a preset still writes the whole parameter set at once.
+Since **26.4.0** the panel exposes **only the 4 presets** (the 12 individual parameter switches
+were removed so that ordinary users do not have to tune low-level parameters; picking a preset
+still writes the whole parameter set at once). The **OpenGL version** dropdown was removed by the
+same change and **restored in 27.1.2**, so the panel is the 4 presets plus that one dropdown.
 
 > ℹ️ All four presets pin the OpenGL version to **4.6**. If your driver does not translate
 > Vulkan to Zink 4.6 correctly (broken picture / refuses to start), lower it to 4.5 / 4.3 / 3.3

@@ -256,7 +256,7 @@ MobileGlues 要求 1.17+，只有 Ironized Zink 不限制版本）。
 
 | 类别 | 内容 | 26.3.0 状态 |
 |---|---|---|
-| **官方内置** | Ironized Zink（默认）、GL4ES、MobileGlues | 只保留这 3 个；其余内置 Renderer（Krypton Wrapper / Kopper Zink / VirGL / Freedreno / Panfrost）已删除 |
+| **官方内置** | 自动、MobileGlues、Ironized Zink、GL4ES | 只保留这 3 个内置渲染器（27.4.0 起列表最前多一个「自动」选项）；其余内置 Renderer（Krypton Wrapper / Kopper Zink / VirGL / Freedreno / Panfrost）已删除 |
 | **外部扩展** | FCL / ZalithLauncher 渲染器插件、新一代 `fclPlugin_V2` 渲染器插件、Vulkan 驱动插件、原生库插件 | **完全保留**，安装后仍会正常出现在渲染器列表中 |
 
 外置插件自带自己的原生库，不受本次内置裁剪影响；
@@ -644,7 +644,8 @@ ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同�
 感谢：
 
 - ZalithLauncher2 项目及其所有贡献者
-- **Ironized Zink（GoyDevv）** —— 本项目的默认渲染器
+- **Ironized Zink（GoyDevv）** —— 本项目的内置渲染器之一
+  （26.3.0 ~ 27.3.0 曾是默认；27.4.0 起默认改为「自动」按版本挑选）
 - **MobileGlues（MobileGL-Dev）**、**gl4es_extra_extra（PojavLauncherTeam）** —— 另外两个内置渲染器
 - **Mesa / Zink / Kopper** 的作者与贡献者 —— Ironized Zink 的渲染引擎
 - 本项目使用的其他开源项目
