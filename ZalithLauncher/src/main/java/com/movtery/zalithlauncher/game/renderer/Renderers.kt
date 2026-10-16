@@ -89,12 +89,21 @@ object Renderers {
      *
      * @param preferredIdentifier 用户实际选择（版本设置里的值，或全局设置的值）
      * @param mcVersion 目标实例的 Minecraft 版本
+     * @return **一定是一个真实存在的渲染器标识符**，绝不会是 `"auto"`
      */
     fun resolveIdentifier(preferredIdentifier: String, mcVersion: String?): String {
-        if (preferredIdentifier == AutoRenderer.IDENTIFIER) {
-            return AutoRenderer.pick(mcVersion)?.getUniqueIdentifier() ?: preferredIdentifier
+        if (preferredIdentifier != AutoRenderer.IDENTIFIER) {
+            return findCompatibleIdentifier(preferredIdentifier, mcVersion)
         }
-        return findCompatibleIdentifier(preferredIdentifier, mcVersion)
+
+        AutoRenderer.pick(mcVersion)?.let { return it.getUniqueIdentifier() }
+
+        //⚠️ 走到这里说明一个都没挑出来（渲染器列表为空，或极端情况下全都不兼容）。
+        //此时**必须回退到一个真实的渲染器**：把 `"auto"` 原样返回出去，
+        //`setCurrentRenderer()` 会找不到它并回退到列表首个，而调用方
+        //（`GameLauncher.setRendererEnv`）却会按「auto」去取 env ——
+        //`AutoRenderer.getRendererEnv()` 是空表、库名是空串，会把游戏启动搞坏。
+        return renderers.firstOrNull()?.getUniqueIdentifier() ?: preferredIdentifier
     }
 
     /**
