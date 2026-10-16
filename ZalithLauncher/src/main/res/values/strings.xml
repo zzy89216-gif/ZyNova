@@ -900,7 +900,7 @@
     <string name="settings_tab_control_manage">Controls</string>
     <string name="settings_tab_info_about">About</string>
     <string name="settings_renderer_global_renderer_title">Global Renderer</string>
-    <string name="settings_renderer_global_renderer_summary">Renderer used by default. Auto picks one that supports each instance's Minecraft version (MobileGlues → Ironized Zink → GL4ES); choosing a specific renderer always takes priority</string>
+    <string name="settings_renderer_global_renderer_summary">Renderer used by default. Auto picks one that supports each instance\'s Minecraft version (MobileGlues → Ironized Zink → GL4ES); choosing a specific renderer always takes priority</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan Driver</string>
     <string name="settings_renderer_env_title">Environment Variable: %s</string>
     <string name="settings_renderer_config_title">Renderer Configuration</string>
