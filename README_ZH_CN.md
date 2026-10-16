@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.3.0)
+[![Release](https://img.shields.io/badge/Release-27.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.4.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,19 +29,27 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.3.0**。这一阶段做了三件事：
-**认证入口向官方账号体系收敛、界面换代并保留可回退的旧版、修掉一个会改坏游戏 DNS 的缺陷。**
+当前版本 **27.4.0**。这一阶段做了四件事：
+**渲染器交给启动器自动判断、恢复离线 / 第三方登录入口、MobileGlues 的 OpenGL 版本可选、同步上游修复。**
 
-- **认证入口调整（议题 #17）**：默认隐藏「离线登录」与「第三方认证」入口，
-  「添加账号」直接进入 Microsoft 正版登录；
-  **只改入口，不删底层实现，也不清理任何已有账号数据**
-- **「界面世代」切换（新版 / 旧版，随时双向可切）**：新版重做字阶与圆角体系，并改用标准动效
-- **移除「强效动态玻璃」档与光敏性警告**：玻璃回到「关闭 / 启用动态玻璃」两档，
-  原本使用强效档的用户会回退到「启用动态玻璃」，**不会被关掉**
-- **修复**：切到非中文界面后，游戏的 `resolv.conf` 会误判成海外并把 DNS 换成 Cloudflare；
-  现在改用与其它模块一致的时区判定
+- **「自动」渲染器（默认）**：渲染器列表现在是
+  **自动 / MobileGlues / Ironized Zink / GL4ES**。
+  选「自动」后，每个实例启动时按固定优先级挑一个**声明支持该 Minecraft 版本**的渲染器
+  （`MobileGlues → Ironized Zink → GL4ES`）——
+  内置三个渲染器的版本覆盖范围本就不同，固定默认某一个必然对一部分版本是错的
+- **恢复「离线登录」与「第三方认证」入口**：登录菜单回到
+  **微软 / 离线 / 第三方认证** 三项并列；**底层实现与已有账号数据一行未动**
+- **MobileGlues 的 OpenGL 版本可选**：选中 MobileGlues 后下方自动展开下拉
+  （3.2 ~ 4.6，默认 4.0），取值与夹取规则照抄上游与 native
+- **标题栏名称可自定义（议题 #18）**：设置 → 启动器 → 启动器名称；**留空即用默认名称**，
+  只影响界面显示，不影响应用名、正版登录与多人游戏识别
+- **同步上游修复**：`SDL_EGL_LIBRARY` 绝对路径重复拼接、surface 重建后画面错位、
+  窗口引用计数多算导致销毁不掉
+- **顺带修复**：按实例的渲染器设置此前**没有「跟随全局」条目**，
+  指定过之后就再也切不回去，现已补上
 
-> 上一版（27.2.0）：图形 API 全自动、页面转场真正生效、无障碍选项「减少动态效果」。
+> 上一版（27.3.0）：认证入口向官方账号体系收敛、界面换代并保留可回退的旧版、
+> 修掉一个会改坏游戏 DNS 的缺陷。
 
 > **在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 > 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
@@ -105,6 +113,8 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 | **卡片式主页拖动排序**（版本卡片 / 世界 / 服务器 / 右侧菜单） | ✅ |
 | **卡片大小可调**（70% ~ 140%） | ✅ |
 | **渲染器体系重做**（内置只保留 Ironized Zink / GL4ES / MobileGlues） | ✅ |
+| **「自动」渲染器**（按实例的 Minecraft 版本自动挑一个合适的） | ✅ |
+| **MobileGlues 的 OpenGL 版本可选**（3.2 ~ 4.6） | ✅ |
 | **Ironized Zink 官方预设**（Potato / Performance / Default / Max Compatibility，选中即展开） | ✅ |
 | **统一资源管理核心**（Resource Management Core） | ✅ |
 | **资源来源 Provider**（Modrinth / CurseForge） | ✅ |
@@ -112,7 +122,7 @@ ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而�
 | **极简资源安装**（上下文直装，不再重复选择） | ✅ |
 | **玻璃效果两档**（关闭 / 启用动态玻璃） | ✅ |
 | **「界面世代」切换**（新版 / 旧版，可随时双向切换） | ✅ |
-| **认证入口调整**（默认隐藏离线 / 第三方认证，Microsoft 正版认证优先） | ✅ |
+| **认证入口**（微软 / 离线 / 第三方认证三项并列） | ✅ |
 | **真实生效的页面转场**（回弹 / 弹跳 / 切入，全项目统一） | ✅ |
 | **减少动态效果**（无障碍：一键关闭转场 / 动态玻璃高光 / 骨架屏闪烁） | ✅ |
 | **图形 API 全自动**（首次启动 OpenGL，之后跟随游戏自身设置；按发布时间判定） | ✅ |
@@ -211,9 +221,15 @@ ZyNova 对原有启动器的界面与交互做了较大范围的重新设计，�
 
 | 渲染器 | 说明 | 配置 |
 |---|---|---|
-| **Ironized Zink**（默认） | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6 | **4 个官方预设** + OpenGL 版本下拉 |
+| **Ironized Zink** | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6 | **4 个官方预设** + OpenGL 版本下拉 |
 | **GL4ES** | 经典 OpenGL 转译层 | 保持默认 |
-| **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | 保持上游默认 |
+| **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | **OpenGL 版本下拉**（3.2 ~ 4.6，默认 4.0） |
+
+**渲染器默认是「自动」**：启动器按 `MobileGlues → Ironized Zink → GL4ES` 的优先级，
+挑一个**声明支持该实例 Minecraft 版本**的渲染器（三个内置渲染器的版本覆盖范围不同，
+MobileGlues 要求 1.17+，只有 Ironized Zink 不限制版本）。
+你也可以在设置里手动指定某一个 —— 那时启动器**尊重你的选择**，
+只有它确实跑不了这个版本才会回退，免得每次启动都弹一次无谓的警告。
 
 **Ironized Zink 的 4 个官方预设**（参数取值与上游一致）：
 
@@ -323,20 +339,22 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 当前版本：
 
-**ZyNova 27.3.0**
+**ZyNova 27.4.0**
 
-27.3.0 处理了仓库里的开放议题 **#17**（认证入口调整），并完成了一次界面体系升级：
+27.4.0 把渲染器选择交给启动器自动判断，并恢复了两条被隐藏的登录路径：
 
-- **🔄 认证入口调整**（#17）：默认隐藏「离线登录」与「第三方认证」入口，
-  「添加账号」直接进入 Microsoft 正版登录；
-  这是**可逆的 UI 层开关** —— 不删底层实现，也不清理任何已有账号数据
-- **✨ 「界面世代」切换**：新版（默认，重做字阶与圆角体系 + 标准动效）/
-  旧版（与 27.3.0 之前完全一致），**两个方向都能切**
-- **🗑️ 移除「强效动态玻璃」档与光敏性警告**：玻璃回到「关闭 / 启用动态玻璃」两档；
-  原本使用强效档的用户会回退到「启用动态玻璃」，**不会被关掉**
-- **🐛 修复**：切到非中文界面会被误判成海外，游戏的 DNS 被换成 Cloudflare；
-  改用与其它模块一致的时区判定
-- **✨ 关于页新增 ZyNova 自己的赞助入口**；四语言 README 末尾新增赞助版块
+- **✨ 「自动」渲染器**（默认）：设置里的列表变为
+  **自动 / MobileGlues / Ironized Zink / GL4ES**；选「自动」时按
+  `MobileGlues → Ironized Zink → GL4ES` 的优先级挑一个支持当前 Minecraft 版本的渲染器
+- **✨ MobileGlues 的 OpenGL 版本可选**：选中 MobileGlues 后下方自动展开下拉
+  （3.2 ~ 4.6，默认 4.0），取值与夹取规则照抄上游插件与 native
+- **🔄 恢复「离线登录」与「第三方认证」入口**：登录菜单回到三项并列；
+  **只改入口显隐，不删底层实现，也不清理任何已有账号数据**
+- **🐛 同步上游修复**：`SDL_EGL_LIBRARY` 对绝对路径重复拼接导致 SDL 加载失败；
+  游戏运行中 surface 重建后渲染状态未恢复导致画面持续错位；
+  窗口逻辑引用计数多算导致真实窗口永远销毁不掉
+- **🐛 修复**：按实例的渲染器设置此前没有「跟随全局设置」条目，
+  用户给某个实例指定过渲染器之后就再也切不回去，现已补上
 
 > 📜 更早版本的完整变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -441,7 +459,19 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 27.3.0（当前版本）
+### 27.4.0（当前版本）
+
+- [x] **「自动」渲染器**（设置里：自动 / MobileGlues / Ironized Zink / GL4ES）
+- [x] **MobileGlues 的 OpenGL 版本可选**（3.2 ~ 4.6，默认 4.0）
+- [x] **恢复离线 / 第三方认证入口**
+- [x] **按实例渲染器新增「跟随全局设置」条目**（此前指定过就切不回去）
+- [x] **同步上游修复**：`SDL_EGL_LIBRARY` 绝对路径重复拼接、surface 重建后画面错位、
+      窗口引用计数多算
+- [ ] 界面世代的后续：**逐屏重做布局与间距**、整体视觉语言统一、per-page 差异化转场、
+      把剩余动画收敛到统一动效入口、读取系统级「移除动画」设置
+- [ ] 评估 `Launcher.kt` 的 `user.country` 与 `LanguageHelper` 对 `Locale.getDefault()` 的依赖
+
+### 27.3.0
 
 - [x] **认证入口调整**：默认隐藏离线 / 第三方认证入口，Microsoft 正版认证优先（#17）
 - [x] **「界面世代」切换**：新版 / 旧版，可随时双向切换
@@ -449,10 +479,6 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 - [x] **移除「强效动态玻璃」档与光敏性警告**（旧配置迁移：强效 → 启用动态玻璃）
 - [x] **修复启动链路用「应用语言」判断地区，导致切语言后游戏 DNS 被换掉**
 - [x] **关于页新增 ZyNova 自己的赞助入口**；四语言 README 新增赞助版块
-- [ ] 界面世代的后续：**逐屏重做布局与间距**、整体视觉语言统一、per-page 差异化转场、
-      把剩余动画收敛到统一动效入口、读取系统级「移除动画」设置
-- [ ] 评估 `Launcher.kt` 的 `user.country` 与 `LanguageHelper` 对 `Locale.getDefault()` 的依赖
-      （会实际影响游戏 JVM 的 locale，需要单独验证后再改）
 
 ### 27.2.0
 

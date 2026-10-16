@@ -391,13 +391,29 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
     renderer.getRendererEGL()?.let { eglName ->
         envMap["POJAVEXEC_EGL"] = eglName
 
-        // 指定 SDL EGL
-        val nativeLibPath = if (renderer is Plugin) {
-            renderer.getNativeLibPath()
+        //指定 SDL EGL。
+        //
+        //⚠️ eglName 可能已经是绝对路径：插件渲染器在
+        //RendererPluginManager（`progressEglName`）与 RendererConfig（`**|` 前缀）
+        //里都已经把库名解析成了完整路径。再拼一次库目录会得到
+        //`…/lib/libEGL.so/libEGL.so` 这种根本不存在的路径，SDL 会加载失败。
+        //因此：已是绝对路径就直接用，只有裸库名才拼接；并且**校验文件真实存在**，
+        //不存在时干脆不设置这个变量，交给 SDL 按自身规则解析。
+        val eglPath = if (eglName.startsWith("/")) {
+            eglName
         } else {
-            PathManager.DIR_NATIVE_LIB
+            val nativeLibPath = if (renderer is Plugin) {
+                renderer.getNativeLibPath()
+            } else {
+                PathManager.DIR_NATIVE_LIB
+            }
+            "$nativeLibPath/$eglName"
         }
-        envMap["SDL_EGL_LIBRARY"] = "$nativeLibPath/$eglName"
+        if (File(eglPath).isFile) {
+            envMap["SDL_EGL_LIBRARY"] = eglPath
+        } else {
+            Logger.warning(TAG, "Renderer EGL library does not exist, leaving SDL_EGL_LIBRARY unset: $eglPath")
+        }
     }
 
     envMap["POJAV_RENDERER"] = rendererId

@@ -691,6 +691,16 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         }
         if (vmViewModel.isRunning) {
             ZLBridge.setupBridgeWindow(nativeSurface)
+            //surface 被重建（旋转 / 分屏 / 小窗 / 回到前台）后必须恢复渲染状态：
+            //1）清掉销毁标记，否则下面的 onSurfaceTextureSizeChanged / surfaceChanged
+            //   会被那个 `if (mIsSurfaceDestroyed) return` 全部挡掉，尺寸再也回不来；
+            //2）主动按当前屏幕尺寸重新刷新一次，让新 SurfaceTexture 的 buffer
+            //   与视图尺寸重新对齐（否则画面保持错位、无法自愈）。
+            withHandler { mIsSurfaceDestroyed = false }
+            val runningSize = vmViewModel.screenSize
+            if (runningSize.width > 0 && runningSize.height > 0) {
+                refreshWindowSize(screenSize = runningSize)
+            }
             return
         }
         vmViewModel.isRunning = true
@@ -739,6 +749,13 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         SdlBridge.prepareSurface(this, surface, gameSurfaceView?.parent as? ViewGroup, holder)
         if (vmViewModel.isRunning) {
             ZLBridge.setupBridgeWindow(surface)
+            //同 onSurfaceTextureAvailable：SurfaceView 路径也要清掉销毁标记并重新对齐尺寸，
+            //否则窗口复用后画面错位不能自愈（原因见上面的注释）。
+            withHandler { mIsSurfaceDestroyed = false }
+            val runningSize = vmViewModel.screenSize
+            if (runningSize.width > 0 && runningSize.height > 0) {
+                refreshWindowSize(screenSize = runningSize)
+            }
             return
         }
         vmViewModel.isRunning = true

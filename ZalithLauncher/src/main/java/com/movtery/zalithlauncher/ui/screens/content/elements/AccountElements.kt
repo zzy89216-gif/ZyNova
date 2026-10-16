@@ -451,32 +451,34 @@ fun AccountItem(
 /**
  * 认证入口策略
  *
- * ZyNova 以 **Microsoft（正版）认证**作为默认且主要的登录方式。
- * 离线认证与第三方认证的**入口**默认不再向用户展示 ——
- * 这两条路径无法通过 Microsoft / Minecraft 官方账号体系确认游戏许可，
- * 继续作为公开、默认的认证引导存在合规风险。
+ * ZyNova 同时提供 **Microsoft（正版）认证**、**离线登录** 与 **第三方认证** 三种登录方式。
+ * 登录菜单把三者并列，由用户按自己的实际情况选择
+ * （项目原则：Context First, Less Steps —— 但对认证方式而言，
+ * 「不替用户决定他能用哪一种账号」比「少点一步」更重要）。
+ *
+ * 27.3.0 曾把离线 / 第三方入口默认隐藏；**27.4.0 起两个入口重新默认开启**，
+ * 因为把入口藏起来会让只想离线玩、或使用自建认证服务器的用户无处可去。
  *
  * ⚠️ 这是**可逆的 UI 层开关**，不是删除。以下内容**全部保持原样**：
  * - 底层认证实现（`game/account/offline`、`game/account/auth_server`、`game/account/yggdrasil`）
  * - 账号数据结构、`AccountType` 取值与**已有账号数据**（升级不会清理旧账号）
  * - Microsoft OAuth / 设备代码流（`MicrosoftAuthenticator`）
  * - 会话续期、皮肤 / 披风与游戏启动链路
- *
- * 把下面的值改回 `true`，即可恢复对应入口。
  */
 object AuthEntryPolicy {
     /** 是否展示「离线登录」入口 */
-    val SHOW_LOCAL_ENTRY = false
+    val SHOW_LOCAL_ENTRY = true
 
     /** 是否展示「第三方认证」入口（添加认证服务器 + 已添加的服务器列表） */
-    val SHOW_THIRD_PARTY_ENTRY = false
+    val SHOW_THIRD_PARTY_ENTRY = true
 
     /**
      * 是否仍把「登录菜单」作为「添加账号」的入口。
      *
-     * 两个入口都隐藏时（默认），登录菜单里只剩 Microsoft 登录一项，
-     * 再让用户点开一层只有一个选项的菜单没有意义；
-     * 因此「添加账号」直接进入 Microsoft 登录说明弹窗
+     * 两个入口都开启时（当前默认），登录菜单包含 Microsoft / 离线 / 第三方三项，
+     * 因此「添加账号」照旧打开菜单；
+     * 若把上面两个开关都关掉，菜单里就只剩 Microsoft 一项，
+     * 此时「添加账号」直接进入 Microsoft 登录说明弹窗，少一层没有意义的菜单
      * （项目原则：Context First, Less Steps）。
      */
     val USE_LOGIN_MENU = SHOW_LOCAL_ENTRY || SHOW_THIRD_PARTY_ENTRY
@@ -539,7 +541,7 @@ fun LoginMenuDialog(
                                     onDismissRequest()
                                 }
                             )
-                            //离线登录（默认隐藏，见 AuthEntryPolicy）
+                            //离线登录（入口可开关，见 AuthEntryPolicy）
                             if (AuthEntryPolicy.SHOW_LOCAL_ENTRY) {
                                 LoginItem(
                                     modifier = Modifier.fillMaxWidth(),
@@ -552,7 +554,7 @@ fun LoginMenuDialog(
                             }
                         }
 
-                        //第三方认证（默认隐藏，见 AuthEntryPolicy）
+                        //第三方认证（入口可开关，见 AuthEntryPolicy）
                         if (AuthEntryPolicy.SHOW_THIRD_PARTY_ENTRY) {
                             LazyColumn(
                                 modifier = Modifier.weight(1f),

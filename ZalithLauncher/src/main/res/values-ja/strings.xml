@@ -290,6 +290,7 @@
     <string name="versions_overview_logs_folder">ログフォルダ</string>
     <string name="versions_overview_crash_report_folder">クラッシュレポートフォルダ</string>
     <string name="versions_config_game_settings">ゲーム個別設定</string>
+    <string name="versions_config_renderer_follow_global">グローバル設定に従う</string>
     <string name="versions_config_renderer">レンダラー</string>
     <string name="versions_config_vulkan_driver">Vulkanドライバー</string>
     <string name="account_supporting_username_invalid_empty">ユーザー名が必要</string>
@@ -349,6 +350,9 @@
     <string name="settings_control_gesture_long_press_action_title">長押し時のアクションタイプ</string>
     <string name="settings_control_gesture_long_press_action_summary">画面長押し時に実行されるマウスボタンのアクションを選択</string>
     <string name="settings_control_gesture_long_press_delay_title">長押しジェスチャーの反応遅延</string>
+    <string name="settings_launcher_title_title">ランチャー名</string>
+    <string name="settings_launcher_title_summary">ランチャー左上に表示される名前です。空欄にすると既定の名前を使用します。</string>
+    <string name="settings_launcher_title_label">空欄で既定を使用</string>
     <string name="settings_launcher_color_theme_title">カラーテーマ</string>
     <string name="settings_launcher_color_theme_summary">ランチャーカラーをカスタマイズします</string>
     <string name="settings_control_gesture_control_title">ジェスチャーコントロール</string>
@@ -360,6 +364,8 @@
     <string name="settings_renderer_vsync_in_zink_title">Zink垂直同期</string>
     <string name="settings_renderer_vsync_in_zink_summary">システムインターフェースを使用してZinkレンダラーの垂直同期を有効にします</string>
     <string name="settings_tab_info_about">情報</string>
+    <string name="settings_renderer_auto_title">自動</string>
+    <string name="settings_renderer_auto_summary">インスタンスごとに適切なレンダラーを自動で選択します。自分で選ぶ必要はありません。</string>
     <string name="settings_renderer_global_renderer_title">グローバルレンダラー</string>
     <string name="settings_renderer_global_renderer_summary">グローバルデフォルトレンダラーはモバイルでも快適に動作するために動的ライブラリ変換レイヤーを利用しています</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan ドライバー</string>
@@ -1215,6 +1221,8 @@
     <string name="ai_audit_clear">クリア</string>
     <string name="ai_audit_empty">まだ書き込み操作の記録はありません。</string>
     <string name="ai_audit_share_failed">エクスポートしたファイルを共有できませんでした。</string>
+    <string name="settings_renderer_mobileglues_gl_version_title">OpenGL バージョン</string>
+    <string name="settings_renderer_mobileglues_gl_version_summary">MobileGlues がゲームに報告する OpenGL バージョンです。既定は 4.0（上流プラグインと同じ）。MOD やシェーダーパックがより新しい OpenGL を要求する場合は上げ、ドライバが対応できず画面が乱れる／起動しない場合は下げてください。</string>
     <string name="settings_renderer_ironized_gl_version_title">OpenGL バージョン</string>
     <string name="settings_renderer_ironized_gl_version_summary">4 つの公式プリセットはすべて 4.6 を使用します。GPU ドライバーが Vulkan→Zink の 4.6 を正しく変換できない場合（描画の乱れ／起動しない）は、ここで 4.5 / 4.3 / 3.3 に下げられます。この項目だけを変更しても他のプリセットパラメータには影響しません。</string>
 </resources>

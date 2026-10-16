@@ -714,6 +714,7 @@
     <string name="versions_config_support_settings">Additional Support Settings</string>
     <string name="versions_config_isolation_title">Version Isolation</string>
     <string name="versions_config_isolation_summary">Isolate the current version so that its data does not interfere with any other versions</string>
+    <string name="versions_config_renderer_follow_global">Follow global setting</string>
     <string name="versions_config_renderer">Renderer</string>
     <string name="versions_config_vulkan_driver">Vulkan Driver</string>
     <string name="versions_config_control">Control Layout</string>
@@ -1064,6 +1065,9 @@
     <string name="settings_gamepad_config_create_name">Configuration Name</string>
     <string name="settings_gamepad_config_create_contains">A configuration with the same name already exists</string>
     <string name="settings_gamepad_config_no_items">No configurations created, unable to switch</string>
+    <string name="settings_launcher_title_title">Launcher name</string>
+    <string name="settings_launcher_title_summary">The name shown at the top-left of the launcher. Leave it blank to use the default name.</string>
+    <string name="settings_launcher_title_label">Leave blank for default</string>
     <string name="settings_launcher_color_theme_title">Color Theme</string>
     <string name="settings_launcher_color_theme_summary">Customize launcher colors</string>
     <string name="settings_launcher_color_theme_style">Palette Style</string>
@@ -1550,7 +1554,11 @@
     <string name="settings_renderer_ironized_force_software_title">Force software</string>
     <string name="settings_renderer_ironized_force_software_summary">LIBGL_ALWAYS_SOFTWARE — CPU fallback; last-resort only (very slow)</string>
     <string name="settings_renderer_ironized_unsafe_combo">The saved parameters still use a combination that is the confirmed cause of the \"hand renders through GUI\" glitch. Pick any preset above to restore a supported configuration.</string>
+    <string name="settings_renderer_auto_title">Auto</string>
+    <string name="settings_renderer_auto_summary">Pick the best renderer for each instance automatically — no need to choose one yourself.</string>
     <string name="settings_renderer_mobileglues_summary">Translates desktop OpenGL onto the device\'s OpenGL ES 3.x</string>
+    <string name="settings_renderer_mobileglues_gl_version_title">OpenGL version</string>
+    <string name="settings_renderer_mobileglues_gl_version_summary">The OpenGL version MobileGlues reports to the game — 4.0 by default, same as the upstream plugin. Raise it if a mod or shader pack requires a newer OpenGL; lower it if your driver cannot handle the higher level and the picture breaks or the game refuses to start.</string>
     <string name="ai_title">AI Assistant</string>
     <string name="ai_config_title">AI Settings</string>
     <string name="ai_model_not_selected">No model selected</string>

@@ -37,8 +37,9 @@ import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
-import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
+import com.movtery.zalithlauncher.game.renderer.AutoRenderer
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
+import com.movtery.zalithlauncher.game.renderer.mobileglues.MobileGluesGlVersion
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.setting.enums.UiGeneration
 import com.movtery.zalithlauncher.ui.control.HotbarRule
@@ -50,13 +51,31 @@ import com.movtery.zalithlauncher.ui.theme.ColorThemeType
 import com.movtery.zalithlauncher.utils.animation.TransitionAnimationType
 
 object AllSettings : SettingsRegistry() {
+    /**
+     * 标题栏左上角显示的启动器名称（议题 #18）
+     *
+     * 留空 = 使用默认的 `BuildKeys.LAUNCHER_IDENTIFIER`（即 gradle.properties 里的
+     * `launcher_name`）。读取请统一走 `launcherDisplayTitle`，
+     * 不要直接用这里的状态 —— 否则「留空」会在界面上显示成一片空白。
+     */
+    val launcherTitle = stringSetting("launcherTitle", "")
+
     //Renderer
     /**
      * 全局渲染器
      *
-     * 默认 Ironized Zink（Default 预设）
+     * 默认 **「自动」**：每个实例启动时按偏好顺序挑一个支持该 Minecraft 版本的渲染器
+     * （见 `game/renderer/AutoRenderer.kt` 与 `Renderers.resolveIdentifier`）。
+     *
+     * 之所以默认自动而不是直接写死某一个：内置三个渲染器的版本覆盖范围不同 ——
+     * MobileGlues 声明 `minMCVer = 1.17`，只有 Ironized Zink 不限制版本。
+     * 固定默认某一个，必然对一部分 Minecraft 版本是错的（旧版本实例每次启动都要先吃一次
+     * 「渲染器可能不兼容」的警告）。自动模式把这个选择交给启动器。
+     *
+     * ⚠️ 这个默认值**只对新用户生效**：老用户配置里已经写死了 `renderer` 键，
+     * 启动器不会去改它。
      */
-    val renderer = stringSetting("renderer", IRONIZED_ZINK_UNIQUE_IDENTIFIER)
+    val renderer = stringSetting("renderer", AutoRenderer.IDENTIFIER)
 
     /**
      * Vulkan 驱动器
@@ -177,6 +196,21 @@ object AllSettings : SettingsRegistry() {
      * 强制软件渲染（LIBGL_ALWAYS_SOFTWARE，实验性）
      */
     val ironizedZinkForceSoftware = boolSetting("ironizedZinkForceSoftware", false)
+
+    //MobileGlues
+    //MobileGlues 的 OpenGL 版本**不是**环境变量，而是它自己 config.json 里的
+    //`customGLVersion` 整数；启动游戏前由 MobileGluesConfig 写进 MG_DIR_PATH 下。
+    //存储的是 MobileGluesGlVersion 的枚举名。
+
+    /**
+     * MobileGlues 的 OpenGL 目标版本
+     *
+     * 默认 4.0，与 MobileGlues 官方默认（native `DEFAULT_GL_VERSION = 40`）一致。
+     */
+    val mobileGluesGlVersion = stringSetting(
+        "mobileGluesGlVersion",
+        MobileGluesGlVersion.default.name
+    )
 
     //Game
     /**

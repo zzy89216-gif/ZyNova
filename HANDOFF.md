@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.3.0**（`launcher_version_code=270300`）
+**当前版本：27.4.0**（`launcher_version_code=270400`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,148 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.4.0 自动渲染器 + 恢复登录入口 + MobileGlues 的 OpenGL 版本 ✅
+
+**一、本版本做了什么（五件事）**
+
+1. **新增「自动」渲染器并设为默认**（渲染器选择交给启动器判断）
+2. **恢复离线 / 第三方认证入口**（27.3.0 的 `AuthEntryPolicy` 两个开关改回 `true`）
+3. **MobileGlues 的 OpenGL 版本可选**（3.2 ~ 4.6，默认 4.0）
+4. **处理议题 #18**：标题栏左上角的启动器名称可自定义
+5. **同步三处上游修复** + 修掉「按实例渲染器切不回跟随全局」
+
+**一之二、议题 #18：标题栏名称可自定义**
+
+- 设置项 `AllSettings.launcherTitle`（默认 **空字符串**）+ `setting/LauncherTitle.kt`
+  的扩展属性 `AllSettings.launcherDisplayTitle`：
+  **填了就用填的，留空 / 只填空白则回退到 `BuildKeys.LAUNCHER_IDENTIFIER`**
+- 界面：`MainScreen` 的标题栏（原本硬编码 `BuildKeys.LAUNCHER_IDENTIFIER`）
+  + 设置 → 启动器 → **启动器名称**（`TextInputSettingsCard`，该组第一张卡）
+- ⚠️ **默认值必须是空字符串**，不能在设置里存默认名：
+  - 用户「清空」输入框时要能回到默认，而不是留下一个空的标题栏
+  - 升级后观感完全不变（老用户没有这个键 → 取空 → 显示默认名）
+- ⚠️ **只影响界面显示**。以下全部**不跟着变**（改之前请想清楚）：
+  - 应用名 / 桌面图标名（`launcher_app_name`，在 `gradle.properties`）
+  - `BuildKeys.LAUNCHER_NAME`：写进 `clientToken`（认证）、
+    `-Dminecraft.launcher.brand`、`launcher_name`、`net.minecraft.clientmodname`
+  - `BuildKeys.LAUNCHER_IDENTIFIER`：**还兼作 MMKV 名与版本目录名**，更不能跟着改
+  - 启动页 / 崩溃页 / 关于页显示的名字
+  即：这个开关**不会**影响正版登录与多人游戏识别。
+
+**二、「自动」渲染器（本版本最重要的改动）**
+
+- 新增 `game/renderer/AutoRenderer.kt`：
+  - `IDENTIFIER = "auto"`，存进 `AllSettings.renderer`
+  - **它不是一个真正的渲染器**：`getRendererEnv()` 返回空表、`getRendererLibrary()` 返回空串。
+    它的存在只是在设置界面里提供一个**选项**。
+  - `AUTO_PREFERENCE`：`MobileGlues → Ironized Zink → GL4ES`，
+    按顺序取第一个**声明支持该 Minecraft 版本**的
+- `Renderers.resolveIdentifier(preferred, mcVersion)`：
+  - `preferred == "auto"` → 走 `AutoRenderer.pick()`
+  - 否则走 `findCompatibleIdentifier()`（具体渲染器之间的兼容回退）
+- `Renderers.getRenderersForSelection()`：**只在设置界面用**，返回 `[AutoRenderer] + renderers`。
+  ⚠️ `getRenderers()` 仍然只返回真正的渲染器 —— 否则 `setCurrentRenderer()` 的
+  「回退到列表首个」会被「自动」污染，把 `"auto"` 当成一个渲染器装上去。
+- `Version.getRenderer(applyVersionResolve = true)`：先取版本自己的设置、否则全局设置，
+  再过 `Renderers.resolveIdentifier()`。传 `false` 可拿到用户真正选的那个。
+
+**为什么需要「自动」**（改这块前必读）：
+内置三个渲染器的**版本覆盖范围并不相同** ——
+MobileGlues 声明 `getMinMCVersion() = "1.17"`，GL4ES 走 GLES2 路径，
+**只有 Ironized Zink 不限制版本**（刻意不覆写 min/max）。
+因此「把默认值写死成某一个内置渲染器」必然对一部分 Minecraft 版本是错的：
+1.16 及更早的实例每次启动都会在 `LauncherElements` 的渲染器兼容性检查里
+命中 `UnsupportedRenderer`，弹一次「渲染器可能不兼容」的警告 ——
+用户什么都没做错，却要为默认值的选择买单。
+自动模式把这个选择交给启动器。
+
+⚠️ **两层回退的语义不要混淆**：
+- 「自动」= 用户**主动**要求启动器挑（`AutoRenderer.pick`）
+- 具体渲染器的回退 = 用户选了某个，但它跑不了这个版本时的**兜底**（`findCompatibleIdentifier`）
+两者都**只决定本次启动用哪个，绝不写回设置**。
+
+**三、恢复离线 / 第三方认证入口**
+
+- `ui/screens/content/elements/AccountElements.kt` → `AuthEntryPolicy`：
+  `SHOW_LOCAL_ENTRY = true`、`SHOW_THIRD_PARTY_ENTRY = true`
+- `USE_LOGIN_MENU` 是两者的或，因此自动变回 `true`：
+  `AccountManageScreen.openAddAccountEntry()` 回到「打开登录菜单」分支，
+  **不需要改任何调用点**
+- 登录菜单恢复为 **微软 / 离线 / 第三方认证** 三项并列
+- ⚠️ **依然只是入口开关**：`game/account/offline/`、`auth_server/`、`yggdrasil/`、
+  `AccountType` 取值、已有账号数据、Microsoft 设备代码流全部**一行未改**
+
+**四、MobileGlues 的 OpenGL 版本**
+
+⚠️ **这是本版本最容易搞错的一处，务必先读**：
+
+- **MobileGlues 不读 `MESA_GL_VERSION_OVERRIDE`**（那是 Mesa / Zink 的环境变量）。
+  它的 OpenGL 版本来自 native 端 `config/settings.cpp`：
+  `int customGLVersionInt = config_get_int("customGLVersion");`
+  而 `config.json` 的位置由 `config/config.cpp` 的 `check_path()` 决定：
+  有 `MG_DIR_PATH` 环境变量就用它，否则退回 `/sdcard/MG`。
+- 因此实现是「**写文件 + 注入目录**」，不是环境变量：
+  | 文件 | 作用 |
+  |---|---|
+  | `game/renderer/mobileglues/MobileGluesGlVersion.kt` | 版本枚举（`wire` = 写进 config.json 的整数）+ 常量 `MOBILE_GLUES_UNIQUE_IDENTIFIER` |
+  | `game/renderer/mobileglues/MobileGluesConfig.kt` | 读写 config.json、提供 `MG_DIR_PATH` |
+  | `ui/screens/content/settings/MobileGluesConfigCards.kt` | 选中 MobileGlues 后展开的 OpenGL 版本下拉 |
+- `MobileGluesRenderer.getRendererEnv()`（**只在真正启动游戏时求值**）里：
+  1. 按当前设置写一次 `config.json`
+  2. 注入 `MG_DIR_PATH = <外部私有目录>/mobileglues`
+- **目录选择**：用启动器自己的目录，**不去改公共的 `/sdcard/MG/config.json`** ——
+  那是官方 MobileGlues 插件的配置目录，改了就等于替用户改了另一个应用的设置。
+- **写入策略**（对齐上游插件 `MGConfigCodec`）：
+  - 文件已存在 → **只覆盖 `customGLVersion` 一个键**，其余键（含启动器不认识的）原样保留
+  - 文件不存在 → 先写一份与上游 `MGConfig.Default` 等价的完整配置
+    （**不能只写一个键**：native 对缺失键是回落到它自己的硬编码默认值，
+    而它与插件默认值并不相同 —— 例如缺 `enableANGLE` 会解析成 `DisableIfPossible`，
+    插件默认却是 `EnableIfPossible`）
+- ⚠️ 常量 `MOBILE_GLUES_UNIQUE_IDENTIFIER` **刻意放在 `mobileglues` 包里**，
+  没有挂在 `MobileGluesRenderer` 上：`AllSettings` 要引用它当默认值，
+  若挂在渲染器对象上会形成 `AllSettings` → 渲染器 → `AllSettings` 的初始化成环
+  （渲染器的 `getRendererEnv()` 要读 `AllSettings.mobileGluesGlVersion`）。
+  这与 Ironized Zink 把 UUID 放在 `IronizedZinkConfig.kt` 是同一个理由。
+
+**五、同步的三处上游修复**
+
+| 上游提交 | 内容 | 我们的落点 |
+|---|---|---|
+| `60ef063f` | `SDL_EGL_LIBRARY` 对**已是绝对路径**的 EGL 名重复拼接 | `GameLauncher.setRendererEnv()`：绝对路径直接用，裸名才拼接，并**校验文件存在**（上游没有这层校验） |
+| `1862e360` | surface 重建后渲染状态未恢复，画面持续错位 | `VMActivity` 两处 `isRunning` 分支：清 `mIsSurfaceDestroyed` + 重新刷新窗口尺寸 |
+| `76a09431` | 主窗口逻辑引用计数多算，真实窗口永不销毁 | `sdl_hook.c`：自增收进 `reusePrimaryWindow()`，抽出 `releasePrimaryWindow()` |
+
+⚠️ **两处移植细节**（避免以后误以为「照抄上游」）：
+- 上游 `1862e360` 用的 `referenceScreenSize()` / `requestRefreshWindowSize()`
+  **在本仓库不存在**（分叉后上游新增的）。我们改用本仓库已有的 `refreshWindowSize()`
+  + 零尺寸保护实现同一意图。
+- 上游 `76a09431` 还给 `sdl_hook.c` 加了 **dlsym 层代理**（约 200 行，让 LWJGL 经
+  `dlsym` 解析的 SDL 函数也走 hook 层）。**本版本没有移植**：它依赖上游后来新增的
+  `sdlBridgeSetPrimaryWindow()`（本仓库没有），且本机无法编译 native，
+  硬套有打挂 CI 的风险。**这是已知待办，优先于其它上游同步项。**
+
+**六、修掉的其它缺陷**
+
+- **按实例的渲染器设置无法切回「跟随全局」**：`VersionConfigScreen` 里
+  `defaultId = ""` 的语义是「用全局设置」，但下拉列表里**从来没有这一项** ——
+  用户一旦给某个实例指定过渲染器就再也回不去了。现在显式加了
+  「跟随全局设置」条目（id 为空串）并排在首位，列表也换成含「自动」的那个。
+
+**七、内置渲染器的版本核对（本次做了实测）**
+
+三个内置渲染器**都已是官方最新发布版**，本次**没有**更新任何二进制。
+核对方式不是看 tag，而是**下载官方 release 逐个二进制做 SHA-256 比对**：
+
+| 渲染器 | 我们内置 | 上游最新 | 核对结果 |
+|---|---|---|---|
+| MobileGlues | V2.0.0 | V2.0.0（2026-08-09） | 官方 APK 内 4 个 ABI 的 `libmobileglues.so` **逐一一致** |
+| Ironized Zink | v1.1.0（commit `88f7c202`） | v1.1.0（2026-07-15） | 4 ABI × 5 个库（`libEGL_mesa` / `libcutils` / `libglapi` / `libglxshim` / `libzink_dri`）**全部一致**，`mesa-licenses.rst` 也一致 |
+| GL4ES | `gl4es_extra_extra` master `29ce1307` | 同上（2022-09-16 后无提交） | 上游无 tag / 无 release，我们已是最新 |
+
+- MobileGlues 主线在 V2.0.0 之后只有 1 个**未发布**提交（`0f1e10b5`，multidraw 间接命令
+  缓冲的 grow-only 修复），**没有对应官方二进制**；要跟进必须自行用 NDK 编译，
+  本机（arm64 容器）不具备条件。
 
 ### 27.3.0 认证入口调整 + 界面世代体系（处理议题 #17）✅
 
@@ -804,9 +946,9 @@ HTTP 403
 
 | 渲染器 | 状态 | 配置 |
 |---|---|---|
-| **Ironized Zink** | 新增内置，**默认渲染器** | 完整原生配置 + 4 个官方预设 + 13 个可调参数（**26.4.0 起面板只保留 4 个预设**，见第二节） |
+| **Ironized Zink** | 新增内置（26.3.0 起为默认，**27.4.0 起默认改为「自动」**） | 完整原生配置 + 4 个官方预设 + 13 个可调参数（**26.4.0 起面板只保留 4 个预设**，见第二节） |
 | **GL4ES** | 保留 | 保持默认，不追加任何环境变量 |
-| **MobileGlues** | 新增内置 | 保持上游默认配置 |
+| **MobileGlues** | 新增内置 | **27.4.0 起多一个 OpenGL 版本下拉**（写自己的 `config.json`，不是环境变量，见第二节 27.4.0） |
 
 删除：NG-GL4ES（Krypton Wrapper）、Kopper Zink、VirGL、Freedreno、Panfrost。
 
@@ -834,22 +976,31 @@ HTTP 403
 > `renderer != GL4ESRenderer && renderer != MobileGluesRenderer && renderer != IronizedZinkRenderer`。
 > **以后新增内置渲染器时，务必同步加到这个判断里。**
 
-**四、默认渲染器 = Ironized Zink / Default**
+**四、默认渲染器（26.3.0 起为 Ironized Zink，27.4.0 起改为「自动」）**
 
-- `AllSettings.renderer` 默认值 = `IRONIZED_ZINK_UNIQUE_IDENTIFIER`
+- 26.3.0 ~ 27.3.0：`AllSettings.renderer` 默认值 = `IRONIZED_ZINK_UNIQUE_IDENTIFIER`
+- **27.4.0 起：默认值 = `AutoRenderer.IDENTIFIER`（`"auto"`）** ——
+  启动时按 Minecraft 版本在 `MobileGlues → Ironized Zink → GL4ES` 之间挑一个
+  （详见第二节 27.4.0 章节）。⚠️ **只对新用户生效**，老用户配置里的 `renderer` 键不会被改。
 - 该唯一标识符**沿用原「Kopper Zink」的 UUID**（`0fa435e2-…`），
   这样老用户保存过的 Kopper Zink 选择会自动落到 Ironized Zink，而不是被重置
 - 常量放在 `IronizedZinkConfig.kt` 顶层，**故意不挂在渲染器对象上**，
   避免 `AllSettings` ↔ 渲染器对象初始化成环
+  （MobileGlues 的 `MOBILE_GLUES_UNIQUE_IDENTIFIER` 出于同一理由放在 `mobileglues` 包里）
 
 **五、选中后自动展开配置面板**
 
 `ui/screens/content/settings/RendererSettingsScreen.kt`：
-当 `AllSettings.renderer.state == IRONIZED_ZINK_UNIQUE_IDENTIFIER` 时，
-在渲染器列表卡片**下方**插入一个 `AnimatedItem`，渲染 `IronizedZinkConfigCards()`。
-（**26.4.0 起该面板只剩预设卡**，不再包含 OpenGL 版本下拉与 12 个参数开关。）
-（只有全局渲染器设置里有该面板；`VersionConfigScreen` 的**按版本**渲染器选择不显示它 ——
-Ironized Zink 的参数是全局的，不按版本区分。）
+- `AllSettings.renderer.state == IRONIZED_ZINK_UNIQUE_IDENTIFIER` → 在渲染器列表卡片
+  **下方**插入 `IronizedZinkConfigCards()`（**26.4.0 起只剩预设卡 + OpenGL 版本下拉**）
+- `AllSettings.renderer.state == MOBILE_GLUES_UNIQUE_IDENTIFIER` → 同样位置插入
+  `MobileGluesConfigCards()`（**27.4.0 新增**，目前只有一张 OpenGL 版本下拉卡）
+- `"auto"` 不展开任何面板（它没有可配置项）
+- ⚠️ 渲染器列表用的是 `Renderers.getRenderersForSelection()`
+  （`[AutoRenderer] + renderers`），**不是** `getRenderers()`；
+  但上面这两个判断用的仍是 `AllSettings.renderer.state` 的原始值
+- 只有全局渲染器设置里有该面板；`VersionConfigScreen` 的**按版本**渲染器选择不显示它 ——
+  这些参数是全局的，不按版本区分。
 
 **六、发布形态：一个通用版本 + 代码混淆**
 
@@ -1069,7 +1220,7 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 1. **Boat 后端双端**：用户曾想接入 Boat 后端（像老版 FCL 一样），目前未开始。
 2. ~~**AI 助手**~~ ✅ **已完成（27.1.0 – 27.1.2）**：
    已实现**全局 AI Agent**——Provider（OpenAI / Anthropic，可扩展）、模型从服务商动态获取、
-   流式对话、历史对话与侧边栏、25 个可真正执行操作的工具（读日志 / 管模组 / 改 117 项设置 /
+   流式对话、历史对话与侧边栏、25 个可真正执行操作的工具（读日志 / 管模组 / 改启动器设置 /
    写文件 / 装资源 / 启动游戏）。比当初设想的「接入 OpenAI 接口 + 自动加模组写配置」范围大得多。
    后续可继续扩充工具集。
 3. **自定义主页数据接口**：`HomeDataProvider` 已可作为统一数据入口，可继续开放给自定义主页。
@@ -1093,6 +1244,19 @@ Ironized Zink 的参数是全局的，不按版本区分。）
    只是把「图形 API 自动判定用 26.2-snapshot-1 作为 Vulkan 后端起点」这件事写清楚
    （详见 27.2.0 章节）。要支持多档要求时应改成 `List<VulkanRequirement>` +
    按发布时间选择，注意别碰 `VulkanCapabilities` 的构造参数（native 反射依赖）。
+5.5 **上游 SDL dlsym 层代理尚未移植** ⬜（27.4.0 记录，优先级较高）：
+   上游 `76a09431` 除窗口引用计数外，还给 `sdl_hook.c` 加了约 200 行的
+   **dlsym 层代理** —— LWJGL 的 `org.lwjgl.sdl` 绑定经 `dlopen` + `dlsym` 解析 SDL 函数指针后
+   直接调用，bytehook 的 `hook_all`（GOT 导入补丁）拦截不到，主窗口复用 / 销毁跟踪
+   对这类调用方不生效。27.4.0 **只移植了引用计数部分**，没有移植代理层，原因：
+   - 它依赖上游后来新增的 `sdlBridgeSetPrimaryWindow()`，本仓库没有该函数；
+   - 本机（arm64 容器）无法编译 native，硬套有打挂 CI 的风险。
+   要跟进时请先在**能编译 native 的环境**里验证；`customDlsym` 的挂点
+   （`sdl_dlopen_hook.c`）本仓库**已经存在**，所以工程上是可行的。
+5.6 **MobileGlues 未发布的 multidraw 修复无法跟进** ⬜：
+   上游主线在 V2.0.0 之后有一个未发布提交 `0f1e10b5`
+   （multidraw 间接命令缓冲的 grow-only 修复），**没有对应官方二进制**；
+   要采用必须自行用 Android NDK 编译 `MobileGlues-cpp`，本机不具备条件。
 6. **配置 `CURSEFORGE_API_KEY`（已知遗留，26.2.3 起已有兜底，维护者决定暂不处理）**：
    - 仓库的 Actions Secrets 里**没有配置** `CURSEFORGE_API_KEY`，
      所以打包出来的 APK 调 CurseForge 官方接口**必然返回 403**；
@@ -1134,6 +1298,11 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 
 | 文件 | 作用 |
 |---|---|
+| `setting/LauncherTitle.kt` | 标题栏显示名：留空回退到默认 `launcher_name`（27.4.0，议题 #18） |
+| `game/renderer/AutoRenderer.kt` | 「自动」渲染器**选项** + 偏好顺序（`MobileGlues → Ironized Zink → GL4ES`）（27.4.0） |
+| `game/renderer/mobileglues/MobileGluesGlVersion.kt` | MobileGlues 的 OpenGL 版本枚举 + `MOBILE_GLUES_UNIQUE_IDENTIFIER`（27.4.0） |
+| `game/renderer/mobileglues/MobileGluesConfig.kt` | 读写 MobileGlues 的 `config.json`（`customGLVersion`）与 `MG_DIR_PATH`（27.4.0） |
+| `ui/screens/content/settings/MobileGluesConfigCards.kt` | 选中 MobileGlues 后展开的 OpenGL 版本下拉（27.4.0） |
 | `ui/theme/Shapes.kt` | 界面世代的形状体系（新版 `ModernShapes` / 经典 `ClassicShapes`）（27.3.0） |
 | `setting/enums/UiGeneration.kt` | 界面世代枚举：新版 / 旧版，可随时双向切换（27.3.0） |
 | `game/version/installed/AutoGraphicsApi.kt` | 图形 API 全自动策略：按**版本发布时间**判定是否需要图形后端选项 + 只读本地取值（27.2.0） |
@@ -1363,7 +1532,10 @@ Ironized Zink 的参数是全局的，不按版本区分。）
 | `glassLevel` 旧档位名（`Standard` / `Enhanced` / `Extreme` / **`Intense`**） | 26.2.2 起枚举只剩 `Off` / `On`；`loadAllSettings` 里的 `migrateLegacyGlassLevel()` **直接读原始字符串**并迁移为 `On`（**不能**先经过 `AllSettings.glassLevel` 读取，那样只会拿到默认值，用户原本的选择会丢失）。**27.3.0 移除了 `Intense` 档，并把 `"Intense"` 加进了 `GlassLevel.LEGACY_ENABLED_NAMES`**：用强效档的老用户会回退到「启用动态玻璃」，而不是被静默关掉 |
 | `launcherPhotosensitivityWarning` | 27.3.0 移除光敏性警告后，**定义保留但不再读写**（默认值改为 `false`），与 `liquidGlass` 同属「旧配置兼容项」，**不要删** |
 | `uiGeneration`（界面世代） | 27.3.0 新增，默认 `Modern`。老用户没有这个键 → 取默认值，升级后直接看到新版界面；想回旧版在设置里切一下即可，**两个方向都能切** |
-| 离线 / 第三方认证入口 | 27.3.0 默认隐藏（`AuthEntryPolicy`），但**只改入口显隐**：已有账号数据、`AccountType` 取值与底层实现全部保留，升级不会清理任何旧账号 |
+| 离线 / 第三方认证入口 | **27.4.0 起重新默认开启**（`AuthEntryPolicy` 两个开关为 `true`）；27.3.0 曾默认隐藏。**始终只是入口显隐**：已有账号数据、`AccountType` 取值与底层实现全部保留，升级不会清理任何旧账号 |
+| `renderer`（全局渲染器）的默认值 | 27.4.0 起默认 **`"auto"`**（见 `AutoRenderer`）：启动时按版本兼容性挑一个内置渲染器。⚠️ **只对新用户生效** —— 老用户配置里已有 `renderer` 键，启动器不会改它。`"auto"` 不是真正的渲染器，`Renderers.getRenderers()` 里没有它 |
+| `mobileGluesGlVersion` | 27.4.0 新增，默认 `GL_4_0`。存的是 `MobileGluesGlVersion` 的**枚举名**；解析时兼容裸整数与展示名。旧的 `mobileGlues*` 键不存在 → 取默认值，与上游插件的默认行为一致 |
+| `launcherTitle`（标题栏名称） | 27.4.0 新增（议题 #18），**默认空字符串**。老用户没有这个键 → 取空 → 显示默认的 `launcher_name`，升级观感不变。⚠️ 默认值刻意不是默认名，这样「留空 / 清空输入框」才能回到默认，而不是留下一个空白的标题栏 |
 | `lastIgnoredVersion`（整数） | 保留定义不再写入，新逻辑使用 `lastIgnoredVersionName`（字符串），避免存储类型冲突 |
 | `homePageType` | 新增 `Cards` 枚举值，旧值 `Blank / FromLocal / FromURL` 语义不变 |
 | `searchModPlatform` 等搜索平台 | 26.2.1 起新增 `SearchPlatform.ALL`，枚举名与旧 `Platform` 保持一致，旧值可直接反序列化 |
@@ -1538,15 +1710,23 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 仍然保留的禁令：**不要恢复 ZL2 更新链、资源中心的一键安装入口、BBSMC**。
    - **不要创建 Client Secret**：设备代码流是公共客户端，带 Secret 反而会破坏登录。
      只会用到公开的 `OAUTH_CLIENT_ID`，它必须随包分发。
-   - **27.3.0 起（议题 #17）**：**离线认证与第三方认证的「入口」默认隐藏**
-     （`AuthEntryPolicy.SHOW_LOCAL_ENTRY` / `SHOW_THIRD_PARTY_ENTRY`，都在
-     `ui/screens/content/elements/AccountElements.kt`）。
-     ⚠️ **隐藏的是入口，不是能力**：离线 / 第三方认证的**后端实现、账号数据结构、
-     已有账号数据**全部保留，**不要**因为「入口已经藏起来」就去删
+   - **27.4.0 起：三种登录入口并列**（微软 / 离线 / 第三方认证），
+     `AuthEntryPolicy.SHOW_LOCAL_ENTRY` 与 `SHOW_THIRD_PARTY_ENTRY` 均为 `true`
+     （都在 `ui/screens/content/elements/AccountElements.kt`）。
+     27.3.0 曾把后两者默认隐藏，本版本已恢复。
+     ⚠️ **无论开关取值如何，都只是「入口显隐」**：离线 / 第三方认证的
+     **后端实现、账号数据结构、已有账号数据**必须一直保留，**不要**去删
      `game/account/offline/`、`game/account/auth_server/`、`game/account/yggdrasil/`
      或 `AccountType` 的任何取值 —— 那会让老用户的账号直接读不出来。
-     要重新开放入口，只把两个开关改回 `true` 即可，**不需要改任何调用点**。
-9. **不要为了「让预设成为唯一事实来源」而删除 `AllSettings` 里的 `ironizedZink*` 定义**：
+     切换入口只需改这两个开关，**不需要改任何调用点**
+     （`USE_LOGIN_MENU` 是两者的或，会自动决定「添加账号」是开菜单还是直接进微软登录）。
+9. **不要把 `"auto"` 当成一个真正的渲染器**：
+   `AutoRenderer` 只存在于设置界面的可选项里（`Renderers.getRenderersForSelection()`），
+   **不要**把它加进 `Renderers.getRenderers()`、更不要传给 `setCurrentRenderer()` ——
+   它不是 `RendererInterface` 的真实实现（env 为空、库名为空串），
+   而且会破坏「找不到已保存渲染器时回退到列表首个」这条路径。
+   真正做选择的是 `Renderers.resolveIdentifier()` / `AutoRenderer.pick()`。
+10. **不要为了「让预设成为唯一事实来源」而删除 `AllSettings` 里的 `ironizedZink*` 定义**：
    26.4.0 移除了面板上的 13 个参数控件，但 14 个设置项定义**必须保留**——
    `IronizedZinkSettings.kt` 仍在读写它们，删定义会导致 MMKV 读取类型不匹配。
 
@@ -1695,6 +1875,13 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 
 31. **改动渲染器后要一起看的地方（自查清单）**：
    - `Renderers.kt` 的注册顺序（**列表首个就是所有回退路径的落点**）
+   - **`Renderers.getRenderersForSelection()` 与 `getRenderers()` 的区别**（27.4.0）：
+     前者多了 `AutoRenderer`，只给设置界面用；后者才是真正的渲染器列表
+   - **`AutoRenderer.AUTO_PREFERENCE` 的偏好顺序**（27.4.0）：
+     新增内置渲染器时要决定是否加进去，否则「自动」永远不会选到它
+   - **渲染器自己声明的 `getMinMCVersion()` / `getMaxMCVersion()`**（27.4.0）：
+     这两个值现在会被 `Renderers.isCompatible()` 用于自动挑选与兼容回退，
+     写错会让某个版本的实例落到错误的渲染器上
    - `GameLauncher.setRendererEnv()` 的排除条件
    - `sdl_hook.c` 的 `sdlGlesCompatEnabled()` / `isMobileGluesEgl()`（按 `POJAV_RENDERER` 与
      `POJAVEXEC_EGL` 判断，改 ID 或 EGL 名要同步确认）
@@ -1702,6 +1889,8 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - `library/_Libraries.kt` 的许可条目
    - `VersionConfigScreen`（按版本渲染器列表）与 `RendererSettingsScreen`（全局）
    - 预编译库里该渲染器需要的 `.so` 是否真的在包内（`jniLibs/` 或 AAR）
+   - **MobileGlues 专属**：`MobileGluesConfig` 的 `DEFAULTS` 是否仍与上游插件
+     `MGConfig.Default` 一致（键名与默认值都要对齐，否则只写一个键会改掉别的行为）
 
 32. **「UI 门控」和「请求条件」必须成对修改**（26.4.0 实际踩到并修复）：
    - 类别筛选器的可用性由两处共同决定：`SearchAssetsScreen` 传给 `SearchFilter` 的
@@ -1721,6 +1910,27 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 因此排查「微软登录失败」时**不要**去查重定向 URI 或签名指纹，先确认
      `BuildKeys.OAUTH_CLIENT_ID` 是否真的非空（未配置时是空字符串，请求会被直接拒绝）
    - Client ID 会随包分发，这是设计使然；**绝不要**为了「安全」而引入 Client Secret
+
+35. **MobileGlues 不读任何 `MESA_*` 环境变量**（27.4.0 实际调查确认）：
+   - 它的 OpenGL 版本只来自自己 `config.json` 的 `customGLVersion`（整数，`46` = 4.6）。
+     试图用 `MESA_GL_VERSION_OVERRIDE` 去改它**完全不会生效**（那是 Mesa / Zink 的变量）。
+   - `config.json` 的位置由 `MG_DIR_PATH` 决定，未设置时退回 `/sdcard/MG`
+     （`config/config.cpp` 的 `check_path()`）。
+   - ⚠️ **写这个文件时不能只写一个键**：native 对缺失键是回落到它自己的硬编码默认值，
+     而它与官方插件 `MGConfig.Default` **并不相同**。例如缺 `enableANGLE` 会被解析成
+     `DisableIfPossible`，而插件默认是 `EnableIfPossible` —— 只写一个键会悄悄改掉别的行为。
+   - ⚠️ **不要去改公共的 `/sdcard/MG/config.json`**：那是官方 MobileGlues 插件的配置目录，
+     改了就等于替用户改了另一个应用的设置。本项目的做法是用自己的目录 + 注入 `MG_DIR_PATH`。
+   - 界面上显示的档位要与 native 的**夹取规则**一致（native 把 `34..39` 夹到 3.3、
+     `1..31` 夹到 3.2、`>46` 当 4.6），否则会出现「界面写 4.4、游戏里其实是 4.3」。
+
+36. **「自动」渲染器不能被当成渲染器用**（27.4.0）：
+   - `AutoRenderer` 只是设置界面里的一个**选项**，不在 `Renderers.getRenderers()` 里。
+     把它混进真正的渲染器列表，会破坏 `setCurrentRenderer()` 的「回退到列表首个」路径
+     （它会把 `"auto"` 当成一个渲染器装上去，env 为空、库名为空串）。
+   - 两层语义不要混：**「自动」是用户主动要求启动器挑**；
+     **具体渲染器的回退**是用户选了某个、但它跑不了这个版本时的兜底。
+     两者都只决定「本次启动用哪个」，**绝不写回设置**。
 
 ---
 
@@ -1788,8 +1998,8 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**27.3.0**
-- 历史版本：27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**27.4.0**
+- 历史版本：27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
@@ -1898,8 +2108,12 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-06（27.3.0 已开发完成 —— 处理议题 #17：认证入口调整
-（默认隐藏离线 / 第三方认证入口，Microsoft 正版认证优先）；新增「界面世代」切换与
-新版字阶 / 形状体系；移除「强效动态玻璃」档与光敏性警告；
-修复启动链路上「用应用语言判断地区」导致游戏 DNS 被换掉的缺陷；
-关于页新增 ZyNova 自己的赞助入口，四语言 README 末尾新增赞助支持版块）
+**最后更新**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
+（`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
+MobileGlues → Ironized Zink → GL4ES 之间自动挑一个）；
+恢复离线 / 第三方认证入口；MobileGlues 新增 OpenGL 版本下拉
+（写 `config.json` 的 `customGLVersion` + 注入 `MG_DIR_PATH`，因为 MobileGlues 不读
+`MESA_GL_VERSION_OVERRIDE`）；同步三处上游修复（`SDL_EGL_LIBRARY` 绝对路径重复拼接、
+surface 重建后渲染状态未恢复、窗口引用计数多算）；
+修复按实例渲染器无法切回「跟随全局」；处理议题 #18（标题栏左上角启动器名称可自定义）；
+并实测核对三个内置渲染器均已是最新官方发布版）

@@ -714,6 +714,7 @@
     <string name="versions_config_support_settings">额外支持设置</string>
     <string name="versions_config_isolation_title">版本隔离</string>
     <string name="versions_config_isolation_summary">隔离当前的版本，与所有版本之间的数据互不干扰</string>
+    <string name="versions_config_renderer_follow_global">跟随全局设置</string>
     <string name="versions_config_renderer">渲染器</string>
     <string name="versions_config_vulkan_driver">Vulkan 驱动器</string>
     <string name="versions_config_control">控制布局</string>
@@ -1064,6 +1065,9 @@
     <string name="settings_gamepad_config_create_name">配置名称</string>
     <string name="settings_gamepad_config_create_contains">已有同名称的配置</string>
     <string name="settings_gamepad_config_no_items">未创建配置，无法切换</string>
+    <string name="settings_launcher_title_title">启动器名称</string>
+    <string name="settings_launcher_title_summary">显示在启动器左上角的名字。留空则使用默认名称。</string>
+    <string name="settings_launcher_title_label">留空即使用默认</string>
     <string name="settings_launcher_color_theme_title">颜色主题</string>
     <string name="settings_launcher_color_theme_summary">更改启动器的整体颜色主题</string>
     <string name="settings_launcher_color_theme_style">配色风格</string>
@@ -1532,7 +1536,11 @@
     <string name="settings_renderer_ironized_force_software_title">强制软件渲染</string>
     <string name="settings_renderer_ironized_force_software_summary">LIBGL_ALWAYS_SOFTWARE —— 退回 CPU 渲染，仅作最后手段（非常慢）</string>
     <string name="settings_renderer_ironized_unsafe_combo">保存的参数组合仍是「手穿过 GUI 界面」画面错乱的已知成因 —— 请在上方重新选择任意预设以恢复受支持的配置。</string>
+    <string name="settings_renderer_auto_title">自动</string>
+    <string name="settings_renderer_auto_summary">按实例自动挑选合适的渲染器，不需要自己选。</string>
     <string name="settings_renderer_mobileglues_summary">把桌面 OpenGL 转译到设备的 OpenGL ES 3.x</string>
+    <string name="settings_renderer_mobileglues_gl_version_title">OpenGL 版本</string>
+    <string name="settings_renderer_mobileglues_gl_version_summary">MobileGlues 向游戏上报的 OpenGL 版本，默认 4.0（与上游插件一致）。模组或光影包要求更高的 OpenGL 时调高；如果驱动跑不动这个版本、出现画面异常或进不去游戏，就调低。</string>
     <string name="ai_title">AI 助手</string>
     <string name="ai_config_title">AI 设置</string>
     <string name="ai_model_not_selected">尚未选择模型</string>

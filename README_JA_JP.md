@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.3.0)
+[![Release](https://img.shields.io/badge/Release-27.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.4.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -35,7 +35,34 @@
 
 ---
 
-## ✨ 27.3.0 のハイライト
+## ✨ 27.4.0 のハイライト
+- **レンダラー選択は既定で自動になりました。** レンダラーの一覧は
+  **自動 / MobileGlues / Ironized Zink / GL4ES** です。「自動」を選ぶと、インスタンスごとに
+  `MobileGlues → Ironized Zink → GL4ES` の順で、**その Minecraft バージョンに対応すると宣言している**
+  レンダラーを選びます。内蔵の 3 つは対応バージョンが同じではありません
+  （MobileGlues は 1.17 以上が必要で、無制限なのは Ironized Zink だけ）。そのため既定を
+  どれか 1 つに固定すると、必ず一部のバージョンで間違いになります。
+  「自動」は**設定に書き戻しません**。自分で特定のレンダラーを選んだ場合はそれを尊重し、
+  本当に起動できないときだけフォールバックします —
+  起動のたびに無意味な「レンダラーが非互換の可能性」警告が出ることはもうありません。
+- **オフライン／サードパーティのサインインが復活しました。** サインインメニューは
+  **Microsoft / オフライン / サードパーティ** の 3 項目に戻ります。内部は何も削除していません。
+  バックエンド、アカウントのデータ構造、既存のアカウントはすべてそのままです。
+- **MobileGlues で OpenGL バージョンを選べるようになりました。** 選択すると、すぐ下に
+  **OpenGL バージョン**のドロップダウンが展開されます（3.2 – 4.6、既定 4.0）。
+  値と丸め規則は上流プラグインと MobileGlues 自身の native 設定コードからそのまま持ってきているため、
+  UI の表示とゲームで実際に使われる値は必ず一致します。
+- **タイトルバーのランチャー名を変更できるようになりました（issue #18）** —
+  *設定 → ランチャー → ランチャー名*。空欄にすると既定の名前のままです。
+  これは UI の表示だけを変えるもので、アプリ名・正規サインイン・マルチプレイの識別には影響しません。
+- **上流の修正を同期**：`SDL_EGL_LIBRARY` が既に絶対パスの EGL 名を二重に連結していた問題
+  （プラグイン製レンダラーが読み込めない）、ゲーム実行中の surface 再作成後に
+  レンダリング状態が復元されず画面がずれ続ける問題、プライマリウィンドウの論理参照カウントが
+  二重に加算され実ウィンドウが破棄されない問題。
+- **あわせて修正**：インスタンスごとのレンダラー設定に *グローバル設定に従う* の項目が無く、
+  一度レンダラーを指定すると元に戻せなくなっていました。
+
+### 27.3.0
 
 - **サインインは Microsoft 正規アカウント優先になりました。** オフラインと第三者認証の
   **入口は既定で非表示**になり、「アカウントを追加」は選択肢が 1 つだけのメニューを経由せず、
@@ -140,9 +167,9 @@
 
 | レンダラー | 内容 | 構成 |
 |---|---|---|
-| **Ironized Zink**（既定） | デスクトップ OpenGL 4.6 を Vulkan に変換（Mesa Zink + Kopper）、GoyDevv 氏作 | **4 つの公式プリセット** + OpenGL バージョン |
+| **Ironized Zink** | デスクトップ OpenGL 4.6 を Vulkan に変換（Mesa Zink + Kopper）、GoyDevv 氏作 | **4 つの公式プリセット** + OpenGL バージョン |
 | **GL4ES** | クラシックな OpenGL 変換レイヤー | 既定値のまま |
-| **MobileGlues** | デスクトップ OpenGL を端末の OpenGL ES 3.x 上に変換 | アップストリームの既定値のまま |
+| **MobileGlues** | デスクトップ OpenGL を端末の OpenGL ES 3.x 上に変換 | **OpenGL バージョンのドロップダウン**（3.2 ~ 4.6、既定 4.0） |
 
 **Ironized Zink の 4 つの公式プリセット**（値はアップストリームと同一）：
 

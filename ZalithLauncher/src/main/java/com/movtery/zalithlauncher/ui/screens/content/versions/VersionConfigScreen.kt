@@ -193,8 +193,17 @@ private fun VersionConfigs(
             summary = stringResource(R.string.settings_game_skip_game_integrity_check_summary)
         )
 
-        val renderers = Renderers.getRenderers()
-        val renderersIdList = getIDList(renderers) { IDItem(it.getUniqueIdentifier(), it.getRendererName()) }
+        //按实例的渲染器设置。
+        //
+        //⚠️ 必须显式提供一个「跟随全局」条目（id 为空字符串）：配置里 `renderer = ""`
+        //的含义就是「用全局设置」，但此前列表里没有这一项，用户一旦给某个实例指定过渲染器
+        //就再也切不回跟随全局了。
+        val renderers = Renderers.getRenderersForSelection()
+        val followGlobalName = stringResource(R.string.versions_config_renderer_follow_global)
+        val renderersIdList = buildList {
+            add(IDItem("", followGlobalName))
+            addAll(getIDList(renderers) { IDItem(it.getUniqueIdentifier(), it.getRendererName()) })
+        }
         ListSettingsCard(
             modifier = Modifier.fillMaxWidth(),
             position = CardPosition.Middle,

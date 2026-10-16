@@ -325,22 +325,33 @@ static void custom_SDL_UnloadObject_Func(void *handle) {
 
 // 首个成功创建的 SDL 窗口，后续创建请求将重定向到它
 static SDL_Window *sPrimaryWindow = NULL;
+// 主窗口的逻辑引用计数：真实窗口创建时为 1，每次复用递增
 static unsigned int sPrimaryWindowRefs = 0;
 
-static void custom_SDL_DestroyWindow_Func(SDL_Window *window) {
-    if (window == sPrimaryWindow && sPrimaryWindowRefs > 0) {
-        sPrimaryWindowRefs--;
-        LOG_TO_I("SDL_Hook: releasing logical window %p, refs=%u", window, sPrimaryWindowRefs);
+// 释放主窗口的一个逻辑引用；返回 true 表示需要执行真实销毁。
+// 复用窗口仍持有引用时跳过真实销毁，防止复用窗口被提前销毁导致 use-after-destroy 崩溃。
+static bool releasePrimaryWindow(SDL_Window *window) {
+    if (window == sPrimaryWindow) {
         if (sPrimaryWindowRefs > 0) {
-            if (window == sdlLastEventWindow) sdlLastEventWindow = NULL;
-            return;
+            sPrimaryWindowRefs--;
+            LOG_TO_I("SDL_Hook: releasing logical window %p, refs=%u", window, sPrimaryWindowRefs);
+            if (sPrimaryWindowRefs > 0) {
+                if (window == sdlLastEventWindow) sdlLastEventWindow = NULL;
+                return false;
+            }
+            sPrimaryWindow = NULL;
         }
-        sPrimaryWindow = NULL;
         if (window == sdlLastEventWindow) sdlLastEventWindow = NULL;
     } else if (window == sdlLastEventWindow) {
         sdlLastEventWindow = NULL;
     }
-    BYTEHOOK_CALL_PREV(custom_SDL_DestroyWindow_Func, SDL_DestroyWindow_t, window);
+    return true;
+}
+
+static void custom_SDL_DestroyWindow_Func(SDL_Window *window) {
+    if (releasePrimaryWindow(window)) {
+        BYTEHOOK_CALL_PREV(custom_SDL_DestroyWindow_Func, SDL_DestroyWindow_t, window);
+    }
     BYTEHOOK_POP_STACK();
 }
 
@@ -403,8 +414,13 @@ static void forceEglProfileEs(void) {
 // 尺寸与方向均无需额外处理：
 // 前者由 Android Surface 决定（创建时即取 Surface 尺寸，与请求值无关）
 // 后者由 SDL_ORIENTATIONS hint 统一控制。
+//
+// ⚠️ 每次复用即在这里签发一个逻辑引用。调用方**不要**再自增 sPrimaryWindowRefs：
+// 曾经调用方与此处各加一次，导致复用一次记两个引用，
+// 真实窗口在全部持有者释放后仍不会被销毁（引用计数永远减不到 0）。
 static SDL_Window *reusePrimaryWindow(void) {
-    LOG_TO_I("SDL_Hook: reusing primary window %p", sPrimaryWindow);
+    ++sPrimaryWindowRefs;
+    LOG_TO_I("SDL_Hook: reusing primary window %p, refs=%u", sPrimaryWindow, sPrimaryWindowRefs);
     return sPrimaryWindow;
 }
 
@@ -413,10 +429,7 @@ static SDL_Window *custom_SDL_CreateWindow_Func(const char *title, int w, int h,
     const bool reuse = shouldReusePrimaryWindow();
     LOG_TO_I("SDL_Hook: primary window reuse=%s", reuse ? "enabled" : "disabled");
     if (reuse && sPrimaryWindow != NULL) {
-        sPrimaryWindowRefs++;
-        LOG_TO_I("SDL_Hook: reusing primary window %p, refs=%u", sPrimaryWindow, sPrimaryWindowRefs);
-        SDL_Window *wnd = reusePrimaryWindow();
-        return wnd;
+        return reusePrimaryWindow();
     }
     SDL_Window *wnd = BYTEHOOK_CALL_PREV(custom_SDL_CreateWindow_Func, SDL_CreateWindow_t, title, w, h, flags);
     if (reuse && wnd != NULL) {
@@ -432,10 +445,7 @@ static SDL_Window *custom_SDL_CreateWindowWithProperties_Func(uint32_t props) {
     const bool reuse = shouldReusePrimaryWindow();
     LOG_TO_I("SDL_Hook: primary window reuse=%s", reuse ? "enabled" : "disabled");
     if (reuse && sPrimaryWindow != NULL) {
-        sPrimaryWindowRefs++;
-        LOG_TO_I("SDL_Hook: reusing primary window %p, refs=%u", sPrimaryWindow, sPrimaryWindowRefs);
-        SDL_Window *wnd = reusePrimaryWindow();
-        return wnd;
+        return reusePrimaryWindow();
     }
     SDL_Window *wnd = BYTEHOOK_CALL_PREV(custom_SDL_CreateWindowWithProperties_Func, SDL_CreateWindowWithProperties_t, props);
     if (reuse && wnd != NULL) {

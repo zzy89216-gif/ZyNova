@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.3.0)
+[![Release](https://img.shields.io/badge/Release-27.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.4.0)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,7 +35,35 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.3.0
+## ✨ Highlights of 27.4.0
+
+- **Renderer selection is automatic by default.** The renderer list is now
+  **Auto / MobileGlues / Ironized Zink / GL4ES**. With *Auto*, each instance picks a renderer that
+  actually declares support for its Minecraft version, in this order:
+  `MobileGlues → Ironized Zink → GL4ES`. The three built-in renderers do not cover the same
+  versions (MobileGlues requires 1.17+; only Ironized Zink is unrestricted), so hard-coding a
+  default is necessarily wrong for some versions. *Auto* never writes back to your settings.
+  If you pick a specific renderer yourself, the launcher respects it and only falls back when it
+  genuinely cannot run that version — no more pointless "renderer may be incompatible" warning on
+  every launch.
+- **Offline and third-party sign-in are back.** The sign-in menu lists
+  **Microsoft / offline / third-party** side by side again. Nothing was removed underneath:
+  the backends, the account data structures and every existing account are untouched.
+- **MobileGlues now exposes an OpenGL version.** Selecting it expands an **OpenGL version**
+  dropdown right below (3.2 – 4.6, default 4.0). The values and clamping rules are copied from the
+  upstream plugin and MobileGlues' own native settings code, so what the UI shows is exactly what
+  the game uses.
+- **The launcher name in the title bar is now customisable (issue #18)** —
+  *Settings → Launcher → Launcher name*. Leave it blank to keep the default. This only changes
+  what the UI displays; the app name, premium sign-in and multiplayer identification are untouched.
+- **Upstream fixes synced**: `SDL_EGL_LIBRARY` was concatenating an already-absolute EGL path
+  (breaking plugin renderers); render state was not restored after a surface rebuild, leaving the
+  picture permanently misaligned; and the primary window's logical reference count was incremented
+  twice, so the real window was never destroyed.
+- **Also fixed**: the per-instance renderer setting had no *Follow global setting* entry, so once
+  you had assigned a renderer to an instance you could never switch it back.
+
+### 27.3.0
 
 - **Sign-in is now Microsoft-first.** The offline and third-party sign-in entries are hidden by
   default, so *Add account* takes you straight to Microsoft sign-in instead of opening a menu with
@@ -119,7 +147,7 @@ and it **calls tools and actually does it**, instead of writing you a tutorial.
 
 - **25 tools**, all built on the launcher's existing systems: instances, real mod metadata,
   enabling / disabling / deleting mods, resource packs, shaders, saves, files, logs, crash reports,
-  **117 launcher settings**, resource search and install (including recursive installation of
+  **every launcher setting**, resource search and install (including recursive installation of
   required dependencies), and **actually launching the game**
 - **Conversations are saved on this device**, and a **sidebar** (top-left) lets you review, switch,
   delete or start a new conversation
@@ -140,9 +168,14 @@ Since 26.3.0 the launcher ships **exactly three built-in renderers**:
 
 | Renderer | What it is | Configuration |
 |---|---|---|
-| **Ironized Zink** (default) | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets** + OpenGL version |
+| **Ironized Zink** | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets** + OpenGL version |
 | **GL4ES** | Classic OpenGL translation layer | Kept at its defaults |
-| **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | Kept at upstream defaults |
+| **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | **OpenGL version dropdown** (3.2 - 4.6, default 4.0) |
+
+The default is **Auto**: the launcher picks the first renderer that declares support for that
+instance's Minecraft version, in the order `MobileGlues -> Ironized Zink -> GL4ES`
+(the three built-ins do not cover the same versions). If you pick one yourself, the launcher
+respects that choice and only falls back when it genuinely cannot run the version.
 
 **The 4 official Ironized Zink presets** (values identical to upstream):
 

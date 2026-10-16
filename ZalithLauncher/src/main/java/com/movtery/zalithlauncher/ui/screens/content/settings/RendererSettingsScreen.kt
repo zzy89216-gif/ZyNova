@@ -50,6 +50,7 @@ import com.movtery.zalithlauncher.game.plugin.renderer_v2.RendererV2Data
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
 import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
+import com.movtery.zalithlauncher.game.renderer.mobileglues.MOBILE_GLUES_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.path.URL_CLOUD_DRIVE_DRIVER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_CLOUD_RENDERER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_GITHUB_DRIVER_PLUGINS
@@ -112,7 +113,8 @@ fun RendererSettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Top,
                         unit = AllSettings.renderer,
-                        items = Renderers.getRenderers(),
+                        //「自动」在最前，其余内置渲染器依次在后（见 Renderers.getRenderersForSelection）
+                        items = Renderers.getRenderersForSelection(),
                         title = stringResource(R.string.settings_renderer_global_renderer_title),
                         summary = stringResource(R.string.settings_renderer_global_renderer_summary),
                         getItemText = { it.getRendererName() },
@@ -238,10 +240,21 @@ fun RendererSettingsScreen(
                 }
             }
 
-            //选中 Ironized Zink 后，在其下方自动展开完整配置（4 个官方预设 + 全部可调参数）
+            //选中 Ironized Zink 后，在其下方自动展开配置（4 个官方预设 + OpenGL 版本）
             if (currentRendererId == IRONIZED_ZINK_UNIQUE_IDENTIFIER) {
                 AnimatedItem(scope) { yOffset ->
                     IronizedZinkConfigCards(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                    )
+                }
+            }
+
+            //选中 MobileGlues 后，在其下方自动展开配置（OpenGL 版本）
+            if (currentRendererId == MOBILE_GLUES_UNIQUE_IDENTIFIER) {
+                AnimatedItem(scope) { yOffset ->
+                    MobileGluesConfigCards(
                         modifier = Modifier
                             .fillMaxWidth()
                             .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }

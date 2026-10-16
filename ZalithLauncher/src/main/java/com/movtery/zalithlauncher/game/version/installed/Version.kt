@@ -29,6 +29,7 @@ import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.context.GlobalContext
 import com.movtery.zalithlauncher.game.path.getGameHome
 import com.movtery.zalithlauncher.game.path.getVersionsHome
+import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.support.touch_controller.VibrationHandler
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -167,7 +168,27 @@ class Version(
 
     private fun String.getValueOrDefault(default: String): String = this.takeIf { it.isNotEmpty() } ?: default
 
-    fun getRenderer(): String = versionConfig.renderer.getValueOrDefault(AllSettings.renderer.getValue())
+    /**
+     * 本实例实际要使用的渲染器唯一标识符。
+     *
+     * 优先级：**版本自己的渲染器设置** → 全局渲染器设置 → 都为空则用全局默认。
+     *
+     * ⚠️ 之后还要过一道版本兼容性解析（[Renderers.resolveIdentifier]）：
+     * - 用户选了「自动」→ 按偏好顺序挑一个支持该 Minecraft 版本的；
+     * - 用户选了具体渲染器但它跑不了这个版本 → 回退到支持该版本的
+     *   （内置渲染器并非都支持所有版本：MobileGlues 声明 `minMCVer = 1.17`，
+     *   只有 Ironized Zink 不限制版本）。
+     *
+     * 这一步**不会写回设置**，用户的选择原样保留。
+     *
+     * @param applyVersionResolve 传 `false` 可拿到「用户真正选的那个」而不做解析；
+     * 需要展示 / 编辑用户选择的地方应当用 `false`
+     */
+    fun getRenderer(applyVersionResolve: Boolean = true): String {
+        val preferred = versionConfig.renderer.getValueOrDefault(AllSettings.renderer.getValue())
+        if (!applyVersionResolve) return preferred
+        return Renderers.resolveIdentifier(preferred, getVersionInfo()?.minecraftVersion)
+    }
 
     fun getDriver(): String = versionConfig.driver.getValueOrDefault(AllSettings.vulkanDriver.getValue())
 

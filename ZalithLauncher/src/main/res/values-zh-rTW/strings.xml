@@ -617,6 +617,7 @@
     <string name="versions_config_support_settings">額外支援設定</string>
     <string name="versions_config_isolation_title">版本隔離</string>
     <string name="versions_config_isolation_summary">隔離目前版本，使各版本之間的資料互不干擾</string>
+    <string name="versions_config_renderer_follow_global">跟隨全域設定</string>
     <string name="versions_config_renderer">渲染器</string>
     <string name="versions_config_vulkan_driver">Vulkan 驅動程式</string>
     <string name="versions_config_control">控制佈局</string>
@@ -764,6 +765,8 @@
     <string name="settings_tab_java_manage">Java 管理</string>
     <string name="settings_tab_control_manage">控制管理</string>
     <string name="settings_tab_info_about">關於</string>
+    <string name="settings_renderer_auto_title">自動</string>
+    <string name="settings_renderer_auto_summary">依實例自動挑選合適的渲染器，不需要自己選。</string>
     <string name="settings_renderer_global_renderer_title">全域渲染器</string>
     <string name="settings_renderer_global_renderer_summary">全域預設的渲染器，透過動態函式庫轉換層，確保遊戲能在行動裝置上執行</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驅動程式</string>
@@ -928,6 +931,9 @@
     <string name="settings_gamepad_config_create_name">設定名稱</string>
     <string name="settings_gamepad_config_create_contains">已存在相同名稱的設定</string>
     <string name="settings_gamepad_config_no_items">尚未建立任何設定，無法切換</string>
+    <string name="settings_launcher_title_title">啟動器名稱</string>
+    <string name="settings_launcher_title_summary">顯示在啟動器左上角的名稱。留空則使用預設名稱。</string>
+    <string name="settings_launcher_title_label">留空即使用預設</string>
     <string name="settings_launcher_color_theme_title">顏色主題</string>
     <string name="settings_launcher_color_theme_summary">變更啟動器的整體顏色主題</string>
     <string name="settings_launcher_color_theme_style">配色風格</string>
@@ -1484,6 +1490,8 @@
     <string name="ai_audit_clear">清空</string>
     <string name="ai_audit_empty">還沒有寫入操作記錄。</string>
     <string name="ai_audit_share_failed">無法分享匯出檔案。</string>
+    <string name="settings_renderer_mobileglues_gl_version_title">OpenGL 版本</string>
+    <string name="settings_renderer_mobileglues_gl_version_summary">MobileGlues 向遊戲回報的 OpenGL 版本，預設 4.0（與上游外掛一致）。模組或光影包要求更高的 OpenGL 時調高；若驅動跑不動這個版本、出現畫面異常或進不去遊戲，就調低。</string>
     <string name="settings_renderer_ironized_gl_version_title">OpenGL 版本</string>
     <string name="settings_renderer_ironized_gl_version_summary">4 個官方預設都使用 4.6。如果你的 GPU 驅動對 Vulkan→Zink 的 4.6 轉譯不完整（畫面異常或進不去），可以在這裡降到 4.5 / 4.3 / 3.3。改動此項只影響 OpenGL 版本，不動其它預設參數。</string>
 </resources>
