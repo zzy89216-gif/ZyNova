@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
+[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -35,7 +35,16 @@
 
 ---
 
-## ✨ 27.5.0 のハイライト
+## ✨ 27.5.1 のハイライト
+- **ブランドアイコンを全面刷新。** ランチャー / 丸型 / アダプティブ 3 層 / Play Store /
+  アプリ内ロゴ / スプラッシュ / 通知アイコンをすべて新しいアートワークに統一しました。
+- **AI 設定を整理。** 「AI プロバイダー」の選択を削除し DeepSeek 固定に。ベース URL は
+  初回に DeepSeek のアドレスが入り、変更も可能です。カードとボタンを詰め、監査ボタンの
+  くっつきも解消しました。
+- **動的ガラスを統一。** ホームのカードにガラス層を追加し、設定 / AI 設定のぼかしと
+  ハイライトをカードの角丸でクリップするようにしました。
+
+### 27.5.0
 - **既定の AI プロバイダーが DeepSeek になりました。** プロバイダー一覧は **DeepSeek / OpenAI** で、
   Anthropic とその選択 UI は削除されました。両者は同じ Chat Completions プロトコルなので実装を共有しますが、
   API キーと Base URL は別々に保存されます。モデルは引き続きプロバイダーから動的に取得し、

@@ -1566,7 +1566,7 @@
     <string name="ai_config_api_key_hint">粘贴你的 API Key</string>
     <string name="ai_config_api_key_note">只保存在本机，不会上传到 ZyNova 的任何服务器。</string>
     <string name="ai_config_base_url">接口地址</string>
-    <string name="ai_config_base_url_note">留空使用默认地址；任何 OpenAI 兼容服务都可以填这里。</string>
+    <string name="ai_config_base_url_note">首次打开会默认填好 DeepSeek 的接口地址，也可以改成任何兼容 OpenAI 协议的中转地址；留空即回退到 DeepSeek。</string>
     <string name="ai_config_model">模型</string>
     <string name="ai_config_fetch_models">获取模型列表</string>
     <string name="ai_config_models_empty">还没有模型。填好 API Key 后点「获取模型列表」。</string>
@@ -1608,7 +1608,7 @@
     <string name="ai_untitled_conversation">新对话</string>
     <string name="ai_tool_write">写操作</string>
     <string name="ai_privacy_title">关于数据流向</string>
-    <string name="ai_privacy_message">启用 AI 功能后，以下内容会**发送到你配置的 AI 服务商**（DeepSeek / OpenAI / 你填写的自定义地址）：\n\n· 游戏日志与崩溃报告\n· 模组列表与实例信息\n· 配置文件内容\n· 你输入的文字\n\nAI 产生的工具调用与执行结果也会一并发送。\n\n**ZyNova 不存储、不中转这些内容**，API Key 只保存在本机。如果你填写的是第三方中转服务，请注意其隐私政策。</string>
+    <string name="ai_privacy_message">启用 AI 功能后，以下内容会**发送到你配置的 AI 服务商**（DeepSeek，或你自己填写的兼容接口）：\n\n· 游戏日志与崩溃报告\n· 模组列表与实例信息\n· 配置文件内容\n· 你输入的文字\n\nAI 产生的工具调用与执行结果也会一并发送。\n\n**ZyNova 不存储、不中转这些内容**，API Key 只保存在本机。如果你填写的是第三方中转服务，请注意其隐私政策。</string>
     <string name="ai_privacy_confirm">我知道了</string>
     <string name="ai_audit_title">操作审计</string>
     <string name="ai_audit_note">记录 AI 执行的每一次写操作（改设置、写文件、删模组、装资源等），方便事后核对。</string>

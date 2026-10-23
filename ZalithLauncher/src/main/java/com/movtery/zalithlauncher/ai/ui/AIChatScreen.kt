@@ -82,6 +82,7 @@ import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.conversation.AIConversationMeta
 import com.movtery.zalithlauncher.ai.model.AIMessage
 import com.movtery.zalithlauncher.ai.model.AIRole
+import com.movtery.zalithlauncher.ai.provider.AIProviderType
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
@@ -208,7 +209,7 @@ fun AIChatScreen(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = AISettings.provider.state.displayName,
+                            text = AIProviderType.DEEPSEEK.displayName,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

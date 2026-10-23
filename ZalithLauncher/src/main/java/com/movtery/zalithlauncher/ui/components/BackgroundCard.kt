@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -72,7 +73,11 @@ fun BackgroundCard(
         border = border,
     ) {
         Column(
-            modifier = Modifier.backgroundGlass(blur, colors.containerColor, influencedByBackground),
+            //显式裁到卡片形状：模糊与动态高光都画在这一层上，
+            //不能依赖 Card 的裁剪（阴影/elevation 下会出现方角溢出）
+            modifier = Modifier
+                .clip(shape)
+                .backgroundGlass(blur, colors.containerColor, influencedByBackground),
             content = content
         )
     }
@@ -125,7 +130,9 @@ fun BackgroundCard(
         interactionSource = interactionSource,
     ) {
         Column(
-            modifier = Modifier.backgroundGlass(blur, colors.containerColor, influencedByBackground),
+            modifier = Modifier
+                .clip(shape)
+                .backgroundGlass(blur, colors.containerColor, influencedByBackground),
             content = content
         )
     }

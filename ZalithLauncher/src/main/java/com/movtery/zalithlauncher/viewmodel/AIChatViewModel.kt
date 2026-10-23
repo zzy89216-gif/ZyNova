@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.ai.conversation.AIConversationStore
 import com.movtery.zalithlauncher.ai.model.AIMessage
 import com.movtery.zalithlauncher.ai.model.AIRole
 import com.movtery.zalithlauncher.ai.model.AIToolResult
+import com.movtery.zalithlauncher.ai.provider.AIProviderType
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -143,9 +144,8 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
         val text = rawInput.trim()
         if (text.isEmpty() || _busy.value) return
 
-        val providerType = AISettings.provider.getValue()
-        if (!AISettings.hasKey(providerType)) {
-            _error.value = GlobalContext.getString(R.string.ai_error_no_api_key, providerType.displayName)
+        if (!AISettings.hasKey()) {
+            _error.value = GlobalContext.getString(R.string.ai_error_no_api_key, AIProviderType.DEEPSEEK.displayName)
             return
         }
         if (!AISettings.hasModel()) {
@@ -168,9 +168,9 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
 
             try {
                 AIAgent.run(
-                    providerType = providerType,
-                    apiKey = AISettings.getKey(providerType),
-                    baseUrl = AISettings.getBaseUrl(providerType),
+                    providerType = AIProviderType.DEEPSEEK,
+                    apiKey = AISettings.getKey(),
+                    baseUrl = AISettings.getBaseUrl(),
                     model = AISettings.model.getValue(),
                     temperature = AISettings.temperature.getValue(),
                     systemPrompt = buildSystemPrompt(),

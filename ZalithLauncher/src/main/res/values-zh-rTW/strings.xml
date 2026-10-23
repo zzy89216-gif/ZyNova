@@ -1439,7 +1439,7 @@
     <string name="ai_config_api_key_hint">貼上你的 API Key</string>
     <string name="ai_config_api_key_note">只儲存在本機，不會上傳到 ZyNova 的任何伺服器。</string>
     <string name="ai_config_base_url">介面位址</string>
-    <string name="ai_config_base_url_note">留空使用預設位址；任何 OpenAI 相容服務都可以填這裡。</string>
+    <string name="ai_config_base_url_note">首次開啟會預設填好 DeepSeek 的介面位址，也可以改成任何相容 OpenAI 協定的轉送位址；留空即回退到 DeepSeek。</string>
     <string name="ai_config_model">模型</string>
     <string name="ai_config_fetch_models">取得模型清單</string>
     <string name="ai_config_models_empty">還沒有模型。填好 API Key 後點「取得模型清單」。</string>
@@ -1481,7 +1481,7 @@
     <string name="ai_untitled_conversation">新對話</string>
     <string name="ai_tool_write">寫入操作</string>
     <string name="ai_privacy_title">關於資料流向</string>
-    <string name="ai_privacy_message">啟用 AI 功能後，以下內容會**傳送給你設定的 AI 服務商**（DeepSeek / OpenAI / 你填寫的自訂位址）：\n\n· 遊戲日誌與崩潰報告\n· 模組清單與實例資訊\n· 設定檔內容\n· 你輸入的文字\n\nAI 產生的工具呼叫與執行結果也會一併傳送。\n\n**ZyNova 不儲存、不轉送這些內容**，API Key 只保存在本機。如果你填寫的是第三方轉送服務，請注意其隱私政策。</string>
+    <string name="ai_privacy_message">啟用 AI 功能後，以下內容會**傳送給你設定的 AI 服務商**（DeepSeek，或你自己填寫的相容介面）：\n\n· 遊戲日誌與崩潰報告\n· 模組清單與實例資訊\n· 設定檔內容\n· 你輸入的文字\n\nAI 產生的工具呼叫與執行結果也會一併傳送。\n\n**ZyNova 不儲存、不轉送這些內容**，API Key 只保存在本機。如果你填寫的是第三方轉送服務，請注意其隱私政策。</string>
     <string name="ai_privacy_confirm">我知道了</string>
     <string name="ai_audit_title">操作稽核</string>
     <string name="ai_audit_note">記錄 AI 執行的每一次寫入操作（改設定、寫檔案、刪模組、裝資源等），方便事後核對。</string>

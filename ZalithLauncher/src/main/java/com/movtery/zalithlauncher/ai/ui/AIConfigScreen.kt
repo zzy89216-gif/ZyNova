@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.ai.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -38,8 +39,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -71,7 +74,6 @@ import com.movtery.zalithlauncher.ai.AIModelRepository
 import com.movtery.zalithlauncher.ai.AIPermissionMode
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.model.AIModelInfo
-import com.movtery.zalithlauncher.ai.provider.AIProviders
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.RadioCard
@@ -95,14 +97,12 @@ fun AIConfigScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    // 当前 Provider（可观察）
-    val provider = AISettings.provider.state
-
-    var apiKey by remember(provider) { mutableStateOf(AISettings.getKey(provider)) }
-    var baseUrl by remember(provider) { mutableStateOf(AISettings.getBaseUrl(provider)) }
+    // 27.5.1 起固定使用 DeepSeek，不再有服务商选择
+    var apiKey by remember { mutableStateOf(AISettings.getKey()) }
+    var baseUrl by remember { mutableStateOf(AISettings.getBaseUrl()) }
     var showKey by remember { mutableStateOf(false) }
 
-    var models by remember(provider) { mutableStateOf<List<AIModelInfo>>(emptyList()) }
+    var models by remember { mutableStateOf<List<AIModelInfo>>(emptyList()) }
     var modelFilter by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
@@ -126,13 +126,6 @@ fun AIConfigScreen(
         showPrivacyNotice = false
     }
 
-    // 切换 Provider 时清掉上一家的模型列表，避免列表与 Provider 对不上
-    LaunchedEffect(provider) {
-        models = emptyList()
-        modelFilter = ""
-        message = null
-    }
-
     BaseScreen(
         screenKey = key,
         currentKey = backStackViewModel.mainScreen.currentKey
@@ -143,28 +136,6 @@ fun AIConfigScreen(
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // ── 1. AI Provider ────────────────────────────────────
-            ConfigCard {
-                SectionTitle(stringResource(R.string.ai_config_provider))
-                AIProviders.available.forEach { type ->
-                    RadioCard(
-                        selected = provider == type,
-                        text = type.displayName,
-                        onClick = {
-                            if (provider != type) {
-                                // 先保存当前输入的 Key / Base URL，再切走
-                                AISettings.saveKey(provider, apiKey)
-                                AISettings.saveBaseUrl(provider, baseUrl)
-                                AISettings.switchProvider(type)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
             // ── 2. API Key ────────────────────────────────────────
             ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_api_key))
@@ -174,7 +145,7 @@ fun AIConfigScreen(
                     value = apiKey,
                     onValueChange = {
                         apiKey = it
-                        AISettings.saveKey(provider, it)
+                        AISettings.saveKey(it)
                     },
                     label = { Text(stringResource(R.string.ai_config_api_key)) },
                     placeholder = { Text(stringResource(R.string.ai_config_api_key_hint)) },
@@ -205,7 +176,7 @@ fun AIConfigScreen(
                 HintText(stringResource(R.string.ai_config_api_key_note))
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             // ── 3. Base URL ───────────────────────────────────────
             ConfigCard {
@@ -215,16 +186,16 @@ fun AIConfigScreen(
                     value = baseUrl,
                     onValueChange = {
                         baseUrl = it
-                        AISettings.saveBaseUrl(provider, it)
+                        AISettings.saveBaseUrl(it)
                     },
                     label = { Text(stringResource(R.string.ai_config_base_url)) },
-                    placeholder = { Text(provider.defaultBaseUrl) },
+                    placeholder = { Text(AISettings.DEFAULT_BASE_URL) },
                     singleLine = true,
                 )
                 HintText(stringResource(R.string.ai_config_base_url_note))
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             // ── 4. Model（动态获取，不硬编码）──────────────────────
             ConfigCard {
@@ -240,14 +211,14 @@ fun AIConfigScreen(
                         CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                         Spacer(Modifier.width(8.dp))
                     }
-                    TextButton(
+                    FilledTonalButton(
                         enabled = !loading && apiKey.isNotBlank(),
                         onClick = {
                             loading = true
                             message = null
                             scope.launch {
                                 runCatching {
-                                    AIModelRepository.fetchAndEnsureSelection(provider)
+                                    AIModelRepository.fetchAndEnsureSelection()
                                 }.onSuccess { list ->
                                     models = list
                                     message = if (list.isEmpty()) {
@@ -298,7 +269,7 @@ fun AIConfigScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 320.dp)
+                                .heightIn(max = 240.dp)
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
                         ) {
@@ -321,7 +292,7 @@ fun AIConfigScreen(
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             // ── 5. Agent 权限模式 ────────────────────────────────
             ConfigCard {
@@ -344,15 +315,19 @@ fun AIConfigScreen(
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             // ── #12 操作审计 ──────────────────────────────────────
             ConfigCard {
                 SectionTitle(stringResource(R.string.ai_audit_title))
                 HintText(stringResource(R.string.ai_audit_note))
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = {
+                Row(
+                    modifier = Modifier.padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(onClick = {
                         auditRecords = AIAuditLog.readAll()
                         showAudit = true
                     }) {
@@ -389,7 +364,7 @@ fun AIConfigScreen(
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
         }
     }
 
@@ -475,14 +450,14 @@ fun AIConfigScreen(
 @Composable
 private fun ConfigCard(content: @Composable ColumnScope.() -> Unit) {
     BackgroundCard(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), content = content)
+        Column(modifier = Modifier.padding(12.dp), content = content)
     }
 }
 
 @Composable
 private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(
-        modifier = modifier.padding(top = 2.dp, bottom = 8.dp),
+        modifier = modifier.padding(top = 2.dp, bottom = 6.dp),
         text = text,
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary

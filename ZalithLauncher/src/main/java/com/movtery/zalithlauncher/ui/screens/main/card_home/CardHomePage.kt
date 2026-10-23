@@ -59,6 +59,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.components.ReorderState
 import com.movtery.zalithlauncher.ui.components.reorderItem
 import com.movtery.zalithlauncher.ui.components.rememberReorderState
+import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 
@@ -239,6 +240,8 @@ private fun InstanceModule(
             .reorderItem(key = reorderKey, state = reorderState)
             .clip(MaterialTheme.shapes.large)
             .background(cardColor())
+            // 动态玻璃：首页卡片此前完全没有走玻璃层，和其它页面观感不一致
+            .backgroundGlass(AllSettings.backgroundBlur.state, cardColor())
             .clickable(onClick = onLaunch)
     ) {
         Column(

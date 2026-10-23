@@ -51,7 +51,7 @@ class OpenAIProvider(
      * DeepSeek 与 OpenAI 使用同一套协议，因此共用这个实现，
      * 只是默认 Base URL、本地保存的 Key / 地址分开存放。
      */
-    override val type: AIProviderType = AIProviderType.OPENAI,
+    override val type: AIProviderType = AIProviderType.DEEPSEEK,
 ) : AIProvider {
 
     override suspend fun listModels(apiKey: String, baseUrl: String): List<AIModelInfo> {

@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
+[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,7 +35,18 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.5.0
+## ✨ Highlights of 27.5.1
+
+- **A completely new brand icon.** Launcher, round, adaptive (foreground / background /
+  monochrome), Play Store, in-app About logo, splash screen and notification icon now all use
+  the new artwork — one source image, no leftover pieces of the old one.
+- **AI settings tightened up.** The provider picker is gone; the launcher talks to DeepSeek, and the
+  base URL is pre-filled on first launch yet still editable. Cards and buttons were compacted and
+  the audit buttons no longer stick together.
+- **Dynamic glass fixed and unified.** Home-screen instance cards now actually get the glass layer,
+  and every card's blur/highlight is clipped to its rounded corners on both Settings and AI Settings.
+
+### 27.5.0
 
 - **DeepSeek is now the default AI provider.** The provider list is **DeepSeek / OpenAI**; the
   Anthropic entry and its selection UI were removed. DeepSeek speaks the same Chat Completions

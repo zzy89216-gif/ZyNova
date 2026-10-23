@@ -34,15 +34,12 @@ enum class AIProviderType(
     val defaultBaseUrl: String,
 ) {
     /**
-     * DeepSeek（默认）
+     * DeepSeek（唯一内置服务商）
      *
-     * 协议与 OpenAI Chat Completions 完全兼容，复用同一个 Provider 实现，
-     * 只是默认 Base URL 与本地保存的 Key / 地址分开。
+     * 27.5.1 起不再提供「AI 服务商」选择：启动器只接 DeepSeek，
+     * 协议与 OpenAI Chat Completions 兼容，复用同一个 Provider 实现。
      */
-    DEEPSEEK("DeepSeek", "https://api.deepseek.com/v1"),
-
-    /** OpenAI 官方，以及所有 OpenAI 兼容的第三方服务（自定义 Base URL 即可）*/
-    OPENAI("OpenAI", "https://api.openai.com/v1");
+    DEEPSEEK("DeepSeek", "https://api.deepseek.com/v1");
 
     companion object {
         fun fromName(name: String?): AIProviderType =

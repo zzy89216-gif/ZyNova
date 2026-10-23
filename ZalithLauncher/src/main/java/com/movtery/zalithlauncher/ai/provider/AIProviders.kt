@@ -26,9 +26,8 @@ package com.movtery.zalithlauncher.ai.provider
 object AIProviders {
 
     private val builtin: List<AIProvider> = listOf(
-        // DeepSeek 与 OpenAI 共用 Chat Completions 协议实现，只是默认地址与存储分开
+        // DeepSeek 使用 OpenAI Chat Completions 兼容协议
         OpenAIProvider(AIProviderType.DEEPSEEK),
-        OpenAIProvider(AIProviderType.OPENAI),
     )
 
     private val registry: Map<AIProviderType, AIProvider> = builtin.associateBy { it.type }

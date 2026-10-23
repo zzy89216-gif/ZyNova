@@ -32,33 +32,20 @@ import com.movtery.zalithlauncher.setting.SettingsRegistry
  */
 object AISettings : SettingsRegistry() {
 
-    // ── 1. AI Provider ─────────────────────────────────────────────
+    // ── 1. API Key / Base URL（固定 DeepSeek）─────────────────────
     /**
-     * 当前使用的 Provider 类型。
+     * DeepSeek 的 API Key（用户自备，只存本机 MMKV）。
      *
-     * 默认 **DeepSeek**。旧版本存过已移除的 Provider 名时，
-     * [com.movtery.zalithlauncher.setting.unit.EnumSettingUnit] 会自动回退到这个默认值，
-     * 不会崩溃，也不会清空其他配置。
+     * 27.5.1 起不再提供「AI 服务商」选择：启动器只接 DeepSeek，
+     * 接口地址固定为 [DEFAULT_BASE_URL]，用户可以自己改（兼容同类中转）。
      */
-    val provider = enumSetting("aiProvider", AIProviderType.DEEPSEEK)
+    val apiKey = stringSetting("aiDeepSeekKey", "")
 
-    // ── 2. API Key（用户自备，本地保存）────────────────────────────
-    /** DeepSeek 的 API Key */
-    val deepSeekKey = stringSetting("aiDeepSeekKey", "")
-
-    /** OpenAI（及任何 OpenAI 兼容服务）的 API Key */
-    val openAIKey = stringSetting("aiOpenAIKey", "")
-
-    // ── 3. Model（不硬编码；从 Provider 动态获取后由用户选择）──────
-    /** 当前选中的模型 ID；为空表示尚未选择 */
+    /** 当前选中的模型 ID；为空表示尚未选择（模型仍然动态获取） */
     val model = stringSetting("aiModel", "")
 
-    // ── 4. Base URL（有默认值，可自定义）──────────────────────────
-    /** DeepSeek 的 API 地址（默认 https://api.deepseek.com/v1）*/
-    val deepSeekBaseUrl = stringSetting("aiDeepSeekBaseUrl", AIProviderType.DEEPSEEK.defaultBaseUrl)
-
-    /** OpenAI 的 API 地址（可换成任何 OpenAI 兼容服务）*/
-    val openAIBaseUrl = stringSetting("aiOpenAIBaseUrl", AIProviderType.OPENAI.defaultBaseUrl)
+    /** DeepSeek 的 API 地址（可换成兼容 OpenAI 协议的中转地址） */
+    val baseUrl = stringSetting("aiDeepSeekBaseUrl", DEFAULT_BASE_URL)
 
     // ── 5. Agent 权限模式 ─────────────────────────────────────────
     /**
@@ -87,51 +74,32 @@ object AISettings : SettingsRegistry() {
 
     // ── 便捷读取 ──────────────────────────────────────────────────
 
-    /** 取指定 Provider 的 API Key */
-    fun getKey(type: AIProviderType = provider.getValue()): String = when (type) {
-        AIProviderType.DEEPSEEK -> deepSeekKey.getValue()
-        AIProviderType.OPENAI -> openAIKey.getValue()
+    /** DeepSeek 官方接口地址 */
+    const val DEFAULT_BASE_URL = "https://api.deepseek.com/v1"
+
+    /** 取 API Key */
+    fun getKey(): String = apiKey.getValue().trim()
+
+    /** 取 Base URL（去掉尾部斜杠；留空回退到默认地址） */
+    fun getBaseUrl(): String =
+        baseUrl.getValue().trim().trimEnd('/').ifEmpty { DEFAULT_BASE_URL }
+
+    /** 保存 API Key */
+    fun saveKey(value: String) {
+        apiKey.save(value.trim())
     }
 
-    /** 取指定 Provider 的 Base URL（去掉尾部斜杠）*/
-    fun getBaseUrl(type: AIProviderType = provider.getValue()): String =
-        when (type) {
-            AIProviderType.DEEPSEEK -> deepSeekBaseUrl.getValue()
-            AIProviderType.OPENAI -> openAIBaseUrl.getValue()
-        }.trim().trimEnd('/').ifEmpty { type.defaultBaseUrl }
-
-    /** 保存指定 Provider 的 API Key */
-    fun saveKey(type: AIProviderType, value: String) {
-        val v = value.trim()
-        when (type) {
-            AIProviderType.DEEPSEEK -> deepSeekKey.save(v)
-            AIProviderType.OPENAI -> openAIKey.save(v)
-        }
+    /** 保存 Base URL（留空则回退到默认值） */
+    fun saveBaseUrl(value: String) {
+        baseUrl.save(value.trim().trimEnd('/').ifEmpty { DEFAULT_BASE_URL })
     }
 
-    /** 保存指定 Provider 的 Base URL（留空则回退到默认值）*/
-    fun saveBaseUrl(type: AIProviderType, value: String) {
-        val v = value.trim().trimEnd('/').ifEmpty { type.defaultBaseUrl }
-        when (type) {
-            AIProviderType.DEEPSEEK -> deepSeekBaseUrl.save(v)
-            AIProviderType.OPENAI -> openAIBaseUrl.save(v)
-        }
-    }
+    /** 是否已填 API Key */
+    fun hasKey(): Boolean = getKey().isNotBlank()
 
-    /** 当前 Provider 是否已填 API Key */
-    fun hasKey(type: AIProviderType = provider.getValue()): Boolean = getKey(type).isNotBlank()
-
-    /** 当前 Provider 是否已选好模型 */
+    /** 是否已选好模型 */
     fun hasModel(): Boolean = model.getValue().isNotBlank()
 
     /** 是否已经可以发起对话 */
-    fun isReady(type: AIProviderType = provider.getValue()): Boolean = hasKey(type) && hasModel()
-
-    /** 切换 Provider 时清空已选模型，避免把 A 家的模型名带到 B 家 */
-    fun switchProvider(type: AIProviderType) {
-        if (provider.getValue() != type) {
-            provider.save(type)
-            model.save("")
-        }
-    }
+    fun isReady(): Boolean = hasKey() && hasModel()
 }

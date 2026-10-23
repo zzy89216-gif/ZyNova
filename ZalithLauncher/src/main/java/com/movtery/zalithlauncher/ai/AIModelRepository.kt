@@ -38,10 +38,11 @@ object AIModelRepository {
      * @throws IllegalArgumentException Key 未填时抛出，消息可直接展示给用户
      * @throws Exception 网络 / 鉴权失败时抛出（消息已是可读文本）
      */
-    suspend fun fetch(type: AIProviderType = AISettings.provider.getValue()): List<AIModelInfo> {
-        val key = AISettings.getKey(type)
-        require(key.isNotBlank()) { "请先填写 ${type.displayName} 的 API Key。" }
-        return AIProviders.get(type).listModels(key, AISettings.getBaseUrl(type))
+    suspend fun fetch(): List<AIModelInfo> {
+        val key = AISettings.getKey()
+        require(key.isNotBlank()) { "请先填写 DeepSeek 的 API Key。" }
+        return AIProviders.get(AIProviderType.DEEPSEEK)
+            .listModels(key, AISettings.getBaseUrl())
     }
 
     /**
@@ -51,10 +52,8 @@ object AIModelRepository {
      *
      * @return 拉取到的模型列表
      */
-    suspend fun fetchAndEnsureSelection(
-        type: AIProviderType = AISettings.provider.getValue()
-    ): List<AIModelInfo> {
-        val list = fetch(type)
+    suspend fun fetchAndEnsureSelection(): List<AIModelInfo> {
+        val list = fetch()
         if (list.isNotEmpty()) {
             val current = AISettings.model.getValue()
             if (current.isBlank() || list.none { it.id == current }) {

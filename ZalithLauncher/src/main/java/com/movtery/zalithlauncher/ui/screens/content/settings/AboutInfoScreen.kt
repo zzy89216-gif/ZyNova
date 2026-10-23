@@ -131,9 +131,9 @@ fun AboutInfoScreen(
                             modifier = Modifier.padding(horizontal = 14.dp)
                         )
 
-                        //项目维护者
+                        //项目维护者（使用维护者本人的社交头像，避免与启动器图标混淆）
                         ButtonIconItem(
-                            icon = painterResource(R.drawable.img_launcher),
+                            icon = painterResource(R.drawable.img_avatar_zzy),
                             title = stringResource(R.string.about_launcher_author_zzy_title),
                             text = stringResource(R.string.about_launcher_author_zzy_text, BuildKeys.LAUNCHER_NAME),
                             button = {

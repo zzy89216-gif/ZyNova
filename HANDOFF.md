@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.5.0**（`launcher_version_code=270500`）
+**当前版本：27.5.1**（`launcher_version_code=270501`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,53 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.5.1 全量品牌图标 + AI 设置收紧 + 动态玻璃统一 ✅
+
+**一、图标全量替换（议题 #20，已授权）**
+
+- 源图：议题附件 `1254×1254` 新图标（深蓝底 + 草方块 + 青色星形 + 蓝色轨迹）
+- 生成方式（一次性脚本，不进入仓库）：先用**边缘泛洪**去掉圆角外的白底，
+  再按用途生成；所有尺寸来自同一份源图
+- **桌面图标**：`mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher.webp` 与 `_round.webp`
+  （48/72/96/144/192）——放大 1.35 倍后居中裁剪，避免整幅铺不满时露出白角
+- **自适应图标**（`mipmap-anydpi-v26/*.xml` 未改结构）：
+  - 前景 `drawable-nodpi/ic_launcher_foreground.png`：864px **整幅**画面
+  - 背景 `ic_launcher_bg.png`：兜底深蓝（被前景覆盖）
+  - 单色 `ic_launcher_monochrome.png`：方块 + 轨迹环 + 星形剪影
+- **其它品牌入口**：
+  - `src/main/ic_launcher-playstore.png`（512）→ 新图标
+  - `drawable/img_launcher.png`（关于页 Logo）→ 新图标
+  - 启动页 `splash_launcher.xml` → 新增 `drawable-nodpi/splash_icon.png`（保留圆角，不直接复用前景）
+  - 通知栏小图标 `JvmService` / `GameService` → `R.drawable.ic_launcher_monochrome`
+    （此前用整张彩色 mipmap，系统会渲染成白色方块）
+  - 关于页「项目维护者」→ `drawable-nodpi/img_avatar_zzy.png`（维护者本人社交头像）
+- ⚠️ **不要**用「只替换 `mipmap`」的方式做下一次图标更新：自适应前景、Play Store、
+  关于页 Logo、启动页、通知图标是五个独立入口，缺一处就会新旧混用
+
+**二、AI 设置（用户反馈）**
+
+- **移除「AI 服务商」分区**，固定使用 DeepSeek；`AIProviderType` 只保留 `DEEPSEEK`，
+  `OpenAIProvider` 作为协议实现继续复用（名字保留，避免大改）
+- **接口地址不写死**：`AISettings.baseUrl` 的**默认值**是 `https://api.deepseek.com/v1`，
+  输入框可编辑；留空回退到默认值。`getBaseUrl()` 始终读用户配置，不在请求处硬编码
+- 存储键 `aiDeepSeekKey` / `aiDeepSeekBaseUrl` / `aiModel` **保持不变**，
+  老用户已填的 Key 与自定义地址不会丢（旧 `OPENAI` 枚举值会回退为 DeepSeek）
+- 布局收紧：卡片内边距 12dp、卡片间距 8dp、底部 24dp；
+  「获取模型列表」改 `FilledTonalButton`；审计按钮拆成 `OutlinedButton` + `TextButton`（间距 8dp）；
+  模型列表最大高度 240dp
+
+**三、动态玻璃统一**
+
+- **首页实例卡片此前没有玻璃层**：`CardHomePage.InstanceModule` 只有
+  `.clip(shape).background(cardColor())`，动态玻璃在首页完全不生效；
+  现已补 `.backgroundGlass(...)`
+- `BackgroundCard` 的模糊层与动态高光现在**显式 `clip(shape)`**，
+  不再依赖 `Card` 的裁剪，修复方角溢出 / 边缘发白
+- 「设置」与「AI 设置」都走 `BackgroundCard`（`SettingsCard` 也是它的封装），
+  因此两处同步生效
+- ⚠️ 以后新增卡片**不要**直接 `.background(cardColor())` 了事：
+  要么用 `BackgroundCard` / `SettingsCard`，要么手动补 `backgroundGlass`
 
 ### 27.5.0 AI 服务商与交互修复 + 模组依赖去重 + 下载稳定性 + MG 兼容开关 ✅
 
@@ -134,15 +181,11 @@
 - 截图的紫黑棋盘格是**缺失贴图占位图**，定位需要
   `<外部私有目录>/mobileglues/latest.log`；上线后让用户先取日志
 
-**九、议题 #20（图标）审计结论**
+**九、议题 #20（图标）—— 已执行**
 
-- 当前实际构建使用的是旧角色图标：`mipmap-*/ic_launcher.webp`（mipmap-anydpi-v26 走
-  `drawable/ic_launcher_foreground` / `_bg` / `_monochrome`），Manifest 引用
-  `@mipmap/ic_launcher` 与 `@mipmap/ic_launcher_round`
-- 新图标（深蓝圆角底 + 草方块 + 青色星形 + 蓝色轨迹）已在议题附件中，但议题本身要求
-  「先审计、未经明确授权不批量替换」，因此本轮**不改任何图标**
-- 实施时需要：从同一源图生成 5 个密度 + 自适应前景（留安全区）+ 单色层；
-  同步检查启动页/关于页/AI 页面里引用品牌图的位置；README 截图是否需要重拍
+- 27.5.0 时只做了审计；**27.5.1 已获授权并全量替换**，具体见上方 27.5.1 章节
+- 结论：Manifest、自适应 XML、启动页、Play Store、关于页、通知入口六处已全部核对，
+  仓库内不再有旧角色图标的实际引用
 
 ### 27.4.0 自动渲染器 + 恢复登录入口 + MobileGlues 的 OpenGL 版本 ✅
 
@@ -1382,10 +1425,10 @@ HTTP 403
      **绝对不要写进本文件、CHANGELOG、README、Issue、Release 说明或任何提交**
    - 另需知道：CurseForge API Key 会被**打进 APK**（上游设计如此，客户端必须自带），
      但这**不是**可以在文档里公开它的理由
-7. **议题 #20 图标替换** ⬜（**等待明确授权**）：
-   - 审计已完成（见 27.5.0 章节）：当前仍是旧角色图标，新图标未使用
-   - 议题正文明确要求「先审计与规划、未经明确授权不批量替换」，因此**没有动任何图标**
-   - 授权后按 27.5.0 章节列的清单执行：5 个密度 + 自适应前景/背景/单色层 + 文档截图核查
+7. ~~**议题 #20 图标替换**~~ ✅ **已完成（27.5.1）**：
+   - 已获授权并全量替换，覆盖桌面 / 圆形 / 自适应三层 / Play Store /
+     关于页 Logo / 启动页 / 通知小图标
+   - 详见 27.5.1 章节；后续更新遵循同一份入口清单
 8. **议题 #29 MobileGlues 火焰异常** ⬜（需要用户日志）：
    - 二进制已核对为官方 V2.0.0，无更新可同步；上游修复仍在未合并 PR #61
    - 截图里的紫黑棋盘格是 missingno（缺失贴图），**必须**先拿到
@@ -1420,6 +1463,7 @@ HTTP 403
 
 | 文件 | 作用 |
 |---|---|
+| `game/version/mod/ModIdentity.kt` | 模组稳定身份：Fabric API 识别与删除保护、跨来源项目键归一（27.5.0，议题 #22） |
 | `setting/LauncherTitle.kt` | 标题栏显示名：留空回退到默认 `launcher_name`（27.4.0，议题 #18） |
 | `game/renderer/AutoRenderer.kt` | 「自动」渲染器**选项** + 偏好顺序（`MobileGlues → Ironized Zink → GL4ES`）（27.4.0） |
 | `game/renderer/mobileglues/MobileGluesGlVersion.kt` | MobileGlues 的 OpenGL 版本枚举 + `MOBILE_GLUES_UNIQUE_IDENTIFIER`（27.4.0） |

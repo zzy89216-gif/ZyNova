@@ -138,7 +138,7 @@ class JvmService : Service() {
             }
             .setOngoing(true) //持续通知
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_launcher_monochrome)
             .build()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

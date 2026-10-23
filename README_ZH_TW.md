@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
+[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -34,7 +34,14 @@
 
 ---
 
-## ✨ 27.5.0 主要內容
+## ✨ 27.5.1 主要內容
+- **全新品牌圖示。** 桌面 / 圓形 / 自適應三層 / Play Store / 關於頁 / 啟動頁 / 通知圖示
+  全部換成新圖示，同一份來源圖生成，沒有新舊混用。
+- **AI 設定收緊。** 移除「AI 服務商」分區，固定使用 DeepSeek；介面位址首次開啟預設填好、仍可修改；
+  卡片與按鈕更緊湊，稽核按鈕不再黏在一起。
+- **動態玻璃統一。** 首頁卡片補上玻璃層，設定頁與 AI 設定頁的模糊 / 高光統一裁剪到圓角。
+
+### 27.5.0
 - **預設 AI 服務商改為 DeepSeek。** 服務商清單是 **DeepSeek / OpenAI**，Anthropic 及其選擇入口已移除。
   兩者協定相同、共用實作，但 API Key 與 Base URL 分開儲存；模型仍然從服務商動態取得。
   既有的 Key、自訂位址與模型選擇都會保留；舊版本存過的已移除服務商會自動回退到 DeepSeek。

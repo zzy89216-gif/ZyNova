@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
+[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,9 +29,15 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.5.0**。这一阶段做了五件事：
+当前版本 **27.5.1**。这一阶段做了五件事：
 **AI 默认改为 DeepSeek、修 AI 交互缺陷、模组依赖去重、CurseForge 下载更稳、MobileGlues 加兼容开关。**
+27.5.1 又全量替换了品牌图标、收紧了 AI 设置并统一了动态玻璃。
 
+- **全新品牌图标**：桌面 / 圆形 / 自适应三层 / Play Store / 关于页 / 启动页 / 通知图标
+  全部换成新图标，同一个源图生成，没有新旧混用
+- **AI 设置收紧**：去掉「AI 服务商」分区，固定 DeepSeek；接口地址首次打开默认填好、仍可修改；
+  卡片与按钮排布更紧凑，审计按钮不再粘连
+- **动态玻璃统一**：首页卡片补上玻璃层，设置页与 AI 设置页的模糊 / 高光统一裁剪到圆角
 - **默认 AI 服务商改为 DeepSeek**：服务商列表是 **DeepSeek / OpenAI**，Anthropic 及其选择入口已移除。
   两者协议相同、共用实现，但 API Key 与 Base URL 分开保存；模型仍然从服务商动态获取。
   已有的 Key、自定义地址与模型选择都会保留；旧版本存过的已移除服务商会自动回退到 DeepSeek。
