@@ -142,6 +142,7 @@
     <string name="error_bad_gateway">(%s) The server received an invalid response from an upstream server</string>
     <string name="error_service_unavailable">(%s) The server is temporarily unable to handle the request</string>
     <string name="error_gateway_timeout">(%s) The server did not receive a timely response</string>
+    <string name="error_download_source_unavailable">All download sources are temporarily unavailable. Please check your network or try again later.</string>
     <!-- Splash Screen -->
     <string name="splash_screen_unpack_desc">The launcher needs to install these files to ensure Minecraft runs properly. They are included in the app and must be extracted first. Click the button below to start extraction and update.</string>
     <string name="splash_screen_installing">The launcher is extracting these files. Once done, it will automatically enter the main screen. Please wait patiently.</string>
@@ -1559,6 +1560,8 @@
     <string name="settings_renderer_mobileglues_summary">Translates desktop OpenGL onto the device\'s OpenGL ES 3.x</string>
     <string name="settings_renderer_mobileglues_gl_version_title">OpenGL version</string>
     <string name="settings_renderer_mobileglues_gl_version_summary">The OpenGL version MobileGlues reports to the game — 4.0 by default, same as the upstream plugin. Raise it if a mod or shader pack requires a newer OpenGL; lower it if your driver cannot handle the higher level and the picture breaks or the game refuses to start.</string>
+    <string name="settings_renderer_mobileglues_angle_title">ANGLE backend</string>
+    <string name="settings_renderer_mobileglues_angle_summary">Off by default. Keep it off if clouds show through terrain, or water/particles/fire render in the wrong order — those are caused by a known depth-texture limitation on strict ES hosts such as ANGLE (upstream issue #57). Only turn it on if the native GLES driver is the one giving you trouble.</string>
     <string name="ai_title">AI Assistant</string>
     <string name="ai_config_title">AI Settings</string>
     <string name="ai_model_not_selected">No model selected</string>
@@ -1623,7 +1626,7 @@
     <string name="ai_untitled_conversation">New conversation</string>
     <string name="ai_tool_write">write</string>
     <string name="ai_privacy_title">Where does your data go?</string>
-    <string name="ai_privacy_message">When the AI features are on, the following is **sent to the AI provider you configured** (OpenAI / Anthropic / your own base URL):\n\n· game logs and crash reports\n· mod lists and instance information\n· configuration file contents\n· the text you type\n\nTool calls and their results are sent as well.\n\n**ZyNova does not store or relay any of this**, and your API key stays on this device. If you use a third-party relay, please check its privacy policy.</string>
+    <string name="ai_privacy_message">When the AI features are on, the following is **sent to the AI provider you configured** (DeepSeek / OpenAI / your own base URL):\n\n· game logs and crash reports\n· mod lists and instance information\n· configuration file contents\n· the text you type\n\nTool calls and their results are sent as well.\n\n**ZyNova does not store or relay any of this**, and your API key stays on this device. If you use a third-party relay, please check its privacy policy.</string>
     <string name="ai_privacy_confirm">Got it</string>
     <string name="ai_audit_title">Operation audit</string>
     <string name="ai_audit_note">Records every write operation the AI performs (changing settings, writing files, deleting mods, installing resources, …) so you can review it later.</string>
@@ -1632,4 +1635,6 @@
     <string name="ai_audit_clear">Clear</string>
     <string name="ai_audit_empty">No write operations recorded yet.</string>
     <string name="ai_audit_share_failed">Could not share the exported file.</string>
+    <string name="ai_stopped">Generation stopped</string>
+    <string name="ai_scroll_to_bottom">Jump to latest</string>
 </resources>

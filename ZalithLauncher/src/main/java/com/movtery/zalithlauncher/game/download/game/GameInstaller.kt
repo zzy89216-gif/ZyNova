@@ -613,6 +613,15 @@ class GameInstaller(
             modName: String,
             modVer: String,
         ) {
+            //同一实例里已经装有同名文件时不再重复下载。
+            //例如更新加载器时又一次自动选中了 Fabric API，最终复制阶段本来也会跳过已有文件，
+            //以前却会先把它完整下载一遍。
+            val targetModsDir = targetClientDir?.let { VersionFolders.MOD.getDir(it) }
+            if (targetModsDir != null && File(targetModsDir, mod.file.fileName).exists()) {
+                Logger.info(TAG, "$modName $modVer is already installed; skip downloading")
+                return
+            }
+
             addTask(
                 title = androidText(
                     R.string.download_game_install_base_download_file,

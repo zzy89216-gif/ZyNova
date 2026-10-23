@@ -31,6 +31,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.model
 import com.movtery.zalithlauncher.utils.file.MurmurHash2Incremental
 import com.movtery.zalithlauncher.utils.network.httpGetJson
 import com.movtery.zalithlauncher.utils.network.httpPostJson
+import com.movtery.zalithlauncher.utils.network.withRetry
 import io.ktor.http.Parameters
 import io.ktor.server.plugins.NotFoundException
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,9 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import java.io.File
+
+/** CurseForge API 单次调用的最大尝试次数；5xx / 超时会退避重试，4xx 直接失败 */
+private const val API_MAX_ATTEMPTS = 2
 
 class CurseForgeSearcher(
     val api: String = CURSEFORGE_API,
@@ -53,19 +57,23 @@ class CurseForgeSearcher(
         searchFilter: PlatformSearchFilter,
         platformClasses: PlatformClasses
     ): CurseForgeSearchResult {
-        return httpGetJson(
-            url = "$api/mods/search",
-            parameters = searchFilter.toCurseForgeRequest(
-                query = query,
-                platformClasses = platformClasses
-            ).toParameters()
-        )
+        return withRetry<CurseForgeSearchResult>(logTag = "CurseForgeSearch", maxRetries = API_MAX_ATTEMPTS) {
+            httpGetJson<CurseForgeSearchResult>(
+                url = "$api/mods/search",
+                parameters = searchFilter.toCurseForgeRequest(
+                    query = query,
+                    platformClasses = platformClasses
+                ).toParameters()
+            )
+        }
     }
 
     override suspend fun getProject(projectID: String): CurseForgeProject {
-        val project = httpGetJson<CurseForgeProject>(
-            url = "$api/mods/$projectID"
-        )
+        val project = withRetry<CurseForgeProject>(logTag = "CurseForgeProject", maxRetries = API_MAX_ATTEMPTS) {
+            httpGetJson<CurseForgeProject>(
+                url = "$api/mods/$projectID"
+            )
+        }
         if (!project.isApproved()) throw NotFoundException("The project {$projectID} is not in a publicly available state.")
         return project
     }
@@ -77,9 +85,11 @@ class CurseForgeSearcher(
         projectID: String,
         fileID: String,
     ): CurseForgeVersion {
-        return httpGetJson(
-            url = "$api/mods/$projectID/files/$fileID"
-        )
+        return withRetry<CurseForgeVersion>(logTag = "CurseForgeFile", maxRetries = API_MAX_ATTEMPTS) {
+            httpGetJson<CurseForgeVersion>(
+                url = "$api/mods/$projectID/files/$fileID"
+            )
+        }
     }
 
     /**
@@ -91,13 +101,15 @@ class CurseForgeSearcher(
         projectID: String,
         index: Int = 0,
         pageSize: Int = 100
-    ): CurseForgeVersions = httpGetJson(
-        url = "$api/mods/$projectID/files",
-        parameters = Parameters.build {
-            append("index", index.toString())
-            append("pageSize", pageSize.toString())
-        }
-    )
+    ): CurseForgeVersions = withRetry<CurseForgeVersions>(logTag = "CurseForgeVersions", maxRetries = API_MAX_ATTEMPTS) {
+        httpGetJson<CurseForgeVersions>(
+            url = "$api/mods/$projectID/files",
+            parameters = Parameters.build {
+                append("index", index.toString())
+                append("pageSize", pageSize.toString())
+            }
+        )
+    }
 
     override suspend fun getVersions(
         projectID: String,
@@ -130,10 +142,12 @@ class CurseForgeSearcher(
         sha1: String
     ): CurseForgeFile? {
         val hash = MurmurHash2Incremental.computeHash(file, byteToSkip = listOf(0x9, 0xa, 0xd, 0x20))
-        return httpPostJson<CurseForgeFingerprintsMatches>(
-            url = "$api/fingerprints",
-            body = mapOf("fingerprints" to listOf(hash))
-        ).data.exactMatches
+        return withRetry<CurseForgeFingerprintsMatches>(logTag = "CurseForgeFingerprint", maxRetries = API_MAX_ATTEMPTS) {
+            httpPostJson<CurseForgeFingerprintsMatches>(
+                url = "$api/fingerprints",
+                body = mapOf("fingerprints" to listOf(hash))
+            )
+        }.data.exactMatches
             ?.takeIf { it.isNotEmpty() }
             ?.firstOrNull()
             ?.file

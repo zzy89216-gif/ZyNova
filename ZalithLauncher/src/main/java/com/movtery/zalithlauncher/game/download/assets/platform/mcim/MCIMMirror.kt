@@ -29,6 +29,8 @@ private const val ROOT = "https://mod.mcimirror.top"
 private val REPLACE_MIRROR_HOLDERS = listOf(
     //CurseForge
     "https://edge.forgecdn.net",
+    //CurseForge 新文件 CDN：官方 API 返回的 downloadUrl 可能是这个域名
+    "https://mediafilez.forgecdn.net",
     //Modrinth
     "https://cdn.modrinth.com"
 )

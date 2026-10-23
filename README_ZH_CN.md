@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.4.0)
+[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,27 +29,27 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.4.0**。这一阶段做了四件事：
-**渲染器交给启动器自动判断、恢复离线 / 第三方登录入口、MobileGlues 的 OpenGL 版本可选、同步上游修复。**
+当前版本 **27.5.0**。这一阶段做了五件事：
+**AI 默认改为 DeepSeek、修 AI 交互缺陷、模组依赖去重、CurseForge 下载更稳、MobileGlues 加兼容开关。**
 
-- **「自动」渲染器（默认）**：渲染器列表现在是
-  **自动 / MobileGlues / Ironized Zink / GL4ES**。
-  选「自动」后，每个实例启动时按固定优先级挑一个**声明支持该 Minecraft 版本**的渲染器
-  （`MobileGlues → Ironized Zink → GL4ES`）——
-  内置三个渲染器的版本覆盖范围本就不同，固定默认某一个必然对一部分版本是错的
-- **恢复「离线登录」与「第三方认证」入口**：登录菜单回到
-  **微软 / 离线 / 第三方认证** 三项并列；**底层实现与已有账号数据一行未动**
-- **MobileGlues 的 OpenGL 版本可选**：选中 MobileGlues 后下方自动展开下拉
-  （3.2 ~ 4.6，默认 4.0），取值与夹取规则照抄上游与 native
-- **标题栏名称可自定义（议题 #18）**：设置 → 启动器 → 启动器名称；**留空即用默认名称**，
-  只影响界面显示，不影响应用名、正版登录与多人游戏识别
-- **同步上游修复**：`SDL_EGL_LIBRARY` 绝对路径重复拼接、surface 重建后画面错位、
-  窗口引用计数多算导致销毁不掉
-- **顺带修复**：按实例的渲染器设置此前**没有「跟随全局」条目**，
-  指定过之后就再也切不回去，现已补上
+- **默认 AI 服务商改为 DeepSeek**：服务商列表是 **DeepSeek / OpenAI**，Anthropic 及其选择入口已移除。
+  两者协议相同、共用实现，但 API Key 与 Base URL 分开保存；模型仍然从服务商动态获取。
+  已有的 Key、自定义地址与模型选择都会保留；旧版本存过的已移除服务商会自动回退到 DeepSeek。
+- **AI 聊天修复**：停止生成后不再插一条红色错误、也不会卡在「正在生成」，可以立刻继续发消息，
+  被中断的回答标记为「已停止生成」；聊天会滚到真正的底部并跟随流式输出，
+  重新进入时回到最新消息，往上翻时暂停跟随，并多了一个「回到底部」按钮。
+- **AI 设置页修复**：卡片统一宽度并加了内边距，标题不再被圆角切掉，偏窄的卡片也和其他卡片对齐了。
+- **Fabric API 去重与保护**：按稳定 ID 识别（`fabric-api` / Modrinth `P7dR8mSH` / CurseForge `306612`），
+  已装且版本兼容时不再重复下载；模组管理里隐藏删除按钮、批量删除会跳过、AI 也不能删；
+  删除整个实例不受影响。
+- **CurseForge 下载更稳**：超时 / 连接重置 / 5xx 等临时错误最多重试 3 次，403/404 不重试；
+  错误信息会区分「Key 缺失或失效」「文件已下架」「镜像不可用」「超时」。
+  官方 Key 已配置到 Actions Secrets，同时保留 MCIM 镜像兜底。
+- **MobileGlues**：随包二进制已与官方 V2.0.0 逐字节核对一致；新增「ANGLE 渲染后端」开关（默认关闭），
+  用于规避严格 ES 宿主上已知的深度纹理缺陷（云层 / 透明排序异常，上游 #57）。
 
-> 上一版（27.3.0）：认证入口向官方账号体系收敛、界面换代并保留可回退的旧版、
-> 修掉一个会改坏游戏 DNS 的缺陷。
+> 上一版（27.4.0）：把渲染器选择交给启动器自动判断、恢复离线 / 第三方登录入口、
+> MobileGlues 的 OpenGL 版本可选，并同步三处上游修复。
 
 > **在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 > 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
@@ -339,22 +339,24 @@ ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文�
 
 当前版本：
 
-**ZyNova 27.4.0**
+**ZyNova 27.5.0**
 
-27.4.0 把渲染器选择交给启动器自动判断，并恢复了两条被隐藏的登录路径：
+27.5.0 把 AI 默认服务商换成 DeepSeek，并集中修掉一批 AI 交互与下载稳定性问题：
 
-- **✨ 「自动」渲染器**（默认）：设置里的列表变为
-  **自动 / MobileGlues / Ironized Zink / GL4ES**；选「自动」时按
-  `MobileGlues → Ironized Zink → GL4ES` 的优先级挑一个支持当前 Minecraft 版本的渲染器
-- **✨ MobileGlues 的 OpenGL 版本可选**：选中 MobileGlues 后下方自动展开下拉
-  （3.2 ~ 4.6，默认 4.0），取值与夹取规则照抄上游插件与 native
-- **🔄 恢复「离线登录」与「第三方认证」入口**：登录菜单回到三项并列；
-  **只改入口显隐，不删底层实现，也不清理任何已有账号数据**
-- **🐛 同步上游修复**：`SDL_EGL_LIBRARY` 对绝对路径重复拼接导致 SDL 加载失败；
-  游戏运行中 surface 重建后渲染状态未恢复导致画面持续错位；
-  窗口逻辑引用计数多算导致真实窗口永远销毁不掉
-- **🐛 修复**：按实例的渲染器设置此前没有「跟随全局设置」条目，
-  用户给某个实例指定过渲染器之后就再也切不回去，现已补上
+- **✨ 默认 AI 服务商改为 DeepSeek**：服务商列表是 DeepSeek / OpenAI，
+  移除了 Anthropic 及其选择入口；两者共用同一套协议实现，Key 与 Base URL 分开保存，
+  模型仍然动态获取；旧配置不会丢，已移除的服务商会自动回退到 DeepSeek
+- **🐛 修复中断后无法继续对话（#24）**：停止生成不再插入红色错误，也不会卡在「正在生成」，
+  被中断的回答标记为「已停止生成」，可以立刻继续发送
+- **🐛 修复聊天不自动贴底（#26）**：滚到真正的末尾、跟随流式输出、重新进入回到最新消息、
+  上翻时暂停跟随，并新增「回到底部」按钮
+- **🐛 修复 AI 设置页文字裁切（#25）**：卡片统一宽度 + 内边距，标题不再被圆角切掉
+- **🐛 Fabric API 去重与保护（#22）**：按稳定 ID 识别，已装兼容版本不再重复下载；
+  模组管理隐藏删除入口、批量删除跳过、AI 也不能删；删除整个实例不受影响
+- **🐛 CurseForge 下载更稳（#21）**：临时错误最多重试 3 次、4xx 不重试，
+  错误信息区分 403 / 404 / 镜像不可用 / 超时；官方 API Key 已配置，镜像继续兜底
+- **🔧 MobileGlues（#29）**：随包二进制与官方 V2.0.0 逐字节一致；
+  新增「ANGLE 渲染后端」开关（默认关闭），规避严格 ES 上已知的透明排序缺陷
 
 > 📜 更早版本的完整变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -459,7 +461,19 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 27.4.0（当前版本）
+### 27.5.0（当前版本）
+
+- [x] **默认 AI 服务商改为 DeepSeek**，移除 Anthropic 与选择入口（#23）
+- [x] **修复中断生成后无法继续发送消息**（#24）
+- [x] **修复 AI 设置页文字裁切、卡片宽度不一致**（#25）
+- [x] **AI 聊天自动贴底 + 回到底部按钮**（#26）
+- [x] **Fabric API 去重 + 受保护依赖**（#22）
+- [x] **CurseForge 下载重试、错误归类、镜像兜底 + 配置官方 Key**（#21）
+- [x] **MobileGlues 二进制核对（官方 V2.0.0）+ ANGLE 开关**（#29）
+- [ ] 议题 #20 图标替换：审计已完成，等待明确授权
+- [ ] 获取 MobileGlues `latest.log`，定位紫黑棋盘格（缺失贴图）
+
+### 27.4.0
 
 - [x] **「自动」渲染器**（设置里：自动 / MobileGlues / Ironized Zink / GL4ES）
 - [x] **MobileGlues 的 OpenGL 版本可选**（3.2 ~ 4.6，默认 4.0）

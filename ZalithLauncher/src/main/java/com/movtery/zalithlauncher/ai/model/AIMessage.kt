@@ -25,14 +25,14 @@ import java.util.UUID
  * 对话角色。
  *
  * 这是**与 Provider 无关**的统一模型：各 Provider 在发送前自行映射成
- * OpenAI 的 `user/assistant/tool` 或 Anthropic 的 `content block`。
+ * 自家协议需要的消息结构（当前内置的 DeepSeek / OpenAI 都走 `user/assistant/tool`）。
  */
 @Serializable
 enum class AIRole {
     SYSTEM,
     USER,
     ASSISTANT,
-    /** 工具执行结果（OpenAI 用独立的 tool 消息，Anthropic 包在 user 里）*/
+    /** 工具执行结果（OpenAI 兼容协议里是独立的 tool 消息）*/
     TOOL,
 }
 
@@ -88,6 +88,13 @@ data class AIMessage(
     val toolResults: List<AIToolResult> = emptyList(),
     /** 是否正在流式接收中 */
     val streaming: Boolean = false,
+    /**
+     * 是否被用户主动中止。
+     *
+     * 与 [error] 区分开：中止是**用户预期内**的操作，不应该显示成红色错误，
+     * 但界面上要能看出来「这条回答没有说完」。
+     */
+    val interrupted: Boolean = false,
     /** 本条消息出错时的提示（展示给用户）*/
     val error: String? = null,
 ) {

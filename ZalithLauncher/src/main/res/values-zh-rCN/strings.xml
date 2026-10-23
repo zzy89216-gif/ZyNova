@@ -143,6 +143,7 @@
     <string name="error_bad_gateway">(%s) 上游服务器返回了无效响应</string>
     <string name="error_service_unavailable">(%s) 服务器暂时无法处理请求</string>
     <string name="error_gateway_timeout">(%s) 服务器未能及时收到响应</string>
+    <string name="error_download_source_unavailable">所有下载源暂时不可用，请检查网络或稍后重试</string>
     <!--  启动页面  -->
     <string name="splash_screen_unpack_desc">启动器需要安装这些内容，才能够确保 Minecraft 能够正常启动。这些内容已经包含在应用中，需要解压之后才能正常使用，点击下方按钮，开始解压并更新这些内容。</string>
     <string name="splash_screen_installing">启动器正在解压这些内容，解压完成后将自动进入主界面，请耐心等待。</string>
@@ -1541,6 +1542,8 @@
     <string name="settings_renderer_mobileglues_summary">把桌面 OpenGL 转译到设备的 OpenGL ES 3.x</string>
     <string name="settings_renderer_mobileglues_gl_version_title">OpenGL 版本</string>
     <string name="settings_renderer_mobileglues_gl_version_summary">MobileGlues 向游戏上报的 OpenGL 版本，默认 4.0（与上游插件一致）。模组或光影包要求更高的 OpenGL 时调高；如果驱动跑不动这个版本、出现画面异常或进不去游戏，就调低。</string>
+    <string name="settings_renderer_mobileglues_angle_title">ANGLE 渲染后端</string>
+    <string name="settings_renderer_mobileglues_angle_summary">默认关闭。如果出现云层穿透地形、水/粒子/火焰遮挡异常，保持关闭——这是 ANGLE 这类严格 ES 宿主上已知的深度纹理缺陷（上游 issue #57）。只有原生 GLES 驱动本身有问题时，才需要打开它。</string>
     <string name="ai_title">AI 助手</string>
     <string name="ai_config_title">AI 设置</string>
     <string name="ai_model_not_selected">尚未选择模型</string>
@@ -1605,7 +1608,7 @@
     <string name="ai_untitled_conversation">新对话</string>
     <string name="ai_tool_write">写操作</string>
     <string name="ai_privacy_title">关于数据流向</string>
-    <string name="ai_privacy_message">启用 AI 功能后，以下内容会**发送到你配置的 AI 服务商**（OpenAI / Anthropic / 你填写的自定义地址）：\n\n· 游戏日志与崩溃报告\n· 模组列表与实例信息\n· 配置文件内容\n· 你输入的文字\n\nAI 产生的工具调用与执行结果也会一并发送。\n\n**ZyNova 不存储、不中转这些内容**，API Key 只保存在本机。如果你填写的是第三方中转服务，请注意其隐私政策。</string>
+    <string name="ai_privacy_message">启用 AI 功能后，以下内容会**发送到你配置的 AI 服务商**（DeepSeek / OpenAI / 你填写的自定义地址）：\n\n· 游戏日志与崩溃报告\n· 模组列表与实例信息\n· 配置文件内容\n· 你输入的文字\n\nAI 产生的工具调用与执行结果也会一并发送。\n\n**ZyNova 不存储、不中转这些内容**，API Key 只保存在本机。如果你填写的是第三方中转服务，请注意其隐私政策。</string>
     <string name="ai_privacy_confirm">我知道了</string>
     <string name="ai_audit_title">操作审计</string>
     <string name="ai_audit_note">记录 AI 执行的每一次写操作（改设置、写文件、删模组、装资源等），方便事后核对。</string>
@@ -1614,4 +1617,6 @@
     <string name="ai_audit_clear">清空</string>
     <string name="ai_audit_empty">还没有写操作记录。</string>
     <string name="ai_audit_share_failed">无法分享导出文件。</string>
+    <string name="ai_stopped">已停止生成</string>
+    <string name="ai_scroll_to_bottom">回到底部</string>
 </resources>

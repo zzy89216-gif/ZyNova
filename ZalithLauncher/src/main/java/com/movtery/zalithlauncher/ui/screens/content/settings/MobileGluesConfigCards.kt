@@ -28,6 +28,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.ListSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCardColumn
+import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 
 /**
  * MobileGlues 的配置面板
@@ -35,7 +36,9 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCa
  * 只在渲染器列表里选中 MobileGlues 时展示，位于渲染器选择卡片的下方 ——
  * 与 Ironized Zink 选中后展开预设面板是同一个位置、同一个交互。
  *
- * 面板目前**只提供一个 OpenGL 版本下拉**。
+ * 面板提供两个选项：
+ * 1. **OpenGL 版本**下拉；
+ * 2. **ANGLE 渲染后端**开关（默认关闭）。
  *
  * ⚠️ 这里没有用环境变量，而是走 MobileGlues 自己的 `config.json`
  * （原因见 `game/renderer/mobileglues/MobileGluesConfig.kt` 的类注释）：
@@ -46,13 +49,21 @@ fun MobileGluesConfigCards(modifier: Modifier = Modifier) {
     SettingsCardColumn(modifier = modifier.fillMaxWidth()) {
         ListSettingsCard(
             modifier = Modifier.fillMaxWidth(),
-            position = CardPosition.Single,
+            position = CardPosition.Top,
             unit = AllSettings.mobileGluesGlVersion,
             items = MobileGluesGlVersion.entries,
             title = stringResource(R.string.settings_renderer_mobileglues_gl_version_title),
             summary = stringResource(R.string.settings_renderer_mobileglues_gl_version_summary),
             getItemText = { it.displayName },
             getItemId = { it.name }
+        )
+
+        SwitchSettingsCard(
+            modifier = Modifier.fillMaxWidth(),
+            position = CardPosition.Bottom,
+            unit = AllSettings.mobileGluesUseAngle,
+            title = stringResource(R.string.settings_renderer_mobileglues_angle_title),
+            summary = stringResource(R.string.settings_renderer_mobileglues_angle_summary)
         )
     }
 }

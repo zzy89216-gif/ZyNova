@@ -18,11 +18,14 @@
 
 package com.movtery.zalithlauncher.utils.network
 
+import com.movtery.zalithlauncher.game.download.engine.DownloadFailureException
+import com.movtery.zalithlauncher.game.download.engine.DownloadFailureReason
+import com.movtery.zalithlauncher.game.download.engine.findHttpCode
 import com.movtery.zalithlauncher.path.GLOBAL_CLIENT
 import com.movtery.zalithlauncher.path.GLOBAL_JSON
 import com.movtery.zalithlauncher.utils.logging.Logger
 import io.ktor.client.call.body
-import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ResponseException
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -142,8 +145,25 @@ suspend fun <T> withRetry(
 }
 
 private fun canRetry(e: Exception): Boolean {
+    //下载层已经完成归类：只对临时性失败再给一轮机会，403/404 等确定性失败不重试
+    if (e is DownloadFailureException) {
+        return when (e.reason) {
+            DownloadFailureReason.TIMEOUT,
+            DownloadFailureReason.SERVER_ERROR,
+            DownloadFailureReason.SOURCE_UNAVAILABLE,
+            DownloadFailureReason.NETWORK -> true
+            else -> false
+        }
+    }
+    //下载异常可能被包装，沿因果链取 HTTP 状态码
+    e.findHttpCode()?.let { code ->
+        return code == 408 || code == 425 || code == 429 || code in 500..599
+    }
     return when (e) {
-        is ClientRequestException -> e.response.status.value in 500..599 //5xx错误可重试
+        //ktor 的 5xx / 408 / 429 是临时性错误；4xx 不重试
+        is ResponseException -> e.response.status.value.let { code ->
+            code == 408 || code == 425 || code == 429 || code in 500..599
+        }
         is UnresolvedAddressException -> true // DNS解析失败，可能是临时性故障
         is IOException -> true //网络错误
         else -> false

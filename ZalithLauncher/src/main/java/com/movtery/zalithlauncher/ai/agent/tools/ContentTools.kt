@@ -23,6 +23,7 @@ import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.mod.AllModReader
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import java.io.File
 
 /**
@@ -125,6 +126,17 @@ internal fun contentTools(): List<AITool> = listOf(
         val modsDir = VersionFolders.MOD.getDir(version.getGameDir())
         val target = findModFile(modsDir, args.str("mod")!!)
             ?: throw IllegalStateException("在 mods 目录里找不到模组：${args.str("mod")}")
+
+        //Fabric API 是大量模组的必需前置，删掉后游戏会直接崩溃；
+        //与模组管理界面保持一致，识别必须使用元数据 ID，而不是显示名称
+        val targetMod = AllModReader(modsDir).readAllLocals()
+            .firstOrNull { it.file.absolutePath == target.absolutePath }
+        if (targetMod != null && ModIdentity.isDeleteProtected(targetMod)) {
+            throw IllegalStateException(
+                "Fabric API 是受保护的前置依赖，不能在模组管理中删除。如果需要更换版本，请通过下载页安装兼容版本。"
+            )
+        }
+
         if (!target.delete()) throw IllegalStateException("删除失败：${target.name}")
         "已删除模组：${target.name}"
     },

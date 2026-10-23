@@ -33,26 +33,32 @@ import com.movtery.zalithlauncher.setting.SettingsRegistry
 object AISettings : SettingsRegistry() {
 
     // ── 1. AI Provider ─────────────────────────────────────────────
-    /** 当前使用的 Provider 类型（可扩展） */
-    val provider = enumSetting("aiProvider", AIProviderType.OPENAI)
+    /**
+     * 当前使用的 Provider 类型。
+     *
+     * 默认 **DeepSeek**。旧版本存过已移除的 Provider 名时，
+     * [com.movtery.zalithlauncher.setting.unit.EnumSettingUnit] 会自动回退到这个默认值，
+     * 不会崩溃，也不会清空其他配置。
+     */
+    val provider = enumSetting("aiProvider", AIProviderType.DEEPSEEK)
 
     // ── 2. API Key（用户自备，本地保存）────────────────────────────
+    /** DeepSeek 的 API Key */
+    val deepSeekKey = stringSetting("aiDeepSeekKey", "")
+
     /** OpenAI（及任何 OpenAI 兼容服务）的 API Key */
     val openAIKey = stringSetting("aiOpenAIKey", "")
-
-    /** Anthropic 的 API Key */
-    val anthropicKey = stringSetting("aiAnthropicKey", "")
 
     // ── 3. Model（不硬编码；从 Provider 动态获取后由用户选择）──────
     /** 当前选中的模型 ID；为空表示尚未选择 */
     val model = stringSetting("aiModel", "")
 
     // ── 4. Base URL（有默认值，可自定义）──────────────────────────
+    /** DeepSeek 的 API 地址（默认 https://api.deepseek.com/v1）*/
+    val deepSeekBaseUrl = stringSetting("aiDeepSeekBaseUrl", AIProviderType.DEEPSEEK.defaultBaseUrl)
+
     /** OpenAI 的 API 地址（可换成任何 OpenAI 兼容服务）*/
     val openAIBaseUrl = stringSetting("aiOpenAIBaseUrl", AIProviderType.OPENAI.defaultBaseUrl)
-
-    /** Anthropic 的 API 地址 */
-    val anthropicBaseUrl = stringSetting("aiAnthropicBaseUrl", AIProviderType.ANTHROPIC.defaultBaseUrl)
 
     // ── 5. Agent 权限模式 ─────────────────────────────────────────
     /**
@@ -83,23 +89,23 @@ object AISettings : SettingsRegistry() {
 
     /** 取指定 Provider 的 API Key */
     fun getKey(type: AIProviderType = provider.getValue()): String = when (type) {
+        AIProviderType.DEEPSEEK -> deepSeekKey.getValue()
         AIProviderType.OPENAI -> openAIKey.getValue()
-        AIProviderType.ANTHROPIC -> anthropicKey.getValue()
     }
 
     /** 取指定 Provider 的 Base URL（去掉尾部斜杠）*/
     fun getBaseUrl(type: AIProviderType = provider.getValue()): String =
         when (type) {
+            AIProviderType.DEEPSEEK -> deepSeekBaseUrl.getValue()
             AIProviderType.OPENAI -> openAIBaseUrl.getValue()
-            AIProviderType.ANTHROPIC -> anthropicBaseUrl.getValue()
         }.trim().trimEnd('/').ifEmpty { type.defaultBaseUrl }
 
     /** 保存指定 Provider 的 API Key */
     fun saveKey(type: AIProviderType, value: String) {
         val v = value.trim()
         when (type) {
+            AIProviderType.DEEPSEEK -> deepSeekKey.save(v)
             AIProviderType.OPENAI -> openAIKey.save(v)
-            AIProviderType.ANTHROPIC -> anthropicKey.save(v)
         }
     }
 
@@ -107,8 +113,8 @@ object AISettings : SettingsRegistry() {
     fun saveBaseUrl(type: AIProviderType, value: String) {
         val v = value.trim().trimEnd('/').ifEmpty { type.defaultBaseUrl }
         when (type) {
+            AIProviderType.DEEPSEEK -> deepSeekBaseUrl.save(v)
             AIProviderType.OPENAI -> openAIBaseUrl.save(v)
-            AIProviderType.ANTHROPIC -> anthropicBaseUrl.save(v)
         }
     }
 

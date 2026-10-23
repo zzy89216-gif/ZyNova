@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.4.0)
+[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -34,27 +34,25 @@
 
 ---
 
-## ✨ 27.4.0 主要內容
-- **渲染器預設改為「自動」。** 渲染器清單現在是
-  **自動 / MobileGlues / Ironized Zink / GL4ES**。選「自動」時，每個實例會按
-  `MobileGlues → Ironized Zink → GL4ES` 的優先順序，挑一個**實際宣告支援該 Minecraft 版本**的渲染器。
-  三個內建渲染器的版本覆蓋範圍本來就不同（MobileGlues 要求 1.17+，只有 Ironized Zink 不限版本），
-  固定預設某一個必然對某些版本是錯的。「自動」**不會寫回任何設定**。
-  如果你自己指定了某個渲染器，啟動器會**尊重你的選擇**，只有它真的跑不動這個版本才會回退 ——
-  不會再每次啟動都彈一次無謂的「渲染器可能不相容」警告。
-- **離線與第三方登入回來了。** 登入選單恢復為 **微軟 / 離線 / 第三方** 三項並列。
-  底層完全沒有移除：後端實作、帳號資料結構與既有帳號全部原樣保留。
-- **MobileGlues 開放 OpenGL 版本選擇。** 選中它之後，下方會自動展開
-  **OpenGL 版本**下拉（3.2 – 4.6，預設 4.0）。取值與夾取規則照抄上游外掛與
-  MobileGlues 自身的 native 設定程式碼，因此介面顯示的與遊戲實際生效的完全一致。
-- **標題列名稱可自訂（議題 #18）**：設定 → 啟動器 → 啟動器名稱；**留空即使用預設名稱**，
-  只影響介面顯示，不影響應用程式名稱、正版登入與多人遊戲識別。
-- **同步上游修正**：`SDL_EGL_LIBRARY` 對已是絕對路徑的 EGL 名稱重複拼接（導致外掛渲染器失效）；
-  遊戲執行中 surface 重建後渲染狀態未恢復，畫面持續錯位；
-  主視窗的邏輯引用計數被加了兩次，真實視窗永遠不會被銷毀。
-- **另外修正**：按實例的渲染器設定原本沒有 *跟隨全域設定* 這一項，
-  一旦給某個實例指定過渲染器就再也切不回來。
+## ✨ 27.5.0 主要內容
+- **預設 AI 服務商改為 DeepSeek。** 服務商清單是 **DeepSeek / OpenAI**，Anthropic 及其選擇入口已移除。
+  兩者協定相同、共用實作，但 API Key 與 Base URL 分開儲存；模型仍然從服務商動態取得。
+  既有的 Key、自訂位址與模型選擇都會保留；舊版本存過的已移除服務商會自動回退到 DeepSeek。
+- **AI 聊天修正（議題 #24 / #26）。** 停止產生後不會再插入紅色錯誤、也不會卡在「正在產生」，
+  可以立刻繼續傳訊息，被中斷的回覆會標記為「已停止產生」；聊天會捲到**真正的底部**並跟隨串流輸出，
+  重新進入時回到最新訊息，往上翻時暫停跟隨，並多了「回到最底部」按鈕。
+- **AI 設定頁修正（議題 #25）。** 卡片統一寬度並加上內距，標題不再被圓角切掉，
+  較窄的卡片也和其他卡片對齊了。
+- **Fabric API 去重與保護（議題 #22）。** 以穩定 ID 辨識（`fabric-api` / Modrinth `P7dR8mSH` /
+  CurseForge `306612`），已安裝且版本相容時不再重複下載；模組管理隱藏刪除按鈕、
+  批次刪除會跳過、AI 也不能刪；刪除整個實例不受影響。
+- **CurseForge 下載更穩定（議題 #21）。** 逾時 / 連線重置 / 5xx 等暫時性錯誤最多重試 3 次，
+  403/404 不重試；錯誤訊息會區分「Key 缺少或失效」「檔案已下架」「鏡像不可用」「逾時」。
+  官方 Key 已設定在 Actions Secrets，同時保留 MCIM 鏡像備援。
+- **MobileGlues。** 隨包二進位已與官方 **V2.0.0** 逐位元組核對一致；新增「ANGLE 渲染後端」開關
+  （預設關閉），用來規避嚴格 ES 主機上已知的深度紋理缺陷（雲層 / 透明排序異常，上游 #57）。
 
+### 27.4.0
 ### 27.3.0
 
 - **登入改以 Microsoft 正版為優先。** 離線與第三方登入的**入口預設隱藏**，

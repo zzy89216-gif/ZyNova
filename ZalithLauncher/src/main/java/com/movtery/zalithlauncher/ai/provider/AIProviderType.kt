@@ -33,14 +33,19 @@ enum class AIProviderType(
     /** 默认 API 地址 */
     val defaultBaseUrl: String,
 ) {
-    /** OpenAI 官方，以及所有 OpenAI 兼容的第三方服务（自定义 Base URL 即可）*/
-    OPENAI("OpenAI", "https://api.openai.com/v1"),
+    /**
+     * DeepSeek（默认）
+     *
+     * 协议与 OpenAI Chat Completions 完全兼容，复用同一个 Provider 实现，
+     * 只是默认 Base URL 与本地保存的 Key / 地址分开。
+     */
+    DEEPSEEK("DeepSeek", "https://api.deepseek.com/v1"),
 
-    /** Anthropic Claude */
-    ANTHROPIC("Anthropic", "https://api.anthropic.com/v1");
+    /** OpenAI 官方，以及所有 OpenAI 兼容的第三方服务（自定义 Base URL 即可）*/
+    OPENAI("OpenAI", "https://api.openai.com/v1");
 
     companion object {
         fun fromName(name: String?): AIProviderType =
-            entries.firstOrNull { it.name == name } ?: OPENAI
+            entries.firstOrNull { it.name == name } ?: DEEPSEEK
     }
 }

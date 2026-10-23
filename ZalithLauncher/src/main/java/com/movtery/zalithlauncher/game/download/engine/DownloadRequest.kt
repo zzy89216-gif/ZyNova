@@ -48,6 +48,58 @@ fun Throwable.findHttpCode(): Int? =
         .firstOrNull()
         ?.code
 
+/**
+ * 下载失败的归类。
+ *
+ * 引擎只负责「把失败类型说清楚」，具体文案由 UI 层按 [DownloadFailureReason] 映射，
+ * 避免在下载层硬编码面向用户的提示。
+ */
+enum class DownloadFailureReason {
+    /** 网络超时 */
+    TIMEOUT,
+
+    /** HTTP 403：没有权限；CurseForge 侧通常意味着 API Key 未配置或已失效 */
+    FORBIDDEN,
+
+    /** HTTP 404/410：资源文件已被删除、下架或链接失效 */
+    NOT_FOUND,
+
+    /** 其他 4xx：请求本身有问题，重试无意义 */
+    CLIENT_ERROR,
+
+    /** 5xx：服务器内部错误 */
+    SERVER_ERROR,
+
+    /** 502/503/504：镜像或官方源暂时不可用 */
+    SOURCE_UNAVAILABLE,
+
+    /** DNS 解析失败、连接被重置等网络错误 */
+    NETWORK,
+
+    /** 文件完整性（sha1）校验失败 */
+    INTEGRITY,
+
+    /** 其他未知错误 */
+    UNKNOWN
+}
+
+/**
+ * 下载失败异常：既保留可读的 message（含各源失败原因），
+ * 又带结构化 [reason]，供上层给出准确的本地化提示。
+ */
+class DownloadFailureException(
+    val reason: DownloadFailureReason,
+    message: String,
+    cause: Throwable? = null
+) : IOException(message, cause)
+
+/** 沿因果链查找下载失败归类 */
+val Throwable.downloadFailureReason: DownloadFailureReason?
+    get() = generateSequence(this) { it.cause }
+        .filterIsInstance<DownloadFailureException>()
+        .firstOrNull()
+        ?.reason
+
 /** 全部源尝试完毕仍然失败时抛出，message 内含每个源的失败原因 */
 class AllSourcesFailedException(
     summary: String,

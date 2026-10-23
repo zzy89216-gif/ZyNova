@@ -29,6 +29,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.MCIM_MO
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.ModrinthSearcher
 import com.movtery.zalithlauncher.game.download.assets.utils.localizedModSearchKeywords
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.DownloadAssetsState
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.SearchAssetsState
 import com.movtery.zalithlauncher.utils.isChinaMainland
@@ -115,22 +116,28 @@ private fun hasCurseForgeApiKey(): Boolean = BuildKeys.CURSEFORGE_API.isNotBlank
 /**
  * CurseForge 的候选来源
  *
- * 镜像源默认只在中国地区使用。
+ * 规则：
+ * - **没有 Key**：官方接口必然 403，只保留 MCIM 镜像（镜像不需要 Key）；
+ * - **有 Key**：官方接口优先，镜像始终作为兜底，官方临时失败后仍可回退镜像；
+ *   只有用户显式选择「镜像优先」时才把镜像排到前面。
  *
- * ⚠️ 例外：**没有配置 CurseForge API Key** 时官方接口必然返回 403，
- * 这时即便不在中国大陆也必须保留镜像源，否则 CurseForge 侧永远搜不到任何资源，
- * 而「存档」这类只有 CurseForge 提供的资源类型会直接变成**固定空列表**。
+ * ⚠️ 没有 Key 时即便不在中国大陆也必须保留镜像源，否则 CurseForge 侧
+ * 永远搜不到任何资源，而「存档」这类只有 CurseForge 提供的资源类型会直接变成固定空列表。
  */
 fun mirroredCurseForgeSource(
-    enabledMirror: Boolean = isChinaMainland() || !hasCurseForgeApiKey()
+    enabledMirror: Boolean = true
 ): List<CurseForgeSearcher> {
-    val source = resolveMirrorPriority(AllSettings.assetPlatformSource.getValue(), mainland = enabledMirror)
-    val mirrorSource = mirrorCurseForgeSearcher.takeIf { enabledMirror }
-    return when (source) {
-        MirrorPriority.OFFICIAL_FIRST ->
-            listOfNotNull(curseForgeSearcher, mirrorSource)
-        MirrorPriority.MIRROR_FIRST ->
-            listOfNotNull(mirrorSource, curseForgeSearcher)
+    if (!hasCurseForgeApiKey()) {
+        return listOf(mirrorCurseForgeSearcher)
+    }
+    if (!enabledMirror) {
+        return listOf(curseForgeSearcher)
+    }
+    val mirrorFirst = AllSettings.assetPlatformSource.getValue() == MirrorSourceType.MIRROR_FIRST
+    return if (mirrorFirst) {
+        listOf(mirrorCurseForgeSearcher, curseForgeSearcher)
+    } else {
+        listOf(curseForgeSearcher, mirrorCurseForgeSearcher)
     }
 }
 

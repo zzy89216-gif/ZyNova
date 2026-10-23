@@ -212,6 +212,26 @@ object AllSettings : SettingsRegistry() {
         MobileGluesGlVersion.default.name
     )
 
+    /**
+     * MobileGlues 是否启用 ANGLE 渲染后端（`config.json` 的 `enableANGLE`）
+     *
+     * 默认 **关闭**（写 `DisableIfPossible`）。
+     *
+     * 原因：ANGLE 是「严格 ES 宿主」，MC 26.x 的透明合成管线会把 D32F 深度纹理
+     * 绑定到 `MIPMAP_LINEAR` 采样器上，而 ES 3.0 规定深度纹理在这种过滤器下
+     * 是 filter-incomplete —— 采样恒为 0，透明排序整体退化
+     * （云穿透地形、水/粒子/天气/火焰遮挡异常）。
+     * 上游 MobileGlues 已确认该问题（issue #57），修复仍在未合并的 PR #61 里，
+     * 官方二进制暂时没有。
+     *
+     * 因此这里把「用不用 ANGLE」交给用户：
+     * - 关闭（默认）：走设备原生 GLES 驱动，避开上述严格 ES 路径；
+     * - 打开：需要 ANGLE 的设备（个别驱动原生 GLES 有问题）可以自行开启。
+     *
+     * ⚠️ 这只是**绕过**已知的深度纹理缺陷，不是修复 MobileGlues 本身。
+     */
+    val mobileGluesUseAngle = boolSetting("mobileGluesUseAngle", false)
+
     //Game
     /**
      * 版本隔离

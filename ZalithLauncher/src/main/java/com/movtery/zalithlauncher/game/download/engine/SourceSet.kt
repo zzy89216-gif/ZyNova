@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.game.download.engine
 
-import java.net.UnknownHostException
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -76,6 +75,13 @@ class SourceSet(
 
         fun markNoRangeSupport() {
             noRange = true
+        }
+
+        /** 临时错误整体重试前复活该源（致命源不会走到这里） */
+        fun reviveForRetry() {
+            disabled = false
+            failCount.set(0)
+            lastReason = null
         }
     }
 
@@ -136,6 +142,19 @@ class SourceSet(
         }
     }
 
+    /**
+     * 临时错误重试前重置非致命源：
+     * 失败计数与禁用状态清零，让它们在新一轮里重新参与选源。
+     * 404/410、4xx 等致命源不会复活，避免对确定性失败做无意义重试。
+     */
+    fun resetForRetry() {
+        sources.forEach { source ->
+            if (!source.fatal) {
+                source.reviveForRetry()
+            }
+        }
+    }
+
     fun describe(): String =
         sources.joinToString("\n") { source ->
             "- ${source.url}${source.lastReason?.let { reason -> ": $reason" } ?: ""}"
@@ -145,8 +164,8 @@ class SourceSet(
         const val SOFT_FAILURE_LIMIT = 3
 
         fun disableImmediately(error: Throwable): Boolean = when (error) {
-            is HttpResultException -> error.code == 404 || error.code == 410
-            is UnknownHostException -> true
+            //4xx 是确定性失败（404/403/400…），不做重试；408/429 仍属临时性错误，交给上层退避重试
+            is HttpResultException -> error.code in 400..499 && error.code != 408 && error.code != 429
             else -> false
         }
     }

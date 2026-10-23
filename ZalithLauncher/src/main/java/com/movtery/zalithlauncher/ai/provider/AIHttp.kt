@@ -24,6 +24,7 @@ import com.movtery.zalithlauncher.path.createOkHttpClientBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -150,7 +151,15 @@ internal fun postJsonSse(
 
         val source = active.body?.source() ?: throw IOException("响应体为空")
         while (true) {
-            val line = source.readUtf8Line() ?: break
+            val line = try {
+                source.readUtf8Line()
+            } catch (e: IOException) {
+                // 用户点「停止」时，上面主动 close 了 response，阻塞读会抛 IOException。
+                // 这**不是**网络错误：协程已取消时 ensureActive() 会抛出 CancellationException，
+                // 否则上层会把它当成失败，在聊天里插入一条莫名其妙的错误消息（议题 #24）。
+                currentCoroutineContext().ensureActive()
+                throw e
+            } ?: break
             if (line.isEmpty()) continue
             if (!line.startsWith("data:")) continue
             val payload = line.removePrefix("data:").trim()

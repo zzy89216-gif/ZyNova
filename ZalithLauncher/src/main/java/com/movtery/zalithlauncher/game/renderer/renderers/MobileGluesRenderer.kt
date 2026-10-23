@@ -75,7 +75,12 @@ object MobileGluesRenderer : RendererInterface {
         //写配置放在这里：这个方法只在真正启动游戏时求值，
         //因此每次启动都会用用户当前选择的版本刷新一次 config.json
         val glVersion = MobileGluesGlVersion.of(AllSettings.mobileGluesGlVersion.state)
-        MobileGluesConfig.writeGlVersion(glVersion)
+        //ANGLE 默认关闭：严格 ES 宿主会触发 MC 26.x 的深度纹理过滤缺陷（上游 #57），
+        //用户可在「设置 → 渲染器 → MobileGlues」里自行打开
+        MobileGluesConfig.writeGlVersion(
+            glVersion = glVersion,
+            useAngle = AllSettings.mobileGluesUseAngle.state
+        )
 
         linkedMapOf(
             "LIBGL_ES" to "3",

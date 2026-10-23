@@ -21,8 +21,12 @@ package com.movtery.zalithlauncher.game.download.resources
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersionByLocalFile
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.game.version.mod.AllModReader
+import com.movtery.zalithlauncher.game.version.mod.LocalMod
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.game.version.saves.unpackSaveZip
 import com.movtery.zalithlauncher.path.PathManager
+import com.movtery.zalithlauncher.utils.file.calculateFileSha1
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CancellationException
 import org.apache.commons.io.FileUtils
@@ -314,10 +318,39 @@ object ResourceInstallManager {
         //同一个项目只保留一份：两个模组可能各自依赖同一前置的**不同版本**，
         //两份都装进 mods 目录会直接冲突（游戏可能崩，也可能加载错的那一份）
         val addedProjects = mutableMapOf<String, ResourceVersion>()
+        //同一个文件只保留一份：不同来源/不同项目键也可能解析出同名文件
+        val addedFileNames = mutableSetOf<String>()
 
         val info = instance.getVersionInfo()
         val minecraftVersion = info?.minecraftVersion ?: instance.getVersionName()
         val loaderName = info?.loaderInfo?.loader?.displayName
+
+        //当前实例该资源目录下已经存在的文件（同一实例内去重，不影响其它实例）
+        val targetFolder = File(instance.getGameDir(), type.classes.versionFolder.folderName)
+        val installedNames: Set<String> = if (type == ResourceType.MOD_PACK) {
+            //整合包没有单独的安装目录，不能拿游戏根目录的文件名做去重
+            emptySet()
+        } else {
+            installedFileNames(instance, type).mapTo(mutableSetOf()) { it.lowercase() }
+        }
+
+        //本地已安装的 Fabric API 只在真的遇到 Fabric API 依赖时才解析，
+        //避免每次安装普通资源都扫描一遍整个 mods 目录
+        var installedFabricApi: LocalMod? = null
+        var installedModsLoaded = false
+        suspend fun findInstalledFabricApi(): LocalMod? {
+            if (type != ResourceType.MOD) return null
+            if (!installedModsLoaded) {
+                installedModsLoaded = true
+                installedFabricApi = runCatching {
+                    AllModReader(targetFolder).readAllLocals()
+                        .firstOrNull { ModIdentity.isFabricApi(it) }
+                }.onFailure { e ->
+                    Logger.warning(TAG, "Failed to scan installed mods for Fabric API", e)
+                }.getOrNull()
+            }
+            return installedFabricApi
+        }
 
         suspend fun collect(current: ResourceVersion, isDependency: Boolean, required: Boolean) {
             val versionKey = "${current.provider}:${current.projectId}:${current.versionId}"
@@ -343,8 +376,44 @@ object ResourceInstallManager {
                 return
             }
 
-            //② 同一项目已加入过 → 不再重复安装
-            val projectKey = "${current.provider}:${current.projectId}"
+            val fileName = current.file.fileName
+            val fileNameKey = fileName.lowercase()
+
+            //② 同一实例里已经有这个文件 → 不重复下载。
+            //   资源页反复点「安装」、或者先装了模组再装依赖它的模组时，
+            //   以前会每次都把同一个 Fabric API 重新下载并覆盖一遍。
+            if (fileNameKey in installedNames) {
+                Logger.info(
+                    TAG,
+                    "Resource ${current.provider}:${current.projectId} is already installed as $fileName; skip downloading"
+                )
+                return
+            }
+
+            //③ 受保护依赖 Fabric API：按元数据 ID 找到已安装的副本，
+            //   并确认它与当前实例兼容后才跳过 —— 不能把所有 Fabric API 版本都当成兼容
+            if (ModIdentity.isFabricApiProject(current.provider, current.projectId)) {
+                val installed = findInstalledFabricApi()
+                if (
+                    installed != null &&
+                    isInstalledFabricApiCompatible(
+                        installed = installed,
+                        planned = current,
+                        minecraftVersion = minecraftVersion,
+                        loaderName = loaderName
+                    )
+                ) {
+                    Logger.info(
+                        TAG,
+                        "Fabric API is already installed as ${installed.file.name}; " +
+                                "skip downloading ${current.versionId}"
+                    )
+                    return
+                }
+            }
+
+            //④ 同一项目已加入过 → 不再重复安装
+            val projectKey = ModIdentity.canonicalProjectKey(current.provider, current.projectId)
             val existing = addedProjects[projectKey]
             if (existing != null) {
                 if (existing.versionId != current.versionId) {
@@ -354,6 +423,15 @@ object ResourceInstallManager {
                                 "skipping the duplicate version ${current.versionId} to avoid installing two copies"
                     )
                 }
+                return
+            }
+
+            //⑤ 同名文件只提交一次下载任务
+            if (!addedFileNames.add(fileNameKey)) {
+                Logger.warning(
+                    TAG,
+                    "File $fileName was already planned by another project; skip the duplicate download"
+                )
                 return
             }
 
@@ -398,6 +476,46 @@ object ResourceInstallManager {
             entries = plan,
             unresolvedRequiredDependencies = unresolvedRequired
         )
+    }
+
+    /**
+     * 判断已经安装的 Fabric API 是否与当前实例兼容
+     *
+     * 只有拿到它的真实版本信息（游戏版本、加载器）并经过 [isCompatibleWith] 判断，
+     * 才能认为它可以替代本次要下载的版本。网络查询失败时按「不兼容」处理，
+     * 避免把任意一个 Fabric API 文件都当成可用前置。
+     */
+    private suspend fun isInstalledFabricApiCompatible(
+        installed: LocalMod,
+        planned: ResourceVersion,
+        minecraftVersion: String,
+        loaderName: String?
+    ): Boolean {
+        //先确认本次准备安装的版本本身与实例兼容；
+        //不能因为「本地随便有一个 Fabric API」就跳过兼容性判断
+        if (!isCompatibleWith(planned, ResourceType.MOD, minecraftVersion, loaderName)) {
+            return false
+        }
+
+        //版本号一致时无需再查询：planned 已经通过上面的兼容性检查
+        if (installed.version?.equals(planned.displayName, ignoreCase = true) == true) {
+            return true
+        }
+
+        return runCatching {
+            val sha1 = calculateFileSha1(installed.file)
+            val platformVersion = getVersionByLocalFile(installed.file, sha1)
+                ?: return@runCatching false
+            val installedVersion = platformVersion.toResourceVersion(installed.id)
+            isCompatibleWith(
+                version = installedVersion,
+                type = ResourceType.MOD,
+                minecraftVersion = minecraftVersion,
+                loaderName = loaderName
+            )
+        }.onFailure { e ->
+            Logger.warning(TAG, "Failed to check the installed Fabric API version", e)
+        }.getOrDefault(false)
     }
 
     /**
@@ -483,9 +601,26 @@ object ResourceInstallManager {
         //1. 统一交给下载管理器（并发、重试、续传、校验都在这里完成）
         val cacheDir = File(PathManager.DIR_CACHE, "resources")
         val entryByFileName = linkedMapOf<String, ResourceInstallEntry>()
+        //同一实例内已经存在的文件不再提交下载任务。
+        //这里再做一次兜底：即使调用方绕过了 buildInstallPlan，也不会重复下载同一个模组。
+        val installedNames: Set<String> = if (type == ResourceType.MOD_PACK) {
+            //整合包没有单独的安装目录，不能拿游戏根目录的文件名做去重
+            emptySet()
+        } else {
+            installedFileNames(instance, type).mapTo(mutableSetOf()) { it.lowercase() }
+        }
         val requests = plan.mapNotNull { entry ->
             entry.version.file?.let { file ->
-                entryByFileName.putIfAbsent(file.fileName, entry)
+                val fileNameKey = file.fileName.lowercase()
+                if (fileNameKey in installedNames) {
+                    Logger.info(TAG, "Resource ${file.fileName} is already installed; skip downloading")
+                    return@mapNotNull null
+                }
+                //同名文件只提交一次下载请求（以前 putIfAbsent 只影响映射，不影响 requests）
+                if (entryByFileName.putIfAbsent(fileNameKey, entry) != null) {
+                    Logger.warning(TAG, "Duplicate download request for ${file.fileName}; skip it")
+                    return@mapNotNull null
+                }
                 ResourceDownloadRequest(
                     fileName = file.fileName,
                     downloadUrls = file.downloadUrls,
@@ -507,7 +642,7 @@ object ResourceInstallManager {
 
         //2. 必需的前置依赖下载失败 → 记录为缺失，交给上层提示用户
         val missingRequired = outcome.failures.mapNotNull { failure ->
-            val entry = entryByFileName[failure.request.fileName] ?: return@mapNotNull null
+            val entry = entryByFileName[failure.request.fileName.lowercase()] ?: return@mapNotNull null
             if (!entry.isDependency || !entry.required) return@mapNotNull null
             ResourceMissingDependency(
                 provider = entry.version.provider,

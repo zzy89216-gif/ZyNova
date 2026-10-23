@@ -74,7 +74,10 @@ fun quickInstallAsset(
     }
 
     val type = ResourceType.of(classes)
-    val taskId = "quick_install_${version.platformSha1() ?: version.platformFileName()}"
+    //任务 ID 带上实例名：同一个资源安装到不同实例时状态互相独立，
+    //否则第二个实例的安装会被当成重复任务直接忽略
+    val taskId = "quick_install_${currentVersion.getVersionName()}_" +
+            "${version.platformSha1() ?: version.platformFileName()}"
 
     TaskSystem.submitTask(
         Task.runTask(
@@ -166,7 +169,8 @@ fun quickInstallResource(
 
     TaskSystem.submitTask(
         Task.runTask(
-            id = "quick_install_${platform.name}_$projectId",
+            //带上实例名，保证不同实例的安装任务互不影响
+            id = "quick_install_${instance.getVersionName()}_${platform.name}_$projectId",
             task = { task ->
                 task.updateProgress(-1f)
                 task.updateMessage(androidText(R.string.download_assets_quick_install_resolving))

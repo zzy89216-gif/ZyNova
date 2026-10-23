@@ -39,9 +39,12 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.RandomAccessFile
+import java.net.ConnectException
+import java.net.UnknownHostException
 import java.nio.ByteBuffer
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.FileChannel
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -69,13 +72,22 @@ class FileDownloader(
     /** 本轮尝试中实际向文件写入了数据的候选源，用于校验失败时的诊断 */
     private val contributedSources = LinkedHashSet<String>()
 
+    /**
+     * 本轮尝试中最后一次导致源失败的异常。
+     * 分块阶段最终可能只抛出「Incomplete download」包装异常，真正的原因（403/404/超时）保存在这里，
+     * 用于失败归类与重试判定。
+     */
+    private val lastSourceFailure = AtomicReference<Throwable?>(null)
+
     suspend fun download() {
         val target = request.targetFile
         target.ensureParentDirectory()
         val partFile = File(target.parentFile, "${target.name}.part")
 
-        val hashRetries = if (request.sha1 != null) 2 else 1
-        repeat(hashRetries) { attempt ->
+        var integrityAttempts = if (request.sha1 != null) 2 else 1
+        var transientRetries = 0
+
+        while (true) {
             try {
                 runSingleAttempt(partFile)
                 verifyAndCommit(partFile, target)
@@ -85,6 +97,9 @@ class FileDownloader(
                 throw e
             } catch (e: Exception) {
                 partFile.delete()
+                //关闭被协程取消打断的连接时可能抛 ClosedByInterruptException，不能当成普通网络失败
+                if (e.isInterruptedByCancellation()) throw cancellationOf(e)
+
                 if (e is ShaMismatchException) {
                     //校验失败前实际写过的源可能正在返回坏数据，计入主机健康让整批避开它
                     synchronized(contributedSources) {
@@ -92,16 +107,33 @@ class FileDownloader(
                     }.forEach {
                         sourceHealth.recordCorruption(it)
                     }
+                    if (--integrityAttempts > 0) continue
+                    throw toDownloadFailure(e, e, target)
                 }
-                if (attempt == hashRetries - 1) {
-                    throw IOException("Failed to download ${target.name}\n${sources.describe()}", e)
+
+                val failure = lastSourceFailure.get() ?: e
+                if (failure.isTransientDownloadError() && transientRetries < MAX_TRANSIENT_RETRIES) {
+                    transientRetries++
+                    val delayMs = retryDelayMillis(transientRetries)
+                    Logger.warning(
+                        TAG,
+                        "Transient download failure: ${target.name}, retry $transientRetries/$MAX_TRANSIENT_RETRIES "
+                                + "after ${delayMs}ms (${failure.message})"
+                    )
+                    //让非致命的源重新获得机会；404 等确定性失败不会复活
+                    sources.resetForRetry()
+                    delay(delayMs.milliseconds)
+                    continue
                 }
+
+                throw toDownloadFailure(failure, e, target)
             }
         }
     }
 
     private suspend fun runSingleAttempt(partFile: File) {
         synchronized(contributedSources) { contributedSources.clear() }
+        lastSourceFailure.set(null)
         val chain = SegmentChain(request.expectedSize.takeIf { it > 0 } ?: -1L)
         withContext(Dispatchers.IO) {
             RandomAccessFile(partFile, "rw").use { randomAccess ->
@@ -233,6 +265,7 @@ class FileDownloader(
         } catch (e: Exception) {
             if (e.isInterruptedByCancellation()) throw cancellationOf(e)
             Logger.warning(TAG, "Failed: ${source.url}")
+            lastSourceFailure.set(e)
             source.recordFailure(e)
         }
     }
@@ -242,6 +275,90 @@ class FileDownloader(
 
     private fun CancellationException.initCauseIfNeeded(cause: Throwable): CancellationException =
         apply { initCause(cause) }
+
+    /**
+     * 是否属于「值得再试一次」的临时性错误：
+     * IOException、超时、连接重置、408/425/429、5xx。
+     * 403/404 等 4xx 是确定性失败，绝不重试。
+     */
+    private fun Throwable.isTransientDownloadError(): Boolean {
+        val code = findHttpCode()
+        if (code != null) {
+            return when (code) {
+                408, 425, 429 -> true
+                in 500..599 -> true
+                in 400..499 -> false
+                //2xx 却报错（例如空响应体）通常是链路抖动，仍按 IOException 处理
+                else -> this is IOException
+            }
+        }
+        if (isTimeoutError()) return true
+        return this is IOException
+    }
+
+    private fun Throwable.classifyDownloadFailure(): DownloadFailureReason {
+        val code = findHttpCode()
+        return when {
+            this is ShaMismatchException -> DownloadFailureReason.INTEGRITY
+            code == 403 -> DownloadFailureReason.FORBIDDEN
+            code == 404 || code == 410 -> DownloadFailureReason.NOT_FOUND
+            code == 502 || code == 503 || code == 504 -> DownloadFailureReason.SOURCE_UNAVAILABLE
+            code != null && code in 400..499 -> DownloadFailureReason.CLIENT_ERROR
+            code != null && code in 500..599 -> DownloadFailureReason.SERVER_ERROR
+            isTimeoutError() -> DownloadFailureReason.TIMEOUT
+            this is UnknownHostException || this is ConnectException -> DownloadFailureReason.NETWORK
+            this is IOException -> DownloadFailureReason.NETWORK
+            else -> DownloadFailureReason.UNKNOWN
+        }
+    }
+
+    private fun toDownloadFailure(
+        failure: Throwable,
+        wrapper: Throwable,
+        target: File
+    ): DownloadFailureException {
+        val reason = failure.classifyDownloadFailure()
+        return DownloadFailureException(
+            reason = reason,
+            message = buildFailureMessage(reason, failure, wrapper, target),
+            cause = failure
+        )
+    }
+
+    private fun buildFailureMessage(
+        reason: DownloadFailureReason,
+        failure: Throwable,
+        wrapper: Throwable,
+        target: File
+    ): String = buildString {
+        append("下载失败：").append(target.name).append('\n')
+        append(reason.readableDescription())
+        failure.message?.lineSequence()?.firstOrNull()?.takeIf { it.isNotBlank() }?.let {
+            append('\n').append(it)
+        }
+        if (wrapper !== failure) {
+            wrapper.message?.lineSequence()?.firstOrNull()
+                ?.takeIf { it.isNotBlank() && it != failure.message }
+                ?.let { append('\n').append(it) }
+        }
+        append('\n').append(sources.describe())
+    }
+
+    private fun DownloadFailureReason.readableDescription(): String = when (this) {
+        DownloadFailureReason.TIMEOUT -> "网络请求超时"
+        DownloadFailureReason.FORBIDDEN -> "服务器拒绝访问（HTTP 403），请检查 CurseForge API Key 是否有效"
+        DownloadFailureReason.NOT_FOUND -> "资源文件不存在（HTTP 404），可能已被删除或下架"
+        DownloadFailureReason.CLIENT_ERROR -> "请求被服务器拒绝（4xx）"
+        DownloadFailureReason.SERVER_ERROR -> "下载服务器返回错误（5xx）"
+        DownloadFailureReason.SOURCE_UNAVAILABLE -> "下载源暂时不可用（镜像或官方源返回 502/503/504）"
+        DownloadFailureReason.NETWORK -> "网络连接失败（DNS 解析失败、超时或连接被重置）"
+        DownloadFailureReason.INTEGRITY -> "文件完整性校验失败（sha1 不一致）"
+        DownloadFailureReason.UNKNOWN -> "未知错误"
+    }
+
+    /** 指数退避：500ms、1s、2s…，封顶 4s */
+    private fun retryDelayMillis(retry: Int): Long =
+        (MIN_RETRY_DELAY_MS shl (retry - 1)).coerceAtMost(MAX_RETRY_DELAY_MS)
 
     private fun executeSegment(source: SourceSet.Source, segment: SegmentChain.Segment, chain: SegmentChain, channel: FileChannel) {
         val rangeFrom = segment.position()
@@ -416,6 +533,12 @@ class FileDownloader(
         private const val STALLED_TICK_LIMIT = 5
         /** 全部源熔断冷却时最多原地等待的轮数，之后进入降级通道真实尝试 */
         const val MAX_ALL_SOURCES_WAITS = 2
+
+        /** 临时性错误（超时/5xx/连接重置等）的额外重试次数；4xx 不计入 */
+        const val MAX_TRANSIENT_RETRIES = 3
+        private const val MIN_RETRY_DELAY_MS = 500L
+        private const val MAX_RETRY_DELAY_MS = 4_000L
+
         private const val RANGE_HEADER = "Range"
         private const val CONTENT_RANGE = "Content-Range"
 

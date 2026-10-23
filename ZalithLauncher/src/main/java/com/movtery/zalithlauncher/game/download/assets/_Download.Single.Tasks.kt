@@ -23,6 +23,10 @@ import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.mcim.mapMCIMMirrorUrls
+import com.movtery.zalithlauncher.game.download.engine.DownloadFailureReason
+import com.movtery.zalithlauncher.game.download.engine.downloadFailureReason
+import com.movtery.zalithlauncher.game.download.engine.findHttpCode
+import com.movtery.zalithlauncher.game.download.engine.isTimeoutError
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -166,11 +170,42 @@ private fun downloadSingleFile(
 }
 
 fun mapExceptionToMessage(e: Throwable): AndroidStringText {
-    return when (e) {
-        is HttpRequestTimeoutException -> androidText(R.string.error_timeout)
-        is UnknownHostException, is UnresolvedAddressException -> androidText(R.string.error_network_unreachable)
-        is ConnectException -> androidText(R.string.error_connection_failed)
-        is ResponseException -> e.toLocal()
+    val reason = e.downloadFailureReason
+    val code = e.findHttpCode()
+
+    return when {
+        //超时：既包括 ktor 的请求超时，也包括 OkHttp 的 SocketTimeout / InterruptedIOException("timeout")
+        reason == DownloadFailureReason.TIMEOUT ||
+                e is HttpRequestTimeoutException ||
+                e.isTimeoutError() -> androidText(R.string.error_timeout)
+
+        reason == DownloadFailureReason.FORBIDDEN || code == 403 ->
+            androidText(R.string.error_forbidden, "403")
+
+        reason == DownloadFailureReason.NOT_FOUND || code == 404 || code == 410 ->
+            androidText(R.string.error_notfound, (code ?: 404).toString())
+
+        //镜像/官方源整体不可用（502/503/504），与普通的单次服务器错误区分开
+        reason == DownloadFailureReason.SOURCE_UNAVAILABLE ->
+            androidText(R.string.error_download_source_unavailable)
+
+        reason == DownloadFailureReason.NETWORK ->
+            androidText(R.string.error_connection_failed)
+
+        reason == DownloadFailureReason.SERVER_ERROR && code != null ->
+            androidText(R.string.error_internal_server_error, code.toString())
+
+        reason == DownloadFailureReason.CLIENT_ERROR && code != null ->
+            androidText(R.string.error_bad_request, code.toString())
+
+        e is ResponseException -> e.toLocal()
+        e is UnknownHostException || e is UnresolvedAddressException ->
+            androidText(R.string.error_network_unreachable)
+        e is ConnectException -> androidText(R.string.error_connection_failed)
+        code != null && code in 500..599 ->
+            androidText(R.string.error_internal_server_error, code.toString())
+        code != null && code in 400..499 ->
+            androidText(R.string.error_bad_request, code.toString())
         else -> {
             androidText(e.localizedMessage ?: e::class.simpleName ?: "Unknown error")
         }

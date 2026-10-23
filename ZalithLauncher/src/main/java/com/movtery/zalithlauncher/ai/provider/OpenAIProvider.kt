@@ -44,9 +44,15 @@ import kotlinx.serialization.json.putJsonObject
  * 由于大量第三方服务（DeepSeek、Moonshot、Ollama、各类中转）都兼容该协议，
  * 用户只需要改 Base URL 就能直接用，因此这里也照顾了常见的字段差异。
  */
-class OpenAIProvider : AIProvider {
-
-    override val type: AIProviderType = AIProviderType.OPENAI
+class OpenAIProvider(
+    /**
+     * 该实例服务的 Provider 类型。
+     *
+     * DeepSeek 与 OpenAI 使用同一套协议，因此共用这个实现，
+     * 只是默认 Base URL、本地保存的 Key / 地址分开存放。
+     */
+    override val type: AIProviderType = AIProviderType.OPENAI,
+) : AIProvider {
 
     override suspend fun listModels(apiKey: String, baseUrl: String): List<AIModelInfo> {
         val text = getForText(

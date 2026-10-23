@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.game.download.resources
 
-import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchResult
@@ -200,15 +199,15 @@ object ModrinthProvider : AbstractResourceProvider(
 /**
  * CurseForge 资源来源
  *
- * 需要 API Key 才可用，缺少密钥时不参与资源检索。
+ * 有官方 API Key 时走官方接口，官方失败可回退 MCIM 镜像；
+ * 没有 Key 时官方接口必然 403，此时由不需要 Key 的 MCIM 镜像兜底。
  */
 object CurseForgeProvider : AbstractResourceProvider(
     platform = Platform.CURSEFORGE,
     displayName = "CurseForge",
     supportedTypes = ResourceType.entries.toSet()
 ) {
-    override val isAvailable: Boolean
-        get() = BuildKeys.CURSEFORGE_API.isNotBlank()
+    override val isAvailable: Boolean = true
 }
 
 /**

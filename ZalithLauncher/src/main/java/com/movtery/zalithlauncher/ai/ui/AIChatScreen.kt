@@ -50,6 +50,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -59,6 +60,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,6 +75,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ai.AISettings
@@ -132,21 +135,53 @@ fun AIChatScreen(
     var deletingId by remember { mutableStateOf<String?>(null) }
 
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
-    // 是否已经贴底。用户往上翻看历史时不要把他拽回底部。
-    val atBottom by remember {
+    // 是否真的贴底：要求**最后一条完全可见**，而不是「最后一条只要露了个头」。
+    // 用户往上翻时它会立刻变 false，自动跟随随之暂停（议题 #26）。
+    val atBottom by remember(listState) {
         derivedStateOf {
-            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf true
-            last.index >= listState.layoutInfo.totalItemsCount - 1
+            val info = listState.layoutInfo
+            val last = info.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf true
+            last.index == info.totalItemsCount - 1 &&
+                last.offset + last.size <= info.viewportEndOffset + 8
         }
     }
 
-    // 新消息进来时：只有本来就在底部才自动跟随。
-    // 用 scrollToItem（瞬时）而不是 animateScrollToItem —— 流式输出时每来一段就做一次动画会又卡又晕。
-    LaunchedEffect(messages.size, messages.lastOrNull()?.text?.length, busy) {
-        if (messages.isNotEmpty() && atBottom) {
-            listState.scrollToItem(messages.lastIndex)
+    // 刚进入页面 / 刚切换对话 / 刚发出消息：无条件回到底部（不受当前滚动位置影响）。
+    // 单独用这个标记，避免用户翻历史时被「发送」以外的更新拽走。
+    var scrollToBottomRequested by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isCurrentScreen) {
+        if (isCurrentScreen) scrollToBottomRequested = true
+    }
+
+    // 新消息 / 流式输出 / 重新进入页面时同步滚动位置。
+    // 用 scrollToItem（瞬时）而不是 animateScrollToItem —— 流式输出时每来一段做一次动画会又卡又晕。
+    // ⚠️ scrollToItem(index) 只把「条目顶部」对齐到视口顶部；一条很长的回答会因此
+    // 只露出开头。这里传一个足够大的 scrollOffset，让它一直滚到列表真正的末尾。
+    LaunchedEffect(
+        messages.size,
+        messages.lastOrNull()?.id,
+        messages.lastOrNull()?.text?.length,
+        busy,
+        isCurrentScreen,
+        scrollToBottomRequested,
+    ) {
+        if (!isCurrentScreen || messages.isEmpty()) return@LaunchedEffect
+        if (scrollToBottomRequested || atBottom) {
+            scrollToBottomRequested = false
+            listState.scrollToItem(messages.lastIndex, Int.MAX_VALUE)
         }
+    }
+
+    /** 用户主动发送消息：不管当前翻到哪，都回到最新位置 */
+    fun send() {
+        val text = input
+        if (text.isBlank()) return
+        input = ""
+        scrollToBottomRequested = true
+        viewModel.send(text)
     }
 
     BaseScreen(
@@ -224,6 +259,25 @@ fun AIChatScreen(
                                 MessageBubble(message)
                             }
                         }
+
+                        // 往上翻看历史时给一个「回到底部」入口，点一下就恢复自动跟随
+                        if (!atBottom) {
+                            SmallFloatingActionButton(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(16.dp),
+                                onClick = {
+                                    scope.launch {
+                                        listState.animateScrollToItem(messages.lastIndex, Int.MAX_VALUE)
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_arrow_downward),
+                                    contentDescription = stringResource(R.string.ai_scroll_to_bottom)
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -242,11 +296,7 @@ fun AIChatScreen(
                         singleLine = false,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                         keyboardActions = KeyboardActions(onSend = {
-                            val text = input
-                            if (text.isNotBlank() && !busy) {
-                                input = ""
-                                viewModel.send(text)
-                            }
+                            if (input.isNotBlank() && !busy) send()
                         }),
                     )
                     Spacer(Modifier.width(8.dp))
@@ -261,11 +311,7 @@ fun AIChatScreen(
                     } else {
                         IconButton(
                             enabled = input.isNotBlank(),
-                            onClick = {
-                                val text = input
-                                input = ""
-                                viewModel.send(text)
-                            }
+                            onClick = { send() }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_send),
@@ -603,6 +649,14 @@ private fun MessageBubble(message: AIMessage) {
                     text = it,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
+                )
+            }
+            if (message.interrupted) {
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = stringResource(R.string.ai_stopped),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             if (message.streaming && message.text.isBlank()) {

@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.4.0**（`launcher_version_code=270400`）
+**当前版本：27.5.0**（`launcher_version_code=270500`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,116 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.5.0 AI 服务商与交互修复 + 模组依赖去重 + 下载稳定性 + MG 兼容开关 ✅
+
+**一、本版本做了什么（七件事）**
+
+1. **AI 默认服务商改为 DeepSeek**，移除 Anthropic 及其选择入口（议题 #23）
+2. **修复 AI 设置页布局与文字裁切**（议题 #25）
+3. **修复「停止生成后无法继续发送」**（议题 #24）
+4. **AI 聊天自动贴底 / 回到底部按钮**（议题 #26）
+5. **Fabric API 去重并设为受保护依赖**（议题 #22）
+6. **CurseForge 下载重试、错误归类与镜像兜底**（议题 #21）
+7. **MobileGlues 的 ANGLE 开关**（议题 #29；二进制已核对为官方 V2.0.0）
+
+**二、AI 服务商（议题 #23）**
+
+- `AIProviderType` 现在是 **`DEEPSEEK`（默认）/ `OPENAI`**，`ANTHROPIC` 已删除，
+  `AnthropicProvider.kt` 一并删除
+- DeepSeek 与 OpenAI 都是 Chat Completions 协议，**共用 `OpenAIProvider` 实现**，
+  只是构造时传入不同的 `type`（`AIProviders.builtin` 里各注册一个实例）
+- 存储：`aiDeepSeekKey` / `aiDeepSeekBaseUrl` 与 OpenAI 的分开；
+  `AISettings.getKey/getBaseUrl/saveKey/saveBaseUrl` 按类型分支
+- ⚠️ 旧版本存过 `ANTHROPIC` 的用户：`EnumSettingUnit` 找不到枚举时**回退到默认值**，
+  所以会自动变成 DeepSeek，不会崩溃，也不会清空其它键
+- 模型仍然**动态获取**，不硬编码任何模型名
+
+**三、AI 设置页（议题 #25）**
+
+- 根因不是字体，而是**卡片没有内边距**：`Card` 会把内容裁到圆角内，
+  标题贴边时圆角会把文字切掉一半；同时 `BackgroundCard` 默认按内容宽度收缩，
+  「操作审计」这类文字少的卡片明显比别人窄
+- 现在统一走 `ConfigCard`：`fillMaxWidth()` + 内容 `padding(16.dp)`；
+  标题/提示补上下间距与行高，页面底部留 32dp
+- ⚠️ 不要再往 `BackgroundCard` 里直接塞贴边内容，改这个页面时沿用 `ConfigCard`
+
+**四、AI 中断（议题 #24）**
+
+两个根因，缺一不可：
+
+1. 用户点「停止」时 `AIHttp.postJsonSse` 主动关闭 SSE 连接，阻塞读抛的是 `IOException`，
+   上层 `catch (Exception)` 把它当成失败，往聊天里插一条错误气泡。
+   现在：`catch (IOException)` 里先 `currentCoroutineContext().ensureActive()`，
+   协程已取消就抛 `CancellationException`
+2. 旧协程的 `catch/finally` 是异步执行的，可能在新一轮开始后才清掉
+   `_busy` / `_pendingConfirm`，覆盖新请求状态。
+   现在：`AIChatViewModel.runGeneration` 每次发送/停止自增，
+   `catch/finally` 只在**代号匹配**时改状态
+- 被中断的助手消息标记 `AIMessage.interrupted = true`，UI 显示「已停止生成」，
+  **不是**红色错误；`AIMessage` 新增字段有默认值，旧对话文件可正常读取
+
+**五、聊天滚动（议题 #26）**
+
+- `LazyListState.scrollToItem(index)` 只把**条目顶部**对齐视口顶部，
+  一条长回答会只露出开头，看起来像「没贴底」。
+  现在统一用 `scrollToItem(index, Int.MAX_VALUE)` 滚到列表真正的末尾
+- `atBottom` 判据改为「最后一条**完全可见**」（`offset + size <= viewportEndOffset + 8`），
+  用户往上翻时自动跟随暂停，翻回底部自动恢复
+- 重新进入页面（`isCurrentScreen`）、切换对话、发送消息都会强制回到底部；
+  往上翻时右下角出现「回到底部」浮动按钮
+
+**六、Fabric API 去重与保护（议题 #22）**
+
+- 稳定标识集中在 `game/version/mod/ModIdentity.kt`：
+  `fabric-api`（fabric.mod.json）、Modrinth `P7dR8mSH`、CurseForge `306612`
+  **绝不能用显示名称判断**
+- 去重三层：① 目标实例目录已有同名文件；② 同一项目（跨来源映射到同一 canonical key）；
+  ③ 计划内同名文件只提交一次；`install()` 里再兜底一次
+- 已安装的 Fabric API 只有在**版本信息可解析且 `isCompatibleWith` 判定兼容**时才跳过，
+  网络失败按「不兼容」处理（宁可重下，也不留一个版本不对的前置）
+- 保护范围：模组管理界面的单删按钮隐藏、批量删除过滤、AI `delete_mod` 拒绝；
+  **删除整个实例不受影响**（走 `VersionsManager`），保护只针对单文件删除
+- ⚠️ 不要把这套保护扩展到「所有前置」：只有 Fabric API 有稳定 ID 约定
+
+**七、CurseForge 下载（议题 #21）**
+
+- `DownloadFailureReason`：超时 / 403 / 404 / 其他 4xx / 5xx / 镜像不可用 /
+  网络 / 校验失败 / 未知；`DownloadFailureException` 带结构化 reason
+- 文件下载：1 次 + **3 次临时重试**，退避 0.5s / 1s / 2s（封顶 4s），可被协程取消；
+  **403/404 等 4xx 不重试**；重试前 `SourceSet.resetForRetry()` 只复活非致命源
+- CurseForge API：`withRetry(maxRetries = 2)`，仅 5xx / 408 / 425 / 429
+- 源顺序：无 Key → 只用 MCIM 镜像（官方必 403）；有 Key → 官方优先、镜像兜底；
+  只有用户显式选「镜像优先」才把镜像排前
+- 镜像域名补上 `mediafilez.forgecdn.net`（官方 API 现在常用这个 CDN）
+- 已在仓库 Secrets 配置 `CURSEFORGE_API_KEY`（值不落仓库），APK 会编进
+  `BuildKeys.CURSEFORGE_API`；**仍然保留镜像兜底**
+
+**八、MobileGlues（议题 #29）**
+
+- 随包二进制与官方 **V2.0.0** APK 内文件 **SHA256 逐字节一致**（4 个 ABI，
+  arm64 `3c87948b…d385fcd`）。上游最新 Release 仍是 V2.0.0，
+  `main` 只多 3 个提交且只改 `gl/multidraw.cpp`
+- 与透明排序相关的修复仍在未合并的 PR #61（issue #57），**没有官方二进制**，
+  本机无法编译 native，因此**不改 MG**
+- 新增 `AllSettings.mobileGluesUseAngle`（默认 `false`）：
+  `MobileGluesConfig.writeGlVersion(glVersion, useAngle)` 每次启动把 `enableANGLE`
+  显式写成 0（DisableIfPossible）或 1（EnableIfPossible）
+- ⚠️ 顺带修正了 `MobileGluesConfig` 的一个真实缺陷：原来文件不存在时
+  `readConfig()` 返回空对象，导致**只写 `customGLVersion` 一个键**，
+  与注释承诺的「写完整默认配置」不符；现在先补 `DEFAULTS` 再覆盖两个受管键
+- 截图的紫黑棋盘格是**缺失贴图占位图**，定位需要
+  `<外部私有目录>/mobileglues/latest.log`；上线后让用户先取日志
+
+**九、议题 #20（图标）审计结论**
+
+- 当前实际构建使用的是旧角色图标：`mipmap-*/ic_launcher.webp`（mipmap-anydpi-v26 走
+  `drawable/ic_launcher_foreground` / `_bg` / `_monochrome`），Manifest 引用
+  `@mipmap/ic_launcher` 与 `@mipmap/ic_launcher_round`
+- 新图标（深蓝圆角底 + 草方块 + 青色星形 + 蓝色轨迹）已在议题附件中，但议题本身要求
+  「先审计、未经明确授权不批量替换」，因此本轮**不改任何图标**
+- 实施时需要：从同一源图生成 5 个密度 + 自适应前景（留安全区）+ 单色层；
+  同步检查启动页/关于页/AI 页面里引用品牌图的位置；README 截图是否需要重拍
 
 ### 27.4.0 自动渲染器 + 恢复登录入口 + MobileGlues 的 OpenGL 版本 ✅
 
@@ -1225,7 +1335,7 @@ HTTP 403
 
 1. **Boat 后端双端**：用户曾想接入 Boat 后端（像老版 FCL 一样），目前未开始。
 2. ~~**AI 助手**~~ ✅ **已完成（27.1.0 – 27.1.2）**：
-   已实现**全局 AI Agent**——Provider（OpenAI / Anthropic，可扩展）、模型从服务商动态获取、
+   已实现**全局 AI Agent**——Provider（DeepSeek / OpenAI，可扩展）、模型从服务商动态获取、
    流式对话、历史对话与侧边栏、25 个可真正执行操作的工具（读日志 / 管模组 / 改启动器设置 /
    写文件 / 装资源 / 启动游戏）。比当初设想的「接入 OpenAI 接口 + 自动加模组写配置」范围大得多。
    后续可继续扩充工具集。
@@ -1263,22 +1373,28 @@ HTTP 403
    上游主线在 V2.0.0 之后有一个未发布提交 `0f1e10b5`
    （multidraw 间接命令缓冲的 grow-only 修复），**没有对应官方二进制**；
    要采用必须自行用 Android NDK 编译 `MobileGlues-cpp`，本机不具备条件。
-6. **配置 `CURSEFORGE_API_KEY`（已知遗留，26.2.3 起已有兜底，维护者决定暂不处理）**：
-   - 仓库的 Actions Secrets 里**没有配置** `CURSEFORGE_API_KEY`，
-     所以打包出来的 APK 调 CurseForge 官方接口**必然返回 403**；
-     26.2.3 之前，「所有平台」聚合搜索里的 CurseForge 侧实际上一直是**空的**
-     （当时没人注意到，因为 Mod/整合包/资源包/光影在 Modrinth 上也有，
-     唯独「存档」只有 CurseForge 提供，于是固定显示空列表）
-   - **26.2.3 的兜底**：没有 API Key 时**始终保留 MCIM 镜像源**
-     （`mod.mcimirror.top`，不需要 Key），CurseForge 侧恢复可用；
-     不需要等 Secret 配置好
-   - 如果以后想让官方接口也生效，到
-     `Settings → Secrets and variables → Actions` 添加同名 Secret 即可，
-     **不需要改代码**
-   - ⚠️ **密钥值只存在于 GitHub Secrets / 本地密钥文件**（`.curseforge_api.txt` 已被 `.gitignore` 忽略）。
+6. ~~**配置 `CURSEFORGE_API_KEY`**~~ ✅ **已解决（27.5.0）**：
+   - 仓库 Actions Secrets 里**已配置** `CURSEFORGE_API_KEY`，
+     打包出的 APK 会把它编进 `BuildKeys.CURSEFORGE_API`，官方接口不再固定 403
+   - 没有 Key 时**仍然**走 MCIM 镜像兜底（`mod.mcimirror.top`，不需要 Key）；
+     有 Key 时官方优先、镜像兜底
+   - ⚠️ **密钥值只存在于 GitHub Secrets**。
      **绝对不要写进本文件、CHANGELOG、README、Issue、Release 说明或任何提交**
    - 另需知道：CurseForge API Key 会被**打进 APK**（上游设计如此，客户端必须自带），
      但这**不是**可以在文档里公开它的理由
+7. **议题 #20 图标替换** ⬜（**等待明确授权**）：
+   - 审计已完成（见 27.5.0 章节）：当前仍是旧角色图标，新图标未使用
+   - 议题正文明确要求「先审计与规划、未经明确授权不批量替换」，因此**没有动任何图标**
+   - 授权后按 27.5.0 章节列的清单执行：5 个密度 + 自适应前景/背景/单色层 + 文档截图核查
+8. **议题 #29 MobileGlues 火焰异常** ⬜（需要用户日志）：
+   - 二进制已核对为官方 V2.0.0，无更新可同步；上游修复仍在未合并 PR #61
+   - 截图里的紫黑棋盘格是 missingno（缺失贴图），**必须**先拿到
+     `<外部私有目录>/mobileglues/latest.log` 才能定位（含 GPU、驱动、MG 全部 Setting）
+   - 已提供 `设置 → 渲染器 → MobileGlues → ANGLE 渲染后端` 开关作为规避手段
+9. **MobileGlues ANGLE 的默认值需要真机数据** ⬜：
+   27.5.0 默认关闭 ANGLE（避开严格 ES 的深度纹理缺陷）。
+   若后续发现某些设备（如 Adreno 730/740）关掉 ANGLE 反而更差，
+   再考虑改成「按 GPU 自动」而不是直接改全局默认。
 
 ---
 
@@ -2114,7 +2230,12 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
+**最后更新**：2026-10-23（27.5.0 已开发完成 —— AI 默认服务商改为 DeepSeek 并移除 Anthropic、
+修复 AI 设置页裁切 / 停止后无法继续发送 / 聊天不自动贴底；Fabric API 按稳定标识去重并设保护；
+CurseForge 下载补临时重试与错误归类、配置官方 API Key；MobileGlues 核对为官方 V2.0.0 并新增 ANGLE 开关；
+议题 #20 仅完成审计。）
+
+**27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
 MobileGlues → Ironized Zink → GL4ES 之间自动挑一个）；
 恢复离线 / 第三方认证入口；MobileGlues 新增 OpenGL 版本下拉

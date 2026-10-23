@@ -80,9 +80,11 @@ class SourceSetTest {
     }
 
     @Test
-    fun `dns failure counts as fatal`() {
+    fun `dns failure is retryable instead of fatal`() {
+        //DNS 解析失败可能是临时故障（切换网络、解析服务抖动），
+        //因此不再立刻熔断整个源，而是计入软失败，交给文件级退避重试
         val sources = SourceSet(listOf("gone"))
-        assertFalse(sources.acquire(false)!!.recordFailure(fault(-1)))
+        assertTrue(sources.acquire(false)!!.recordFailure(fault(-1)))
     }
 
     @Test

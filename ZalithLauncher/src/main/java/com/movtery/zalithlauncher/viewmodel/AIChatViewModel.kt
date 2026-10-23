@@ -36,6 +36,7 @@ import com.movtery.zalithlauncher.ai.model.AIToolResult
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -98,6 +99,15 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
     private var runJob: Job? = null
     private var confirmDeferred: CompletableDeferred<Boolean>? = null
 
+    /**
+     * 当前这轮生成的代号。
+     *
+     * ⚠️ 解决「停止后立刻再发消息，被上一轮的收尾逻辑污染」的竞态（议题 #24）：
+     * 旧协程的 `catch/finally` 是**异步**执行的，可能在新一轮已经开始后才跑到。
+     * 每次发送/停止都自增它，收尾时只要对不上号，就说明自己已经过期，什么都不要改。
+     */
+    private var runGeneration = 0
+
     init {
         // 打开最近一次对话；如果没有就新建一个。
         // 读文件放到 IO 上，别在 ViewModel 构造时卡主线程。
@@ -152,6 +162,7 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
         _busy.value = true
         persistAsync()
 
+        val generation = ++runGeneration
         runJob = viewModelScope.launch {
             var currentAssistantId: String? = null
 
@@ -245,27 +256,49 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                         AgentEvent.Done -> Unit
                     }
                 }
+            } catch (e: CancellationException) {
+                // 用户点了「停止」：这是正常流程，**不能**当成错误往聊天里塞一条红字。
+                // 正在流式的助手消息标记为「已中止」，让用户知道这轮没说完。
+                if (generation == runGeneration) {
+                    currentAssistantId?.let { id ->
+                        replaceMessage(id) { it.copy(streaming = false, interrupted = true) }
+                    }
+                }
+                throw e
             } catch (e: Exception) {
-                _messages.value = _messages.value + AIMessage(
-                    role = AIRole.ASSISTANT,
-                    error = e.message ?: e::class.simpleName ?: GlobalContext.getString(R.string.ai_error_unknown),
-                )
+                // 过期协程的异常不要再写进界面，否则会盖掉新一轮的内容
+                if (generation == runGeneration) {
+                    _messages.value = _messages.value + AIMessage(
+                        role = AIRole.ASSISTANT,
+                        error = e.message ?: e::class.simpleName ?: GlobalContext.getString(R.string.ai_error_unknown),
+                    )
+                }
             } finally {
-                _busy.value = false
-                _pendingConfirm.value = null
-                persistAsync()
+                // 只有「当前这一轮」才有资格收尾；旧协程晚到的 finally 不能把新一轮的
+                // busy / 待确认状态清掉（那正是「停止后再发送就报错/卡住」的根因之一）
+                if (generation == runGeneration) {
+                    _busy.value = false
+                    _pendingConfirm.value = null
+                    persistAsync()
+                }
             }
         }
     }
 
     /** 中止当前这一轮 */
     fun stop() {
+        // 先作废旧代号，旧协程随后的 catch/finally 就会自动跳过
+        runGeneration++
         runJob?.cancel()
         runJob = null
         confirmDeferred?.complete(false)
         confirmDeferred = null
         _pendingConfirm.value = null
         _busy.value = false
+        // 界面上的「正在输入」必须立刻停掉，不能等旧协程的收尾
+        _messages.value = _messages.value.map { msg ->
+            if (msg.streaming) msg.copy(streaming = false, interrupted = true) else msg
+        }
         persistAsync()
     }
 

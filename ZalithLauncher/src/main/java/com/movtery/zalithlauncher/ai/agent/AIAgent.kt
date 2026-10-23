@@ -305,7 +305,7 @@ object AIAgent {
 
 /**
  * 把 Provider 分片吐出来的工具调用拼成完整的 [AIToolCall]。
- * OpenAI 与 Anthropic 都会把 id / name / 参数拆成多块。
+ * 兼容协议会把 id / name / 参数拆成多块，这里负责拼回完整的一次调用。
  */
 private class ToolCallAccumulator {
     private var id: String? = null

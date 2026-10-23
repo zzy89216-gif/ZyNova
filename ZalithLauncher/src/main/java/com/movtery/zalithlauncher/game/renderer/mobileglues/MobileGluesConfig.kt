@@ -60,6 +60,15 @@ object MobileGluesConfig {
     /** native 端读取的 OpenGL 版本键名（整数，如 46 = 4.6） */
     private const val KEY_GL_VERSION = "customGLVersion"
 
+    /** native 端读取的 ANGLE 配置键名（0=DisableIfPossible，1=EnableIfPossible） */
+    private const val KEY_ANGLE = "enableANGLE"
+
+    /** ANGLE：能用也不用（默认；走设备原生 GLES） */
+    private const val ANGLE_DISABLE_IF_POSSIBLE = 0
+
+    /** ANGLE：能用就用（上游插件的默认值） */
+    private const val ANGLE_ENABLE_IF_POSSIBLE = 1
+
     /**
      * MobileGlues 目录。
      *
@@ -72,26 +81,42 @@ object MobileGluesConfig {
     val configFile: File get() = File(directory, "config.json")
 
     /**
-     * 把用户选择的 OpenGL 版本写进 `config.json`。
+     * 把用户选择的 OpenGL 版本与 ANGLE 开关写进 `config.json`。
      *
-     * - 文件已存在 → **只覆盖 `customGLVersion` 一个键**，其余键（含启动器不认识的键）
-     *   原样保留。这与上游插件 `MGConfigCodec.encode()` 的做法一致：
-     *   不认识的键要写回去，否则每保存一次就等于在删别人的设置。
-     * - 文件不存在 → 先写一份与上游插件 `MGConfig.Default` 等价的完整配置。
+     * - 文件已存在 → 只覆盖 [KEY_GL_VERSION] 与 [KEY_ANGLE] 两个键，
+     *   其余键（含启动器不认识的键）原样保留。这与上游插件 `MGConfigCodec.encode()`
+     *   的做法一致：不认识的键要写回去，否则每保存一次就等于在删别人的设置。
+     * - 文件不存在 / 损坏 → 先写一份与上游插件 `MGConfig.Default` 等价的完整配置。
      *   **不能只写一个键**：native 对缺失的键是「回落到自己的硬编码默认值」，
-     *   而它与插件默认值并不相同（例如缺 `enableANGLE` 会被解析成 `DisableIfPossible`，
-     *   而插件默认是 `EnableIfPossible`），只写一个键会悄悄改掉别的行为。
+     *   而它与插件默认值并不相同（例如缺 `enableANGLE` 会被解析成 `DisableIfPossible`），
+     *   只写一个键会悄悄改掉别的行为。
      *
+     * ⚠️ `enableANGLE` 由 [com.movtery.zalithlauncher.setting.AllSettings.mobileGluesUseAngle]
+     * 统一决定：默认关闭，因为 ANGLE 属于「严格 ES 宿主」，
+     * 会触发 MC 26.x 的深度纹理 filter-incomplete 问题（上游 issue #57）。
+     *
+     * @param useAngle 是否启用 ANGLE
      * @return 是否写入成功。失败只记日志，**不会**阻塞游戏启动
      */
-    fun writeGlVersion(glVersion: MobileGluesGlVersion): Boolean = runCatching {
+    fun writeGlVersion(
+        glVersion: MobileGluesGlVersion,
+        useAngle: Boolean = false,
+    ): Boolean = runCatching {
         if (!directory.ensureDirectorySilently()) {
             Logger.warning(TAG, "Cannot create MobileGlues directory: ${directory.absolutePath}")
             return false
         }
 
         val root = readConfig() ?: JsonObject()
+        //缺失的键先按插件默认值补齐，再覆盖启动器自己管理的两个键
+        DEFAULTS.forEach { (key, value) ->
+            if (!root.has(key)) root.addProperty(key, value)
+        }
         root.addProperty(KEY_GL_VERSION, glVersion.wire)
+        root.addProperty(
+            KEY_ANGLE,
+            if (useAngle) ANGLE_ENABLE_IF_POSSIBLE else ANGLE_DISABLE_IF_POSSIBLE
+        )
 
         val target = configFile
         //先写临时文件再改名：中途失败也不会留下半截 JSON 让游戏读到损坏的配置
@@ -110,14 +135,14 @@ object MobileGluesConfig {
     }
 
     /**
-     * 读取现有 `config.json` 并补齐缺失的键。
+     * 读取现有 `config.json`。
      *
-     * 解析失败（损坏 / 不是 JSON 对象）时返回 `null`，由调用方重建一份默认配置 ——
-     * 宁可恢复默认，也不要让游戏读到坏文件。
+     * 文件不存在或解析失败（损坏 / 不是 JSON 对象）时返回 `null`，
+     * 由调用方重建一份默认配置 —— 宁可恢复默认，也不要让游戏读到坏文件。
      */
     private fun readConfig(): JsonObject? {
         val file = configFile
-        if (!file.isFile) return JsonObject()
+        if (!file.isFile) return null
 
         val parsed = runCatching {
             GSON.fromJson(file.readText(Charsets.UTF_8), JsonObject::class.java)
@@ -128,11 +153,8 @@ object MobileGluesConfig {
             return null
         }
 
-        //与上游插件一致：缺键时按「插件默认值」补齐，
+        //缺键时由调用方按「插件默认值」补齐，
         //而不是留给 native 回落到它自己的硬编码默认值（两者并不相同）
-        DEFAULTS.forEach { (key, value) ->
-            if (!parsed.has(key)) parsed.addProperty(key, value)
-        }
         return parsed
     }
 
@@ -143,8 +165,9 @@ object MobileGluesConfig {
      * （native 一律按 `> 0` 判断布尔）。
      */
     private val DEFAULTS: Map<String, Int> = linkedMapOf(
-        // enableANGLE：EnableIfPossible
-        "enableANGLE" to 1,
+        // enableANGLE：默认关闭（DisableIfPossible）。
+        // 实际值每次启动都会按 AllSettings.mobileGluesUseAngle 覆盖，这里只是兜底。
+        KEY_ANGLE to ANGLE_DISABLE_IF_POSSIBLE,
         // enableNoError：Auto
         "enableNoError" to 0,
         // enableExtTimerQuery：启用

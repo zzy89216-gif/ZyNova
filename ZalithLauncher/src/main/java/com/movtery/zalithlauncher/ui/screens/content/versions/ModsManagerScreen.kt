@@ -109,6 +109,7 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionFolders
 import com.movtery.zalithlauncher.game.version.mod.AllModReader
 import com.movtery.zalithlauncher.game.version.mod.LocalMod
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.game.version.mod.RemoteMod
 import com.movtery.zalithlauncher.game.version.mod.isDisabled
 import com.movtery.zalithlauncher.game.version.mod.isEnabled
@@ -705,11 +706,14 @@ fun ModsManagerScreen(
                                     viewModel.deleteAllOperation == DeleteAllOperation.None &&
                                     viewModel.selectedMods.isNotEmpty()
                                 ) {
-                                    viewModel.deleteAllOperation = DeleteAllOperation.Warning(
-                                        files = viewModel.selectedMods.map { mod ->
-                                            mod.localMod.file
-                                        }
-                                    )
+                                    //批量删除时同样跳过受保护依赖，避免用户「全选后删除」把它一起删掉
+                                    val deletableFiles = viewModel.selectedMods
+                                        .filterNot { ModIdentity.isDeleteProtected(it.localMod) }
+                                        .map { mod -> mod.localMod.file }
+                                    if (deletableFiles.isNotEmpty()) {
+                                        viewModel.deleteAllOperation =
+                                            DeleteAllOperation.Warning(files = deletableFiles)
+                                    }
                                 }
                             },
                             isModsSelected = viewModel.selectedMods.isNotEmpty(),
@@ -769,7 +773,10 @@ fun ModsManagerScreen(
                             },
                             onSwapMoreInfo = onSwapMoreInfo,
                             onDelete = { mod ->
-                                modsOperation = ModsOperation.Delete(mod.localMod)
+                                //Fabric API 是受保护的必需前置，不允许在模组管理界面直接删除
+                                if (!ModIdentity.isDeleteProtected(mod.localMod)) {
+                                    modsOperation = ModsOperation.Delete(mod.localMod)
+                                }
                             }
                         )
                     }
@@ -1147,6 +1154,8 @@ private fun ModItemLayout(
     val context = LocalContext.current
 
     val projectInfo = mod.projectInfo
+    //Fabric API 等受保护依赖不展示删除入口
+    val deleteProtected = ModIdentity.isDeleteProtected(mod.localMod)
 
     LaunchedEffect(mod) {
         //尝试加载该模组文件在平台上所属的项目
@@ -1315,14 +1324,16 @@ private fun ModItemLayout(
                     }
                 }
 
-                IconButton(
-                    modifier = Modifier.size(38.dp),
-                    onClick = onDelete
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_delete_outlined),
-                        contentDescription = stringResource(R.string.generic_delete)
-                    )
+                if (!deleteProtected) {
+                    IconButton(
+                        modifier = Modifier.size(38.dp),
+                        onClick = onDelete
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete_outlined),
+                            contentDescription = stringResource(R.string.generic_delete)
+                        )
+                    }
                 }
             }
         }

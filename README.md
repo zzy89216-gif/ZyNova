@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.4.0)
+[![Release](https://img.shields.io/badge/Release-27.5.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.0)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,8 +35,38 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.4.0
+## ✨ Highlights of 27.5.0
 
+- **DeepSeek is now the default AI provider.** The provider list is **DeepSeek / OpenAI**; the
+  Anthropic entry and its selection UI were removed. DeepSeek speaks the same Chat Completions
+  protocol, so it shares the implementation, but its API key and base URL are stored separately.
+  Models are still fetched from the provider at runtime — nothing is hard-coded. Existing keys,
+  custom base URLs and model choices are kept, and a stored provider that no longer exists simply
+  falls back to DeepSeek instead of crashing.
+- **AI chat fixes (issues #24 / #26).** Stopping a generation no longer leaves a red error bubble or
+  a stuck "busy" state — the next message can be sent immediately, and the interrupted reply is
+  marked *Generation stopped*. The chat now scrolls to the **real** bottom (not just the top of the
+  last message), follows streaming output, returns to the latest message when you reopen it, pauses
+  following while you scroll up, and offers a *jump to latest* button.
+- **AI settings page layout fixed (issue #25).** Cards now share one width and have proper inner
+  padding, so titles are no longer clipped by the rounded corners and the smaller cards stop
+  looking narrower than the rest.
+- **Fabric API is deduplicated and protected (issue #22).** Recognition uses stable IDs
+  (`fabric-api`, Modrinth `P7dR8mSH`, CurseForge `306612`) rather than display names. An already
+  installed, compatible Fabric API is not downloaded again; the mod manager hides its delete
+  button, bulk delete skips it, and the built-in AI agent refuses to delete it. Deleting a whole
+  instance still works normally.
+- **CurseForge downloads are more reliable (issue #21).** Transient failures (timeouts, resets,
+  408/425/429, 5xx) are retried up to three times with backoff; 403/404 are never retried. Errors
+  now say whether it was a missing/invalid API key, a removed file, an unavailable mirror or a
+  timeout. The official API key is configured through Actions Secrets, and the MCIM mirror is kept
+  as a fallback.
+- **MobileGlues.** The bundled binaries were verified byte-for-byte against the official
+  **V2.0.0** APK. A new **ANGLE backend** switch (off by default) lets you avoid the known
+  depth-texture limitation on strict ES hosts (upstream issue #57) that breaks cloud and
+  transparency ordering; turn it on only if your native GLES driver is the one causing trouble.
+
+### 27.4.0
 - **Renderer selection is automatic by default.** The renderer list is now
   **Auto / MobileGlues / Ironized Zink / GL4ES**. With *Auto*, each instance picks a renderer that
   actually declares support for its Minecraft version, in this order:

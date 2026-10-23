@@ -21,6 +21,7 @@ package com.movtery.zalithlauncher.ai.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -139,11 +140,11 @@ fun AIConfigScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             // ── 1. AI Provider ────────────────────────────────────
-            BackgroundCard {
+            ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_provider))
                 AIProviders.available.forEach { type ->
                     RadioCard(
@@ -165,7 +166,7 @@ fun AIConfigScreen(
             Spacer(Modifier.height(12.dp))
 
             // ── 2. API Key ────────────────────────────────────────
-            BackgroundCard {
+            ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_api_key))
 
                 OutlinedTextField(
@@ -207,7 +208,7 @@ fun AIConfigScreen(
             Spacer(Modifier.height(12.dp))
 
             // ── 3. Base URL ───────────────────────────────────────
-            BackgroundCard {
+            ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_base_url))
                 SmallOutlinedEditField(
                     modifier = Modifier.fillMaxWidth(),
@@ -226,7 +227,7 @@ fun AIConfigScreen(
             Spacer(Modifier.height(12.dp))
 
             // ── 4. Model（动态获取，不硬编码）──────────────────────
-            BackgroundCard {
+            ConfigCard {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -323,7 +324,7 @@ fun AIConfigScreen(
             Spacer(Modifier.height(12.dp))
 
             // ── 5. Agent 权限模式 ────────────────────────────────
-            BackgroundCard {
+            ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_permission))
                 AIPermissionMode.entries.forEach { mode ->
                     RadioCard(
@@ -346,7 +347,7 @@ fun AIConfigScreen(
             Spacer(Modifier.height(12.dp))
 
             // ── #12 操作审计 ──────────────────────────────────────
-            BackgroundCard {
+            ConfigCard {
                 SectionTitle(stringResource(R.string.ai_audit_title))
                 HintText(stringResource(R.string.ai_audit_note))
 
@@ -388,7 +389,7 @@ fun AIConfigScreen(
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(32.dp))
         }
     }
 
@@ -462,10 +463,26 @@ fun AIConfigScreen(
     }
 }
 
+/**
+ * 配置卡片统一外观。
+ *
+ * ⚠️ 两个细节缺一不可：
+ * 1. [Modifier.fillMaxWidth]：卡片默认按内容宽度收缩，会让「操作审计」这类
+ *    文字较少的卡片明显比别人窄，页面看起来参差不齐；
+ * 2. 内边距：Card 会把内容裁到圆角内，没有内边距时标题贴边，
+ *    圆角处就会把文字切掉一半（议题 #25 的「文字被垂直裁切」）。
+ */
+@Composable
+private fun ConfigCard(content: @Composable ColumnScope.() -> Unit) {
+    BackgroundCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), content = content)
+    }
+}
+
 @Composable
 private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(
-        modifier = modifier.padding(bottom = 6.dp),
+        modifier = modifier.padding(top = 2.dp, bottom = 8.dp),
         text = text,
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary
@@ -475,9 +492,10 @@ private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
 @Composable
 private fun HintText(text: String) {
     Text(
-        modifier = Modifier.padding(top = 4.dp),
+        modifier = Modifier.padding(top = 6.dp, bottom = 2.dp),
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        lineHeight = MaterialTheme.typography.bodySmall.fontSize * 1.4f
     )
 }
