@@ -849,13 +849,16 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 |---|---|
 | `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher.webp` | 传统方图标，5 个密度（48/72/96/144/192） |
 | `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher_round.webp` | 圆形图标，5 个密度 |
-| `drawable-nodpi/ic_launcher_bg.png` | 自适应图标**背景层**：画作放大铺满 + 高斯模糊扩边，蒙版任意形状都不露接缝 |
-| `drawable-nodpi/ic_launcher_foreground.png` | 自适应图标**前景层**：864px 画布，画作占 **624px（78dp / 108dp）** |
-| `drawable-nodpi/ic_launcher_monochrome.png` | 自适应图标**单色层**：按亮度阈值 80% 提亮部做剪影 |
+| `drawable-nodpi/ic_launcher_bg.png` | 自适应图标**背景层**：27.5.1 起为深蓝兜底（被前景完全覆盖） |
+| `drawable-nodpi/ic_launcher_foreground.png` | 自适应图标**前景层**：27.5.1 起为整幅 864px 画面（放大 1.35 倍裁剪，无白角） |
+| `drawable-nodpi/ic_launcher_monochrome.png` | 自适应图标**单色层**：方块 + 轨迹环 + 星形剪影（手绘 SVG 栅格化） |
 | `mipmap-anydpi-v26/ic_launcher{,_round}.xml` | 引用上面三层 |
-| `values/ic_launcher_background.xml` | 兜底底色改为 `#1B2450` |
+| `values/ic_launcher_background.xml` | 兜底底色 `#1B2450` |
 | `ic_launcher-playstore.png` | Google Play 512×512 |
-| `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用同一前景资源，**自动同步**（文件本身未改） |
+| `drawable-nodpi/splash_icon.png` | 27.5.1 新增：启动页专用圆角图标（640px，透明外角） |
+| `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用 `splash_icon` |
+| `drawable/img_launcher.png` | 关于页 Logo（27.5.1 起为新图标） |
+| `drawable-nodpi/img_avatar_zzy.png` | 关于页「项目维护者」头像（维护者本人社交头像） |
 
 ⚠️ **应用内的解压界面（`ui/screens/splash/SplashScreen.kt`，首次启动 / 更新后出现的那一屏）
 本次未做任何改动**，与 26.4.1 逐字节一致。
@@ -2274,10 +2277,10 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-23（27.5.0 已开发完成 —— AI 默认服务商改为 DeepSeek 并移除 Anthropic、
-修复 AI 设置页裁切 / 停止后无法继续发送 / 聊天不自动贴底；Fabric API 按稳定标识去重并设保护；
-CurseForge 下载补临时重试与错误归类、配置官方 API Key；MobileGlues 核对为官方 V2.0.0 并新增 ANGLE 开关；
-议题 #20 仅完成审计。）
+**最后更新**：2026-10-23（27.5.1 已开发完成 —— 全量替换品牌图标（桌面 / 圆形 / 自适应三层 /
+Play Store / 关于页 / 启动页 / 通知），关于页维护者改用本人社交头像；AI 设置移除服务商分区、
+固定 DeepSeek 且接口地址默认填好可改，收紧间距并修复按钮粘连；动态玻璃统一（首页补玻璃层、
+卡片模糊与高光裁剪到圆角）。27.5.0 的内容见下方章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
