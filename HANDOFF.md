@@ -90,7 +90,14 @@
 - 加载成功并自动选中 Fabric API 后才允许安装
 - 加载失败 / 列表为空才显示「拒绝下载」原因
 
-**五、涉及文件**
+**五、多语言文档**
+
+- **简体中文改为默认 README**：`README.md` 现在是中文；原英文内容移至 `README_EN.md`
+- 新增 **`README_KO.md`（韩语）** 与 **`README_RU.md`（俄语）**
+- `README_ZH_CN.md` 保留为兼容旧链接的入口页，指向 `README.md`
+- 六语言选择器统一为：简体中文 / English / 繁體中文 / 日本語 / 한국어 / Русский
+
+**六、涉及文件**
 
 | 文件 | 作用 |
 |---|---|
@@ -100,6 +107,7 @@
 | `ui/screens/main/card_home/QuickCreateDialogs.kt` | 允许作弊 + 版本自适应（27.6.1） |
 | `game/version/saves/WorldCreator.kt` | 26.x 新格式 / 1.12.2 兼容层双路径 + 回读验证（27.6.1） |
 | `ui/screens/content/download/game/DownloadGameWithAddonScreen.kt` | Fabric API 加载中状态（27.6.1） |
+| `README.md` / `README_EN.md` / `README_KO.md` / `README_RU.md` | 中文默认 + 英/韩/俄 README（27.6.1） |
 
 ### 27.6.0 图标修复 + 首页交互升级 + Fabric API 防呆 ✅
 
@@ -112,7 +120,7 @@
   - 自适应前景从原图按 HSV 抠掉深蓝底与徽章描边，只留方块 / 轨道 / 星形，
     再缩到 **66% 安全区**；圆形 / 方形 / squircle 遮罩都不会切到主体
   - 单色图标同样缩进安全区
-  - `assets/icon.png`（README 四语言顶部）换成当前品牌图标，不再残留旧角色图
+  - `assets/icon.png`（多语言 README 顶部）换成当前品牌图标，不再残留旧角色图
 - ⚠️ 自适应前景是**透明美术层**，背景由 `ic_launcher_bg` 提供；
   不要再把整幅带底色的徽章图直接当前景用
 
@@ -193,12 +201,12 @@ Fabric API 是大量 Fabric 模组的必需前置，但手动装一份、安装�
 | 文件 | 作用 |
 |---|---|
 | `setting/enums/HomeButtonMaterial.kt` | 三档按钮材质枚举（27.6.0，议题 #33） |
-| `ui/components/HomeButtons.kt` | 材质绘制、降级、文字阴影、按钮组件（27.6.0） |
-| `game/version/saves/WorldCreator.kt` | 写兼容层 `level.dat`（27.6.0，议题 #33） |
+| `ui/components/HomeButtons.kt` | 材质绘制、降级、文字阴影、按钮组件（27.6.0；27.6.1 改为幽灵按钮） |
+| `game/version/saves/WorldCreator.kt` | 写 `level.dat`（27.6.0 兼容层；27.6.1 扩展为版本自适应） |
 | `game/version/multiplayer/ServerListWriter.kt` | 追加 `servers.dat`（27.6.0，议题 #33） |
 | `ui/screens/main/card_home/QuickCreateDialogs.kt` | 创建世界 / 添加服务器对话框（27.6.0） |
 | `ui/screens/main/card_home/CardHomePage.kt` | 快捷入口、材质接入、世界文件夹名修正（27.6.0） |
-| `ui/screens/main/MainScreen.kt` | 顶部导航材质（27.6.0） |
+| `ui/screens/main/MainScreen.kt` | 顶部导航材质（27.6.0；27.6.1 已回档） |
 | `game/version/mod/ModIdentity.kt` | 已有 Fabric API 稳定身份；黑名单复用（27.5.0 / 27.6.0） |
 | `game/download/game/GameInstaller.kt` | Fabric API 第二份拦截（27.6.0） |
 | `game/download/resources/ResourceManager.kt` | 手动安装 Fabric API 拦截（27.6.0） |
@@ -615,7 +623,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 
 **七、README 的赞助版块**
 
-- 四语言 README（`README.md` / `README_ZH_CN.md` / `README_ZH_TW.md` / `README_JA_JP.md`）
+- 多语言 README（`README.md` 中文默认 / `README_EN.md` / `README_ZH_TW.md` / `README_JA_JP.md` / `README_KO.md` / `README_RU.md`）
   末尾新增「支持 ZyNova / Supporting ZyNova」版块
 - 图片放在 `assets/donate/`：`alipay.jpg`、`wechat.png`
 - ⚠️ 这两张图是**收款码**，属于维护者主动公开的内容；
@@ -1032,7 +1040,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 | `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用 `splash_icon` |
 | `drawable/img_launcher.png` | 关于页 Logo（27.5.1 起为新图标） |
 | `drawable-nodpi/img_avatar_zzy.png` | 关于页「项目维护者」头像（维护者本人社交头像） |
-| `assets/icon.png` | README 四语言顶部图标；27.6.0 起为当前品牌图标（旧角色图已移除） |
+| `assets/icon.png` | 多语言 README 顶部图标；27.6.0 起为当前品牌图标（旧角色图已移除） |
 
 ⚠️ **应用内的解压界面（`ui/screens/splash/SplashScreen.kt`，首次启动 / 更新后出现的那一屏）
 本次未做任何改动**，与 26.4.1 逐字节一致。
@@ -1075,7 +1083,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 
 **五、文档与代码一致性**
 
-- 四语言 README、CHANGELOG、THIRD_PARTY_NOTICES（含 `assets/licenses/` 镜像）
+- 多语言 README、CHANGELOG、THIRD_PARTY_NOTICES（含 `assets/licenses/` 镜像）
   均已同步为「使用 ZyNova 自己的应用注册」与「图标已更换」
 - 26.4.1 的相关章节**作为历史保留**（当时的叙述是正确的），并在开头标注当前状态
 
@@ -2143,7 +2151,7 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    - 临时邀请会过期，Discord API 会返回 `{"message": "Invite is expired.", "code": 50270}`
    - 校验方式：`curl https://discord.com/api/v10/invites/<code>?with_counts=true`，
      返回中 `expires_at` 为 `null` 才是永久邀请
-   - 更换链接时必须同步：`path/UrlManager.kt`、`README.md`、`README_ZH_CN.md`、
+   - 更换链接时必须同步：`path/UrlManager.kt`、`README.md`、
      `README_ZH_TW.md`、`README_JA_JP.md`、`HANDOFF.md`
 17. **过滤条件还要区分「资源类型」**（26.2.3 实际踩到并修复）：
    - 加载器过滤器只对 **Mod / 整合包**有意义，资源包 / 光影 / 存档**不按加载器分类**
@@ -2285,7 +2293,7 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 
 ## 十、给接手者的建议操作顺序
 
-1. 读本文件 + `README.md`（英文默认；另有 `README_ZH_CN.md` / `README_ZH_TW.md` / `README_JA_JP.md`）
+1. 读本文件 + `README.md`（简体中文默认；另有 `README_EN.md` / `README_ZH_TW.md` / `README_JA_JP.md` / `README_KO.md` / `README_RU.md`）
    + `CHANGELOG.md` + `LICENSE` + `THIRD_PARTY_NOTICES.md`。
 2. 确认 GitHub 仓库状态（看 Actions 最新编译结果）。
 3. 在 ext4 工作副本中改代码 → 静态检查 → commit → push。
@@ -2460,7 +2468,8 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 **最后更新**：2026-10-25（27.6.1 已开发完成 —— 按真机截图回修首页：顶部 5 个入口回档且不再动；
 启动 / 创建世界 / 添加服务器 / 条目统一改为「幽灵按钮」（约 1.5%~2% 明暗差、无描边、保留透明度）；
 快捷按钮缩小并移到启动旁；创建世界按版本自适应（26.1+ 新格式 / 1.12.2~26.0 兼容层 / 低于 1.12.2 隐藏），
-新增「允许作弊」；Fabric API 加载中只显示「正在加载中」。27.6.0 的内容见下方章节。）
+新增「允许作弊」；Fabric API 加载中只显示「正在加载中」；中文改为默认 README，新增韩语 / 俄语并统一六语言入口。
+27.6.0 的内容见下方章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在

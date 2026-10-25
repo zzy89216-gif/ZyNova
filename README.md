@@ -6,440 +6,775 @@
 
 > **Minecraft: Java Edition · Android Launcher**
 >
-> An independent, unofficial project based on the open-source code of ZalithLauncher2
+> 基于 ZalithLauncher2 开源代码开发的独立非官方项目  
+> **只用一部 Android 手机完成开发、测试与发布（编译交由 GitHub Actions 云端完成）**
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
+[![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
-**[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
-
----
-
-## ✦ About
-
-**ZyNova** is an **unofficial** Minecraft: Java Edition launcher for Android, built on the
-open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2).
-
-> **ZyNova is NOT an official version of ZalithLauncher2.**
->
-> ZyNova is an unofficial modified project based on ZalithLauncher2's open-source code.
->
-> It ships with a **built-in AI Agent** that can really read your logs, manage mods, edit
-> configs, install resources and launch the game for you — not just give advice.
-
-- GitHub: <https://github.com/zzy89216-gif/ZyNova>
-- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
+**[简体中文](README.md)** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
 ---
 
-## ✨ Highlights of 27.6.1
+## ✦ 项目简介
 
-- **Top bar restored.** The folder / AI / multiplayer / download / settings entries are back to
-  their pre-27.6.0 appearance and no longer use the home button material.
-- **Ghost home buttons.** Launch / create-world / add-server and world/server buttons use a ghost
-  style: only ~1.5–2% luminance difference from the background, no borders, and enough transparency
-  for images and videos to show through in real time. The create-world and add-server buttons are
-  now compact and sit next to Launch.
-- **Version-aware world creation.** 26.1+ writes the real split save format
-  (`difficulty_settings`, `world_gen_settings.dat`, `game_rules.dat`); 1.12.2–26.0 keeps the
-  DataFixer-based path, and versions below 1.12.2 hide the entry. The generated world is read back
-  and verified before launching.
-- **Fabric API loading state.** While the Fabric API list is loading, the install button shows
-  “loading” instead of “blocked”; installation is only refused after loading fails or the list is
-  empty.
-- **Allow Cheats** is now available when creating a world; the switch is hidden on versions before
-  Minecraft 1.4 and written as off there.
+**ZyNova** 是一个基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码深度开发的 **Minecraft: Java Edition Android 启动器**，由 ZyNova 项目维护者独立开发与维护。
+
+> **目标很简单：打爆同行 100 年。（玩梗）**
+
+> **ZyNova 并非 ZalithLauncher2 官方版本。**
+>
+> 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
+
+当前版本 **27.6.1**。这一阶段主要做了：
+**首页按钮回修、允许作弊、Fabric API 防呆、图标修复，以及 27.6.0 的首页交互升级。**
+
+- **首页按钮回修（27.6.1）**：顶部 5 个入口回档并保持原样；启动 / 创建世界 / 添加服务器 /
+  世界 / 服务器条目改为「幽灵按钮」——只保留约 1.5%~2% 明暗差、无描边、保留透明度，
+  图片 / 视频背景实时透出；创建世界 / 添加服务器缩小后并排放在启动按钮旁边
+- **创建世界按版本自适应（27.6.1）**：26.1+ 直接写新存档结构（`difficulty_settings` /
+  `world_gen_settings.dat` / `game_rules.dat`）；1.12.2~26.0 走 DataFixer 兼容层；
+  低于 1.12.2 隐藏入口；写完回读验证
+- **创建世界允许作弊（27.6.1）**：新增「允许作弊」开关，按版本自适应；
+  Minecraft 1.4 之前不展示并按关闭写入
+- **Fabric API 加载状态（27.6.1）**：加载中只显示「正在加载中」，加载成功才允许安装，
+  失败 / 为空才拒绝下载
+- **首页交互升级（议题 #33）**：实例卡片可直接「+ 创建世界」「+ 添加服务器」，
+  创建完直接 quickPlay 进图 / 进服；设置 → 启动器新增「首页按钮材质」
+  （默认 / 透明 / 液态玻璃，默认透明），减少动效或关闭动态玻璃时自动降级为透明
+- **Fabric API 防呆**：模组下载界面不再显示 Fabric API，也不能手动安装；
+  选择 Fabric 时强制自动加入，检测不到就拒绝下载；Fabric API 在模组管理中
+  不可删除 / 禁用，已有任意版本时不会再安装第二份
+- **图标修复（议题 #31）**：桌面 / 圆形图标不再放大裁剪，自适应 / 单色缩进 66% 安全区，
+  README 顶部也换成了当前品牌图标
+- **细节修复**：存档难度改为正确读取 ByteTag；quickPlay 改用世界文件夹名，避免中文世界名进不去
+- **全新品牌图标**：桌面 / 圆形 / 自适应三层 / Play Store / 关于页 / 启动页 / 通知图标
+  全部换成新图标，同一个源图生成，没有新旧混用
+- **AI 设置收紧**：去掉「AI 服务商」分区，固定 DeepSeek；接口地址首次打开默认填好、仍可修改；
+  卡片与按钮排布更紧凑，审计按钮不再粘连
+- **动态玻璃统一**：首页卡片补上玻璃层，设置页与 AI 设置页的模糊 / 高光统一裁剪到圆角
+- **默认 AI 服务商改为 DeepSeek**：服务商列表是 **DeepSeek / OpenAI**，Anthropic 及其选择入口已移除。
+  两者协议相同、共用实现，但 API Key 与 Base URL 分开保存；模型仍然从服务商动态获取。
+  已有的 Key、自定义地址与模型选择都会保留；旧版本存过的已移除服务商会自动回退到 DeepSeek。
+- **AI 聊天修复**：停止生成后不再插一条红色错误、也不会卡在「正在生成」，可以立刻继续发消息，
+  被中断的回答标记为「已停止生成」；聊天会滚到真正的底部并跟随流式输出，
+  重新进入时回到最新消息，往上翻时暂停跟随，并多了一个「回到底部」按钮。
+- **AI 设置页修复**：卡片统一宽度并加了内边距，标题不再被圆角切掉，偏窄的卡片也和其他卡片对齐了。
+- **Fabric API 去重与保护**：按稳定 ID 识别（`fabric-api` / Modrinth `P7dR8mSH` / CurseForge `306612`），
+  已装且版本兼容时不再重复下载；模组管理里隐藏删除按钮、批量删除会跳过、AI 也不能删；
+  删除整个实例不受影响。
+- **CurseForge 下载更稳**：超时 / 连接重置 / 5xx 等临时错误最多重试 3 次，403/404 不重试；
+  错误信息会区分「Key 缺失或失效」「文件已下架」「镜像不可用」「超时」。
+  官方 Key 已配置到 Actions Secrets，同时保留 MCIM 镜像兜底。
+- **MobileGlues**：随包二进制已与官方 V2.0.0 逐字节核对一致；新增「ANGLE 渲染后端」开关（默认关闭），
+  用于规避严格 ES 宿主上已知的深度纹理缺陷（云层 / 透明排序异常，上游 #57）。
+
+> 上一版（27.4.0）：把渲染器选择交给启动器自动判断、恢复离线 / 第三方登录入口、
+> MobileGlues 的 OpenGL 版本可选，并同步三处上游修复。
+
+> **在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
+> 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+围绕这一目标，项目已经建立了自己的：
+
+- **渲染器体系**（内置 Ironized Zink / GL4ES / MobileGlues，默认 Ironized Zink）
+- **Microsoft（正版）账号登录**（OAuth 2.0 设备代码流，无需 Client Secret）
+- **全局 AI Agent**（Provider 可扩展 / 模型从服务商动态获取 / 流式对话 / 25 个可真正执行操作的工具 /
+  **历史对话与侧边栏** / **不限制工具调用轮数**）
+- 统一资源管理核心（Resource Management Core）
+- 资源来源 Provider 体系（Modrinth / CurseForge）
+- 统一下载管理器（队列 / 并发 / 续传 / 重试 / 校验 / 清理）
+- 极简资源安装流程（上下文直装）
+- 卡片式主页（以版本为模块，模块内展示世界与服务器）
+- **自动图形 API 策略**（按版本发布时间判定，不写死版本号）
+- **玻璃效果（Glass UI）两档**（关闭 / 启用动态玻璃）
+- **「界面世代」切换**（新版 / 旧版，可随时双向切换；新版重做字阶与圆角体系）
+- **无障碍动效控制**（减少动态效果：一键关闭转场、动态玻璃高光与骨架屏闪烁）
+- 启动器自有更新体系（GitHub Releases）
+- Minecraft **26.2-snapshot-1（数据版本 4883）** 起的 Vulkan 检测
+- 单一通用版本发布（含全部 4 个 ABI + 代码混淆）
+
+设计上遵循一条原则：
+
+> **Context First. Less Steps.**
+>
+> 能自动判断，就不要让用户选择；能一步完成，就不要拆成两步；
+> 已有上下文，就直接使用上下文；没有必要的按钮直接删除。
+
+---
+
+## 🌟 项目定位
+
+ZyNova 面向 Android 平台。它的目标不是简单复制上游项目，而是在上游优秀开源项目的基础上，根据实际使用需求逐步形成属于 ZyNova 自身的功能、界面与使用体验。
+
+随着开发推进，项目已经形成了独立的：
+
+- 项目名称与应用身份
+- 独立源码仓库与 Release
+- 独立的资源管理与下载体系
+- 独立的启动器更新体系
+- 完整的 Android 工程与通用版本构建（含代码混淆）
+- 开发流程、项目文档与交接体系
+
+---
+
+## ✨ 主要功能与修改
+
+目前项目涉及的开发内容包括：
+
+| 项目 | 状态 |
+|---|:---:|
+| Android Minecraft Java Edition 启动器 | ✅ |
+| 用户界面重新设计 | ✅ |
+| 交互逻辑调整 | ✅ |
+| **全局 AI Agent**（主界面顶部入口，聊天即 Agent；25 个工具可**真正执行**读日志 / 管模组 / 改配置 / 装资源 / 启动游戏） | ✅ |
+| **AI 配置独立于启动器设置**（Provider 可扩展 / API Key 仅存本机 / 模型动态获取不硬编码 / Base URL 可自定义 / 权限模式） | ✅ |
+| **Microsoft（正版）账号登录**（设备代码流，支持添加账号与会话续期；应用注册已获 Mojang 白名单批准） | ✅ |
+| **卡片式主页**（以版本为模块，模块内展示世界与服务器） | ✅ |
+| **卡片式主页拖动排序**（版本卡片 / 世界 / 服务器 / 右侧菜单） | ✅ |
+| **卡片大小可调**（70% ~ 140%） | ✅ |
+| **渲染器体系重做**（内置只保留 Ironized Zink / GL4ES / MobileGlues） | ✅ |
+| **「自动」渲染器**（按实例的 Minecraft 版本自动挑一个合适的） | ✅ |
+| **MobileGlues 的 OpenGL 版本可选**（3.2 ~ 4.6） | ✅ |
+| **Ironized Zink 官方预设**（Potato / Performance / Default / Max Compatibility，选中即展开） | ✅ |
+| **统一资源管理核心**（Resource Management Core） | ✅ |
+| **资源来源 Provider**（Modrinth / CurseForge） | ✅ |
+| **统一下载管理器**（队列 / 并发 / 续传 / 重试 / 校验 / 清理） | ✅ |
+| **极简资源安装**（上下文直装，不再重复选择） | ✅ |
+| **玻璃效果两档**（关闭 / 启用动态玻璃） | ✅ |
+| **「界面世代」切换**（新版 / 旧版，可随时双向切换） | ✅ |
+| **认证入口**（微软 / 离线 / 第三方认证三项并列） | ✅ |
+| **真实生效的页面转场**（回弹 / 弹跳 / 切入，全项目统一） | ✅ |
+| **减少动态效果**（无障碍：一键关闭转场 / 动态玻璃高光 / 骨架屏闪烁） | ✅ |
+| **图形 API 全自动**（首次启动 OpenGL，之后跟随游戏自身设置；按发布时间判定） | ✅ |
+| **统一卡片按压反馈**（可点击卡片按下轻微缩放） | ✅ |
+| **Minecraft 26.2-snapshot-1（数据版本 4883）Vulkan 检测与兼容判断** | ✅ |
+| **按需加载与性能策略** | ✅ |
+| **启动器自有更新体系**（GitHub Releases） | ✅ |
+| Minecraft 启动相关功能 | ✅ |
+| 游戏实例管理 | ✅ |
+| Android 平台功能调整 | ✅ |
+| **ZalithLauncher2 扩展生态兼容**（渲染器插件 / Vulkan 驱动插件 / 原生库插件） | ✅ |
+| 单一通用版本 APK 构建（含代码混淆） | ✅ |
+| GitHub Release | ✅ |
+| 项目维护与交接文档 | ✅ |
+
+具体功能会随着项目版本更新不断变化。
+
+---
+
+## ℹ️ 正版登录用的是哪个微软应用
+
+**ZyNova 是 ZalithLauncher2 的非官方分支，两者是各自独立维护的不同项目。**
+
+| | 显示名称 | Client ID | Mojang 允许名单 | 本版本是否使用 |
+|---|---|---|---|---|
+| **ZyNova 自己的** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **已获批准（2026-09-30）** | ✅ **正在使用** |
+| **ZalithLauncher2 的** | ZalithLauncher（上游） | （已从本仓库移除） | ✅ 已获批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+
+- **只有处于 Minecraft 应用程序允许名单中的应用注册**才能完成正版登录；
+  否则 `POST /authentication/login_with_xbox` 会返回
+  `403 Invalid app registration, see https://aka.ms/AppRegInfo`
+- ✅ **ZyNova 自己的注册已在该名单中**：Mojang Enforcement 已于 **2026-09-30**
+  完成 AppID 审核，**当前版本的正版登录可以正常完成**，也不再借用上游项目的注册
+- 仍然**只需要「公共客户端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1；
+  Client ID 通过仓库 Secret `OAUTH_CLIENT_ID` **在构建时注入**，不写死在源码中
+
+---
+
+## 🎨 UI 与视觉体验
+
+ZyNova 对原有启动器的界面与交互做了较大范围的重新设计，而不是简单改个名字：
+
+- 全新界面布局与交互逻辑
+- 动态毛玻璃效果、半透明与模糊
+- Android 手机端适配与操作流程调整
+
+### 动效与转场（27.2.0 起）
+
+- **页面转场**：回弹（阻尼缩放）/ 弹跳 / 切入（横向滑入）三档**真实生效**
+  （此前三档全都只是淡入淡出），全项目 15 处导航统一复用同一个实现，含文件管理器
+- **交互动效**：可点击卡片按下轻微缩放并在抬起时回弹
+- **启动体验**：启动页到主界面为淡入淡出，不再使用系统默认 Activity 动画
+
+### 无障碍：减少动态效果
+
+设置 → 启动器 → **减少动态效果**。开启后会一并关闭
+页面转场、级联入场动画、动态玻璃的流动高光、骨架屏闪烁，
+并把 Material 动效方案由 Expressive 降级为标准 —— 是「彻底不动」，而不是只把时长调短。
+
+### 玻璃效果与界面世代
+
+**玻璃效果**提供两档（27.3.0 起移除了带光敏风险的「强效」档与配套的启动警告）：
+
+| 档位 | 说明 |
+|---|---|
+| **关闭**（默认） | 不叠加任何高光层，性能优先 |
+| **启用动态玻璃** | 毛玻璃之上叠加缓慢流动的高光与折射光晕 |
+
+- 动态玻璃只画渐变高光，**不碰 `renderEffect`**，所以不会像旧「极致」档那样模糊文字（issue #2）
+- 开启「减少动态效果」后会退化为静态毛玻璃
+- 原本使用已移除「强效」档的用户，升级后会**回退到「启用动态玻璃」，不会被关掉**
+
+**界面世代**：设置 → 启动器 → **界面世代**，可选**新版 / 旧版**，而且**两个方向都能切**：
+
+| | 新版（默认） | 旧版 |
+|---|---|---|
+| 字阶 | 标题 SemiBold、大字号收紧字距 | Material 默认 |
+| 圆角 | 卡片 22dp / 对话框 30dp | 卡片 16dp / 对话框 28dp |
+| 动效 | 标准动效（无回弹、无过冲） | Expressive |
+
+### 图形 API（27.2.0 起全自动）
+
+不再需要用户选择 OpenGL / Vulkan：
+
+1. 某个实例**第一次启动**时使用 OpenGL（最保守、兼容性最好）
+2. 之后**完全跟随 Minecraft 游戏自身**保存的设置，启动器不再覆盖
+3. 每次启动游戏都会自动检查一次版本信息（含最新正式版与快照），失败不影响启动
+4. 是否需要该选项由**版本发布时间**判断，**不写死版本号**
+   （首个带 Vulkan 后端的版本为 Minecraft 26.2-snapshot-1，发布于 2026-04-07）
+
+---
+
+## 🧩 渲染器
+
+26.3.0 起重做渲染器体系。**启动器内置的渲染器只保留三个**：
+
+| 渲染器 | 说明 | 配置 |
+|---|---|---|
+| **Ironized Zink** | 桌面 OpenGL 经 Vulkan 转译（Mesa Zink + Kopper），作者 GoyDevv；默认 OpenGL 4.6 | **4 个官方预设** + OpenGL 版本下拉 |
+| **GL4ES** | 经典 OpenGL 转译层 | 保持默认 |
+| **MobileGlues** | 把桌面 OpenGL 转译到设备的 OpenGL ES 3.x | **OpenGL 版本下拉**（3.2 ~ 4.6，默认 4.0） |
+
+**渲染器默认是「自动」**：启动器按 `MobileGlues → Ironized Zink → GL4ES` 的优先级，
+挑一个**声明支持该实例 Minecraft 版本**的渲染器（三个内置渲染器的版本覆盖范围不同，
+MobileGlues 要求 1.17+，只有 Ironized Zink 不限制版本）。
+你也可以在设置里手动指定某一个 —— 那时启动器**尊重你的选择**，
+只有它确实跑不了这个版本才会回退，免得每次启动都弹一次无谓的警告。
+
+**Ironized Zink 的 4 个官方预设**（参数取值与上游一致）：
+
+| 预设 | 定位 | Minecraft | 光影 |
+|---|---|---|---|
+| **Potato** | 绝对最高帧率 | 1.8 → 最新（含 26.x） | 不推荐 |
+| **Performance** | 高帧率 + Sodium | 1.20.x → 最新 | 轻量 |
+| **Default** | 均衡 Zink + 光影（**默认**） | 1.16.x → 最新 | 完整（Iris / OptiFine） |
+| **Max Compatibility** | 什么都能跑 | 全部版本 | 完整 + 重度光影包 |
+
+**26.4.0 起，面板只提供上面 4 个预设**：12 个单独参数开关已被移除，
+普通用户不再需要手动调整底层参数。选择预设仍会一次性写入整组参数。
+
+> ℹ️ 4 个预设的 OpenGL 版本都是 **4.6**。如果驱动对 Vulkan→Zink 的 4.6 转译不完整
+> （画面异常或进不去），可以在面板下方的「**OpenGL 版本**」下拉里降到 4.5 / 4.3 / 3.3
+> —— 该下拉在 26.4.0 曾被移除，**27.1.2 起已恢复**。
+> 改动此项只影响 OpenGL 版本，不动其它预设参数。
+
+在 **设置 → 渲染器** 里选中 Ironized Zink 后，**下方会立刻展开预设面板**。
+
+#### 官方内置 与 外部扩展 的区别
+
+26.3.0 删除的是**启动器官方内置**的其余 Renderer，**没有**移除外部 Renderer Plugin 机制：
+
+| 类别 | 内容 | 26.3.0 状态 |
+|---|---|---|
+| **官方内置** | 自动、MobileGlues、Ironized Zink、GL4ES | 只保留这 3 个内置渲染器（27.4.0 起列表最前多一个「自动」选项）；其余内置 Renderer（Krypton Wrapper / Kopper Zink / VirGL / Freedreno / Panfrost）已删除 |
+| **外部扩展** | FCL / ZalithLauncher 渲染器插件、新一代 `fclPlugin_V2` 渲染器插件、Vulkan 驱动插件、原生库插件 | **完全保留**，安装后仍会正常出现在渲染器列表中 |
+
+外置插件自带自己的原生库，不受本次内置裁剪影响；
+设置页的「下载渲染器插件」入口也仍然保留。
+
+## 🔄 与 ZalithLauncher2 共存
+
+ZyNova 使用独立的应用名称以及独立的应用签名。
+
+因此，在 Android 系统及设备环境允许的情况下，ZyNova 可以与 ZalithLauncher2 同时安装并共存。
+
+| 项目 | 状态 |
+|---|:---:|
+| ZalithLauncher2 单独安装 | ✅ |
+| ZyNova 单独安装 | ✅ |
+| ZalithLauncher2 + ZyNova 同时安装 | ✅ |
+| 不删除 ZyNova 使用 ZalithLauncher2 | ✅ |
+| 不删除 ZalithLauncher2 使用 ZyNova | ✅ |
+
+用户可以根据自己的需求自由选择使用哪个启动器。
+
+如果之后希望重新使用 ZalithLauncher2，也可以重新下载安装原项目。
+
+> ℹ️ **注意：安装可以共存，而正版登录使用的是 ZyNova 自己的应用注册。**
+> ZyNova 是 ZalithLauncher2 的非官方分支，两者是**不同项目**；
+> 从 26.4.2 起，正版登录改用 **ZyNova 自己申请、并已获 Mojang 允许名单批准的**
+> Microsoft 应用注册（见上方「正版登录用的是哪个微软应用」）。
+> 因此在微软账号的「已连接的应用」中看到的是 **ZyNova Launcher**，而不是 ZalithLauncher。
+
+---
+
+## 🧬 技术栈
+
+ZyNova 是一个完整的 Android 软件工程，而不仅仅是一个 APK 文件。
+
+| 技术 | 用途 |
+|---|---|
+| Kotlin / Java | Android 主要开发语言 |
+| C / C++ + NDK | Native 相关部分 |
+| Gradle | 项目构建 |
+| Git / GitHub | 版本管理与项目管理 |
+| GitHub Actions | 云端构建与自动化流程 |
+| Android | 主要目标平台 |
+
+按仓库语言统计，大致为 **Kotlin 约 64% / Java 约 23% / C 约 13%**；
+项目仍在持续开发，实际比例会随版本变化。
+
+---
+
+## 📱 通用版本
+
+26.3.0 起，**Release 只提供一个通用版本 APK**，不再按架构拆分。
+
+| 项 | 说明 |
+|---|---|
+| 覆盖架构 | `arm64-v8a`、`armeabi-v7a`、`x86`、`x86_64`（一个包全部包含） |
+| 代码混淆 | Release 开启（`isMinifyEnabled` + `isShrinkResources`） |
+| 产物名 | `ZyNova-<版本>.apk` |
+| 混淆映射 | `mapping.universal.zip`，用于还原崩溃堆栈 |
+
+为什么只出一个通用版本：
+
+- 用户**不需要判断自己的设备是什么架构**，下载唯一的安装包即可
+- 混淆映射只需要维护一份，排查线上崩溃更简单
+- 代价是包体包含全部 4 个 ABI 的预编译库，比单架构包大
+
+一次 Release 只上传 **2 个产物**：
+
+| 产物 | 内容 |
+|---|---|
+| `ZyNova-<版本>.apk` | 通用版本安装包（已代码混淆） |
+| `mapping.universal.zip` | 混淆映射，用于还原崩溃堆栈 |
+
+> GitHub 上传 Release 资产时会把空格与括号净化为点号，
+> 因此线上资产名固定是 `mapping.universal.zip`（CI 内部 artifact 名为 `mapping (universal)`）。
+
+---
+
+## 🚀 Release
+
+当前版本：
+
+**ZyNova 27.6.1**
+
+27.6.1 按真机截图反馈回修首页，并把「创建世界」改为按 Minecraft 版本自适应：
+
+- **顶部 5 个按钮回档**：文件夹 / AI / 多人 / 下载 / 设置恢复原样，不再套用首页按钮材质
+- **幽灵按钮（Ghost Button）**：启动 / 创建世界 / 添加服务器 / 世界 / 服务器条目只保留约
+  1.5% ~ 2% 的明暗差，无描边、保留透明度，图片 / 视频背景实时透出
+- **快捷按钮缩小并排**：创建世界 / 添加服务器缩小后，和启动按钮一起放在实例标题右侧
+- **创建世界按版本自适应**：26.1+ 直接写新存档结构（`difficulty_settings` /
+  `world_gen_settings.dat` / `game_rules.dat`）；1.12.2 ~ 26.0 走 DataFixer 兼容层；
+  低于 1.12.2 隐藏入口；写完回读验证
+- **允许作弊**：创建世界新增开关，按 Minecraft 版本自适应
+- **Fabric API 加载状态**：加载中只显示「正在加载中」，加载成功才允许安装，
+  失败 / 为空才拒绝下载
+- **27.6.0 内容保留**：Fabric API 防呆、图标修复、首页按钮材质、一键创建世界 / 服务器
+
+> 📜 更早版本的完整变更记录见 [CHANGELOG.md](CHANGELOG.md)。
+
+## 🛠️ 开发与测试流程
+
+ZyNova 的开发并不只在源码层面完成，实际流程是：
+
+> 需求 → 源码分析 → 代码修改（在 Android 手机上）→ 云端构建与 APK 打包（GitHub Actions）
+> → 真机安装 → 实际测试 → 发现 Bug → 修复 → 重新构建 → 再次测试 → Release 发布
+
+项目中的部分功能是在实际 Android 设备使用过程中进行测试和调整的。
+
+---
+
+## 📱 用手机开发的项目
+
+> **从写代码、测试到发布，全部只用一部 Android 手机操作，没有使用电脑。**
+
+只有 **APK 编译不在手机上完成**：Android 环境缺少完整的 SDK / NDK 工具链
+（NDK 的 clang 只有 x86_64 版本，Google 不提供 arm64 Linux 版），
+因此编译交给 **GitHub Actions 云端服务器** 执行。
+
+| 环节 | 在哪里完成 |
+|---|---|
+| 源码编写 / 工程配置 / Git 操作 / 文档维护 / 真机测试 / Release 发布 | Android 手机 |
+| **APK 编译（通用版本 + 代码混淆）** | **GitHub Actions 云端** |
+
+> 手机开发 → 云端构建 → 手机测试 → 手机发布
+
+---
+
+## 🤖 AI Agent 辅助开发
+
+> ℹ️ 本节说的是**开发 ZyNova 时**使用的 AI Agent（工程辅助）。
+> 启动器**内置的** AI Agent 功能是另一回事，见 [主要功能与修改](#-主要功能与修改)。
+
+ZyNova 的开发过程中大量使用 AI Agent 辅助实际工程工作，包括：
+源码与工程结构分析、代码修改与功能开发、构建错误分析、Bug 修复、
+APK 构建与通用版本打包、文件整理、GitHub 与 Release 操作、项目文档与交接文档编写。
+
+AI Agent 只是辅助工具：**需求、开发方向、测试结果与最终发布由项目维护者决定。**
+
+---
+
+## 📚 项目文档与交接
+
+为了避免项目未来完全依赖某一次开发过程或者某一个 AI 对话，ZyNova 建立了相应的项目维护与交接资料。
+
+相关资料用于记录：
+
+- 项目结构
+- 当前项目状态
+- 构建方式
+- 主要修改内容
+- 已知问题
+- 维护方式
+- 后续开发方向
+- 未来开发者或 AI 如何继续参与项目
+
+这样即使原有开发环境或者 AI 对话上下文不存在，未来仍然可以通过公开源码和项目文档继续了解和维护 ZyNova。
+
+---
+
+## 🏗️ 项目结构
+
+仓库同时承担 **源码仓库 + 开发仓库 + 文档仓库 + Release 发布仓库**：
+
+| 内容 | 位置 |
+|---|---|
+| Android 工程（Kotlin / Java / Native / Gradle 模块） | 仓库根目录与 `ZalithLauncher/` |
+| 多语言说明 | `README.md`（中文默认）/ `README_EN.md` / `README_ZH_TW.md` / `README_JA_JP.md` / `README_KO.md` / `README_RU.md` |
+| 更新记录 | `CHANGELOG.md` |
+| 第三方许可证与版权声明 | `THIRD_PARTY_NOTICES.md` |
+| 维护与交接资料 | `HANDOFF.md` |
+| 许可证 | `LICENSE`（GPL-3.0） |
+| Release 与混淆映射 | GitHub Releases |
+
+---
+
+## 👥 项目维护者
+
+ZyNova 由 **zzy** 独立开发与维护。
+
+项目的具体代码、功能、界面、版本以及后续发展由 ZyNova 项目维护者负责。
+
+---
+
+## 🌱 项目维护理念
+
+ZyNova 不追求为了保持更新而强行加入大量功能。
+
+| 情况 | 处理方式 |
+|---|---|
+| 🐛 发现 Bug | 修复 |
+| 💡 有新的实际需求 | 视情况增加功能 |
+| 🔧 有值得改进的地方 | 进行调整 |
+| 😴 没有新的需求 | 保持当前状态 |
+
+让 ZyNova 按照实际需求自然发展。
+
+---
+
+## 🗺️ Roadmap
+
+### 27.6.1（当前版本）
+
+- [x] **顶部 5 个入口回档**，恢复原样
+- [x] **幽灵按钮（约 1.5%~2% 明暗差、无描边、保留透明度）**
+- [x] **创建世界「允许作弊」+ 版本自适应**
 
 ### 27.6.0
 
-- **Home interaction upgrade (issue #33).** Home cards can create a world or add a server in one
-  step and launch straight into it. A new **Home Button Material** setting offers Default /
-  Transparent / Liquid Glass, and automatically falls back to Transparent when reduced motion is on
-  or dynamic glass is off.
-- **Fabric API is locked down.** Fabric API is hidden from mod downloads and cannot be installed
-  manually. Selecting Fabric forces it in, and installation is refused when no compatible copy is
-  available. It cannot be deleted or disabled, and a second copy is never installed.
-- **Icon rendering fixed (issue #31).** Desktop and round icons no longer zoom-crop the artwork;
-  adaptive and monochrome layers are scaled into the 66% safe zone, and the README icon now uses
-  the current artwork instead of the old character icon.
-- **Smaller fixes.** Save difficulty now reads the `ByteTag` correctly, and quick-play uses the
-  world folder name rather than its display name.
+- [x] **首页按钮材质**（默认 / 透明 / 液态玻璃）（#33）
+- [x] **首页一键创建世界 / 添加服务器 + quickPlay**（#33）
+- [x] **Fabric API 防呆**：下载黑名单、强制前置、不可删除 / 禁用、不装第二份
+- [x] **修复图标放大裁剪 + README 旧图标**（#31）
 
 ### 27.5.1
 
-- **A completely new brand icon.** Launcher, round, adaptive (foreground / background /
-  monochrome), Play Store, in-app About logo, splash screen and notification icon now all use
-  the new artwork — one source image, no leftover pieces of the old one.
-- **AI settings tightened up.** The provider picker is gone; the launcher talks to DeepSeek, and the
-  base URL is pre-filled on first launch yet still editable. Cards and buttons were compacted and
-  the audit buttons no longer stick together.
-- **Dynamic glass fixed and unified.** Home-screen instance cards now actually get the glass layer,
-  and every card's blur/highlight is clipped to its rounded corners on both Settings and AI Settings.
+- [x] **全量品牌图标替换**（桌面 / 圆形 / 自适应三层 / Play Store / 关于页 / 启动页 / 通知）（#20）
+- [x] **AI 设置收紧**：移除服务商分区、固定 DeepSeek、接口地址默认填好且可改
+- [x] **动态玻璃统一**：首页卡片补玻璃层、卡片模糊与高光裁剪到圆角
+- [x] 关于页「项目维护者」改用维护者社交头像
 
 ### 27.5.0
 
-- **DeepSeek is now the default AI provider.** The provider list is **DeepSeek / OpenAI**; the
-  Anthropic entry and its selection UI were removed. DeepSeek speaks the same Chat Completions
-  protocol, so it shares the implementation, but its API key and base URL are stored separately.
-  Models are still fetched from the provider at runtime — nothing is hard-coded. Existing keys,
-  custom base URLs and model choices are kept, and a stored provider that no longer exists simply
-  falls back to DeepSeek instead of crashing.
-- **AI chat fixes (issues #24 / #26).** Stopping a generation no longer leaves a red error bubble or
-  a stuck "busy" state — the next message can be sent immediately, and the interrupted reply is
-  marked *Generation stopped*. The chat now scrolls to the **real** bottom (not just the top of the
-  last message), follows streaming output, returns to the latest message when you reopen it, pauses
-  following while you scroll up, and offers a *jump to latest* button.
-- **AI settings page layout fixed (issue #25).** Cards now share one width and have proper inner
-  padding, so titles are no longer clipped by the rounded corners and the smaller cards stop
-  looking narrower than the rest.
-- **Fabric API is deduplicated and protected (issue #22).** Recognition uses stable IDs
-  (`fabric-api`, Modrinth `P7dR8mSH`, CurseForge `306612`) rather than display names. An already
-  installed, compatible Fabric API is not downloaded again; the mod manager hides its delete
-  button, bulk delete skips it, and the built-in AI agent refuses to delete it. Deleting a whole
-  instance still works normally.
-- **CurseForge downloads are more reliable (issue #21).** Transient failures (timeouts, resets,
-  408/425/429, 5xx) are retried up to three times with backoff; 403/404 are never retried. Errors
-  now say whether it was a missing/invalid API key, a removed file, an unavailable mirror or a
-  timeout. The official API key is configured through Actions Secrets, and the MCIM mirror is kept
-  as a fallback.
-- **MobileGlues.** The bundled binaries were verified byte-for-byte against the official
-  **V2.0.0** APK. A new **ANGLE backend** switch (off by default) lets you avoid the known
-  depth-texture limitation on strict ES hosts (upstream issue #57) that breaks cloud and
-  transparency ordering; turn it on only if your native GLES driver is the one causing trouble.
+- [x] **默认 AI 服务商改为 DeepSeek**，移除 Anthropic 与选择入口（#23）
+- [x] **修复中断生成后无法继续发送消息**（#24）
+- [x] **修复 AI 设置页文字裁切、卡片宽度不一致**（#25）
+- [x] **AI 聊天自动贴底 + 回到底部按钮**（#26）
+- [x] **Fabric API 去重 + 受保护依赖**（#22）
+- [x] **CurseForge 下载重试、错误归类、镜像兜底 + 配置官方 Key**（#21）
+- [x] **MobileGlues 二进制核对（官方 V2.0.0）+ ANGLE 开关**（#29）
+- [ ] 议题 #20 图标替换：审计已完成，等待明确授权
+- [ ] 获取 MobileGlues `latest.log`，定位紫黑棋盘格（缺失贴图）
 
 ### 27.4.0
-- **Renderer selection is automatic by default.** The renderer list is now
-  **Auto / MobileGlues / Ironized Zink / GL4ES**. With *Auto*, each instance picks a renderer that
-  actually declares support for its Minecraft version, in this order:
-  `MobileGlues → Ironized Zink → GL4ES`. The three built-in renderers do not cover the same
-  versions (MobileGlues requires 1.17+; only Ironized Zink is unrestricted), so hard-coding a
-  default is necessarily wrong for some versions. *Auto* never writes back to your settings.
-  If you pick a specific renderer yourself, the launcher respects it and only falls back when it
-  genuinely cannot run that version — no more pointless "renderer may be incompatible" warning on
-  every launch.
-- **Offline and third-party sign-in are back.** The sign-in menu lists
-  **Microsoft / offline / third-party** side by side again. Nothing was removed underneath:
-  the backends, the account data structures and every existing account are untouched.
-- **MobileGlues now exposes an OpenGL version.** Selecting it expands an **OpenGL version**
-  dropdown right below (3.2 – 4.6, default 4.0). The values and clamping rules are copied from the
-  upstream plugin and MobileGlues' own native settings code, so what the UI shows is exactly what
-  the game uses.
-- **The launcher name in the title bar is now customisable (issue #18)** —
-  *Settings → Launcher → Launcher name*. Leave it blank to keep the default. This only changes
-  what the UI displays; the app name, premium sign-in and multiplayer identification are untouched.
-- **Upstream fixes synced**: `SDL_EGL_LIBRARY` was concatenating an already-absolute EGL path
-  (breaking plugin renderers); render state was not restored after a surface rebuild, leaving the
-  picture permanently misaligned; and the primary window's logical reference count was incremented
-  twice, so the real window was never destroyed.
-- **Also fixed**: the per-instance renderer setting had no *Follow global setting* entry, so once
-  you had assigned a renderer to an instance you could never switch it back.
+
+- [x] **「自动」渲染器**（设置里：自动 / MobileGlues / Ironized Zink / GL4ES）
+- [x] **MobileGlues 的 OpenGL 版本可选**（3.2 ~ 4.6，默认 4.0）
+- [x] **恢复离线 / 第三方认证入口**
+- [x] **按实例渲染器新增「跟随全局设置」条目**（此前指定过就切不回去）
+- [x] **同步上游修复**：`SDL_EGL_LIBRARY` 绝对路径重复拼接、surface 重建后画面错位、
+      窗口引用计数多算
+- [ ] 界面世代的后续：**逐屏重做布局与间距**、整体视觉语言统一、per-page 差异化转场、
+      把剩余动画收敛到统一动效入口、读取系统级「移除动画」设置
+- [ ] 评估 `Launcher.kt` 的 `user.country` 与 `LanguageHelper` 对 `Locale.getDefault()` 的依赖
 
 ### 27.3.0
 
-- **Sign-in is now Microsoft-first.** The offline and third-party sign-in entries are hidden by
-  default, so *Add account* takes you straight to Microsoft sign-in instead of opening a menu with
-  a single option in it. This is a **UI-layer switch, not a removal**: the offline and third-party
-  backends, the account data structures and the Microsoft device-code flow are untouched, and
-  accounts you created before the update still show up and still launch the game.
-- **Interface Style — Modern / Classic, switchable both ways.** *Settings → Launcher → Interface
-  Style* lets you choose between the redesigned look and exactly the previous one, and you can
-  switch back and forth as often as you like. Modern reworks the type scale (semibold headings,
-  tighter tracking on large text), enlarges the corner radii (cards 16dp → 22dp, dialogs → 30dp)
-  and uses a standard motion scheme with no bounce or overshoot. One setting covers all 203
-  `MaterialTheme.shapes` call sites and every text level at once.
-- **The intense dynamic-glass level and its photosensitivity warning are gone.** Glass is back to
-  two levels (off / dynamic glass), and nothing in the launcher pulses, flashes or strobes any
-  more — so the warning is no longer needed either. If you were using the intense level you fall
-  back to **dynamic glass**, not to off.
-- **Fixed: changing the app language no longer changes the game's DNS.** The launcher used to
-  decide your region from the *app language*, so switching to a non-Chinese interface made it treat
-  users in mainland China as overseas and swap the game's DNS over to Cloudflare — which can break
-  name resolution depending on your network. It now uses the same timezone-based region check as
-  the rest of the app.
-- A **sponsor entry in About**, plus sponsor sections at the bottom of all four READMEs.
-- **The intense dynamic-glass level and its photosensitivity warning were removed.** Glass went back
-  to two levels (off / dynamic glass), and nothing in the launcher pulses, flashes or strobes any
-  more — so the warning was no longer needed either. Anyone using the intense level fell back to
-  **dynamic glass**, not to off.
-  *(27.4.0 subsequently removed that level entirely — see the highlights above.)*
+- [x] **认证入口调整**：默认隐藏离线 / 第三方认证入口，Microsoft 正版认证优先（#17）
+- [x] **「界面世代」切换**：新版 / 旧版，可随时双向切换
+- [x] **新版设计令牌层**：字阶（SemiBold 标题 + 负字距）、圆角体系（卡片 22dp）、标准动效
+- [x] **移除「强效动态玻璃」档与光敏性警告**（旧配置迁移：强效 → 启用动态玻璃）
+- [x] **修复启动链路用「应用语言」判断地区，导致切语言后游戏 DNS 被换掉**
+- [x] **关于页新增 ZyNova 自己的赞助入口**；多语言 README 新增赞助版块
 
 ### 27.2.0
 
-- **Page transitions now actually do something.** The transition setting offered
-  *jelly bounce / bounce / slice in*, but every one of them was silently rendered as a plain
-  cross-fade. Each option now has a real transition, and all fifteen navigation surfaces share
-  one implementation — including the file manager, which previously had none.
-- **Reduce Motion** — a new accessibility switch that turns everything off at once: page
-  transitions, cascading entrance animations, the flowing highlights of dynamic glass and the
-  shimmer skeleton, and it downgrades the Material motion scheme from expressive to standard.
-  It is a real off switch, not just a shorter duration.
-- **A new ⚠️ intense dynamic-glass level, with a photosensitivity warning.** The glass effect now
-  has three levels: off / dynamic glass / **intense (photosensitivity risk)**. The intense level
-  flows faster, is brighter and adds a slow brightness pulse. Unlike the old "extreme" level it
-  only paints gradient highlights — it never blurs the layer that carries text, so text stays
-  sharp. Because that level does carry a real risk, the launcher shows a **photosensitivity
-  warning on every start while it is in use**, and you can turn that warning off in
-  *Settings → Launcher*.
-- **Cards now respond to touch** — a subtle press-and-release scale, applied consistently through
-  the shared card component (skipped entirely under Reduce Motion).
-- **The graphics API is fully automatic.** The manual OpenGL / Vulkan selector is gone. An
-  instance uses OpenGL the first time it is launched, and from then on the launcher leaves the
-  backend alone so the game's own setting wins. Whether a version needs that option at all is
-  decided from its **release date**, not from a hard-coded version number — the first
-  Vulkan-capable version was Minecraft 26.2-snapshot-1 (2026-04-07). Version metadata is checked
-  on every launch (including the latest release and snapshot) without ever blocking the game.
-- **The splash screen now fades into the main screen** instead of using the default activity
-  animation.
+- [x] **页面转场真实生效**（回弹 / 弹跳 / 切入），15 处导航统一（#15）
+- [x] **减少动态效果**（无障碍总开关：转场 / 级联入场 / 动态玻璃高光 / 骨架屏闪烁）（#15）
+- [x] **强效动态玻璃档位 + 启动光敏性警告**（可在设置中关闭）（#15）
+- [x] **统一卡片按压反馈**（#15）
+- [x] **启动页 → 主界面淡入淡出**（#15）
+- [x] **图形 API 全自动**（移除手动选择，按版本发布时间判定）（#16）
+- [x] **修复 AI 图标点击无反馈**（#14）
+- [ ] 议题 #15 的其余部分：启动流程重新设计、整体视觉语言统一、
+      per-page 差异化转场、把剩余动画收敛到统一动效入口、读取系统级「移除动画」设置
 
-> 📜 Full version history: [CHANGELOG.md](CHANGELOG.md)
+### 27.1.2
 
-## ℹ️ Which Microsoft application is used for sign-in
-**ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
-independently.**
+- [x] **移除上游 Client ID 并改写 Git 历史**（3 个提交清除，全对象扫描 0 命中）
+- [x] AI 配置页首次打开时的**数据流向说明**
+- [x] Agent **写操作审计日志**（可查看 / 导出 / 清空）
+- [x] Agent 权限模式**默认值改为「操作确认」**
+- [x] **恢复「OpenGL 版本」下拉**（4.6 / 4.5 / 4.3 / 3.3）
+- [x] 修复「操作确认」弹窗会盖在其它页面上的问题
 
-| | Display name | Client ID | Mojang allow list | Used by this build |
-|---|---|---|---|---|
-| **ZyNova's own** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **approved (2026-09-30)** | ✅ yes |
-| **ZalithLauncher2's** | ZalithLauncher (upstream) | (removed) | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
+> 📜 更早版本的路线图记录见 [CHANGELOG.md](CHANGELOG.md)。
 
-- Only a registration that is on **Minecraft's application allow list** can complete premium
-  sign-in; otherwise `POST /authentication/login_with_xbox` answers
-  `403 Invalid app registration`, no matter how OAuth, Xbox Live and XSTS went.
-- ✅ **ZyNova's own registration is on that allow list** — the Mojang Enforcement AppID review was
-  completed on **2026-09-30**. Premium sign-in works with the current builds, and ZyNova no longer
-  borrows the upstream project's registration.
-- Still required: **public client + Client ID only** — no Client Secret, no redirect URI, no SHA-1.
-  The ID is injected at build time through the repository secret `OAUTH_CLIENT_ID`; it is never
-  hard-coded in the source.
+## 💬 社区与反馈
 
-## 🛠️ Features
+| 渠道 | 地址 |
+|---|---|
+| GitHub 仓库 | <https://github.com/zzy89216-gif/ZyNova> |
+| GitHub Issues（Bug / 建议） | <https://github.com/zzy89216-gif/ZyNova/issues> |
+| Discord 服务器 | <https://discord.gg/QwPpZQHrTa> |
+| Releases（下载） | <https://github.com/zzy89216-gif/ZyNova/releases> |
 
-### AI Agent
+> ⚠️ Discord 使用的是**永久邀请链接**。如果该链接失效，说明服务器更换了邀请，
+> 请以 GitHub 仓库首页与启动器「关于」页面中的链接为准，并到 Issues 反馈。
 
-A new **AI** button sits next to the file entry in the top bar and opens the chat screen
-directly — there is no separate AI home page. Chat and Agent are the **same entry point**:
-ask *"why won't this instance launch?"* and it goes and reads the logs; then say *"fix it for me"*
-and it **calls tools and actually does it**, instead of writing you a tutorial.
+---
 
-- **25 tools**, all built on the launcher's existing systems: instances, real mod metadata,
-  enabling / disabling / deleting mods, resource packs, shaders, saves, files, logs, crash reports,
-  **every launcher setting**, resource search and install (including recursive installation of
-  required dependencies), and **actually launching the game**
-- **Conversations are saved on this device**, and a **sidebar** (top-left) lets you review, switch,
-  delete or start a new conversation
-- **Operation audit log**: every write operation is recorded locally and can be reviewed or
-  exported from the AI settings
-- **No tool-call limit** — the agent keeps working until it decides it is done; you can stop it at
-  any time
-- **Its own settings screen** (top-right of the chat), separate from the launcher settings:
-  provider (OpenAI / Anthropic, extensible), your own API key (stored on this device only),
-  a **dynamically fetched model list — no model name is hard-coded**, a customisable base URL, and
-  a permission mode (**confirm each operation** by default, or full control)
-- **Safety**: file tools are confined to the game and launcher data directories; sensitive setting
-  keys are refused; if the confirmation UI is unavailable, write operations are denied
+## 🔗 上游项目
 
-### Renderers
+ZyNova 基于：
 
-Since 26.3.0 the launcher ships **exactly three built-in renderers**:
+**ZalithLauncher2**
 
-| Renderer | What it is | Configuration |
+官方项目仓库：
+
+https://github.com/ZalithLauncher/ZalithLauncher2
+
+感谢 ZalithLauncher2 项目以及所有贡献者提供的：
+
+- 开源代码
+- 技术基础
+- 项目经验
+- 相关工作
+
+ZyNova 的开发离不开上游项目所提供的基础。
+
+---
+
+## 🧬 内置渲染器的上游
+
+26.3.0 起内置的三个渲染器分别来自这些上游项目（**各自适用各自的许可证**）：
+
+| 渲染器 | 上游项目 | 该渲染器自身代码的许可证 |
 |---|---|---|
-| **Ironized Zink** | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets** + OpenGL version |
-| **GL4ES** | Classic OpenGL translation layer | Kept at its defaults |
-| **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | **OpenGL version dropdown** (3.2 - 4.6, default 4.0) |
+| **Ironized Zink** | https://github.com/GoyDevv/IronizedZink | **GPL-3.0** |
+| **MobileGlues** | https://github.com/MobileGL-Dev/MobileGlues | **LGPL-2.1** |
+| **GL4ES** | https://github.com/PojavLauncherTeam/gl4es_extra_extra | **MIT** |
 
-The default is **Auto**: the launcher picks the first renderer that declares support for that
-instance's Minecraft version, in the order `MobileGlues -> Ironized Zink -> GL4ES`
-(the three built-ins do not cover the same versions). If you pick one yourself, the launcher
-respects that choice and only falls back when it genuinely cannot run the version.
+Ironized Zink 本身是一个「打包 + 配置」项目；真正的渲染引擎来自
+**Mesa**（https://mesa3d.org/）：
 
-**The 4 official Ironized Zink presets** (values identical to upstream):
+- **Zink**（Mesa 的 Gallium 驱动）与 **Kopper**（Mesa 的 Vulkan 窗口系统集成层）
+  都是 **Mesa 代码库的一部分**，并不是独立的第三方项目
+- Mesa 内部各组件许可证**并不相同**：主 Mesa 代码 / Gallium 代码为 **MIT**，
+  GLX 客户端代码为 **SGI Free Software License B**，
+  GL / GLX 扩展头文件为 **Khronos**，C11 线程模拟为 **Boost（宽松许可）**
+- 随启动器分发的 Zink / Kopper 预编译二进制来自
+  **AngelAuraMC 的 `mesa_zink_kopper` 构建**，以**未经修改**的形式随包分发
 
-| Preset | Best for | Minecraft | Shaders |
-|---|---|---|---|
-| **Potato** | Absolute maximum FPS | 1.8 → latest (incl. 26.x) | Not recommended |
-| **Performance** | High FPS with Sodium | 1.20.x → latest | Light |
-| **Default** | Balanced Zink + shaders (**default**) | 1.16.x → latest | Full (Iris / OptiFine) |
-| **Max Compatibility** | Run everything | All versions | Full + heavy packs |
-
-Since **26.4.0** the panel exposes **only the 4 presets** (the 12 individual parameter switches
-were removed so that ordinary users do not have to tune low-level parameters; picking a preset
-still writes the whole parameter set at once). The **OpenGL version** dropdown was removed by the
-same change and **restored in 27.1.2**, so the panel is the 4 presets plus that one dropdown.
-
-> ℹ️ All four presets pin the OpenGL version to **4.6**. If your driver does not translate
-> Vulkan to Zink 4.6 correctly (broken picture / refuses to start), lower it to 4.5 / 4.3 / 3.3
-> in the **OpenGL version** dropdown below the presets — that dropdown was removed in 26.4.0 and
-> **restored in 27.1.2**. Changing it only affects the OpenGL version, not the other presets.
-
-Selecting Ironized Zink in **Settings → Renderer** immediately expands the preset panel right below it.
-
-> **External renderers are unaffected**: renderer plugins (FCL / Zalith renderer plugins
-> and the newer `fclPlugin_V2` plugins) can still add more renderers to the list.
-> Only three are *built in* — you can still install as many plugins as you like.
-
-### Card-style home screen
-
-The home screen is organized into **per-version modules**: each installed version is a module
-card that directly lists that version's own local worlds and saved servers.
-Tapping the module card itself launches that version.
-
-The card home screen also supports:
-
-- **Long-press drag to reorder**: version cards, the worlds / servers inside a card,
-  and the three blocks of the right menu can all be dragged into any order, and the order is remembered
-- **Card size**: Settings → Launcher → Home Page → Card Size (70%–140%, default 100%)
-- A single-layer card background, so no extra frame or shadow is drawn
-
-Data is loaded on demand — the launcher does not scan everything at startup.
-The default / card / custom home screen can be selected in settings.
-
-### Unified Resource Management Core
-
-Mods, resource packs, shaders and worlds all share a single pipeline:
-
-> Search → Details → Version matching → File selection → Download → Verification → Install
-
-### Resource Providers
-
-Resource sources are decoupled from the UI. Upper layers only depend on a unified interface.
-Adding another source later only requires implementing a provider — no rewrite needed.
-
-### Unified Download Manager
-
-One download entry point for everything: download queue, concurrency control, progress,
-resume, retry, cancellation, checksum verification, temporary file cleanup, and
-post-download install triggering.
-
-### Minimal resource installation
-
-When entering a resource page from *Version Settings → Mods*, the launcher already knows the
-current instance, Minecraft version, loader and resource directory. Tapping download installs
-directly, without repeatedly asking for the Minecraft version, instance or installation path.
-The resource list shows an **Installed** state afterwards.
-
-### Vulkan detection
-
-Detection results are clearly split into **available / unavailable / check failed**, with
-concrete reasons, GPU and driver information, and a manual re-check button. Detection is based
-on the capabilities actually enumerated from the device, not on what the device claims to support.
+完整的逐组件许可证、版权归属、预编译二进制来源与对应源码获取方式，见
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ---
 
-## 📦 Build Instructions (For Developers)
+## ⚠️ 与 ZalithLauncher2 的关系
 
-> The following section is for developers who wish to contribute or build the project locally.
+**ZyNova 并非 ZalithLauncher2 官方版本。**
 
-### Requirements
+ZyNova 是基于 ZalithLauncher2 开源代码进行开发的非官方修改项目。
 
-* Android Studio that supports **AGP 9.3.0** (recent stable release) —— older versions cannot open this project
-* Android SDK:
-  * **Minimum API level**: 26
-  * **Target API level**: 34
-  * **Compile SDK**: 37
-* JDK 17
-* Gradle **9.5.0** (the wrapper handles this automatically)
+本项目与 ZalithLauncher2 官方项目不存在官方合作、授权或隶属关系，除非另有明确说明。
 
-### Build Steps
+ZyNova 的具体代码、功能、界面以及后续发展由 ZyNova 项目维护者负责。
 
-```bash
-git clone https://github.com/zzy89216-gif/ZyNova.git
-# Open the project in Android Studio and build
-```
+如需了解 ZalithLauncher2 官方项目，请以其官方仓库中的信息为准。
 
 ---
 
-## 📜 License
+## ⚖️ 开源与许可证
 
-This project is licensed under the **[GPL-3.0 license](LICENSE)**.
+ZalithLauncher2 项目使用 **GNU General Public License v3.0 (GPL-3.0)**。
 
-> **Licenses differ per component.** Do not assume the whole project is MIT just because one
-> dependency is: ZyNova itself is GPL-3.0, Ironized Zink is GPL-3.0, MobileGlues is LGPL-2.1,
-> and GL4ES is MIT. The rendering engine Ironized Zink ships is **Mesa** — its core and Gallium
-> code (including the **Zink** driver) are MIT, the GLX client code is under the
-> SGI Free Software License B, and the GL / GLX extension headers are under the Khronos license.
-> **Kopper** is also part of the Mesa code base, so the Mesa terms apply to it.
-> See **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)** for the full per-component breakdown,
-> copyright notices and the source availability statement for the redistributed binaries.
+ZyNova 基于 ZalithLauncher2 的开源代码开发，因此 **ZyNova 自身同样以 GPL-3.0 发布**
+（仓库根目录 `LICENSE`），在涉及上游代码的部分遵循适用的 GPL-3.0 许可证要求。
 
-### Additional Terms (Pursuant to Section 7 of the GPLv3 License)
+使用、修改、再发布或分发 ZyNova 时，请同时注意：
 
-1. When distributing a modified version of this program, you must reasonably modify the program's name or version number to distinguish it from the original version. (According to [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374))
-    - Modified versions **must not include the original program name "ZalithLauncher" or its abbreviation "ZL" in their name, nor use any name that is similar enough to cause confusion with the official name**.
-    - All modified versions **must clearly indicate that they are “Unofficial Modified Versions” on the program’s startup screen or main interface**.
-    - The application name of the program can be modified in [gradle.properties](./ZalithLauncher/gradle.properties).
+- ZalithLauncher2 所适用的许可证要求
+- ZyNova 自身适用的许可证要求
+- 项目中其他第三方开源组件各自适用的许可证
+- 相关版权声明
+- 各许可证文本中的其他要求
 
-2. You must not remove the copyright notices displayed by the program. (According to [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370))
+请在使用、修改或再发布本项目之前仔细阅读相关许可证及版权信息。
 
-## Open Source Libraries and Licenses
+### 各组件许可证并不相同
 
-This software uses the following open source libraries:
+**不要因为某一个依赖是 MIT，就认为整个项目都是 MIT。** 本项目逐组件适用各自的许可证：
 
-| Library                               | Copyright                                                                                                     | License              | Official Link                                                                      |
-|---------------------------------------|---------------------------------------------------------------------------------------------------------------|----------------------|------------------------------------------------------------------------------------|
-| androidx-appcompat                    | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/appcompat)         |
-| androidx-constraintlayout-compose     | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/develop/ui/compose/layouts/constraintlayout) |
-| androidx-webkit                       | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/webkit)            |
-| ANGLE                                 | Copyright 2018 The ANGLE Project Authors                                                                      | BSD 3-Clause License | [Link↗](http://angleproject.org/)                                                  |
-| Apache Commons Codec                  | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-codec)                           |
-| Apache Commons Compress               | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-compress)                        |
-| Apache Commons IO                     | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-io)                              |
-| ByteHook                              | Copyright © 2020-2024 ByteDance, Inc.                                                                         | MIT License          | [Link↗](https://github.com/bytedance/bhook)                                        |
-| BuildKeys                             | Copyright © 2026 MovTery                                                                                      | Apache 2.0           | [Link↗](https://github.com/MovTery/BuildKeys)                                      |
-| Coil Compose                          | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
-| Coil Gifs                             | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
-| Coil SVG                              | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
-| Fishnet                               | Copyright © 2025 Kyant                                                                                        | Apache 2.0           | [Link↗](https://github.com/Kyant0/Fishnet)                                         |
-| gl4es_extra_extra                     | Copyright © 2016-2018 Sebastien Chevalier; Copyright (c) 2013-2016 Ryan Hileman                               | MIT License          | [Link↗](https://github.com/PojavLauncherTeam/gl4es_extra_extra)                    |
-| Gson                                  | Copyright © 2008 Google Inc.                                                                                  | Apache 2.0           | [Link↗](https://github.com/google/gson)                                            |
-| kotlinx.coroutines                    | Copyright © 2000-2020 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://github.com/Kotlin/kotlinx.coroutines)                              |
-| ktor-client-content-negotiation       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
-| ktor-client-core                      | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
-| ktor-client-okhttp                    | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
-| ktor-http                             | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
-| ktor-serialization-kotlinx-json       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
-| LWJGL - Lightweight Java Game Library | Copyright © 2012-present Lightweight Java Game Library All rights reserved.                                   | BSD 3-Clause License | [Link↗](https://github.com/LWJGL/lwjgl3)                                           |
-| material-color-utilities              | Copyright 2021 Google LLC                                                                                     | Apache 2.0           | [Link↗](https://github.com/material-foundation/material-color-utilities)           |
-| Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [Link↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
-| Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
-| Ironized Zink                         | Copyright © GoyDevv (rendering engine: Mesa Zink / Kopper, © The Mesa Authors)                                 | GPL-3.0              | [Link↗](https://github.com/GoyDevv/IronizedZink)                                   |
-| Mesa core / Gallium (incl. Zink)      | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT                  | [Link↗](https://mesa3d.org/)                                                       |
-| Mesa GLX client code                  | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | SGI Free Software License B | [Link↗](https://mesa3d.org/)                                                 |
-| Mesa GL / GLX extension headers       | Copyright © The Khronos Group                                                                                 | Khronos              | [Link↗](https://www.khronos.org/)                                                  |
-| Kopper                                | Part of the Mesa code base (Vulkan WSI layer)                                                                 | Covered by the Mesa terms above | [Link↗](https://mesa3d.org/)                                            |
-| MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [Link↗](https://github.com/Tencent/MMKV)                                           |
-| Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
-| MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [Link↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
-| OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okhttp)                                          |
-| Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okio)                                            |
-| OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [Link↗](https://github.com/GeyserMC/OpenNBT)                                       |
-| Process Phoenix                       | Copyright © 2015 Jake Wharton                                                                                 | Apache 2.0           | [Link↗](https://github.com/JakeWharton/ProcessPhoenix)                             |
-| proxy-client-android                  | -                                                                                                             | LGPL-3.0 License     | [Link↗](https://github.com/TouchController/TouchController)                        |
-| Reorderable                           | Copyright © 2023 Calvin Liang                                                                                 | Apache 2.0           | [Link↗](https://github.com/Calvin-LL/Reorderable)                                  |
-| sdl2-compat                           | Copyright (C) 2026 Sam Lantinga <slouken@libsdl.org>                                                          | Zlib License         | [Link↗](https://github.com/libsdl-org/sdl2-compat)                                 |
-| SDL3                                  | Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>                                                     | Zlib License         | [Link↗](https://github.com/libsdl-org/SDL)                                         |
-| skinview3d                            | Copyright © 2014-2018 Kent Rasmussen; Copyright © 2017-2022 Haowei Wen, Sean Boult and contributors           | MIT License          | [Link↗](https://github.com/bs-community/skinview3d)                                |
-| sora-editor                           | Copyright (C) 2020-2026  Rosemoe                                                                              | LGPL-2.1 License     | [Link↗](https://github.com/Rosemoe/sora-editor)                                    |
-| StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [Link↗](https://github.com/MegatronKing/StringFog)                                 |
-| tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [Link↗](https://github.com/eclipse-tm4e/tm4e)                                      |
-| XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [Link↗](https://tukaani.org/xz/java.html)                                          |
+| 组件 | 许可证 |
+|---|---|
+| ZyNova Launcher（本项目自身） | **GPL-3.0** |
+| ZalithLauncher2（上游，ZyNova 基于其开发） | **GPL-3.0**（上游另有 GPLv3 第 7 条附加条款，见本文件及各 README 的「附加条款」小节） |
+| Ironized Zink（GoyDevv） | **GPL-3.0** |
+| MobileGlues（MobileGL-Dev） | **LGPL-2.1** |
+| GL4ES（gl4es_extra_extra / PojavLauncherTeam） | **MIT** |
+| Mesa 主代码 / Gallium 代码（含 Zink 驱动） | **MIT** |
+| Mesa GLX 客户端代码 | **SGI Free Software License B** |
+| Mesa GL / GLX 扩展头文件 | **Khronos** |
+| Mesa C11 线程模拟 | **Boost（宽松许可）** |
+| Kopper | 属于 Mesa 代码库，随 Mesa 适用上述条款 |
+| 其余第三方依赖（ANGLE / LWJGL / SDL3 / MMKV / sora-editor / Terracotta 等） | 各自上游许可证，见应用内「关于 → 开源许可」 |
+
+- 仓库根目录 `LICENSE` 是 **GPL-3.0** 全文，其中保留了上游
+  Zalith Launcher / MovTery 的版权声明 —— 这是 GPL-3.0 的要求，**不会删除**
+- 上游 ZalithLauncher2 依据 GPLv3 第 7 条提出的附加条款（分发修改版时需更名以区别于原版、
+  且不得移除程序显示的版权声明）同样适用；本项目已在启动器「关于」页面标注
+  「非官方修改版本」，并在四份 README 中完整转录该附加条款
+- 完整声明（含各预编译二进制的来源与对应源码获取方式）：
+  [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+- 应用内「关于 → 开源许可」逐条列出各组件及其许可文本
+- **上游作者的版权与署名信息一律保留，不会被删除**
+- **MobileGlues** 以 LGPL-2.1 分发的是**未经修改**的预编译动态库：
+  已与上游官方 release 内的同名二进制做 **SHA-256 比对，四个 ABI 全部一致**；
+  其对应源码获取方式已在 `THIRD_PARTY_NOTICES.md` 中给出
+
+### 附加条款（依据 GPLv3 第 7 条）
+
+1. **分发本程序的修改版本时，必须合理地修改程序名称或版本号，以区别于原版。**
+   （依据 [GPLv3 第 7(c) 条](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374)）
+   - 修改版本的名称中**不得包含原程序名称「ZalithLauncher」或其缩写「ZL」，
+     也不得使用与官方名称足够相似、可能造成混淆的名称**
+   - 所有修改版本**必须在程序启动画面或主界面明确标注「非官方修改版本」**
+   - 程序的应用名称可在 [gradle.properties](./ZalithLauncher/gradle.properties) 中修改
+2. **不得移除程序所显示的版权声明。**
+   （依据 [GPLv3 第 7(b) 条](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370)）
 
 ---
 
-## 💖 Supporting ZyNova
+## ❤️ 致谢
 
-ZyNova is maintained by **one person** and developed entirely on **a single Android phone** —
-there is no company, team, or funding behind it. If the launcher has been useful to you,
-a small tip is genuinely appreciated: it goes straight back into keeping the project alive.
+感谢：
+
+- ZalithLauncher2 项目及其所有贡献者
+- **Ironized Zink（GoyDevv）** —— 本项目的内置渲染器之一
+  （26.3.0 ~ 27.3.0 曾是默认；27.4.0 起默认改为「自动」按版本挑选）
+- **MobileGlues（MobileGL-Dev）**、**gl4es_extra_extra（PojavLauncherTeam）** —— 另外两个内置渲染器
+- **Mesa / Zink / Kopper** 的作者与贡献者 —— Ironized Zink 的渲染引擎
+- 本项目使用的其他开源项目
+- 第三方开源组件的作者与贡献者
+- 所有参与测试的用户
+- 提交 Bug 和反馈问题的用户
+- 提供建议和改进意见的用户
+
+感谢所有开源项目和社区生态为 ZyNova 提供的技术基础。
+
+---
+
+## 📌 总结
+
+ZyNova 从一个最初的界面与功能需求开始，逐渐发展成为一个完整的 Android Minecraft: Java Edition 启动器项目。
+
+目前项目已经拥有：
+
+- 独立名称
+- 独立应用身份
+- 独立源码仓库
+- 完整 Android 工程
+- Kotlin / Java / C / NDK
+- **全局 AI Agent**（Provider 可扩展 / 25 个可真正执行操作的工具 / 历史对话与侧边栏 / 写操作审计 / 数据流向说明）
+- 统一资源管理核心
+- 资源来源 Provider 体系
+- 统一下载管理器
+- 卡片式主页
+- 自有更新体系
+- 单一通用版本构建（含代码混淆）
+- GitHub Release
+- 正式 APK
+- 内置渲染器体系（Ironized Zink / GL4ES / MobileGlues）
+- ZalithLauncher2 扩展兼容
+- 功能与 UI 修改
+- 实际 Android 真机测试
+- Bug 修复与版本迭代
+- 项目维护与交接文档
+
+并且整个项目的开发、测试与发布流程，均**只使用一部 Android 手机操作完成**（APK 编译交由 GitHub Actions 在云端执行）。
+
+ZyNova 不追求一次完成所有事情，也不会为了更新而强行加入功能。
+
+未来将按照实际需求自然发展：
+
+> **有 Bug 就修。**
+>
+> **有需要就改。**
+>
+> **有想法就加。**
+>
+> **没有需要，就保持当前状态。**
+
+---
+
+# ZyNova
+
+**Minecraft: Java Edition Android Launcher**
+
+**基于开源，持续开发，独立维护。**
+
+**一个只用一部 Android 手机操作完成开发、测试与发布的独立项目（编译借助云端 CI）。**
+
+---
+
+## 💖 支持 ZyNova
+
+ZyNova 由**一个人**维护，全程只用**一部 Android 手机**开发，背后没有公司、团队，也没有资金支持。
+如果这个启动器帮到了你，欢迎请作者喝杯水 —— 这些支持会直接用在让项目继续活下去、继续变好上。
 
 <p align="center">
-  <img src="assets/donate/alipay.jpg" width="220" alt="Alipay">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="WeChat Pay">
+  <img src="assets/donate/alipay.jpg" width="220" alt="支付宝">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="微信支付">
 </p>
 
-<p align="center"><sub>Alipay（支付宝）&nbsp;·&nbsp;WeChat Pay（微信支付）</sub></p>
+<p align="center"><sub>支付宝&nbsp;·&nbsp;微信支付</sub></p>
 
-Donations are **completely optional**. Filing a bug report, improving a translation, or simply
-starring the repository helps just as much.
+打赏**完全自愿**。提一个 Bug、改进一句翻译，或者只是点一个 Star，帮助同样大。

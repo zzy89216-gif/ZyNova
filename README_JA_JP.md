@@ -13,7 +13,7 @@
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
 
-[English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
+[简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
 ---
 
@@ -56,7 +56,7 @@
   視差効果を減らす設定または動的ガラスがオフの場合は透明に自動フォールバックします。
 - **Fabric API をロック。** モッドのダウンロード画面から Fabric API を非表示にし、
   手動インストールも禁止しました。Fabric を選ぶと自動で追加され、互換版が見つからない場合は
-  ダウンロードを拒否します。削除・無効化はできず、2 つ目のコピーもインストールされません。
+  ダウンロードを拒否します。Fabric API は削除・無効化できず、2 つ目のコピーもインストールされません。
 - **アイコン表示の修正（issue #31）。** デスクトップ / 丸型アイコンのズームクロップを廃止し、
   アダプティブ / モノクロは 66% セーフゾーンに収めました。README のアイコンも現行のものに更新しました。
 - **細かな修正。** ワールドの難易度を ByteTag から正しく読むようにし、quickPlay は表示名ではなく

@@ -13,7 +13,7 @@
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
 
-[English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
+[简体中文](README.md) | [English](README_EN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
 ---
 
@@ -50,7 +50,8 @@
   quickPlay 進入遊戲；設定 → 啟動器新增「首頁按鈕材質」（預設 / 透明 / 液態玻璃，
   預設透明），開啟減少動效或關閉動態玻璃時會自動降級為透明。
 - **Fabric API 防呆。** 模組下載介面不再顯示 Fabric API，也不能手動安裝；選擇 Fabric 時
-  強制自動加入，偵測不到就拒絕下載；模組管理不可刪除 / 停用，已有任意版本時不會再裝第二份。
+  強制自動加入，偵測不到就拒絕下載；Fabric API 在模組管理不可刪除 / 停用，
+  已有任意版本時不會再裝第二份。
 - **圖示修正（議題 #31）。** 桌面 / 圓形圖示不再放大裁切，自適應 / 單色圖示縮進 66% 安全區，
   README 也改用目前品牌圖示。
 - **細節修正。** 存檔難度改為正確讀取 ByteTag；quickPlay 改用世界資料夾名稱。

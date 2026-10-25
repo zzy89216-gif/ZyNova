@@ -1,0 +1,445 @@
+<p align="center">
+  <img src="assets/icon.png" width="180" alt="ZyNova">
+</p>
+
+# ZyNova
+
+> **Minecraft: Java Edition · Android Launcher**
+>
+> An independent, unofficial project based on the open-source code of ZalithLauncher2
+
+[![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
+[![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
+
+[简体中文](README.md) | **[English](README_EN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
+
+---
+
+## ✦ About
+
+**ZyNova** is an **unofficial** Minecraft: Java Edition launcher for Android, built on the
+open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2).
+
+> **ZyNova is NOT an official version of ZalithLauncher2.**
+>
+> ZyNova is an unofficial modified project based on ZalithLauncher2's open-source code.
+>
+> It ships with a **built-in AI Agent** that can really read your logs, manage mods, edit
+> configs, install resources and launch the game for you — not just give advice.
+
+- GitHub: <https://github.com/zzy89216-gif/ZyNova>
+- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord: <https://discord.gg/QwPpZQHrTa> (permanent invite)
+
+---
+
+## ✨ Highlights of 27.6.1
+
+- **Top bar restored.** The folder / AI / multiplayer / download / settings entries are back to
+  their pre-27.6.0 appearance and no longer use the home button material.
+- **Ghost home buttons.** Launch / create-world / add-server and world/server buttons use a ghost
+  style: only ~1.5–2% luminance difference from the background, no borders, and enough transparency
+  for images and videos to show through in real time. The create-world and add-server buttons are
+  now compact and sit next to Launch.
+- **Version-aware world creation.** 26.1+ writes the real split save format
+  (`difficulty_settings`, `world_gen_settings.dat`, `game_rules.dat`); 1.12.2–26.0 keeps the
+  DataFixer-based path, and versions below 1.12.2 hide the entry. The generated world is read back
+  and verified before launching.
+- **Fabric API loading state.** While the Fabric API list is loading, the install button shows
+  “loading” instead of “blocked”; installation is only refused after loading fails or the list is
+  empty.
+- **Allow Cheats** is now available when creating a world; the switch is hidden on versions before
+  Minecraft 1.4 and written as off there.
+
+### 27.6.0
+
+- **Home interaction upgrade (issue #33).** Home cards can create a world or add a server in one
+  step and launch straight into it. A new **Home Button Material** setting offers Default /
+  Transparent / Liquid Glass, and automatically falls back to Transparent when reduced motion is on
+  or dynamic glass is off.
+- **Fabric API is locked down.** Fabric API is hidden from mod downloads and cannot be installed
+  manually. Selecting Fabric forces it in, and installation is refused when no compatible copy is
+  available. It cannot be deleted or disabled, and a second copy is never installed.
+- **Icon rendering fixed (issue #31).** Desktop and round icons no longer zoom-crop the artwork;
+  adaptive and monochrome layers are scaled into the 66% safe zone, and the README icon now uses
+  the current artwork instead of the old character icon.
+- **Smaller fixes.** Save difficulty now reads the `ByteTag` correctly, and quick-play uses the
+  world folder name rather than its display name.
+
+### 27.5.1
+
+- **A completely new brand icon.** Launcher, round, adaptive (foreground / background /
+  monochrome), Play Store, in-app About logo, splash screen and notification icon now all use
+  the new artwork — one source image, no leftover pieces of the old one.
+- **AI settings tightened up.** The provider picker is gone; the launcher talks to DeepSeek, and the
+  base URL is pre-filled on first launch yet still editable. Cards and buttons were compacted and
+  the audit buttons no longer stick together.
+- **Dynamic glass fixed and unified.** Home-screen instance cards now actually get the glass layer,
+  and every card's blur/highlight is clipped to its rounded corners on both Settings and AI Settings.
+
+### 27.5.0
+
+- **DeepSeek is now the default AI provider.** The provider list is **DeepSeek / OpenAI**; the
+  Anthropic entry and its selection UI were removed. DeepSeek speaks the same Chat Completions
+  protocol, so it shares the implementation, but its API key and base URL are stored separately.
+  Models are still fetched from the provider at runtime — nothing is hard-coded. Existing keys,
+  custom base URLs and model choices are kept, and a stored provider that no longer exists simply
+  falls back to DeepSeek instead of crashing.
+- **AI chat fixes (issues #24 / #26).** Stopping a generation no longer leaves a red error bubble or
+  a stuck "busy" state — the next message can be sent immediately, and the interrupted reply is
+  marked *Generation stopped*. The chat now scrolls to the **real** bottom (not just the top of the
+  last message), follows streaming output, returns to the latest message when you reopen it, pauses
+  following while you scroll up, and offers a *jump to latest* button.
+- **AI settings page layout fixed (issue #25).** Cards now share one width and have proper inner
+  padding, so titles are no longer clipped by the rounded corners and the smaller cards stop
+  looking narrower than the rest.
+- **Fabric API is deduplicated and protected (issue #22).** Recognition uses stable IDs
+  (`fabric-api`, Modrinth `P7dR8mSH`, CurseForge `306612`) rather than display names. An already
+  installed, compatible Fabric API is not downloaded again; the mod manager hides its delete
+  button, bulk delete skips it, and the built-in AI agent refuses to delete it. Deleting a whole
+  instance still works normally.
+- **CurseForge downloads are more reliable (issue #21).** Transient failures (timeouts, resets,
+  408/425/429, 5xx) are retried up to three times with backoff; 403/404 are never retried. Errors
+  now say whether it was a missing/invalid API key, a removed file, an unavailable mirror or a
+  timeout. The official API key is configured through Actions Secrets, and the MCIM mirror is kept
+  as a fallback.
+- **MobileGlues.** The bundled binaries were verified byte-for-byte against the official
+  **V2.0.0** APK. A new **ANGLE backend** switch (off by default) lets you avoid the known
+  depth-texture limitation on strict ES hosts (upstream issue #57) that breaks cloud and
+  transparency ordering; turn it on only if your native GLES driver is the one causing trouble.
+
+### 27.4.0
+- **Renderer selection is automatic by default.** The renderer list is now
+  **Auto / MobileGlues / Ironized Zink / GL4ES**. With *Auto*, each instance picks a renderer that
+  actually declares support for its Minecraft version, in this order:
+  `MobileGlues → Ironized Zink → GL4ES`. The three built-in renderers do not cover the same
+  versions (MobileGlues requires 1.17+; only Ironized Zink is unrestricted), so hard-coding a
+  default is necessarily wrong for some versions. *Auto* never writes back to your settings.
+  If you pick a specific renderer yourself, the launcher respects it and only falls back when it
+  genuinely cannot run that version — no more pointless "renderer may be incompatible" warning on
+  every launch.
+- **Offline and third-party sign-in are back.** The sign-in menu lists
+  **Microsoft / offline / third-party** side by side again. Nothing was removed underneath:
+  the backends, the account data structures and every existing account are untouched.
+- **MobileGlues now exposes an OpenGL version.** Selecting it expands an **OpenGL version**
+  dropdown right below (3.2 – 4.6, default 4.0). The values and clamping rules are copied from the
+  upstream plugin and MobileGlues' own native settings code, so what the UI shows is exactly what
+  the game uses.
+- **The launcher name in the title bar is now customisable (issue #18)** —
+  *Settings → Launcher → Launcher name*. Leave it blank to keep the default. This only changes
+  what the UI displays; the app name, premium sign-in and multiplayer identification are untouched.
+- **Upstream fixes synced**: `SDL_EGL_LIBRARY` was concatenating an already-absolute EGL path
+  (breaking plugin renderers); render state was not restored after a surface rebuild, leaving the
+  picture permanently misaligned; and the primary window's logical reference count was incremented
+  twice, so the real window was never destroyed.
+- **Also fixed**: the per-instance renderer setting had no *Follow global setting* entry, so once
+  you had assigned a renderer to an instance you could never switch it back.
+
+### 27.3.0
+
+- **Sign-in is now Microsoft-first.** The offline and third-party sign-in entries are hidden by
+  default, so *Add account* takes you straight to Microsoft sign-in instead of opening a menu with
+  a single option in it. This is a **UI-layer switch, not a removal**: the offline and third-party
+  backends, the account data structures and the Microsoft device-code flow are untouched, and
+  accounts you created before the update still show up and still launch the game.
+- **Interface Style — Modern / Classic, switchable both ways.** *Settings → Launcher → Interface
+  Style* lets you choose between the redesigned look and exactly the previous one, and you can
+  switch back and forth as often as you like. Modern reworks the type scale (semibold headings,
+  tighter tracking on large text), enlarges the corner radii (cards 16dp → 22dp, dialogs → 30dp)
+  and uses a standard motion scheme with no bounce or overshoot. One setting covers all 203
+  `MaterialTheme.shapes` call sites and every text level at once.
+- **The intense dynamic-glass level and its photosensitivity warning are gone.** Glass is back to
+  two levels (off / dynamic glass), and nothing in the launcher pulses, flashes or strobes any
+  more — so the warning is no longer needed either. If you were using the intense level you fall
+  back to **dynamic glass**, not to off.
+- **Fixed: changing the app language no longer changes the game's DNS.** The launcher used to
+  decide your region from the *app language*, so switching to a non-Chinese interface made it treat
+  users in mainland China as overseas and swap the game's DNS over to Cloudflare — which can break
+  name resolution depending on your network. It now uses the same timezone-based region check as
+  the rest of the app.
+- A **sponsor entry in About**, plus sponsor sections at the bottom of all four READMEs.
+- **The intense dynamic-glass level and its photosensitivity warning were removed.** Glass went back
+  to two levels (off / dynamic glass), and nothing in the launcher pulses, flashes or strobes any
+  more — so the warning was no longer needed either. Anyone using the intense level fell back to
+  **dynamic glass**, not to off.
+  *(27.4.0 subsequently removed that level entirely — see the highlights above.)*
+
+### 27.2.0
+
+- **Page transitions now actually do something.** The transition setting offered
+  *jelly bounce / bounce / slice in*, but every one of them was silently rendered as a plain
+  cross-fade. Each option now has a real transition, and all fifteen navigation surfaces share
+  one implementation — including the file manager, which previously had none.
+- **Reduce Motion** — a new accessibility switch that turns everything off at once: page
+  transitions, cascading entrance animations, the flowing highlights of dynamic glass and the
+  shimmer skeleton, and it downgrades the Material motion scheme from expressive to standard.
+  It is a real off switch, not just a shorter duration.
+- **A new ⚠️ intense dynamic-glass level, with a photosensitivity warning.** The glass effect now
+  has three levels: off / dynamic glass / **intense (photosensitivity risk)**. The intense level
+  flows faster, is brighter and adds a slow brightness pulse. Unlike the old "extreme" level it
+  only paints gradient highlights — it never blurs the layer that carries text, so text stays
+  sharp. Because that level does carry a real risk, the launcher shows a **photosensitivity
+  warning on every start while it is in use**, and you can turn that warning off in
+  *Settings → Launcher*.
+- **Cards now respond to touch** — a subtle press-and-release scale, applied consistently through
+  the shared card component (skipped entirely under Reduce Motion).
+- **The graphics API is fully automatic.** The manual OpenGL / Vulkan selector is gone. An
+  instance uses OpenGL the first time it is launched, and from then on the launcher leaves the
+  backend alone so the game's own setting wins. Whether a version needs that option at all is
+  decided from its **release date**, not from a hard-coded version number — the first
+  Vulkan-capable version was Minecraft 26.2-snapshot-1 (2026-04-07). Version metadata is checked
+  on every launch (including the latest release and snapshot) without ever blocking the game.
+- **The splash screen now fades into the main screen** instead of using the default activity
+  animation.
+
+> 📜 Full version history: [CHANGELOG.md](CHANGELOG.md)
+
+## ℹ️ Which Microsoft application is used for sign-in
+**ZyNova is an unofficial fork of ZalithLauncher2 — they are different projects, maintained
+independently.**
+
+| | Display name | Client ID | Mojang allow list | Used by this build |
+|---|---|---|---|---|
+| **ZyNova's own** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **approved (2026-09-30)** | ✅ yes |
+| **ZalithLauncher2's** | ZalithLauncher (upstream) | (removed) | ✅ approved | ❌ no (used by the 26.4.0 / 26.4.1 builds) |
+
+- Only a registration that is on **Minecraft's application allow list** can complete premium
+  sign-in; otherwise `POST /authentication/login_with_xbox` answers
+  `403 Invalid app registration`, no matter how OAuth, Xbox Live and XSTS went.
+- ✅ **ZyNova's own registration is on that allow list** — the Mojang Enforcement AppID review was
+  completed on **2026-09-30**. Premium sign-in works with the current builds, and ZyNova no longer
+  borrows the upstream project's registration.
+- Still required: **public client + Client ID only** — no Client Secret, no redirect URI, no SHA-1.
+  The ID is injected at build time through the repository secret `OAUTH_CLIENT_ID`; it is never
+  hard-coded in the source.
+
+## 🛠️ Features
+
+### AI Agent
+
+A new **AI** button sits next to the file entry in the top bar and opens the chat screen
+directly — there is no separate AI home page. Chat and Agent are the **same entry point**:
+ask *"why won't this instance launch?"* and it goes and reads the logs; then say *"fix it for me"*
+and it **calls tools and actually does it**, instead of writing you a tutorial.
+
+- **25 tools**, all built on the launcher's existing systems: instances, real mod metadata,
+  enabling / disabling / deleting mods, resource packs, shaders, saves, files, logs, crash reports,
+  **every launcher setting**, resource search and install (including recursive installation of
+  required dependencies), and **actually launching the game**
+- **Conversations are saved on this device**, and a **sidebar** (top-left) lets you review, switch,
+  delete or start a new conversation
+- **Operation audit log**: every write operation is recorded locally and can be reviewed or
+  exported from the AI settings
+- **No tool-call limit** — the agent keeps working until it decides it is done; you can stop it at
+  any time
+- **Its own settings screen** (top-right of the chat), separate from the launcher settings:
+  provider (OpenAI / Anthropic, extensible), your own API key (stored on this device only),
+  a **dynamically fetched model list — no model name is hard-coded**, a customisable base URL, and
+  a permission mode (**confirm each operation** by default, or full control)
+- **Safety**: file tools are confined to the game and launcher data directories; sensitive setting
+  keys are refused; if the confirmation UI is unavailable, write operations are denied
+
+### Renderers
+
+Since 26.3.0 the launcher ships **exactly three built-in renderers**:
+
+| Renderer | What it is | Configuration |
+|---|---|---|
+| **Ironized Zink** | Desktop OpenGL 4.6 translated to Vulkan (Mesa Zink + Kopper), by GoyDevv | **4 official presets** + OpenGL version |
+| **GL4ES** | Classic OpenGL translation layer | Kept at its defaults |
+| **MobileGlues** | Translates desktop OpenGL onto the device's OpenGL ES 3.x | **OpenGL version dropdown** (3.2 - 4.6, default 4.0) |
+
+The default is **Auto**: the launcher picks the first renderer that declares support for that
+instance's Minecraft version, in the order `MobileGlues -> Ironized Zink -> GL4ES`
+(the three built-ins do not cover the same versions). If you pick one yourself, the launcher
+respects that choice and only falls back when it genuinely cannot run the version.
+
+**The 4 official Ironized Zink presets** (values identical to upstream):
+
+| Preset | Best for | Minecraft | Shaders |
+|---|---|---|---|
+| **Potato** | Absolute maximum FPS | 1.8 → latest (incl. 26.x) | Not recommended |
+| **Performance** | High FPS with Sodium | 1.20.x → latest | Light |
+| **Default** | Balanced Zink + shaders (**default**) | 1.16.x → latest | Full (Iris / OptiFine) |
+| **Max Compatibility** | Run everything | All versions | Full + heavy packs |
+
+Since **26.4.0** the panel exposes **only the 4 presets** (the 12 individual parameter switches
+were removed so that ordinary users do not have to tune low-level parameters; picking a preset
+still writes the whole parameter set at once). The **OpenGL version** dropdown was removed by the
+same change and **restored in 27.1.2**, so the panel is the 4 presets plus that one dropdown.
+
+> ℹ️ All four presets pin the OpenGL version to **4.6**. If your driver does not translate
+> Vulkan to Zink 4.6 correctly (broken picture / refuses to start), lower it to 4.5 / 4.3 / 3.3
+> in the **OpenGL version** dropdown below the presets — that dropdown was removed in 26.4.0 and
+> **restored in 27.1.2**. Changing it only affects the OpenGL version, not the other presets.
+
+Selecting Ironized Zink in **Settings → Renderer** immediately expands the preset panel right below it.
+
+> **External renderers are unaffected**: renderer plugins (FCL / Zalith renderer plugins
+> and the newer `fclPlugin_V2` plugins) can still add more renderers to the list.
+> Only three are *built in* — you can still install as many plugins as you like.
+
+### Card-style home screen
+
+The home screen is organized into **per-version modules**: each installed version is a module
+card that directly lists that version's own local worlds and saved servers.
+Tapping the module card itself launches that version.
+
+The card home screen also supports:
+
+- **Long-press drag to reorder**: version cards, the worlds / servers inside a card,
+  and the three blocks of the right menu can all be dragged into any order, and the order is remembered
+- **Card size**: Settings → Launcher → Home Page → Card Size (70%–140%, default 100%)
+- A single-layer card background, so no extra frame or shadow is drawn
+
+Data is loaded on demand — the launcher does not scan everything at startup.
+The default / card / custom home screen can be selected in settings.
+
+### Unified Resource Management Core
+
+Mods, resource packs, shaders and worlds all share a single pipeline:
+
+> Search → Details → Version matching → File selection → Download → Verification → Install
+
+### Resource Providers
+
+Resource sources are decoupled from the UI. Upper layers only depend on a unified interface.
+Adding another source later only requires implementing a provider — no rewrite needed.
+
+### Unified Download Manager
+
+One download entry point for everything: download queue, concurrency control, progress,
+resume, retry, cancellation, checksum verification, temporary file cleanup, and
+post-download install triggering.
+
+### Minimal resource installation
+
+When entering a resource page from *Version Settings → Mods*, the launcher already knows the
+current instance, Minecraft version, loader and resource directory. Tapping download installs
+directly, without repeatedly asking for the Minecraft version, instance or installation path.
+The resource list shows an **Installed** state afterwards.
+
+### Vulkan detection
+
+Detection results are clearly split into **available / unavailable / check failed**, with
+concrete reasons, GPU and driver information, and a manual re-check button. Detection is based
+on the capabilities actually enumerated from the device, not on what the device claims to support.
+
+---
+
+## 📦 Build Instructions (For Developers)
+
+> The following section is for developers who wish to contribute or build the project locally.
+
+### Requirements
+
+* Android Studio that supports **AGP 9.3.0** (recent stable release) —— older versions cannot open this project
+* Android SDK:
+  * **Minimum API level**: 26
+  * **Target API level**: 34
+  * **Compile SDK**: 37
+* JDK 17
+* Gradle **9.5.0** (the wrapper handles this automatically)
+
+### Build Steps
+
+```bash
+git clone https://github.com/zzy89216-gif/ZyNova.git
+# Open the project in Android Studio and build
+```
+
+---
+
+## 📜 License
+
+This project is licensed under the **[GPL-3.0 license](LICENSE)**.
+
+> **Licenses differ per component.** Do not assume the whole project is MIT just because one
+> dependency is: ZyNova itself is GPL-3.0, Ironized Zink is GPL-3.0, MobileGlues is LGPL-2.1,
+> and GL4ES is MIT. The rendering engine Ironized Zink ships is **Mesa** — its core and Gallium
+> code (including the **Zink** driver) are MIT, the GLX client code is under the
+> SGI Free Software License B, and the GL / GLX extension headers are under the Khronos license.
+> **Kopper** is also part of the Mesa code base, so the Mesa terms apply to it.
+> See **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)** for the full per-component breakdown,
+> copyright notices and the source availability statement for the redistributed binaries.
+
+### Additional Terms (Pursuant to Section 7 of the GPLv3 License)
+
+1. When distributing a modified version of this program, you must reasonably modify the program's name or version number to distinguish it from the original version. (According to [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374))
+    - Modified versions **must not include the original program name "ZalithLauncher" or its abbreviation "ZL" in their name, nor use any name that is similar enough to cause confusion with the official name**.
+    - All modified versions **must clearly indicate that they are “Unofficial Modified Versions” on the program’s startup screen or main interface**.
+    - The application name of the program can be modified in [gradle.properties](./ZalithLauncher/gradle.properties).
+
+2. You must not remove the copyright notices displayed by the program. (According to [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370))
+
+## Open Source Libraries and Licenses
+
+This software uses the following open source libraries:
+
+| Library                               | Copyright                                                                                                     | License              | Official Link                                                                      |
+|---------------------------------------|---------------------------------------------------------------------------------------------------------------|----------------------|------------------------------------------------------------------------------------|
+| androidx-appcompat                    | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/appcompat)         |
+| androidx-constraintlayout-compose     | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/develop/ui/compose/layouts/constraintlayout) |
+| androidx-webkit                       | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/webkit)            |
+| ANGLE                                 | Copyright 2018 The ANGLE Project Authors                                                                      | BSD 3-Clause License | [Link↗](http://angleproject.org/)                                                  |
+| Apache Commons Codec                  | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-codec)                           |
+| Apache Commons Compress               | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-compress)                        |
+| Apache Commons IO                     | -                                                                                                             | Apache 2.0           | [Link↗](https://commons.apache.org/proper/commons-io)                              |
+| ByteHook                              | Copyright © 2020-2024 ByteDance, Inc.                                                                         | MIT License          | [Link↗](https://github.com/bytedance/bhook)                                        |
+| BuildKeys                             | Copyright © 2026 MovTery                                                                                      | Apache 2.0           | [Link↗](https://github.com/MovTery/BuildKeys)                                      |
+| Coil Compose                          | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
+| Coil Gifs                             | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
+| Coil SVG                              | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [Link↗](https://github.com/coil-kt/coil)                                           |
+| Fishnet                               | Copyright © 2025 Kyant                                                                                        | Apache 2.0           | [Link↗](https://github.com/Kyant0/Fishnet)                                         |
+| gl4es_extra_extra                     | Copyright © 2016-2018 Sebastien Chevalier; Copyright (c) 2013-2016 Ryan Hileman                               | MIT License          | [Link↗](https://github.com/PojavLauncherTeam/gl4es_extra_extra)                    |
+| Gson                                  | Copyright © 2008 Google Inc.                                                                                  | Apache 2.0           | [Link↗](https://github.com/google/gson)                                            |
+| kotlinx.coroutines                    | Copyright © 2000-2020 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://github.com/Kotlin/kotlinx.coroutines)                              |
+| ktor-client-content-negotiation       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-client-core                      | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-client-okhttp                    | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-http                             | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| ktor-serialization-kotlinx-json       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [Link↗](https://ktor.io)                                                           |
+| LWJGL - Lightweight Java Game Library | Copyright © 2012-present Lightweight Java Game Library All rights reserved.                                   | BSD 3-Clause License | [Link↗](https://github.com/LWJGL/lwjgl3)                                           |
+| material-color-utilities              | Copyright 2021 Google LLC                                                                                     | Apache 2.0           | [Link↗](https://github.com/material-foundation/material-color-utilities)           |
+| Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [Link↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
+| Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
+| Ironized Zink                         | Copyright © GoyDevv (rendering engine: Mesa Zink / Kopper, © The Mesa Authors)                                 | GPL-3.0              | [Link↗](https://github.com/GoyDevv/IronizedZink)                                   |
+| Mesa core / Gallium (incl. Zink)      | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT                  | [Link↗](https://mesa3d.org/)                                                       |
+| Mesa GLX client code                  | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | SGI Free Software License B | [Link↗](https://mesa3d.org/)                                                 |
+| Mesa GL / GLX extension headers       | Copyright © The Khronos Group                                                                                 | Khronos              | [Link↗](https://www.khronos.org/)                                                  |
+| Kopper                                | Part of the Mesa code base (Vulkan WSI layer)                                                                 | Covered by the Mesa terms above | [Link↗](https://mesa3d.org/)                                            |
+| MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [Link↗](https://github.com/Tencent/MMKV)                                           |
+| Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [Link↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
+| MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [Link↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
+| OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okhttp)                                          |
+| Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [Link↗](https://github.com/square/okio)                                            |
+| OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [Link↗](https://github.com/GeyserMC/OpenNBT)                                       |
+| Process Phoenix                       | Copyright © 2015 Jake Wharton                                                                                 | Apache 2.0           | [Link↗](https://github.com/JakeWharton/ProcessPhoenix)                             |
+| proxy-client-android                  | -                                                                                                             | LGPL-3.0 License     | [Link↗](https://github.com/TouchController/TouchController)                        |
+| Reorderable                           | Copyright © 2023 Calvin Liang                                                                                 | Apache 2.0           | [Link↗](https://github.com/Calvin-LL/Reorderable)                                  |
+| sdl2-compat                           | Copyright (C) 2026 Sam Lantinga <slouken@libsdl.org>                                                          | Zlib License         | [Link↗](https://github.com/libsdl-org/sdl2-compat)                                 |
+| SDL3                                  | Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>                                                     | Zlib License         | [Link↗](https://github.com/libsdl-org/SDL)                                         |
+| skinview3d                            | Copyright © 2014-2018 Kent Rasmussen; Copyright © 2017-2022 Haowei Wen, Sean Boult and contributors           | MIT License          | [Link↗](https://github.com/bs-community/skinview3d)                                |
+| sora-editor                           | Copyright (C) 2020-2026  Rosemoe                                                                              | LGPL-2.1 License     | [Link↗](https://github.com/Rosemoe/sora-editor)                                    |
+| StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [Link↗](https://github.com/MegatronKing/StringFog)                                 |
+| tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [Link↗](https://github.com/eclipse-tm4e/tm4e)                                      |
+| XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [Link↗](https://tukaani.org/xz/java.html)                                          |
+
+---
+
+## 💖 Supporting ZyNova
+
+ZyNova is maintained by **one person** and developed entirely on **a single Android phone** —
+there is no company, team, or funding behind it. If the launcher has been useful to you,
+a small tip is genuinely appreciated: it goes straight back into keeping the project alive.
+
+<p align="center">
+  <img src="assets/donate/alipay.jpg" width="220" alt="Alipay">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="WeChat Pay">
+</p>
+
+<p align="center"><sub>Alipay（支付宝）&nbsp;·&nbsp;WeChat Pay（微信支付）</sub></p>
+
+Donations are **completely optional**. Filing a bug report, improving a translation, or simply
+starring the repository helps just as much.
