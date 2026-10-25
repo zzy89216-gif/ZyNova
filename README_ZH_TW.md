@@ -4,9 +4,9 @@
 
 # ZyNova
 
-> **Minecraft: Java Edition · Android 啟動器**
+> **Minecraft: Java Edition · Android Launcher**
 >
-> 基於 ZalithLauncher2 開源程式碼開發的獨立非官方專案
+> 基於 ZalithLauncher2 開源程式碼的獨立非官方專案
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
@@ -17,335 +17,81 @@
 
 ---
 
-## ✦ 專案簡介
+## ✦ 簡介
 
-**ZyNova** 是一個基於 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2)
-開源程式碼開發的 **非官方** Minecraft: Java Edition Android 啟動器。
-
-> **ZyNova 並非 ZalithLauncher2 官方版本。**
->
-> ZyNova 是基於 ZalithLauncher2 開源程式碼進行開發的非官方修改專案。
->
-> 內建 **全域 AI Agent**：不只是聊天，而是能**直接讀日誌、管模組、改設定、裝資源、啟動遊戲**。
+**ZyNova** 是面向 Android 的 **Minecraft: Java Edition** 啟動器，基於
+[ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 開源程式碼開發。
+它**不是** ZalithLauncher2 官方版本，而是獨立維護、獨立發佈的非官方修改版。
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>（永久邀請）
+- Discord：<https://discord.gg/QwPpZQHrTa>
 
----
+## ✨ 27.6.1 更新重點
 
-## ✨ 27.6.1 主要內容
-
-- **頂部 5 個按鈕回檔**：資料夾 / AI / 多人 / 下載 / 設定恢復原樣，不再套用首頁按鈕材質。
-- **首頁按鈕改為幽靈按鈕**：只保留約 1.5%~2% 明暗差、無描邊、保留透明度，
-  圖片 / 影片背景可即時透出；建立世界 / 新增伺服器縮小後並排放在啟動按鈕旁。
+- **頂部 5 個按鈕回檔**：資料夾 / AI / 多人 / 下載 / 設定恢復原樣，不再套用首頁按鈕材質
+- **幽靈按鈕**：啟動 / 建立世界 / 新增伺服器 / 條目只保留約 1.5%~2% 明暗差，無描邊、保留透明度，
+  圖片 / 影片背景即時透出；快捷按鈕縮小後並排放在啟動按鈕旁
 - **建立世界依版本自適應**：26.1+ 直接寫新存檔結構；1.12.2~26.0 走 DataFixer；
-  低於 1.12.2 隱藏入口，寫完回讀驗證。
-- **Fabric API 載入狀態**：載入中只顯示「正在載入中」，成功後才允許安裝。
-- **建立世界支援「允許作弊」**：依版本自適應；Minecraft 1.4 之前不顯示並按關閉寫入。
+  低於 1.12.2 隱藏入口；寫完回讀驗證
+- **允許作弊**：建立世界新增開關，依 Minecraft 版本自適應
+- **Fabric API 載入狀態**：載入中只顯示「正在載入中」，載入成功才允許安裝，失敗 / 為空才拒絕
+- **保留 27.6.0 內容**：Fabric API 防呆、圖示修正、一鍵建立世界 / 伺服器
 
-### 27.6.0
+> 完整歷史見 [CHANGELOG.md](CHANGELOG.md)。
 
-- **首頁互動升級（議題 #33）。** 實例卡片可以直接建立世界或新增伺服器，完成後直接
-  quickPlay 進入遊戲；設定 → 啟動器新增「首頁按鈕材質」（預設 / 透明 / 液態玻璃，
-  預設透明），開啟減少動效或關閉動態玻璃時會自動降級為透明。
-- **Fabric API 防呆。** 模組下載介面不再顯示 Fabric API，也不能手動安裝；選擇 Fabric 時
-  強制自動加入，偵測不到就拒絕下載；Fabric API 在模組管理不可刪除 / 停用，
-  已有任意版本時不會再裝第二份。
-- **圖示修正（議題 #31）。** 桌面 / 圓形圖示不再放大裁切，自適應 / 單色圖示縮進 66% 安全區，
-  README 也改用目前品牌圖示。
-- **細節修正。** 存檔難度改為正確讀取 ByteTag；quickPlay 改用世界資料夾名稱。
+## 🛠️ 主要功能
 
-### 27.5.1
-- **全新品牌圖示。** 桌面 / 圓形 / 自適應三層 / Play Store / 關於頁 / 啟動頁 / 通知圖示
-  全部換成新圖示，同一份來源圖生成，沒有新舊混用。
-- **AI 設定收緊。** 移除「AI 服務商」分區，固定使用 DeepSeek；介面位址首次開啟預設填好、仍可修改；
-  卡片與按鈕更緊湊，稽核按鈕不再黏在一起。
-- **動態玻璃統一。** 首頁卡片補上玻璃層，設定頁與 AI 設定頁的模糊 / 高光統一裁剪到圓角。
+- **AI Agent**：預設 DeepSeek，能讀日誌、管理模組、改設定、裝資源、啟動遊戲
+- **渲染器**：自動 / MobileGlues / Ironized Zink / GL4ES
+- **卡片式首頁**：依實例展示世界與伺服器，可一鍵建立 / 新增並 quickPlay 進入
+- **統一資源管理**：Modrinth / CurseForge 搜尋、依賴解析、下載、SHA1 校驗、安裝
+- **Fabric API 防呆**：只由 Fabric 安裝流程自動加入；不可手動安裝、刪除、停用或重複安裝
 
-### 27.5.0
-- **預設 AI 服務商改為 DeepSeek。** 服務商清單是 **DeepSeek / OpenAI**，Anthropic 及其選擇入口已移除。
-  兩者協定相同、共用實作，但 API Key 與 Base URL 分開儲存；模型仍然從服務商動態取得。
-  既有的 Key、自訂位址與模型選擇都會保留；舊版本存過的已移除服務商會自動回退到 DeepSeek。
-- **AI 聊天修正（議題 #24 / #26）。** 停止產生後不會再插入紅色錯誤、也不會卡在「正在產生」，
-  可以立刻繼續傳訊息，被中斷的回覆會標記為「已停止產生」；聊天會捲到**真正的底部**並跟隨串流輸出，
-  重新進入時回到最新訊息，往上翻時暫停跟隨，並多了「回到最底部」按鈕。
-- **AI 設定頁修正（議題 #25）。** 卡片統一寬度並加上內距，標題不再被圓角切掉，
-  較窄的卡片也和其他卡片對齊了。
-- **Fabric API 去重與保護（議題 #22）。** 以穩定 ID 辨識（`fabric-api` / Modrinth `P7dR8mSH` /
-  CurseForge `306612`），已安裝且版本相容時不再重複下載；模組管理隱藏刪除按鈕、
-  批次刪除會跳過、AI 也不能刪；刪除整個實例不受影響。
-- **CurseForge 下載更穩定（議題 #21）。** 逾時 / 連線重置 / 5xx 等暫時性錯誤最多重試 3 次，
-  403/404 不重試；錯誤訊息會區分「Key 缺少或失效」「檔案已下架」「鏡像不可用」「逾時」。
-  官方 Key 已設定在 Actions Secrets，同時保留 MCIM 鏡像備援。
-- **MobileGlues。** 隨包二進位已與官方 **V2.0.0** 逐位元組核對一致；新增「ANGLE 渲染後端」開關
-  （預設關閉），用來規避嚴格 ES 主機上已知的深度紋理缺陷（雲層 / 透明排序異常，上游 #57）。
+## 📦 下載與建置
 
-### 27.4.0
-### 27.3.0
+- **下載**：<https://github.com/zzy89216-gif/ZyNova/releases>
+  - 通用 APK（arm64-v8a / armeabi-v7a / x86 / x86_64）
+  - `mapping.universal.zip`（還原混淆堆疊）
+- **本機構建**：需要 JDK 17、Android SDK / NDK，然後執行：
+  ```bash
+  ./gradlew ZalithLauncher:assembleRelease
+  ```
+- 正式建置由 GitHub Actions 完成，Release 建置開啟程式碼混淆與資源壓縮。
 
-- **登入改以 Microsoft 正版為優先。** 離線與第三方登入的**入口預設隱藏**，
-  「新增帳號」會直接進入 Microsoft 登入，而不再先開一個只有一個選項的選單。
-  這是**可逆的 UI 層開關，不是移除**：離線 / 第三方後端、帳號資料結構、
-  Microsoft 裝置碼流程全部保持原樣，更新前建立的帳號依然會顯示、依然能啟動遊戲。
-- **介面世代 —— 新版 / 舊版，兩個方向都能切。** 在 *設定 → 啟動器 → 介面世代* 裡選擇
-  重新設計的外觀或與先前完全一致的外觀，而且可以隨時來回切換。新版重做了字階
-  （標題改為 SemiBold、大字縮緊字距）、放大圓角（卡片 16dp → 22dp、對話框 → 30dp），
-  並改用標準動效方案（沒有回彈與過衝）。一次設定即涵蓋全部 203 處
-  `MaterialTheme.shapes` 與所有文字層級。
-- **移除「強效動態玻璃」等級與其光敏性警告。** 玻璃效果回到兩個等級（關閉 / 啟用動態玻璃），
-  啟動器內不再有任何脈動、閃爍或頻閃，因此警告也不再需要。
-  原本使用強效等級的使用者會退回**啟用動態玻璃**，而不是被關閉。
-- **修正：切換應用程式語言不再改掉遊戲的 DNS。** 啟動器原本用*應用程式語言*判斷地區，
-  把介面切成非中文後，會讓中國大陸的使用者被誤判為海外，並把遊戲的 DNS 換成 Cloudflare，
-  在某些網路下會導致名稱解析失敗。現在改用與其他模組一致的**時區**判定。
-- **「關於」頁新增贊助入口**，四份 README 底部也新增贊助區塊。
+## ⚠️ 注意
 
-### 27.2.0
+- 首頁「建立世界」在 **26.1+** 使用新存檔格式；**1.12.2~26.0** 使用相容層；
+  **低於 1.12.2** 不提供此入口。
+- Fabric API 由安裝流程自動處理；手動安裝會被拒絕，模組管理中也不能刪除 / 停用。
+- 舊版本不支援 quickPlay 時，仍會正常啟動到遊戲主選單。
+- 舊設定、既有存檔與伺服器清單不受升級影響。
 
-- **頁面轉場終於真的起作用了。** 轉場設定提供 *果凍彈跳 / 彈跳 / 切入*，
-  但每一個都被默默渲染成普通的交叉淡入淡出。現在每個選項都有真正的轉場，
-  而且十五個導覽介面共用同一套實作 —— 包括先前完全沒有轉場的檔案管理員。
-- **減少動效** —— 全新的無障礙開關，一次關閉所有動效：頁面轉場、階梯式進場動畫、
-  動態玻璃的流動高光與微光骨架，並把 Material 動效方案從 expressive 降級為 standard。
-  它是真正的關閉開關，而不只是縮短時長。
-- **全新的 ⚠️ 強烈動態玻璃等級，附光敏性警告。** 玻璃效果現在有三個等級：
-  關閉 / 動態玻璃 / **強烈（光敏性風險）**。強烈等級流動更快、更亮，並加入緩慢的亮度脈動。
-  與舊的「極致」等級不同，它只繪製漸層高光 —— 絕不模糊承載文字的圖層，因此文字保持清晰。
-  由於該等級確實帶有真實風險，啟動器**在使用期間每次啟動都會顯示光敏性警告**，
-  你可以在 *設定 → 啟動器* 中關閉該警告。
-- **卡片現在會回應觸控** —— 細緻的按下與放開縮放，透過共用的卡片元件一致套用
-  （在減少動效下完全略過）。
-- **圖形 API 全面自動化。** 手動的 OpenGL / Vulkan 選擇器已移除。實例首次啟動時使用 OpenGL，
-  之後啟動器就不再干預後端，讓遊戲自身的設定決定。某個版本是否需要這個選項，
-  取決於它的**發佈日期**，而非硬編碼的版本號 —— 第一個支援 Vulkan 的版本是
-  Minecraft 26.2-snapshot-1（2026-04-07）。版本中介資料會在每次啟動時檢查
-  （包括最新正式版與快照），且絕不會阻擋遊戲啟動。
-- **啟動畫面現在會淡入主畫面**，而不再使用預設的 Activity 動畫。
+## 📚 文件
 
-> 📜 完整版本歷史請見 [CHANGELOG.md](CHANGELOG.md)
+| 內容 | 檔案 |
+|---|---|
+| 更新日誌 | [CHANGELOG.md](CHANGELOG.md) |
+| 交接 / 架構 / 開發流程 | [HANDOFF.md](HANDOFF.md) |
+| 第三方授權 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| 授權條款 | [LICENSE](LICENSE) |
 
-## ℹ️ 正版登入用的是哪個應用
-**ZyNova 是 ZalithLauncher2 的非官方分支，兩者是各自獨立維護的不同專案。**
+## ⚖️ 授權
 
-| | 顯示名稱 | Client ID | Mojang 允許名單 | 本版本是否使用 |
-|---|---|---|---|---|
-| **ZyNova 自己的** | ZyNova Launcher | `7b66e168-f8cd-43fc-a52d-2e78dba189b0` | ✅ **已獲批准（2026-09-30）** | ✅ **正在使用** |
-| **ZalithLauncher2 的** | ZalithLauncher（上游） | （已移除） | ✅ 已獲批准 | ❌ 不使用（26.4.0 / 26.4.1 曾使用） |
+ZyNova 以 **GPL-3.0** 發佈，必須保持開源。上游 ZalithLauncher2 的版權與授權聲明已保留；
+附加條款與完整文本見 [LICENSE](LICENSE)，第三方元件授權見
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
-- **只有處於 Minecraft 應用程式允許名單中的應用註冊**才能完成正版登入；
-  否則 `POST /authentication/login_with_xbox` 會回傳 `403 Invalid app registration`
-- ✅ **ZyNova 自己的註冊已在該名單中**：Mojang Enforcement 已於 **2026-09-30** 完成 AppID 審核，
-  目前版本的正版登入可以正常完成，也不再借用上游專案的註冊
-- 仍然**只需要「公開客戶端 + Client ID」**：不需要 Client Secret、不需要 Redirect URI、不需要 SHA-1；
-  Client ID 透過倉庫 Secret `OAUTH_CLIENT_ID` **在建置時注入**，不寫死在原始碼中
+## 💖 支援
 
-## 🛠️ 功能
+- 回報問題：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>
+- 贊助：見 [assets/donate](assets/donate) 與關於頁
 
-### AI Agent
+## 👥 維護者
 
-頂部工具列「檔案」旁新增 **AI** 按鈕，點擊**直接進入聊天介面**，不設獨立的 AI 首頁。
-聊天與 Agent 是**同一個入口**：先問「為什麼這個實例進不去？」，它會去讀日誌；
-接著說「幫我修」，它會**直接呼叫工具動手處理**，而不是寫一段教學給你。
-
-- **25 個工具**，全部建立在啟動器現有系統之上：實例、模組真實中繼資料、
-  啟用／停用／刪除模組、資源包、光影、存檔、檔案、日誌、崩潰報告、
-  **117 項啟動器設定**、資源搜尋與安裝（含遞迴安裝必需前置），以及**真正啟動遊戲**
-- **對話自動存在本機**，左上角的**側邊欄**可以查看、切換、刪除或新增對話
-- **寫入操作稽核記錄**：每一次寫入操作都會在本地留痕，可在 AI 設定中查看或匯出
-- **不限制工具呼叫次數** —— Agent 會一直做到它認為完成為止，你隨時可以停止
-- **設定獨立於啟動器設定**（聊天介面右上角）：服務商（OpenAI / Anthropic，可擴充）、
-  自備 API Key（僅存本機）、**模型清單動態取得、不硬編碼任何模型名稱**、
-  可自訂 Base URL、權限模式（預設**操作確認**／完全控制）
-- **安全**：檔案類工具只能存取遊戲與啟動器資料目錄；敏感設定鍵拒絕讀寫；
-  確認介面不可用時一律拒絕寫入操作
-
-### 渲染器
-
-26.3.0 起，啟動器**內建的渲染器只有三個**：
-
-| 渲染器 | 說明 | 設定 |
-|---|---|---|
-| **Ironized Zink** | 桌面 OpenGL 4.6 經 Vulkan 轉譯（Mesa Zink + Kopper），作者 GoyDevv | **4 個官方預設** + OpenGL 版本下拉 |
-| **GL4ES** | 經典 OpenGL 轉譯層 | 保持預設 |
-| **MobileGlues** | 把桌面 OpenGL 轉譯到裝置的 OpenGL ES 3.x | **OpenGL 版本下拉**（3.2 ~ 4.6，預設 4.0） |
-
-**Ironized Zink 的 4 個官方預設**（參數值與上游一致）：
-
-| 預設 | 定位 | Minecraft | 光影 |
-|---|---|---|---|
-| **Potato** | 絕對最高幀率 | 1.8 → 最新（含 26.x） | 不推薦 |
-| **Performance** | 高幀率 + Sodium | 1.20.x → 最新 | 輕量 |
-| **Default** | 均衡 Zink + 光影（**預設**） | 1.16.x → 最新 | 完整（Iris / OptiFine） |
-| **Max Compatibility** | 什麼都能跑 | 全部版本 | 完整 + 重度光影包 |
-
-**26.4.0 起，面板只提供上面 4 個預設**：12 個單獨參數開關已被移除，
-一般使用者不再需要手動調整底層參數。選擇預設仍會一次寫入整組參數。
-
-> ℹ️ 4 個預設的 OpenGL 版本都是 **4.6**。如果驅動對 Vulkan→Zink 的 4.6 轉譯不完整
-> （畫面異常或進不去），可以在面板下方的「**OpenGL 版本**」下拉降到 4.5 / 4.3 / 3.3
-> —— 該下拉在 26.4.0 曾被移除，**27.1.2 起已恢復**。
-> 改動此項只影響 OpenGL 版本，不動其它預設參數。
-
-在 **設定 → 渲染器** 選中 Ironized Zink 後，**下方會立刻展開預設面板**。
-
-> **外掛渲染器不受影響**：仍然可以透過安裝渲染器外掛（FCL / Zalith 渲染器外掛、
-> 新一代 `fclPlugin_V2` 外掛）把更多渲染器加進清單 ——
-> 內建只有 3 個，外掛想裝幾個還是幾個。
-
-### 卡片式首頁
-
-首頁以**版本為模組**組織內容：每個已安裝的版本是一張模組卡片，
-卡片內直接列出該版本自己的本機世界與已儲存伺服器。
-點擊模組卡片本身即可**啟動該版本**。
-
-卡片式首頁還支援：
-
-- **長按拖動排序**：版本卡片之間、卡片內的世界 / 伺服器，
-  以及右側選單的三塊（帳號頭像 / 版本列 / 啟動按鈕）都能拖動調整順序，順序會被記住
-- **卡片大小**：設定 → 啟動器 → 首頁 → 卡片大小（70% ~ 140%，預設 100%）
-- 卡片為**單層背景**，不會有多餘的邊框或陰影
-
-資料按需載入，啟動器啟動時不會全盤掃描。
-設定中可選擇預設 / 卡片 / 自訂首頁。
-
-### 統一資源管理核心
-
-Mod、資源包、光影與存檔共用同一條流程：
-
-> 搜尋 → 資源詳情 → 版本匹配 → 檔案選擇 → 下載 → 校驗 → 安裝
-
-### 資源來源 Provider
-
-資源來源與介面完全解耦，上層只依賴統一介面。
-日後新增其他來源只需實作 Provider，不需要重寫整個資源系統。
-
-### 統一下載管理器
-
-所有下載共用同一個入口：下載佇列、併發控制、下載進度、斷點續傳、失敗重試、
-取消下載、檔案校驗、臨時檔案清理，以及下載完成後的安裝觸發。
-
-### 極簡資源安裝
-
-從「版本設定 → Mods」進入資源頁面時，系統已知目前實例、Minecraft 版本、
-載入器與資源目錄，點擊下載即可直接安裝，不會重複要求選擇版本、實例或安裝位置。
-安裝完成後資源列表會顯示「已安裝」狀態。
-
-### Vulkan 偵測
-
-偵測結果明確區分 **可用 / 不可用 / 偵測失敗**，並提供具體原因、GPU 與驅動資訊，
-以及主動重新偵測按鈕。判斷依據是裝置**實際列舉出來的 Vulkan 能力**，
-而不是裝置對外宣稱的支援情況。
+ZyNova 由 **zzy** 獨立開發與維護。
 
 ---
 
-## 📦 構建方式（開發者）
-
-> 以下內容供希望參與開發或在本機構建專案的開發者參考。
-
-### 環境要求
-
-* 支援 **AGP 9.3.0** 的 Android Studio（近期穩定版）—— 舊版本無法開啟本專案
-* Android SDK：
-  * **最低 API 等級**：26
-  * **目標 API 等級**：34
-  * **Compile SDK**：37
-* JDK 17
-* Gradle **9.5.0**（Wrapper 會自動處理）
-
-### 構建步驟
-
-```bash
-git clone https://github.com/zzy89216-gif/ZyNova.git
-# 使用 Android Studio 開啟專案並進行構建
-```
-
----
-
-## 📜 License
-
-本專案程式碼遵循 **[GPL-3.0 license](LICENSE)** 開源協議。
-
-### 附加條款（依據 GPLv3 開源授權條款第七條）
-
-1. 當你分發本程式的修改版本時，必須以合理方式修改該程式的名稱或版本號，以區別於原始版本。（依據 [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374)）
-    - 修改版本 **不得在名稱中包含原程式名稱「ZalithLauncher」或其縮寫「ZL」，亦不得使用與官方名稱相近、可能造成混淆的名稱**。
-    - 所有修改版本 **必須在程式啟動畫面或主介面中以明顯方式標示其為「非官方修改版」**。
-    - 程式的應用名稱可於 [gradle.properties](./ZalithLauncher/gradle.properties) 中進行修改。
-
-2. 你不得移除本程式所顯示的版權聲明。（依據 [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370)）
-
-> **各元件的授權並不相同。** 不要因為某個相依套件是 MIT，就認為整個專案都是 MIT：
-> ZyNova 本身是 GPL-3.0，Ironized Zink 是 GPL-3.0，MobileGlues 是 LGPL-2.1，GL4ES 是 MIT。
-> Ironized Zink 隨附的渲染引擎來自 **Mesa**：主程式碼與 Gallium（含 **Zink** 驅動）為 MIT，
-> GLX 客戶端程式碼為 SGI Free Software License B，GL / GLX 擴充標頭檔為 Khronos 授權；
-> **Kopper** 同樣屬於 Mesa 程式碼庫，適用 Mesa 的上述條款。
-> 完整的逐元件清單、版權聲明，以及重散布二進位檔的原始碼取得方式，
-> 見 **[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)**。
-
-## 引用開源專案
-  
-本軟體使用以下開源函式庫:
-
-| Library                               | Copyright                                                                                                     | License              | Official Link                                                                     |
-|---------------------------------------|---------------------------------------------------------------------------------------------------------------|----------------------|-----------------------------------------------------------------------------------|
-| androidx-appcompat                    | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/appcompat)         |
-| androidx-constraintlayout-compose     | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/develop/ui/compose/layouts/constraintlayout) |
-| androidx-webkit                       | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/webkit)            |
-| ANGLE                                 | Copyright 2018 The ANGLE Project Authors                                                                      | BSD 3-Clause License | [链接↗](http://angleproject.org/)                                                  |
-| Apache Commons Codec                  | -                                                                                                             | Apache 2.0           | [链接↗](https://commons.apache.org/proper/commons-codec)                           |
-| Apache Commons Compress               | -                                                                                                             | Apache 2.0           | [链接↗](https://commons.apache.org/proper/commons-compress)                        |
-| Apache Commons IO                     | -                                                                                                             | Apache 2.0           | [链接↗](https://commons.apache.org/proper/commons-io)                              |
-| ByteHook                              | Copyright © 2020-2024 ByteDance, Inc.                                                                         | MIT License          | [链接↗](https://github.com/bytedance/bhook)                                        |
-| BuildKeys                             | Copyright © 2026 MovTery                                                                                      | Apache 2.0           | [链接↗](https://github.com/MovTery/BuildKeys)                                      |
-| Coil Compose                          | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [链接↗](https://github.com/coil-kt/coil)                                           |
-| Coil Gifs                             | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [链接↗](https://github.com/coil-kt/coil)                                           |
-| Coil SVG                              | Copyright © 2025 Coil Contributors                                                                            | Apache 2.0           | [链接↗](https://github.com/coil-kt/coil)                                           |
-| Fishnet                               | Copyright © 2025 Kyant                                                                                        | Apache 2.0           | [链接↗](https://github.com/Kyant0/Fishnet)                                         |
-| gl4es_extra_extra                     | Copyright © 2016-2018 Sebastien Chevalier; Copyright (c) 2013-2016 Ryan Hileman                               | MIT License          | [链接↗](https://github.com/PojavLauncherTeam/gl4es_extra_extra)                    |
-| Gson                                  | Copyright © 2008 Google Inc.                                                                                  | Apache 2.0           | [链接↗](https://github.com/google/gson)                                            |
-| kotlinx.coroutines                    | Copyright © 2000-2020 JetBrains s.r.o.                                                                        | Apache 2.0           | [链接↗](https://github.com/Kotlin/kotlinx.coroutines)                              |
-| ktor-client-content-negotiation       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [链接↗](https://ktor.io)                                                           |
-| ktor-client-core                      | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [链接↗](https://ktor.io)                                                           |
-| ktor-client-okhttp                    | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [链接↗](https://ktor.io)                                                           |
-| ktor-http                             | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [链接↗](https://ktor.io)                                                           |
-| ktor-serialization-kotlinx-json       | Copyright © 2000-2023 JetBrains s.r.o.                                                                        | Apache 2.0           | [链接↗](https://ktor.io)                                                           |
-| LWJGL - Lightweight Java Game Library | Copyright © 2012-present Lightweight Java Game Library All rights reserved.                                   | BSD 3-Clause License | [链接↗](https://github.com/LWJGL/lwjgl3)                                           |
-| material-color-utilities              | Copyright 2021 Google LLC                                                                                     | Apache 2.0           | [链接↗](https://github.com/material-foundation/material-color-utilities)           |
-| Maven Artifact                        | Copyright © The Apache Software Foundation                                                                    | Apache 2.0           | [链接↗](https://github.com/apache/maven/tree/maven-3.9.9/maven-artifact)           |
-| Media3                                | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/media3)            |
-| Ironized Zink                         | Copyright © GoyDevv（渲染引擎：Mesa Zink / Kopper，版權歸 Mesa 作者所有）                                     | GPL-3.0              | [連結↗](https://github.com/GoyDevv/IronizedZink)                                   |
-| Mesa 主程式碼 / Gallium（含 Zink）    | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | MIT                  | [連結↗](https://mesa3d.org/)                                                       |
-| Mesa GLX 客戶端程式碼                 | Copyright © 1999-2007 Brian Paul and the Mesa contributors                                                    | SGI Free Software License B | [連結↗](https://mesa3d.org/)                                                 |
-| Mesa GL / GLX 擴充標頭檔              | Copyright © The Khronos Group                                                                                 | Khronos              | [連結↗](https://www.khronos.org/)                                                  |
-| Kopper                                | 屬於 Mesa 程式碼庫（Vulkan WSI 層）                                                                           | 隨 Mesa 適用上述條款 | [連結↗](https://mesa3d.org/)                                                      |
-| MMKV                                  | Copyright © 2018 THL A29 Limited, a Tencent company.                                                          | BSD 3-Clause License | [链接↗](https://github.com/Tencent/MMKV)                                           |
-| Navigation 3                          | Copyright © The Android Open Source Project                                                                   | Apache 2.0           | [链接↗](https://developer.android.com/jetpack/androidx/releases/navigation3)       |
-| MobileGlues                           | Copyright (c) 2025-2026 MobileGL-Dev                                                                          | LGPL-2.1             | [連結↗](https://github.com/MobileGL-Dev/MobileGlues)                               |
-| OkHttp                                | Copyright © 2019 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://github.com/square/okhttp)                                          |
-| Okio                                  | Copyright © 2013 Square, Inc.                                                                                 | Apache 2.0           | [链接↗](https://github.com/square/okio)                                            |
-| OpenNBT                               | Copyright © 2013-2021 Steveice10.                                                                             | MIT License          | [链接↗](https://github.com/GeyserMC/OpenNBT)                                       |
-| Process Phoenix                       | Copyright © 2015 Jake Wharton                                                                                 | Apache 2.0           | [链接↗](https://github.com/JakeWharton/ProcessPhoenix)                             |
-| proxy-client-android                  | -                                                                                                             | LGPL-3.0 License     | [链接↗](https://github.com/TouchController/TouchController)                        |
-| Reorderable                           | Copyright © 2023 Calvin Liang                                                                                 | Apache 2.0           | [链接↗](https://github.com/Calvin-LL/Reorderable)                                  |
-| sdl2-compat                           | Copyright (C) 2026 Sam Lantinga <slouken@libsdl.org>                                                          | Zlib License         | [链接↗](https://github.com/libsdl-org/sdl2-compat)                                 |
-| SDL3                                  | Copyright (C) 1997-2026 Sam Lantinga <slouken@libsdl.org>                                                     | Zlib License         | [链接↗](https://github.com/libsdl-org/SDL)                                         |
-| skinview3d                            | Copyright © 2014-2018 Kent Rasmussen; Copyright © 2017-2022 Haowei Wen, Sean Boult and contributors           | MIT License          | [链接↗](https://github.com/bs-community/skinview3d)                                |
-| sora-editor                           | Copyright (C) 2020-2026  Rosemoe                                                                              | LGPL-2.1 License     | [链接↗](https://github.com/Rosemoe/sora-editor)                                    |
-| StringFog                             | Copyright © 2016-2023, Megatron King                                                                          | Apache 2.0           | [链接↗](https://github.com/MegatronKing/StringFog)                                 |
-| tm4e (TextMate for Eclipse)           | Copyright © Eclipse Foundation                                                                                | EPL-2.0 License      | [链接↗](https://github.com/eclipse-tm4e/tm4e)                                      |
-| XZ for Java                           | Copyright © The XZ for Java authors and contributors                                                          | 0BSD License         | [链接↗](https://tukaani.org/xz/java.html)                                          |
----
-
-## 💖 支持 ZyNova
-
-ZyNova 由**一個人**維護，全程只用**一部 Android 手機**開發，背後沒有公司、團隊，也沒有資金支援。
-如果這個啟動器幫到了你，歡迎請作者喝杯水 —— 這些支持會直接用在讓專案繼續活下去、繼續變好上。
-
-<p align="center">
-  <img src="assets/donate/alipay.jpg" width="220" alt="支付寶">&nbsp;&nbsp;&nbsp;&nbsp;<img src="assets/donate/wechat.png" width="220" alt="微信支付">
-</p>
-
-<p align="center"><sub>支付寶&nbsp;·&nbsp;微信支付</sub></p>
-
-贊助**完全自願**。回報一個 Bug、改進一句翻譯，或者只是點一個 Star，幫助同樣大。
+**ZyNova — Context First. Less Steps.**

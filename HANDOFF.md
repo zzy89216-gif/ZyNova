@@ -2351,6 +2351,50 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 ---
 
+### 附：README 精简后保留的说明
+
+README 已精简为「简介 / 当前版本要点 / 功能概览 / 下载与构建 / 注意事项 / 文档入口 /
+许可证 / 支持」几块，避免首页过长。以下内容不再放在 README，统一记录在这里：
+
+**1. 项目定位**
+
+ZyNova 面向 Android，目标不是复制上游，而是在 ZalithLauncher2 的基础上形成独立的应用身份、
+资源与下载体系、更新体系、构建形态和交接文档。它不是 ZalithLauncher2 官方版本。
+
+**2. 技术栈**
+
+| 技术 | 用途 |
+|---|---|
+| Kotlin / Java | Android 主要开发语言 |
+| C / C++ + NDK | Native 相关部分 |
+| Gradle | 项目构建 |
+| Git / GitHub | 版本管理与项目管理 |
+| GitHub Actions | 云端构建与自动化流程 |
+| Android | 主要目标平台 |
+
+**3. 开发与发布流程**
+
+需求 → 源码分析 → 代码修改（Android 手机）→ GitHub Actions 云端编译 → 真机安装测试 →
+修复 → 重新构建 → Release。APK 编译不在手机上完成（本机缺少完整 Android SDK / NDK）。
+
+**4. 项目结构**
+
+仓库同时承担源码仓库、开发仓库、文档仓库与 Release 发布仓库；
+Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*.md`、`CHANGELOG.md`、
+`HANDOFF.md`、`THIRD_PARTY_NOTICES.md`，许可证为 `LICENSE`。
+
+**5. 登录与渲染器**
+
+- 正版登录使用 ZyNova 自己的 Microsoft 应用注册（设备代码流），入口为微软 / 离线 / 第三方认证；
+  详细历史与红线见本文 26.4.2 / 27.3.0 / 27.4.0 章节
+- 内置渲染器：MobileGlues / Ironized Zink / GL4ES，另有「自动」选择；
+  上游来源、版本与许可见 `THIRD_PARTY_NOTICES.md` 与本文 27.4.0 章节
+
+**6. 详细历史与许可证**
+
+- 所有版本的完整变更记录在 `CHANGELOG.md`
+- 各组件许可证与附加条款在 `LICENSE` / `THIRD_PARTY_NOTICES.md`
+
 ## 十一、当前仓库信息
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
@@ -2468,7 +2512,7 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 **最后更新**：2026-10-25（27.6.1 已开发完成 —— 按真机截图回修首页：顶部 5 个入口回档且不再动；
 启动 / 创建世界 / 添加服务器 / 条目统一改为「幽灵按钮」（约 1.5%~2% 明暗差、无描边、保留透明度）；
 快捷按钮缩小并移到启动旁；创建世界按版本自适应（26.1+ 新格式 / 1.12.2~26.0 兼容层 / 低于 1.12.2 隐藏），
-新增「允许作弊」；Fabric API 加载中只显示「正在加载中」；中文改为默认 README，新增韩语 / 俄语并统一六语言入口。
+新增「允许作弊」；Fabric API 加载中只显示「正在加载中」；中文改为默认 README，新增韩语 / 俄语并统一六语言入口，README 精简后详细内容移入本文件与 CHANGELOG。
 27.6.0 的内容见下方章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器

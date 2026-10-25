@@ -36,6 +36,8 @@
 - **简体中文改为默认 README**：`README.md` 现在是中文；原英文内容移至 `README_EN.md`
 - **新增韩语 / 俄语 README**：`README_KO.md` / `README_RU.md`
 - 六语言选择器、项目结构表和相关交接说明同步更新
+- **README 精简**：详细版本历史、开发流程、技术栈、项目结构等移到 `CHANGELOG.md` / `HANDOFF.md`，
+  README 只保留简介、当前版本要点、功能概览、下载构建、注意事项与文档入口
 
 ### 🧪 说明
 
