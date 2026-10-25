@@ -54,6 +54,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.game.version.installed.utils.isLowerVer
 import com.movtery.zalithlauncher.game.version.multiplayer.ServerListWriter
 import com.movtery.zalithlauncher.game.version.saves.Difficulty
 import com.movtery.zalithlauncher.game.version.saves.GameMode
@@ -93,10 +94,17 @@ fun CreateWorldDialog(
     var name by remember { mutableStateOf("") }
     var seed by remember { mutableStateOf("") }
     var keepInventory by remember { mutableStateOf(false) }
+    var allowCheats by remember { mutableStateOf(false) }
     var mode by remember { mutableStateOf(CreateWorldMode.Survival) }
     var difficulty by remember { mutableStateOf(Difficulty.NORMAL) }
     var error by remember { mutableStateOf<String?>(null) }
     var working by remember { mutableStateOf(false) }
+
+    //「允许作弊」从 Minecraft 1.4 起才有；更老的版本不展示，按关闭写入
+    val minecraftVersion = remember(instance) { instance.getVersionInfo()?.minecraftVersion }
+    val supportsCheats = remember(minecraftVersion) {
+        minecraftVersion == null || !minecraftVersion.isLowerVer("1.4")
+    }
 
     QuickCreateDialogFrame(
         title = stringResource(R.string.home_create_world_title),
@@ -124,7 +132,8 @@ fun CreateWorldDialog(
                             hardcore = mode == CreateWorldMode.Hardcore,
                             //极限模式在游戏内固定为困难
                             difficulty = if (mode == CreateWorldMode.Hardcore) Difficulty.HARD else difficulty,
-                            keepInventory = keepInventory
+                            keepInventory = keepInventory,
+                            allowCheats = supportsCheats && allowCheats
                         )
                     }.onSuccess { folderName ->
                         working = false
@@ -170,6 +179,23 @@ fun CreateWorldDialog(
                 checked = keepInventory,
                 onCheckedChange = { keepInventory = it }
             )
+        }
+
+        if (supportsCheats) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.home_create_world_allow_cheats),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = allowCheats,
+                    onCheckedChange = { allowCheats = it }
+                )
+            }
         }
 
         Text(

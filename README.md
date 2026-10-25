@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
+[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,7 +35,25 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.6.0
+## ✨ Highlights of 27.6.1
+
+- **Top bar restored.** The folder / AI / multiplayer / download / settings entries are back to
+  their pre-27.6.0 appearance and no longer use the home button material.
+- **Ghost home buttons.** Launch / create-world / add-server and world/server buttons use a ghost
+  style: only ~1.5–2% luminance difference from the background, no borders, and enough transparency
+  for images and videos to show through in real time. The create-world and add-server buttons are
+  now compact and sit next to Launch.
+- **Version-aware world creation.** 26.1+ writes the real split save format
+  (`difficulty_settings`, `world_gen_settings.dat`, `game_rules.dat`); 1.12.2–26.0 keeps the
+  DataFixer-based path, and versions below 1.12.2 hide the entry. The generated world is read back
+  and verified before launching.
+- **Fabric API loading state.** While the Fabric API list is loading, the install button shows
+  “loading” instead of “blocked”; installation is only refused after loading fails or the list is
+  empty.
+- **Allow Cheats** is now available when creating a world; the switch is hidden on versions before
+  Minecraft 1.4 and written as off there.
+
+### 27.6.0
 
 - **Home interaction upgrade (issue #33).** Home cards can create a world or add a server in one
   step and launch straight into it. A new **Home Button Material** setting offers Default /

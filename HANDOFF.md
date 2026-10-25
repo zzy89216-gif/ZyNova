@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.6.0**（`launcher_version_code=270600`）
+**当前版本：27.6.1**（`launcher_version_code=270601`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,73 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.6.1 首页按钮回修 + 允许作弊 ✅
+
+**一、顶部 5 个按钮回档（用户明确要求）**
+
+- 文件夹 / AI / 多人 / 下载 / 设置这 5 个顶部入口恢复为 27.6.0 之前的原样，
+  **不再套用首页按钮材质**：`MainScreen` 里与 `HomeButtonMaterial` / `homeButtonMaterial` /
+  `homeButtonTextStyle` 相关的接线已全部移除
+- ⚠️ **不要再给这 5 个入口加材质**；用户的原话是「回档，回到之前的样子，然后不要动它」
+
+**二、首页按钮改为「幽灵按钮」+ 缩小并排**
+
+- `ui/components/HomeButtons.kt` 新增 `homeButtonGhostColor()`：
+  取 `cardColor()`，浅色主题压暗约 **1.5%**、深色主题提亮约 **2%**；
+  **不提高 alpha、不加描边**，并保留透明度让图片 / 视频背景实时透出
+- `HomeMaterialButton` / `HomeMaterialChip` 默认 `containerColor` 改为幽灵色，
+  `contentColor` 用 `onCardColor()`；快捷创建不再传固定 `secondaryContainer`
+- **移除全部描边**：Transparent 与 LiquidGlass 分支都不再画 border
+- 液态玻璃保留 Haze + 流光，但默认档位（幽灵按钮）不额外叠模糊，
+  避免「按钮上又盖一层玻璃」和背景动态玻璃打架
+- 启动、创建世界、添加服务器、世界 / 服务器条目全部使用同一套幽灵底色
+- **快捷按钮缩小并移到标题右侧**：创建世界 / 添加服务器改为小尺寸文字按钮
+  （`minHeight = 28.dp`、`labelSmall`），和启动按钮（`32.dp`、`labelMedium`）并排；
+  不再单独占一整行
+- ⚠️ 默认（Default）只是比幽灵档略实一点（alpha 上限 0.92），仍然保留透明度，
+  不锁成死色
+
+**三、创建世界按版本自适应（重点）**
+
+26.1 重构了存档格式，继续用 1.12.2 模板硬套很容易出问题，因此 `WorldCreator` 改为双路径：
+
+- **MC 26.1+**：直接写 26.x 真实结构
+  - `level.dat`：`difficulty_settings`（字符串难度 + hardcore/locked）、`spawn`、
+    `Version{Id, Name}`、`version_history`、`DataVersion`、`allowCommands`、`DataPacks`
+  - `data/minecraft/world_gen_settings.dat`：`data.seed` + 三个维度的完整生成器
+  - `data/minecraft/game_rules.dat`：`minecraft:keep_inventory`
+  - `DataVersion` 映射：26.1 = 4786、26.2 = 4903、26.3 = 5023；
+    26.4+ 暂时沿用 5023 作为旧基线，让 DataFixer 升级
+  - 已用**真实 26.3 服务端**加载过按此结构生成的世界，确认可正常启动、
+    `keep_inventory` 生效
+- **MC 1.12.2 ~ 26.0**：继续写 1.12.2 兼容层 + 原版 DataFixer
+- **低于 1.12.2**：`WorldCreator.supports()` 返回 false，首页不显示「创建世界」
+- 写完统一 `verifyWorld()` 回读：
+  - 普通版本检查 `level.dat` 的 `Data/LevelName`
+  - 26.x 额外检查 `world_gen_settings.dat` 的 `data.seed` 与 `game_rules.dat` 的 `data`
+  - 失败会删除半成品目录，不再「提示成功但世界坏掉」
+- `CreateWorldDialog` 新增「允许作弊」开关：
+  - 写入 `allowCommands`（普通版本 `Data/allowCommands`，26.x 同名字段）
+  - **按版本自适应**：Minecraft 1.4 之前不展示开关，并按 `0` 写入；1.4 及以上正常展示
+
+**四、Fabric API 加载状态**
+
+- 选择 Fabric 但 Fabric API 列表仍在加载时，只显示「正在加载中」，
+  安装按钮暂时不可用，**不再显示「禁止安装」**
+- 加载成功并自动选中 Fabric API 后才允许安装
+- 加载失败 / 列表为空才显示「拒绝下载」原因
+
+**五、涉及文件**
+
+| 文件 | 作用 |
+|---|---|
+| `ui/screens/main/MainScreen.kt` | 顶部 5 个入口回档（27.6.1） |
+| `ui/components/HomeButtons.kt` | 幽灵底色 + 移除描边 + 可调尺寸（27.6.1） |
+| `ui/screens/main/card_home/CardHomePage.kt` | 快捷按钮缩小并排、按版本隐藏创建世界（27.6.1） |
+| `ui/screens/main/card_home/QuickCreateDialogs.kt` | 允许作弊 + 版本自适应（27.6.1） |
+| `game/version/saves/WorldCreator.kt` | 26.x 新格式 / 1.12.2 兼容层双路径 + 回读验证（27.6.1） |
+| `ui/screens/content/download/game/DownloadGameWithAddonScreen.kt` | Fabric API 加载中状态（27.6.1） |
 
 ### 27.6.0 图标修复 + 首页交互升级 + Fabric API 防呆 ✅
 
@@ -62,6 +129,8 @@
   - `HomeMaterialButton` / `HomeMaterialChip` 供首页按钮复用
 - 接入范围：首页启动按钮、快捷创建入口、世界 / 服务器条目、首页顶部导航图标
 - ⚠️ 顶部导航只在首页套用材质；进入设置 / 下载等页面后恢复原样
+- ⚠️ **27.6.1 已按反馈回档顶部导航**：5 个入口恢复原样，不再套用材质；
+  详见上方 27.6.1 章节。后续不要再动这 5 个入口
 - ⚠️ 液态玻璃的流光与 `backgroundGlass` 保持同一性质：只有缓慢移动，没有明暗脉动；
   改这里时不要引入频闪，否则要补回光敏性警告
 
@@ -74,6 +143,8 @@
   - 写 **1.12.2 兼容层**（`LevelName` / `RandomSeed` / `GameType` / `Difficulty` /
     `GameRules.keepInventory` / `generatorName` / `Version{Id=1343}`），
     由原版 DataFixer 在首次进入时升级到当前版本
+  - ⚠️ **27.6.1 起**：26.1+ 已改为直接写 26.x 新格式；这里的 1.12.2 兼容层只用于
+    1.12.2 ~ 26.0，详见上方 27.6.1 章节
   - ⚠️ **`level.dat` 必须 gzip 压缩**：`NBTIO.writeFile(..., compressed = true, ...)`。
     Minecraft 与 `SaveUtils` 都按压缩格式读取，写成未压缩会被判为坏档
   - 种子：纯数字直接用，文本按 Minecraft 的字符串哈希，留空随机
@@ -2276,8 +2347,8 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**27.6.0**
-- 历史版本：27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 最新版本：**27.6.1**
+- 历史版本：27.6.0、27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
@@ -2386,11 +2457,10 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-25（27.6.0 已开发完成 —— 修复议题 #31 的图标放大裁剪（桌面 / 圆形 /
-自适应 / 单色 + README 图标）；议题 #33 首页按钮材质（默认 / 透明 / 液态玻璃，默认透明）与
-一键创建世界 / 添加服务器（OpenNBT + 1.12.2 兼容层 + quickPlay）；Fabric API 防呆：搜索与手动
-安装黑名单、选择 Fabric 时强制自动前置、缺失时拒绝下载、模组管理不可删除 / 禁用、不再安装第二份；
-顺带修复 level.dat 难度 Byte 读取。27.5.x 的内容见下方章节。）
+**最后更新**：2026-10-25（27.6.1 已开发完成 —— 按真机截图回修首页：顶部 5 个入口回档且不再动；
+启动 / 创建世界 / 添加服务器 / 条目统一改为「幽灵按钮」（约 1.5%~2% 明暗差、无描边、保留透明度）；
+快捷按钮缩小并移到启动旁；创建世界按版本自适应（26.1+ 新格式 / 1.12.2~26.0 兼容层 / 低于 1.12.2 隐藏），
+新增「允许作弊」；Fabric API 加载中只显示「正在加载中」。27.6.0 的内容见下方章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在

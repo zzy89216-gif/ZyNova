@@ -205,6 +205,7 @@
     <string name="download_game_addon_not_installable">Not installable automatically</string>
     <string name="download_game_addon_warning_api">%s is not selected. Without installing it, most mods will not work!</string>
     <string name="download_game_addon_require_fabric_api">Fabric API is required when Fabric is selected. No compatible Fabric API is available right now, so the download is blocked.</string>
+    <string name="download_game_addon_fabric_api_loading">Fabric API is loading, please wait…</string>
     <string name="download_game_install_title">Installing Game</string>
     <string name="download_game_install_vanilla">Downloading Vanilla %s</string>
     <string name="download_game_install_base_download_file">Download %1$s %2$s main file</string>
@@ -1110,7 +1111,7 @@
     <string name="settings_launcher_glass_level_on">Enable Dynamic Glass</string>
     <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look</string>
     <string name="settings_launcher_home_button_material_title">Home Button Material</string>
-    <string name="settings_launcher_home_button_material_summary">Choose the material for the launch, quick-create and top navigation buttons on the home page. Liquid glass requires the dynamic glass effect; it falls back to transparent when reduced motion is enabled or dynamic glass is off.</string>
+    <string name="settings_launcher_home_button_material_summary">Choose the material for the launch, quick-create and world/server buttons on the home page. Liquid glass requires the dynamic glass effect; it falls back to transparent when reduced motion is enabled or dynamic glass is off.</string>
     <string name="settings_launcher_home_button_material_default">Default</string>
     <string name="settings_launcher_home_button_material_transparent">Transparent</string>
     <string name="settings_launcher_home_button_material_liquid_glass">Liquid Glass</string>
@@ -1138,6 +1139,7 @@
     <string name="home_create_world_seed">Seed (optional)</string>
     <string name="home_create_world_seed_hint">Leave blank for a random seed</string>
     <string name="home_create_world_keep_inventory">Keep Inventory</string>
+    <string name="home_create_world_allow_cheats">Allow Cheats</string>
     <string name="home_create_world_game_mode">Game Mode</string>
     <string name="home_create_world_difficulty">Difficulty</string>
     <string name="home_create_world_action">Create and Play</string>

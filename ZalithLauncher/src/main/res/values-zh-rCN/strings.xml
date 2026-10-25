@@ -206,6 +206,7 @@
     <string name="download_game_addon_not_installable">不支持自动安装</string>
     <string name="download_game_addon_warning_api">未选择 %s，若不安装它，大多数模组将无法使用！</string>
     <string name="download_game_addon_require_fabric_api">选择 Fabric 后必须同时安装 Fabric API。当前没有可用的兼容版本，下载已被拒绝。</string>
+    <string name="download_game_addon_fabric_api_loading">Fabric API 正在加载中，请稍候…</string>
     <string name="download_game_install_title">安装游戏中</string>
     <string name="download_game_install_vanilla">下载安装原版 %s</string>
     <string name="download_game_install_base_download_file">下载 %1$s %2$s 主文件</string>
@@ -1110,7 +1111,7 @@
     <string name="settings_launcher_glass_level_on">启用动态玻璃</string>
     <string name="settings_launcher_liquid_glass_summary">在毛玻璃之上叠加缓慢流动的高光与折射光晕，呈现 iOS 26 风格液态玻璃质感</string>
     <string name="settings_launcher_home_button_material_title">首页按钮材质</string>
-    <string name="settings_launcher_home_button_material_summary">调整首页启动、快捷创建与顶部导航按钮的材质。液态玻璃需要开启动态玻璃；开启「减少动态效果」或关闭动态玻璃时会自动降级为透明。</string>
+    <string name="settings_launcher_home_button_material_summary">调整首页启动、快捷创建与世界 / 服务器条目的材质。液态玻璃需要开启动态玻璃；开启「减少动态效果」或关闭动态玻璃时会自动降级为透明。</string>
     <string name="settings_launcher_home_button_material_default">默认</string>
     <string name="settings_launcher_home_button_material_transparent">透明</string>
     <string name="settings_launcher_home_button_material_liquid_glass">液态玻璃</string>
@@ -1138,6 +1139,7 @@
     <string name="home_create_world_seed">种子（可选）</string>
     <string name="home_create_world_seed_hint">留空则随机生成</string>
     <string name="home_create_world_keep_inventory">死亡不掉落</string>
+    <string name="home_create_world_allow_cheats">允许作弊</string>
     <string name="home_create_world_game_mode">游戏模式</string>
     <string name="home_create_world_difficulty">游戏难度</string>
     <string name="home_create_world_action">创建并进入</string>

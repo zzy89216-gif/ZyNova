@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
+[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,9 +29,19 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.6.0**。这一阶段主要做了：
-**首页交互升级、Fabric API 防呆、图标修复，以及 27.5.x 的 AI / 依赖 / 下载 / MG 修复。**
+当前版本 **27.6.1**。这一阶段主要做了：
+**首页按钮回修、允许作弊、Fabric API 防呆、图标修复，以及 27.6.0 的首页交互升级。**
 
+- **首页按钮回修（27.6.1）**：顶部 5 个入口回档并保持原样；启动 / 创建世界 / 添加服务器 /
+  世界 / 服务器条目改为「幽灵按钮」——只保留约 1.5%~2% 明暗差、无描边、保留透明度，
+  图片 / 视频背景实时透出；创建世界 / 添加服务器缩小后并排放在启动按钮旁边
+- **创建世界按版本自适应（27.6.1）**：26.1+ 直接写新存档结构（`difficulty_settings` /
+  `world_gen_settings.dat` / `game_rules.dat`）；1.12.2~26.0 走 DataFixer 兼容层；
+  低于 1.12.2 隐藏入口；写完回读验证
+- **创建世界允许作弊（27.6.1）**：新增「允许作弊」开关，按版本自适应；
+  Minecraft 1.4 之前不展示并按关闭写入
+- **Fabric API 加载状态（27.6.1）**：加载中只显示「正在加载中」，加载成功才允许安装，
+  失败 / 为空才拒绝下载
 - **首页交互升级（议题 #33）**：实例卡片可直接「+ 创建世界」「+ 添加服务器」，
   创建完直接 quickPlay 进图 / 进服；设置 → 启动器新增「首页按钮材质」
   （默认 / 透明 / 液态玻璃，默认透明），减少动效或关闭动态玻璃时自动降级为透明
@@ -479,7 +489,13 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 27.6.0（当前版本）
+### 27.6.1（当前版本）
+
+- [x] **顶部 5 个入口回档**，恢复原样
+- [x] **首页按钮自适应底色 + 移除描边**
+- [x] **创建世界「允许作弊」+ 版本自适应**
+
+### 27.6.0
 
 - [x] **首页按钮材质**（默认 / 透明 / 液态玻璃）（#33）
 - [x] **首页一键创建世界 / 添加服务器 + quickPlay**（#33）

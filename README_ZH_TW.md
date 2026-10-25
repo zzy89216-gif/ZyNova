@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
+[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -34,7 +34,17 @@
 
 ---
 
-## ✨ 27.6.0 主要內容
+## ✨ 27.6.1 主要內容
+
+- **頂部 5 個按鈕回檔**：資料夾 / AI / 多人 / 下載 / 設定恢復原樣，不再套用首頁按鈕材質。
+- **首頁按鈕改為幽靈按鈕**：只保留約 1.5%~2% 明暗差、無描邊、保留透明度，
+  圖片 / 影片背景可即時透出；建立世界 / 新增伺服器縮小後並排放在啟動按鈕旁。
+- **建立世界依版本自適應**：26.1+ 直接寫新存檔結構；1.12.2~26.0 走 DataFixer；
+  低於 1.12.2 隱藏入口，寫完回讀驗證。
+- **Fabric API 載入狀態**：載入中只顯示「正在載入中」，成功後才允許安裝。
+- **建立世界支援「允許作弊」**：依版本自適應；Minecraft 1.4 之前不顯示並按關閉寫入。
+
+### 27.6.0
 
 - **首頁互動升級（議題 #33）。** 實例卡片可以直接建立世界或新增伺服器，完成後直接
   quickPlay 進入遊戲；設定 → 啟動器新增「首頁按鈕材質」（預設 / 透明 / 液態玻璃，

@@ -244,15 +244,26 @@ fun DownloadGameWithAddonScreen(
         AddonsViewModel(key.gameVersion, loaderSupports)
     }
 
-    //选择 Fabric 后必须同时安装 Fabric API；检测不到就直接拒绝下载
+    //选择 Fabric 后必须同时安装 Fabric API：
+    //· 正在加载 → 只提示「正在加载中」，按钮暂时不可用，但不算「禁止安装」
+    //· 加载完成但仍没有 → 才拒绝下载
     val fabricVersion = viewModel.currentAddon.fabricVersion.value
     val fabricAPIVersion = viewModel.currentAddon.fabricAPIVersion.value
+    val fabricAPILoading = loaderSupports.isFabricSupports &&
+            fabricVersion != null &&
+            viewModel.currentAddon.fabricAPIState == AddonState.Loading
     val fabricAPIBlockedMessage = if (
         loaderSupports.isFabricSupports &&
         fabricVersion != null &&
+        !fabricAPILoading &&
         fabricAPIVersion == null
     ) {
         stringResource(R.string.download_game_addon_require_fabric_api)
+    } else {
+        null
+    }
+    val fabricAPILoadingMessage = if (fabricAPILoading) {
+        stringResource(R.string.download_game_addon_fabric_api_loading)
     } else {
         null
     }
@@ -285,6 +296,7 @@ fun DownloadGameWithAddonScreen(
                 refreshIcon = viewModel.refreshIcon,
                 refreshErrorCheck = refreshErrorCheck,
                 installBlockedReason = fabricAPIBlockedMessage,
+                installLoadingMessage = fabricAPILoadingMessage,
                 onInstall = { customVersionName ->
                     onInstall(
                         GameDownloadInfo(
@@ -383,6 +395,7 @@ fun DownloadGameWithAddonScreen(
                             //列表为空/加载失败时同样会提示，并由下载按钮直接拒绝
                             val isFabricAPIWarning =
                                 viewModel.currentAddon.fabricVersion.value != null &&
+                                        !fabricAPILoading &&
                                         viewModel.currentAddon.fabricAPIVersion.value == null
 
                             AnimatedVisibility(
@@ -549,6 +562,7 @@ private fun ScreenHeader(
     refreshIcon: Any? = null,
     refreshErrorCheck: Any? = null,
     installBlockedReason: String? = null,
+    installLoadingMessage: String? = null,
     onInstall: (String) -> Unit = {}
 ) {
     Column(modifier = modifier) {
@@ -588,6 +602,7 @@ private fun ScreenHeader(
             val isError = remember(nameValue, refreshErrorCheck, installBlockedReason) {
                 nameValue.isEmpty() || filenameInvalidMessage != null || installBlockedReason != null
             }
+            val installEnabled = !isError && installLoadingMessage == null
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -620,9 +635,10 @@ private fun ScreenHeader(
                     }
                 )
 
-                if (isError || isVersionOverwrite) {
+                if (isError || isVersionOverwrite || installLoadingMessage != null) {
                     val message = when {
                         installBlockedReason != null -> installBlockedReason
+                        installLoadingMessage != null -> installLoadingMessage
                         isError -> filenameInvalidMessage ?: emptyError
                         else -> overwriteMessage
                     }
@@ -698,7 +714,7 @@ private fun ScreenHeader(
 
             IconButton(
                 onClick = {
-                    if (!isError) {
+                    if (installEnabled) {
                         onInstall(nameValue)
                     }
                 }

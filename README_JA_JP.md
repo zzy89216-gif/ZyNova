@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
+[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -35,7 +35,20 @@
 
 ---
 
-## ✨ 27.6.0 のハイライト
+## ✨ 27.6.1 のハイライト
+
+- **上部 5 ボタンを元に戻しました。** フォルダー / AI / マルチプレイ / ダウンロード / 設定は
+  27.6.0 より前の見た目に戻り、ホームボタンの素材は適用されません。
+- **ホームボタンをゴースト化。** 起動 / ワールド作成 / サーバー追加 / ワールド・サーバー項目は
+  背景との明暗差を約 1.5〜2% だけにし、枠線を削除、透明度を保って画像・動画背景がリアルタイムに
+  透けるようにしました。ワールド作成 / サーバー追加は小さくして起動ボタンの隣に並べています。
+- **ワールド作成をバージョン別に。** 26.1+ は新しい分割保存形式を直接書き、1.12.2〜26.0 は
+  DataFixer 経由、1.12.2 未満は入口を非表示にします。書き込み後に読み戻して検証します。
+- **Fabric API の読み込み状態。** 読み込み中は「読み込み中」と表示し、成功後にのみインストールを
+  許可します。
+- **「チートを許可」** をワールド作成に追加。Minecraft 1.4 より前では非表示で、オフとして書き込みます。
+
+### 27.6.0
 
 - **ホーム画面の操作を強化（issue #33）。** インスタンスカードからワールド作成 /
   サーバー追加を行い、そのまま quickPlay でゲームに入れます。設定 → ランチャーに

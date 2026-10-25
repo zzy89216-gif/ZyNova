@@ -24,9 +24,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,12 +52,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
+import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
+import com.movtery.zalithlauncher.ui.theme.cardColor
+import com.movtery.zalithlauncher.ui.theme.onCardColor
 
 /**
  * 解析当前实际生效的首页按钮材质。
@@ -86,6 +88,25 @@ fun rememberHomeButtonMaterial(): HomeButtonMaterial {
 }
 
 /**
+ * 幽灵按钮（Ghost Button）底色：
+ * 与当前卡片/背景只保留约 1.5% ~ 2% 的明暗差，不提高透明度、不加描边。
+ * 这样叠在动态玻璃上时不会出现「按钮上又盖一层玻璃」的冲突。
+ */
+@Composable
+fun homeButtonGhostColor(): Color {
+    val base = cardColor()
+    //浅色主题稍微压暗，深色主题稍微提亮；幅度刻意很小
+    val factor = if (isLauncherInDarkTheme()) 1.02f else 0.985f
+    return Color(
+        red = (base.red * factor).coerceIn(0f, 1f),
+        green = (base.green * factor).coerceIn(0f, 1f),
+        blue = (base.blue * factor).coerceIn(0f, 1f),
+        //保留一点透明度：背景是图片 / 视频时，按钮会随画面实时变化，而不是锁成一块死色
+        alpha = base.alpha.coerceAtMost(0.90f)
+    )
+}
+
+/**
  * 首页按钮材质背景。
  *
  * ⚠️ 液态玻璃只使用 `backgroundGlass`（Haze）+ `drawBehind` 渐变高光，
@@ -105,34 +126,19 @@ fun Modifier.homeButtonMaterial(
 
     val clipped = this.clip(shape)
     return when (material) {
-        HomeButtonMaterial.Default -> clipped.background(containerColor)
+        //默认档也只是略实一点，仍然保留透明度，跟着背景动
+        HomeButtonMaterial.Default -> clipped.background(
+            containerColor.copy(alpha = (containerColor.alpha + 0.10f).coerceAtMost(0.92f))
+        )
 
-        HomeButtonMaterial.Transparent -> clipped
-            .background(containerColor.copy(alpha = 0.42f))
-            .border(
-                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.38f)),
-                shape = shape
-            )
+        HomeButtonMaterial.Transparent -> clipped.background(containerColor)
 
         HomeButtonMaterial.LiquidGlass -> {
             //按钮通常比整页背景小，模糊半径取一个下限，避免用户把全局模糊设为 0 时毫无质感
             val blur = maxOf(AllSettings.backgroundBlur.state, 18)
             var glass = clipped
-                .background(containerColor.copy(alpha = 0.28f))
-                .backgroundGlass(blur, containerColor.copy(alpha = 0.30f))
-                .border(
-                    border = BorderStroke(
-                        width = 1.dp,
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color.White.copy(alpha = 0.55f),
-                                Color.White.copy(alpha = 0.10f),
-                                Color.White.copy(alpha = 0.28f)
-                            )
-                        )
-                    ),
-                    shape = shape
-                )
+                .background(containerColor)
+                .backgroundGlass(blur, containerColor.copy(alpha = 0.12f))
 
             //背景模糊模式下 backgroundGlass 不会叠加动态高光，这里补一层；
             //前景模糊模式下 backgroundGlass 已经带流动高光，不再重复叠加
@@ -209,16 +215,18 @@ fun HomeMaterialButton(
     text: String,
     modifier: Modifier = Modifier,
     material: HomeButtonMaterial,
-    containerColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    containerColor: Color = homeButtonGhostColor(),
+    contentColor: Color = onCardColor(),
     shape: Shape = MaterialTheme.shapes.large,
     enabled: Boolean = true,
+    minHeight: Dp = 40.dp,
+    textStyle: TextStyle = MaterialTheme.typography.labelLarge,
     contentPadding: PaddingValues = PaddingValues(horizontal = 18.dp, vertical = 10.dp),
     leadingIcon: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
-            .heightIn(min = 40.dp)
+            .heightIn(min = minHeight)
             .homeButtonMaterial(material, shape, containerColor)
             .clickable(
                 enabled = enabled,
@@ -233,7 +241,7 @@ fun HomeMaterialButton(
             leadingIcon?.invoke()
             Text(
                 text = text,
-                style = homeButtonTextStyle(MaterialTheme.typography.labelLarge, material),
+                style = homeButtonTextStyle(textStyle, material),
                 color = contentColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -250,8 +258,8 @@ fun HomeMaterialChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     material: HomeButtonMaterial,
-    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    containerColor: Color = homeButtonGhostColor(),
+    contentColor: Color = onCardColor(),
     shape: Shape = MaterialTheme.shapes.medium,
     content: @Composable ColumnScope.() -> Unit,
 ) {

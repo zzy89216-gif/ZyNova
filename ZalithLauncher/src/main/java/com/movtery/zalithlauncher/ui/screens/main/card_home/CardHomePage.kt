@@ -30,10 +30,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,6 +55,7 @@ import com.movtery.zalithlauncher.game.home.HomeLayoutStore
 import com.movtery.zalithlauncher.game.home.HomeServer
 import com.movtery.zalithlauncher.game.home.HomeWorld
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.game.version.saves.WorldCreator
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.ui.components.HomeMaterialButton
@@ -237,6 +235,8 @@ private fun InstanceModule(
 ) {
     var createWorldOpen by remember { mutableStateOf(false) }
     var addServerOpen by remember { mutableStateOf(false) }
+    //低于 1.12.2 的实例不提供创建世界（没有可靠的 level.dat 模板）
+    val canCreateWorld = remember(instance.instance) { WorldCreator.supports(instance.instance) }
     //该实例内部的世界 / 服务器各自的拖动排序
     val worldReorder = rememberReorderState { dragged, target ->
         val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
@@ -309,52 +309,41 @@ private fun InstanceModule(
                     )
                 }
 
-                HomeMaterialButton(
-                    onClick = onLaunch,
-                    text = stringResource(R.string.home_instance_launch),
-                    material = material
-                )
-            }
-
-            //议题 #33：首页直接创建世界 / 添加服务器，省去进入游戏主菜单的步骤
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
-            ) {
-                HomeMaterialButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = { createWorldOpen = true },
-                    text = stringResource(R.string.home_quick_create_world),
-                    material = material,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    shape = MaterialTheme.shapes.medium,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(18.dp),
-                            painter = painterResource(R.drawable.ic_add),
-                            contentDescription = null
+                //小尺寸幽灵按钮：创建世界 / 添加服务器 / 启动并排放在标题右侧
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp * scale),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (canCreateWorld) {
+                        HomeMaterialButton(
+                            onClick = { createWorldOpen = true },
+                            text = stringResource(R.string.home_quick_create_world),
+                            material = material,
+                            shape = MaterialTheme.shapes.small,
+                            minHeight = 28.dp,
+                            textStyle = MaterialTheme.typography.labelSmall,
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                         )
                     }
-                )
-                HomeMaterialButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = { addServerOpen = true },
-                    text = stringResource(R.string.home_quick_add_server),
-                    material = material,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    shape = MaterialTheme.shapes.medium,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(18.dp),
-                            painter = painterResource(R.drawable.ic_public),
-                            contentDescription = null
-                        )
-                    }
-                )
+                    HomeMaterialButton(
+                        onClick = { addServerOpen = true },
+                        text = stringResource(R.string.home_quick_add_server),
+                        material = material,
+                        shape = MaterialTheme.shapes.small,
+                        minHeight = 28.dp,
+                        textStyle = MaterialTheme.typography.labelSmall,
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                    )
+                    HomeMaterialButton(
+                        onClick = onLaunch,
+                        text = stringResource(R.string.home_instance_launch),
+                        material = material,
+                        shape = MaterialTheme.shapes.medium,
+                        minHeight = 32.dp,
+                        textStyle = MaterialTheme.typography.labelMedium,
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 3.dp)
+                    )
+                }
             }
 
             if (instance.isEmpty) {
