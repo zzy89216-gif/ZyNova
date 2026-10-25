@@ -71,7 +71,7 @@
   - `data/minecraft/game_rules.dat`：`minecraft:keep_inventory`
   - `DataVersion` 映射：26.1 = 4786、26.2 = 4903、26.3 = 5023；
     26.4+ 暂时沿用 5023 作为旧基线，让 DataFixer 升级
-  - 已用**真实 26.3 服务端**加载过按此结构生成的世界，确认可正常启动、
+  - 已用**真实 26.1 / 26.3 服务端**加载过按此结构生成的世界，确认可正常启动、
     `keep_inventory` 生效
 - **MC 1.12.2 ~ 26.0**：继续写 1.12.2 兼容层 + 原版 DataFixer
 - **低于 1.12.2**：`WorldCreator.supports()` 返回 false，首页不显示「创建世界」
