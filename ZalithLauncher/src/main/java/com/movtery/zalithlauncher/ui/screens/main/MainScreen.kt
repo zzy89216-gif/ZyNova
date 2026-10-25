@@ -78,11 +78,15 @@ import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.launcherDisplayTitle
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
+import com.movtery.zalithlauncher.ui.components.homeButtonMaterial
+import com.movtery.zalithlauncher.ui.components.homeButtonTextStyle
+import com.movtery.zalithlauncher.ui.components.rememberHomeButtonMaterial
 import com.movtery.zalithlauncher.ui.components.TextRailItem
 import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
@@ -156,6 +160,8 @@ fun MainScreen(
     val mainScreenKey = screenBackStackModel.mainScreen.currentKey
     val inLauncherScreen = mainScreenKey == null || mainScreenKey is NormalNavKey.LauncherMain
 
+    val homeMaterial = rememberHomeButtonMaterial()
+
     val isBackgroundValid = LocalBackgroundViewModel.current?.isValid == true
     val launcherBackgroundOpacity = AllSettings.launcherBackgroundOpacity.state.toFloat() / 100f
 
@@ -181,6 +187,7 @@ fun MainScreen(
                 taskRunning = tasks.isEmpty(),
                 isTasksExpanded = isTaskMenuExpanded,
                 contentColor = onBackgroundColor(),
+                homeMaterial = homeMaterial,
                 onScreenBack = {
                     screenBackStackModel.mainScreen.backStack.removeFirstOrNull()
                 },
@@ -256,6 +263,7 @@ private fun <E: TitledNavKey> TopBar(
     isTasksExpanded: Boolean,
     modifier: Modifier = Modifier,
     contentColor: Color,
+    homeMaterial: HomeButtonMaterial,
     onScreenBack: () -> Unit,
     toMainScreen: () -> Unit,
     toSettingsScreen: () -> Unit,
@@ -271,6 +279,9 @@ private fun <E: TitledNavKey> TopBar(
     val inDownloadScreen = mainScreenKey is NestedNavKey.Download
     val inSettingsScreen = mainScreenKey is NestedNavKey.Settings
     val inAIChatScreen = mainScreenKey is NormalNavKey.AIChat
+
+    //只在首页给顶部导航按钮套用材质；进入设置/下载等页面后保持原有外观
+    val railMaterial = if (inLauncherScreen) homeMaterial else null
 
     CompositionLocalProvider(
         LocalContentColor provides contentColor
@@ -428,6 +439,7 @@ private fun <E: TitledNavKey> TopBar(
                 // 选中后展开深色胶囊背景并把板块文字一起带出来（原先只是一个没有反馈的图标）
                 TopBarRailItem(
                     selected = inAIChatScreen,
+                    material = railMaterial,
                     painter = painterResource(R.drawable.ic_ai_filled),
                     text = stringResource(R.string.ai_title),
                     onClick = {
@@ -437,6 +449,7 @@ private fun <E: TitledNavKey> TopBar(
 
                 TopBarRailItem(
                     selected = inMultiplayerScreen,
+                    material = railMaterial,
                     painter = painterResource(R.drawable.ic_group_filled),
                     text = stringResource(R.string.terracotta),
                     onClick = {
@@ -446,6 +459,7 @@ private fun <E: TitledNavKey> TopBar(
 
                 TopBarRailItem(
                     selected = inDownloadScreen,
+                    material = railMaterial,
                     painter = painterResource(R.drawable.ic_download_2_filled),
                     text = stringResource(R.string.generic_download),
                     onClick = {
@@ -455,6 +469,7 @@ private fun <E: TitledNavKey> TopBar(
 
                 TopBarRailItem(
                     selected = inSettingsScreen,
+                    material = railMaterial,
                     painter = painterResource(R.drawable.ic_settings_filled),
                     text = stringResource(R.string.generic_setting),
                     onClick = {
@@ -472,11 +487,26 @@ private fun TopBarRailItem(
     painter: Painter,
     text: String,
     modifier: Modifier = Modifier,
+    material: HomeButtonMaterial? = null,
     onClick: () -> Unit = {},
     textStyle: TextStyle = MaterialTheme.typography.labelMedium
 ) {
+    val buttonModifier = if (material == null) {
+        modifier
+    } else {
+        modifier.homeButtonMaterial(
+            material = material,
+            shape = MaterialTheme.shapes.extraLarge,
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    }
+    val effectiveTextStyle = if (material == null) {
+        textStyle
+    } else {
+        homeButtonTextStyle(textStyle, material)
+    }
     TextRailItem(
-        modifier = modifier,
+        modifier = buttonModifier,
         onClick = onClick,
         text = {
             AnimatedVisibility(visible = selected) {
@@ -484,7 +514,7 @@ private fun TopBarRailItem(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = text,
-                        style = textStyle
+                        style = effectiveTextStyle
                     )
                 }
             }

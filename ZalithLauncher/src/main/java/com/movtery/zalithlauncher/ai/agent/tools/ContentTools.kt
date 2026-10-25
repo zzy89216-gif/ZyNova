@@ -77,6 +77,7 @@ internal fun contentTools(): List<AITool> = listOf(
             启用或禁用一个模组（通过把文件重命名为 .disabled 实现，可随时恢复）。
             这是**排查模组冲突最安全的手段**：先禁用一半模组看是否还崩，
             而不是直接删除。用户说「帮我找出是哪个模组导致的」时优先用它。
+            ⚠️ Fabric API 是受保护的前置依赖，**不能禁用**。
         """.trimIndent(),
         parameters = AIToolSchema.objectSchema(
             properties = mapOf(
@@ -93,6 +94,15 @@ internal fun contentTools(): List<AITool> = listOf(
         val modsDir = VersionFolders.MOD.getDir(version.getGameDir())
         val target = findModFile(modsDir, args.str("mod")!!)
             ?: throw IllegalStateException("在 mods 目录里找不到模组：${args.str("mod")}")
+
+        //Fabric API 是受保护的前置依赖，不允许通过 AI 禁用
+        val targetMod = AllModReader(modsDir).readAllLocals()
+            .firstOrNull { it.file.absolutePath == target.absolutePath }
+        if (!enabled && targetMod != null && ModIdentity.isFabricApi(targetMod)) {
+            throw IllegalStateException(
+                "Fabric API 是受保护的前置依赖，不能禁用。它必须保持启用，缺失或停用都会让大量模组无法工作。"
+            )
+        }
 
         val nowDisabled = target.name.endsWith(DISABLED_SUFFIX)
         if (enabled == !nowDisabled) {
@@ -133,7 +143,7 @@ internal fun contentTools(): List<AITool> = listOf(
             .firstOrNull { it.file.absolutePath == target.absolutePath }
         if (targetMod != null && ModIdentity.isDeleteProtected(targetMod)) {
             throw IllegalStateException(
-                "Fabric API 是受保护的前置依赖，不能在模组管理中删除。如果需要更换版本，请通过下载页安装兼容版本。"
+                "Fabric API 是受保护的前置依赖，不能删除，也不需要手动安装；选择 Fabric 时它会自动加入，且实例里只保留一份。"
             )
         }
 

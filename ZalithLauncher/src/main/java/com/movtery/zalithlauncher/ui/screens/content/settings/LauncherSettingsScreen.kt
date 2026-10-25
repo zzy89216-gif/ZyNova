@@ -85,6 +85,7 @@ import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
+import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.setting.enums.UiGeneration
@@ -186,6 +187,19 @@ fun LauncherSettingsScreen(
                         title = stringResource(R.string.settings_launcher_title_title),
                         summary = stringResource(R.string.settings_launcher_title_summary),
                         label = stringResource(R.string.settings_launcher_title_label)
+                    )
+
+                    //议题 #33：首页按钮材质（默认 / 透明 / 液态玻璃）
+                    EnumSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.homeButtonMaterial,
+                        entries = HomeButtonMaterial.entries,
+                        title = stringResource(R.string.settings_launcher_home_button_material_title),
+                        summary = stringResource(R.string.settings_launcher_home_button_material_summary),
+                        getRadioText = { stringResource(it.textRes) },
+                        getRadioEnable = { true },
+                        maxItemsInEachRow = 3
                     )
 
                     EnumSettingsCard(

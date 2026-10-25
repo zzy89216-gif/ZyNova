@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
+[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
 
 **[English](README.md)** | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
 
@@ -35,7 +35,22 @@ open-source code of [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLa
 
 ---
 
-## ✨ Highlights of 27.5.1
+## ✨ Highlights of 27.6.0
+
+- **Home interaction upgrade (issue #33).** Home cards can create a world or add a server in one
+  step and launch straight into it. A new **Home Button Material** setting offers Default /
+  Transparent / Liquid Glass, and automatically falls back to Transparent when reduced motion is on
+  or dynamic glass is off.
+- **Fabric API is locked down.** Fabric API is hidden from mod downloads and cannot be installed
+  manually. Selecting Fabric forces it in, and installation is refused when no compatible copy is
+  available. It cannot be deleted or disabled, and a second copy is never installed.
+- **Icon rendering fixed (issue #31).** Desktop and round icons no longer zoom-crop the artwork;
+  adaptive and monochrome layers are scaled into the 66% safe zone, and the README icon now uses
+  the current artwork instead of the old character icon.
+- **Smaller fixes.** Save difficulty now reads the `ByteTag` correctly, and quick-play uses the
+  world folder name rather than its display name.
+
+### 27.5.1
 
 - **A completely new brand icon.** Launcher, round, adaptive (foreground / background /
   monochrome), Play Store, in-app About logo, splash screen and notification icon now all use

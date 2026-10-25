@@ -466,52 +466,6 @@ fun FabricList(
 }
 
 @Composable
-fun FabricAPIList(
-    modifier: Modifier = Modifier,
-    currentAddon: CurrentAddon,
-    requestString: String = stringResource(R.string.download_game_addon_request_addon, ModLoader.FABRIC.displayName),
-    addonList: AddonList,
-    error: String? = null,
-    onValueChanged: () -> Unit = {},
-    onReload: () -> Unit = {}
-) {
-    var version by currentAddon.fabricAPIVersion
-    val fabricVersion by currentAddon.fabricVersion
-    val incompatibleSet by currentAddon.incompatibleWithFabricAPI
-
-    val unSelectedFabric = remember(fabricVersion) {
-        when {
-            fabricVersion == null -> {
-                version = null
-                requestString
-            }
-            else -> null
-        }
-    }
-
-    AddonListLayout(
-        modifier = modifier,
-        state = currentAddon.fabricAPIState,
-        title = ModLoader.FABRIC_API.displayName,
-        iconPainter = painterResource(R.drawable.img_loader_fabric),
-        items = addonList.fabricAPIList,
-        current = version,
-        incompatibleSet = incompatibleSet,
-        checkIncompatible = {
-            currentAddon.updateIncompatibleState(ModLoader.FABRIC_API, addonList)
-        },
-        error = error ?: unSelectedFabric,
-        getItemText = { it.displayName },
-        summary = { ModSummary(it) },
-        onValueChange = { version0 ->
-            version = version0
-            onValueChanged()
-        },
-        onReload = onReload
-    )
-}
-
-@Composable
 fun LegacyFabricList(
     modifier: Modifier = Modifier,
     currentAddon: CurrentAddon,

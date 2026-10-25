@@ -489,6 +489,14 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
             appendLine("3. 修改配置文件前先读一遍，只做最小必要改动。")
             appendLine("4. 每次工具失败后要读错误信息并调整做法，不要重复同样的调用。")
             appendLine("5. **用与用户提问相同的语言回答**（用户用中文就问中文，用英文就回英文），简洁直接，不要复述工具返回的原始内容。")
+            appendLine()
+            appendLine("## Fabric API 防呆（硬性限制）")
+            appendLine("- Fabric API 由启动器的 Fabric 安装流程**自动加入**，不要手动下载 / 安装，")
+            appendLine("  也不要建议用户去资源页找它；资源页已经把 Fabric API 隐藏。")
+            appendLine("- 一个实例只能有一份 Fabric API。用户要求「装 Fabric API」时，先调用 list_mods 检查；")
+            appendLine("  如果已经存在，就说明无需重复安装，**绝不能再装第二份**。")
+            appendLine("- Fabric API **不可删除、不可禁用**：不要调用 delete_mod / set_mod_enabled 去改它；")
+            appendLine("  用户坚持时，直接说明这是启动器的防呆限制。")
         }
     }
 }

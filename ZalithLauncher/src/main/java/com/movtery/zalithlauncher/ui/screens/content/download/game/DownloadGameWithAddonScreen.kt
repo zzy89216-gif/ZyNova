@@ -244,6 +244,19 @@ fun DownloadGameWithAddonScreen(
         AddonsViewModel(key.gameVersion, loaderSupports)
     }
 
+    //选择 Fabric 后必须同时安装 Fabric API；检测不到就直接拒绝下载
+    val fabricVersion = viewModel.currentAddon.fabricVersion.value
+    val fabricAPIVersion = viewModel.currentAddon.fabricAPIVersion.value
+    val fabricAPIBlockedMessage = if (
+        loaderSupports.isFabricSupports &&
+        fabricVersion != null &&
+        fabricAPIVersion == null
+    ) {
+        stringResource(R.string.download_game_addon_require_fabric_api)
+    } else {
+        null
+    }
+
     BaseScreen(
         listOf(
             Pair(NestedNavKey.Download::class.java, mainScreenKey),
@@ -271,6 +284,7 @@ fun DownloadGameWithAddonScreen(
                 currentAddon = viewModel.currentAddon,
                 refreshIcon = viewModel.refreshIcon,
                 refreshErrorCheck = refreshErrorCheck,
+                installBlockedReason = fabricAPIBlockedMessage,
                 onInstall = { customVersionName ->
                     onInstall(
                         GameDownloadInfo(
@@ -365,10 +379,10 @@ fun DownloadGameWithAddonScreen(
                                 .fillMaxWidth()
                                 .offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
                         ) {
+                            //只要选了 Fabric 但还没有 Fabric API，就提示；
+                            //列表为空/加载失败时同样会提示，并由下载按钮直接拒绝
                             val isFabricAPIWarning =
                                 viewModel.currentAddon.fabricVersion.value != null &&
-                                        viewModel.currentAddon.fabricAPIState == AddonState.None &&
-                                        !viewModel.addonList.fabricAPIList.isNullOrEmpty() &&
                                         viewModel.currentAddon.fabricAPIVersion.value == null
 
                             AnimatedVisibility(
@@ -401,19 +415,6 @@ fun DownloadGameWithAddonScreen(
                         }
                     }
 
-                    AnimatedItem(scope) { yOffset ->
-                        FabricAPIList(
-                            modifier = Modifier.offset {
-                                IntOffset(
-                                    x = 0,
-                                    y = yOffset.roundToPx()
-                                )
-                            },
-                            currentAddon = viewModel.currentAddon,
-                            onValueChanged = { viewModel.refreshIcon() },
-                            addonList = viewModel.addonList
-                        ) { viewModel.reloadFabricAPI() }
-                    }
                 }
 
                 if (loaderSupports.isLegacyFabricSupports) {
@@ -547,6 +548,7 @@ private fun ScreenHeader(
     currentAddon: CurrentAddon,
     refreshIcon: Any? = null,
     refreshErrorCheck: Any? = null,
+    installBlockedReason: String? = null,
     onInstall: (String) -> Unit = {}
 ) {
     Column(modifier = modifier) {
@@ -583,8 +585,8 @@ private fun ScreenHeader(
                 isVersionExists(nameValue, true)
             }
 
-            val isError = remember(nameValue, refreshErrorCheck) {
-                nameValue.isEmpty() || filenameInvalidMessage != null
+            val isError = remember(nameValue, refreshErrorCheck, installBlockedReason) {
+                nameValue.isEmpty() || filenameInvalidMessage != null || installBlockedReason != null
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -619,10 +621,10 @@ private fun ScreenHeader(
                 )
 
                 if (isError || isVersionOverwrite) {
-                    val message = if (isError) {
-                        filenameInvalidMessage ?: emptyError
-                    } else {
-                        overwriteMessage
+                    val message = when {
+                        installBlockedReason != null -> installBlockedReason
+                        isError -> filenameInvalidMessage ?: emptyError
+                        else -> overwriteMessage
                     }
 
                     Text(

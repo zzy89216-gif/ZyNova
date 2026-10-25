@@ -25,26 +25,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,7 +59,12 @@ import com.movtery.zalithlauncher.game.home.HomeServer
 import com.movtery.zalithlauncher.game.home.HomeWorld
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
+import com.movtery.zalithlauncher.ui.components.HomeMaterialButton
+import com.movtery.zalithlauncher.ui.components.HomeMaterialChip
+import com.movtery.zalithlauncher.ui.components.homeButtonTextStyle
 import com.movtery.zalithlauncher.ui.components.ReorderState
+import com.movtery.zalithlauncher.ui.components.rememberHomeButtonMaterial
 import com.movtery.zalithlauncher.ui.components.reorderItem
 import com.movtery.zalithlauncher.ui.components.rememberReorderState
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
@@ -96,11 +104,17 @@ fun cardHomePage(
     var instances by remember { mutableStateOf<List<HomeInstance>>(emptyList()) }
     var loaded by remember { mutableStateOf(false) }
 
+    //创建世界 / 添加服务器后需要重新读取该实例的世界与服务器列表
+    var reloadToken by remember { mutableStateOf(0) }
+
+    //首页按钮材质（议题 #33）：默认透明；液态玻璃在减少动效/关闭玻璃时自动降级
+    val material = rememberHomeButtonMaterial()
+
     //卡片大小（百分比）：100% 与既有外观完全一致，
     //调小可以让更多实例卡片同屏显示，调大则更易点击
     val cardScale = AllSettings.homeCardSize.state.toFloat() / 100f
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(reloadToken) {
         //按用户上次拖动后的顺序恢复；没有记录过就保持默认顺序
         instances = HomeLayoutStore.sort(
             items = HomeDataProvider.instances(),
@@ -161,9 +175,11 @@ fun cardHomePage(
         } else {
             instances.forEach { instance ->
                 val instanceKey = instance.orderKey()
+                key(instanceKey) {
                 InstanceModule(
                     instance = instance,
                     scale = cardScale,
+                    material = material,
                     reorderState = cardReorder,
                     reorderKey = instanceKey,
                     onWorldsReordered = { worlds ->
@@ -186,8 +202,11 @@ fun cardHomePage(
                     },
                     onLaunch = { onLaunchVersion(instance.instance) },
                     onPlayWorld = onPlayWorld,
-                    onJoinServer = onJoinServer
+                    onJoinServer = onJoinServer,
+                    onWorldCreated = { reloadToken++ },
+                    onServerCreated = { reloadToken++ }
                 )
+                }
             }
         }
     }
@@ -205,6 +224,7 @@ private fun InstanceModule(
     instance: HomeInstance,
     /** 卡片大小比例（1f = 100%） */
     scale: Float,
+    material: HomeButtonMaterial,
     reorderState: ReorderState,
     reorderKey: String,
     onWorldsReordered: (List<HomeWorld>) -> Unit,
@@ -212,7 +232,11 @@ private fun InstanceModule(
     onLaunch: () -> Unit,
     onPlayWorld: (Version, String) -> Unit,
     onJoinServer: (Version, String) -> Unit,
+    onWorldCreated: () -> Unit,
+    onServerCreated: () -> Unit,
 ) {
+    var createWorldOpen by remember { mutableStateOf(false) }
+    var addServerOpen by remember { mutableStateOf(false) }
     //该实例内部的世界 / 服务器各自的拖动排序
     val worldReorder = rememberReorderState { dragged, target ->
         val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
@@ -285,9 +309,52 @@ private fun InstanceModule(
                     )
                 }
 
-                Button(onClick = onLaunch) {
-                    Text(text = stringResource(R.string.home_instance_launch))
-                }
+                HomeMaterialButton(
+                    onClick = onLaunch,
+                    text = stringResource(R.string.home_instance_launch),
+                    material = material
+                )
+            }
+
+            //议题 #33：首页直接创建世界 / 添加服务器，省去进入游戏主菜单的步骤
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
+            ) {
+                HomeMaterialButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { createWorldOpen = true },
+                    text = stringResource(R.string.home_quick_create_world),
+                    material = material,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = MaterialTheme.shapes.medium,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(18.dp),
+                            painter = painterResource(R.drawable.ic_add),
+                            contentDescription = null
+                        )
+                    }
+                )
+                HomeMaterialButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { addServerOpen = true },
+                    text = stringResource(R.string.home_quick_add_server),
+                    material = material,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    shape = MaterialTheme.shapes.medium,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(18.dp),
+                            painter = painterResource(R.drawable.ic_public),
+                            contentDescription = null
+                        )
+                    }
+                )
             }
 
             if (instance.isEmpty) {
@@ -311,7 +378,8 @@ private fun InstanceModule(
                                 key = world.orderKey(),
                                 state = worldReorder
                             ),
-                            onClick = { onPlayWorld(world.instance, world.name) }
+                            material = material,
+                            onClick = { onPlayWorld(world.instance, world.save.saveFile.name) }
                         )
                     }
                 }
@@ -329,12 +397,37 @@ private fun InstanceModule(
                                 key = server.orderKey(),
                                 state = serverReorder
                             ),
+                            material = material,
                             onClick = { onJoinServer(server.instance, server.server.originIp) }
                         )
                     }
                 }
             }
         }
+    }
+
+    if (createWorldOpen) {
+        CreateWorldDialog(
+            instance = instance.instance,
+            onDismiss = { createWorldOpen = false },
+            onCreated = { folderName ->
+                createWorldOpen = false
+                onWorldCreated()
+                onPlayWorld(instance.instance, folderName)
+            }
+        )
+    }
+
+    if (addServerOpen) {
+        AddServerDialog(
+            instance = instance.instance,
+            onDismiss = { addServerOpen = false },
+            onAdded = { address ->
+                addServerOpen = false
+                onServerCreated()
+                onJoinServer(instance.instance, address)
+            }
+        )
     }
 }
 
@@ -379,34 +472,31 @@ private fun HomeEntryChip(
     subtitle: String?,
     scale: Float,
     reorderModifier: Modifier,
+    material: HomeButtonMaterial,
     onClick: () -> Unit
 ) {
-    FilledTonalButton(
+    HomeMaterialChip(
         modifier = Modifier
             .widthIn(min = (120 * scale).dp, max = (240 * scale).dp)
             .then(reorderModifier),
+        material = material,
         onClick = onClick
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(1.dp),
-            horizontalAlignment = Alignment.Start
-        ) {
+        Text(
+            text = title,
+            style = homeButtonTextStyle(MaterialTheme.typography.labelLarge, material),
+            fontSize = MaterialTheme.typography.labelLarge.fontSize * scale,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (!subtitle.isNullOrBlank()) {
             Text(
-                text = title,
-                style = MaterialTheme.typography.labelLarge,
-                fontSize = MaterialTheme.typography.labelLarge.fontSize * scale,
+                text = subtitle,
+                style = homeButtonTextStyle(MaterialTheme.typography.labelSmall, material),
+                fontSize = MaterialTheme.typography.labelSmall.fontSize * scale,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            if (!subtitle.isNullOrBlank()) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontSize = MaterialTheme.typography.labelSmall.fontSize * scale,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
         }
     }
 }

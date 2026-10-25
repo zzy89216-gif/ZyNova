@@ -253,5 +253,8 @@ private fun Throwable.toInstallMessage(instance: Version): AndroidStringText {
 
         is ResourceMatchException.NoCompatibleVersion ->
             androidText(R.string.download_assets_install_no_compatible_version, target)
+
+        is ResourceMatchException.Blacklisted ->
+            androidText(R.string.download_assets_install_fabric_api_blacklisted)
     }
 }

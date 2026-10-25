@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
+[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)**
 
@@ -35,7 +35,21 @@
 
 ---
 
-## ✨ 27.5.1 のハイライト
+## ✨ 27.6.0 のハイライト
+
+- **ホーム画面の操作を強化（issue #33）。** インスタンスカードからワールド作成 /
+  サーバー追加を行い、そのまま quickPlay でゲームに入れます。設定 → ランチャーに
+  「ホームボタンの素材」（デフォルト / 透明 / リキッドグラス、既定は透明）を追加しました。
+  視差効果を減らす設定または動的ガラスがオフの場合は透明に自動フォールバックします。
+- **Fabric API をロック。** モッドのダウンロード画面から Fabric API を非表示にし、
+  手動インストールも禁止しました。Fabric を選ぶと自動で追加され、互換版が見つからない場合は
+  ダウンロードを拒否します。削除・無効化はできず、2 つ目のコピーもインストールされません。
+- **アイコン表示の修正（issue #31）。** デスクトップ / 丸型アイコンのズームクロップを廃止し、
+  アダプティブ / モノクロは 66% セーフゾーンに収めました。README のアイコンも現行のものに更新しました。
+- **細かな修正。** ワールドの難易度を ByteTag から正しく読むようにし、quickPlay は表示名ではなく
+  ワールドのフォルダー名を使うようにしました。
+
+### 27.5.1
 - **ブランドアイコンを全面刷新。** ランチャー / 丸型 / アダプティブ 3 層 / Play Store /
   アプリ内ロゴ / スプラッシュ / 通知アイコンをすべて新しいアートワークに統一しました。
 - **AI 設定を整理。** 「AI プロバイダー」の選択を削除し DeepSeek 固定に。ベース URL は

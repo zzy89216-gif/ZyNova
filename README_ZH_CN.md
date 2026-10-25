@@ -12,7 +12,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
+[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
 [![Architecture](https://img.shields.io/badge/Architecture-Universal%20APK-red)](https://github.com/zzy89216-gif/ZyNova)
 
 [English](README.md) | **[简体中文](README_ZH_CN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md)
@@ -29,9 +29,18 @@
 >
 > 它是一个基于上游开源代码进行深度修改、独立维护、独立发布的非官方项目。
 
-当前版本 **27.5.1**。这一阶段主要做了：
-**全量品牌图标、AI 设置收紧、动态玻璃统一，以及 27.5.0 的 AI / 依赖 / 下载 / MG 修复。**
+当前版本 **27.6.0**。这一阶段主要做了：
+**首页交互升级、Fabric API 防呆、图标修复，以及 27.5.x 的 AI / 依赖 / 下载 / MG 修复。**
 
+- **首页交互升级（议题 #33）**：实例卡片可直接「+ 创建世界」「+ 添加服务器」，
+  创建完直接 quickPlay 进图 / 进服；设置 → 启动器新增「首页按钮材质」
+  （默认 / 透明 / 液态玻璃，默认透明），减少动效或关闭动态玻璃时自动降级为透明
+- **Fabric API 防呆**：模组下载界面不再显示 Fabric API，也不能手动安装；
+  选择 Fabric 时强制自动加入，检测不到就拒绝下载；Fabric API 在模组管理中
+  不可删除 / 禁用，已有任意版本时不会再安装第二份
+- **图标修复（议题 #31）**：桌面 / 圆形图标不再放大裁剪，自适应 / 单色缩进 66% 安全区，
+  README 顶部也换成了当前品牌图标
+- **细节修复**：存档难度改为正确读取 ByteTag；quickPlay 改用世界文件夹名，避免中文世界名进不去
 - **全新品牌图标**：桌面 / 圆形 / 自适应三层 / Play Store / 关于页 / 启动页 / 通知图标
   全部换成新图标，同一个源图生成，没有新旧混用
 - **AI 设置收紧**：去掉「AI 服务商」分区，固定 DeepSeek；接口地址首次打开默认填好、仍可修改；
@@ -470,7 +479,14 @@ ZyNova 不追求为了保持更新而强行加入大量功能。
 
 ## 🗺️ Roadmap
 
-### 27.5.1（当前版本）
+### 27.6.0（当前版本）
+
+- [x] **首页按钮材质**（默认 / 透明 / 液态玻璃）（#33）
+- [x] **首页一键创建世界 / 添加服务器 + quickPlay**（#33）
+- [x] **Fabric API 防呆**：下载黑名单、强制前置、不可删除 / 禁用、不装第二份
+- [x] **修复图标放大裁剪 + README 旧图标**（#31）
+
+### 27.5.1
 
 - [x] **全量品牌图标替换**（桌面 / 圆形 / 自适应三层 / Play Store / 关于页 / 启动页 / 通知）（#20）
 - [x] **AI 设置收紧**：移除服务商分区、固定 DeepSeek、接口地址默认填好且可改

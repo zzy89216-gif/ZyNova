@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.5.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.5.1)
+[![Release](https://img.shields.io/badge/Release-27.6.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.0)
 
 [English](README.md) | [简体中文](README_ZH_CN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md)
 
@@ -34,7 +34,18 @@
 
 ---
 
-## ✨ 27.5.1 主要內容
+## ✨ 27.6.0 主要內容
+
+- **首頁互動升級（議題 #33）。** 實例卡片可以直接建立世界或新增伺服器，完成後直接
+  quickPlay 進入遊戲；設定 → 啟動器新增「首頁按鈕材質」（預設 / 透明 / 液態玻璃，
+  預設透明），開啟減少動效或關閉動態玻璃時會自動降級為透明。
+- **Fabric API 防呆。** 模組下載介面不再顯示 Fabric API，也不能手動安裝；選擇 Fabric 時
+  強制自動加入，偵測不到就拒絕下載；模組管理不可刪除 / 停用，已有任意版本時不會再裝第二份。
+- **圖示修正（議題 #31）。** 桌面 / 圓形圖示不再放大裁切，自適應 / 單色圖示縮進 66% 安全區，
+  README 也改用目前品牌圖示。
+- **細節修正。** 存檔難度改為正確讀取 ByteTag；quickPlay 改用世界資料夾名稱。
+
+### 27.5.1
 - **全新品牌圖示。** 桌面 / 圓形 / 自適應三層 / Play Store / 關於頁 / 啟動頁 / 通知圖示
   全部換成新圖示，同一份來源圖生成，沒有新舊混用。
 - **AI 設定收緊。** 移除「AI 服務商」分區，固定使用 DeepSeek；介面位址首次開啟預設填好、仍可修改；

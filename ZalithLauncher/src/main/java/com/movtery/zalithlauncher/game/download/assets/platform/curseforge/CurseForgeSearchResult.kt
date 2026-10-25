@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.game.download.assets.platform.curseforge
 
+import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchResult
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.CurseForgeData
@@ -25,6 +26,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.model
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.isApproved
 import com.movtery.zalithlauncher.game.download.assets.platform.searchRankWithChineseBias
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.AssetsPage
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -46,6 +48,10 @@ class CurseForgeSearchResult(
     override fun getAssetsPage(classes: PlatformClasses): AssetsPage {
         val mcmodData = data.mapNotNull { data0 ->
             if (!data0.isApproved()) return@mapNotNull null
+            //Fabric API 进入下载黑名单：只能由 Fabric 安装流程自动加入
+            if (ModIdentity.isFabricApiProject(Platform.CURSEFORGE, data0.platformId())) {
+                return@mapNotNull null
+            }
             data0 to classes.getTranslations().getModBySlugId(data0.slug)
         }
         val pageSize = pagination.pageSize

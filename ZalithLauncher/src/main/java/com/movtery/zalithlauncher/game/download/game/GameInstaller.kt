@@ -612,6 +612,7 @@ class GameInstaller(
             mod: ModVersion,
             modName: String,
             modVer: String,
+            isFabricApi: Boolean = false,
         ) {
             //同一实例里已经装有同名文件时不再重复下载。
             //例如更新加载器时又一次自动选中了 Fabric API，最终复制阶段本来也会跳过已有文件，
@@ -620,6 +621,21 @@ class GameInstaller(
             if (targetModsDir != null && File(targetModsDir, mod.file.fileName).exists()) {
                 Logger.info(TAG, "$modName $modVer is already installed; skip downloading")
                 return
+            }
+
+            //Fabric API 防呆：实例里只要已经存在任意版本的 Fabric API（文件名以 fabric-api 开头），
+            //就不再安装第二份，哪怕这次自动选中的是另一个版本。
+            if (isFabricApi && targetModsDir != null) {
+                val installed = targetModsDir.listFiles()?.firstOrNull { file ->
+                    file.isFile && file.name.lowercase().startsWith("fabric-api")
+                }
+                if (installed != null) {
+                    Logger.info(
+                        TAG,
+                        "$modName is already installed as ${installed.name}; skip downloading $modVer"
+                    )
+                    return
+                }
             }
 
             addTask(
@@ -642,7 +658,8 @@ class GameInstaller(
             addMod(
                 mod = apiVersion,
                 modName = ModLoader.FABRIC_API.displayName,
-                modVer = apiVersion.displayName
+                modVer = apiVersion.displayName,
+                isFabricApi = true
             )
         }
 

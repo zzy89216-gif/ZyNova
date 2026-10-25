@@ -65,6 +65,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDependencyType
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.version.installed.Version
@@ -209,11 +210,18 @@ private fun DownloadDialog(
         val selectedVersions = remember { mutableStateListOf(version0) }
 
         //拆分依赖项目、可选项目
+        //Fabric API 由 Fabric 安装流程自动加入，不在下载 UI 里展示
         val dependencies = remember(dependencyProjects) {
-            dependencyProjects.filter { it.first.type == PlatformDependencyType.REQUIRED }
+            dependencyProjects.filter {
+                it.first.type == PlatformDependencyType.REQUIRED &&
+                        !ModIdentity.isFabricApiProject(it.first.platform, it.first.projectId)
+            }
         }
         val optionals = remember(dependencyProjects) {
-            dependencyProjects.filter { it.first.type == PlatformDependencyType.OPTIONAL }
+            dependencyProjects.filter {
+                it.first.type == PlatformDependencyType.OPTIONAL &&
+                        !ModIdentity.isFabricApiProject(it.first.platform, it.first.projectId)
+            }
         }
         val hasDeps = dependencies.isNotEmpty() || optionals.isNotEmpty()
 

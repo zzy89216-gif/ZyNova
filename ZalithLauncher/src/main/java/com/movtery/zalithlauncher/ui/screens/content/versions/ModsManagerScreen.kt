@@ -1296,14 +1296,16 @@ private fun ModItemLayout(
                     }
                 }
 
-                //启用/禁用
-                Checkbox(
-                    checked = mod.localMod.file.isEnabled(),
-                    onCheckedChange = { checked ->
-                        if (checked) onEnable()
-                        else onDisable()
-                    }
-                )
+                //Fabric API 是受保护的前置依赖：不展示禁用开关（删除入口也已在下方隐藏）
+                if (!deleteProtected) {
+                    Checkbox(
+                        checked = mod.localMod.file.isEnabled(),
+                        onCheckedChange = { checked ->
+                            if (checked) onEnable()
+                            else onDisable()
+                        }
+                    )
+                }
 
                 //详细信息展示
                 if (projectInfo == null) {

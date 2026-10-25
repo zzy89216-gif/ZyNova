@@ -27,6 +27,7 @@ import com.movtery.zalithlauncher.game.download.engine.DownloadFailureReason
 import com.movtery.zalithlauncher.game.download.engine.downloadFailureReason
 import com.movtery.zalithlauncher.game.download.engine.findHttpCode
 import com.movtery.zalithlauncher.game.download.engine.isTimeoutError
+import com.movtery.zalithlauncher.game.download.resources.ResourceMatchException
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -174,6 +175,10 @@ fun mapExceptionToMessage(e: Throwable): AndroidStringText {
     val code = e.findHttpCode()
 
     return when {
+        //Fabric API 手动下载黑名单
+        e is ResourceMatchException.Blacklisted ->
+            androidText(R.string.download_assets_install_fabric_api_blacklisted)
+
         //超时：既包括 ktor 的请求超时，也包括 OkHttp 的 SocketTimeout / InterruptedIOException("timeout")
         reason == DownloadFailureReason.TIMEOUT ||
                 e is HttpRequestTimeoutException ||

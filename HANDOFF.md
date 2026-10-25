@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.5.1**（`launcher_version_code=270501`）
+**当前版本：27.6.0**（`launcher_version_code=270600`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,108 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.6.0 图标修复 + 首页交互升级 + Fabric API 防呆 ✅
+
+**一、议题 #31：图标被放大裁剪**
+
+- 27.5.1 的桌面图标是「放大 1.35 倍后居中裁剪」，自适应前景又是整幅 864px 直接铺满，
+  系统遮罩只显示中间 ~72/108，导致用户看到的是被裁掉一圈的放大图
+- 现在：
+  - 桌面 / 圆形图标直接使用整幅徽章图，**不再放大裁剪**
+  - 自适应前景从原图按 HSV 抠掉深蓝底与徽章描边，只留方块 / 轨道 / 星形，
+    再缩到 **66% 安全区**；圆形 / 方形 / squircle 遮罩都不会切到主体
+  - 单色图标同样缩进安全区
+  - `assets/icon.png`（README 四语言顶部）换成当前品牌图标，不再残留旧角色图
+- ⚠️ 自适应前景是**透明美术层**，背景由 `ic_launcher_bg` 提供；
+  不要再把整幅带底色的徽章图直接当前景用
+
+**二、议题 #33 模块一：首页按钮材质**
+
+- 新增 `setting/enums/HomeButtonMaterial.kt`：`Default / Transparent / LiquidGlass`，
+  `AllSettings.homeButtonMaterial` 默认 **Transparent**
+- `ui/components/HomeButtons.kt`：
+  - `rememberHomeButtonMaterial()` 统一降级：**减少动态效果** 或 `glassLevel == Off` 时，
+    液态玻璃一律降级为透明，不执行实时模糊
+  - `Modifier.homeButtonMaterial(...)`：Default 实心 / Transparent 半透明+描边 /
+    LiquidGlass 走 `backgroundGlass`（Haze）+ `drawBehind` 渐变高光
+  - **绝不使用 `renderEffect`**，文字层始终清晰；非默认档位统一加 2dp 文字阴影
+  - `HomeMaterialButton` / `HomeMaterialChip` 供首页按钮复用
+- 接入范围：首页启动按钮、快捷创建入口、世界 / 服务器条目、首页顶部导航图标
+- ⚠️ 顶部导航只在首页套用材质；进入设置 / 下载等页面后恢复原样
+- ⚠️ 液态玻璃的流光与 `backgroundGlass` 保持同一性质：只有缓慢移动，没有明暗脉动；
+  改这里时不要引入频闪，否则要补回光敏性警告
+
+**三、议题 #33 模块二：首页一键创建世界 / 添加服务器**
+
+- 新增 `game/version/saves/WorldCreator.kt`：
+  - 在实例 `saves/<文件夹名>/level.dat` 写入 OpenNBT
+  - **不直接写现代 `WorldGenSettings`**：缺 `dimensions` 会被原版判定为
+    `No key dimensions`，世界直接打不开
+  - 写 **1.12.2 兼容层**（`LevelName` / `RandomSeed` / `GameType` / `Difficulty` /
+    `GameRules.keepInventory` / `generatorName` / `Version{Id=1343}`），
+    由原版 DataFixer 在首次进入时升级到当前版本
+  - ⚠️ **`level.dat` 必须 gzip 压缩**：`NBTIO.writeFile(..., compressed = true, ...)`。
+    Minecraft 与 `SaveUtils` 都按压缩格式读取，写成未压缩会被判为坏档
+  - 种子：纯数字直接用，文本按 Minecraft 的字符串哈希，留空随机
+  - 文件夹名只做文件系统清洗（替换 `\ / : * ? " < > |`），`LevelName` 保留原文；
+    重名自动追加 `(2)`、`(3)`，不覆盖旧存档
+- 新增 `game/version/multiplayer/ServerListWriter.kt`：复用 `AllServers` 读改写
+  `servers.dat`，保留 `servers.dat_old` 备份；写完会**回读校验**服务器确实落盘，
+  避免 `AllServers.save` 吞掉异常时出现「提示成功、进游戏却没有服务器」
+- 新增 `ui/screens/main/card_home/QuickCreateDialogs.kt`：创建世界 / 添加服务器对话框
+- 首页卡片新增「+ 创建世界」「+ 添加服务器」；创建完成后直接 quickPlay 进图 / 进服
+- ⚠️ `--quickPlaySingleplayer` 需要的是**世界文件夹名**，不是 `LevelName`；
+  旧代码传的是 `HomeWorld.name`（显示名），27.6.0 已改为 `saveFile.name`
+- ⚠️ 旧版本（不支持 quickPlay）仍会正常启动到主菜单，不会因为参数被忽略而报错
+
+**四、Fabric API 防呆（用户要求）**
+
+Fabric API 是大量 Fabric 模组的必需前置，但手动装一份、安装器再自动装一份，
+就会出现两个副本。现在按「锁死 + 不显示」处理：
+
+- **下载黑名单**：
+  - Modrinth / CurseForge 搜索结果直接过滤 Fabric API（`P7dR8mSH` / `306612`），不显示
+  - `ResourceManager.matchVersion / installVersion` 与 `ResourceInstallManager.buildInstallPlan`
+    在入口处抛 `ResourceMatchException.Blacklisted`，即使拿到直链也不能手动安装
+  - 依赖解析仍然可以自动安装 Fabric API（走 `collect`，不经过黑名单入口）
+- **游戏下载页强制前置**：
+  - 选择 Fabric 后自动选中 Fabric API；列表为空 / 检测不到时，下载按钮直接拒绝并显示原因
+  - 移除 Fabric API 的独立选择列表（它由安装流程自动加入）
+- **只保留一份 / 不可卸载 / 不可禁用**：
+  - 模组管理里 Fabric API 不显示删除按钮（`isDeleteProtected`），也不显示禁用开关
+  - 批量删除会跳过它，AI `delete_mod` 同样拒绝
+  - `GameInstaller.addMod` 在装 Fabric API 时，只要目标 `mods` 里已有任意
+    `fabric-api*` 文件，就不再下载第二份（即使自动选中的是另一个版本）
+  - `ResourceInstallManager` 同样：只要本地已有 Fabric API，就不再计划第二份，
+    即使版本不兼容也只记录日志（防呆优先于自动升级）
+  - AI 系统提示词加入同样的硬性限制；`set_mod_enabled` 与 `delete_mod` 工具层也会拒绝操作 Fabric API
+- ⚠️ 这套是**防呆**，不是权限系统：仍可通过文件管理器直接改文件；
+  但启动器内所有入口都不再提供删除 / 禁用 / 二次安装
+
+**五、顺带修复**
+
+- `SaveUtils` 读 `Difficulty` 时补上 `ByteTag` 回退：原版 `level.dat` 存的是 Byte，
+  旧代码只读 Int，导致存档难度一直显示「普通」
+
+**六、涉及文件**
+
+| 文件 | 作用 |
+|---|---|
+| `setting/enums/HomeButtonMaterial.kt` | 三档按钮材质枚举（27.6.0，议题 #33） |
+| `ui/components/HomeButtons.kt` | 材质绘制、降级、文字阴影、按钮组件（27.6.0） |
+| `game/version/saves/WorldCreator.kt` | 写兼容层 `level.dat`（27.6.0，议题 #33） |
+| `game/version/multiplayer/ServerListWriter.kt` | 追加 `servers.dat`（27.6.0，议题 #33） |
+| `ui/screens/main/card_home/QuickCreateDialogs.kt` | 创建世界 / 添加服务器对话框（27.6.0） |
+| `ui/screens/main/card_home/CardHomePage.kt` | 快捷入口、材质接入、世界文件夹名修正（27.6.0） |
+| `ui/screens/main/MainScreen.kt` | 顶部导航材质（27.6.0） |
+| `game/version/mod/ModIdentity.kt` | 已有 Fabric API 稳定身份；黑名单复用（27.5.0 / 27.6.0） |
+| `game/download/game/GameInstaller.kt` | Fabric API 第二份拦截（27.6.0） |
+| `game/download/resources/ResourceManager.kt` | 手动安装 Fabric API 拦截（27.6.0） |
+| `game/download/resources/ResourceInstallManager.kt` | 安装计划入口拦截（27.6.0） |
+| `game/download/assets/platform/*SearchResult.kt` | 搜索结果过滤 Fabric API（27.6.0） |
+| `ai/agent/tools/ContentTools.kt` | AI 工具层拒绝删除 / 禁用 Fabric API（27.6.0） |
+| `viewmodel/AIChatViewModel.kt` | 系统提示词加入 Fabric API 防呆（27.6.0） |
 
 ### 27.5.1 全量品牌图标 + AI 设置收紧 + 动态玻璃统一 ✅
 
@@ -847,11 +949,11 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 
 | 资源 | 说明 |
 |---|---|
-| `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher.webp` | 传统方图标，5 个密度（48/72/96/144/192） |
-| `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher_round.webp` | 圆形图标，5 个密度 |
+| `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher.webp` | 传统方图标，5 个密度（48/72/96/144/192）；27.6.0 起**不再放大裁剪** |
+| `mipmap-{m,h,xh,xxh,xxx}dpi/ic_launcher_round.webp` | 圆形图标，5 个密度；27.6.0 起完整构图 + 圆形遮罩 |
 | `drawable-nodpi/ic_launcher_bg.png` | 自适应图标**背景层**：27.5.1 起为深蓝兜底（被前景完全覆盖） |
-| `drawable-nodpi/ic_launcher_foreground.png` | 自适应图标**前景层**：27.5.1 起为整幅 864px 画面（放大 1.35 倍裁剪，无白角） |
-| `drawable-nodpi/ic_launcher_monochrome.png` | 自适应图标**单色层**：方块 + 轨迹环 + 星形剪影（手绘 SVG 栅格化） |
+| `drawable-nodpi/ic_launcher_foreground.png` | 自适应图标**前景层**：27.6.0 起为**透明美术层**（方块 / 轨道 / 星形），缩到 **66% 安全区**；不要再整幅铺满或放大裁剪 |
+| `drawable-nodpi/ic_launcher_monochrome.png` | 自适应图标**单色层**：方块 + 轨迹环 + 星形剪影，27.6.0 起同步缩进 66% 安全区 |
 | `mipmap-anydpi-v26/ic_launcher{,_round}.xml` | 引用上面三层 |
 | `values/ic_launcher_background.xml` | 兜底底色 `#1B2450` |
 | `ic_launcher-playstore.png` | Google Play 512×512 |
@@ -859,6 +961,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 | `drawable/splash_launcher.xml` | Android 12+ 系统启动画面图标，引用 `splash_icon` |
 | `drawable/img_launcher.png` | 关于页 Logo（27.5.1 起为新图标） |
 | `drawable-nodpi/img_avatar_zzy.png` | 关于页「项目维护者」头像（维护者本人社交头像） |
+| `assets/icon.png` | README 四语言顶部图标；27.6.0 起为当前品牌图标（旧角色图已移除） |
 
 ⚠️ **应用内的解压界面（`ui/screens/splash/SplashScreen.kt`，首次启动 / 更新后出现的那一屏）
 本次未做任何改动**，与 26.4.1 逐字节一致。
@@ -2167,7 +2270,7 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**27.4.0**
+- 最新版本：**27.6.0**
 - 历史版本：27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
@@ -2277,10 +2380,11 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-23（27.5.1 已开发完成 —— 全量替换品牌图标（桌面 / 圆形 / 自适应三层 /
-Play Store / 关于页 / 启动页 / 通知），关于页维护者改用本人社交头像；AI 设置移除服务商分区、
-固定 DeepSeek 且接口地址默认填好可改，收紧间距并修复按钮粘连；动态玻璃统一（首页补玻璃层、
-卡片模糊与高光裁剪到圆角）。27.5.0 的内容见下方章节。）
+**最后更新**：2026-10-25（27.6.0 已开发完成 —— 修复议题 #31 的图标放大裁剪（桌面 / 圆形 /
+自适应 / 单色 + README 图标）；议题 #33 首页按钮材质（默认 / 透明 / 液态玻璃，默认透明）与
+一键创建世界 / 添加服务器（OpenNBT + 1.12.2 兼容层 + quickPlay）；Fabric API 防呆：搜索与手动
+安装黑名单、选择 Fabric 时强制自动前置、缺失时拒绝下载、模组管理不可删除 / 禁用、不再安装第二份；
+顺带修复 level.dat 难度 Byte 读取。27.5.x 的内容见下方章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在

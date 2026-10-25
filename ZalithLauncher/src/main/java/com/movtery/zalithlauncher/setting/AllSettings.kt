@@ -35,6 +35,7 @@ import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.enums.GestureActionType
 import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
 import com.movtery.zalithlauncher.setting.enums.GlassLevel
+import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.game.renderer.AutoRenderer
@@ -573,6 +574,15 @@ object AllSettings : SettingsRegistry() {
      * 启动器背景模糊效果类型
      */
     val backgroundBlurType = enumSetting("backgroundBlurType", BackgroundBlur.Background)
+
+    /**
+     * 首页按钮材质（议题 #33）
+     *
+     * 「默认 / 透明 / 液态玻璃」三档，默认**透明**。
+     * 只有 [GlassLevel.On] 且未开启「减少动态效果」时才允许真正的液态玻璃；
+     * 否则在 `rememberHomeButtonMaterial` 中强制降级为透明。
+     */
+    val homeButtonMaterial = enumSetting("homeButtonMaterial", HomeButtonMaterial.Transparent)
 
     /**
      * 启动器液态玻璃效果

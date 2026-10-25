@@ -83,6 +83,15 @@ sealed class ResourceMatchException(
     ) : ResourceMatchException(
         "No compatible version for $minecraftVersion / ${loaderName ?: "vanilla"}"
     )
+
+    /**
+     * Fabric API 被列入下载黑名单
+     *
+     * 它只能由 Fabric 安装流程自动加入；手动安装会和自动加入的那一份形成两个副本。
+     */
+    class Blacklisted : ResourceMatchException(
+        "Fabric API is installed automatically and cannot be downloaded manually"
+    )
 }
 
 /**
@@ -311,6 +320,12 @@ object ResourceInstallManager {
         instance: Version,
         includeOptionalDependencies: Boolean = false
     ): ResourceInstallPlan {
+        // Fabric API 只能作为 Fabric 安装流程的自动前置加入；
+        // 手动安装会和自动加入的那一份形成两个副本（议题反馈）
+        if (ModIdentity.isFabricApiProject(version.provider, version.projectId)) {
+            throw ResourceMatchException.Blacklisted()
+        }
+
         val plan = mutableListOf<ResourceInstallEntry>()
         val unresolvedRequired = mutableListOf<ResourceMissingDependency>()
         val visited = mutableSetOf<String>()
@@ -394,19 +409,20 @@ object ResourceInstallManager {
             //   并确认它与当前实例兼容后才跳过 —— 不能把所有 Fabric API 版本都当成兼容
             if (ModIdentity.isFabricApiProject(current.provider, current.projectId)) {
                 val installed = findInstalledFabricApi()
-                if (
-                    installed != null &&
-                    isInstalledFabricApiCompatible(
+                if (installed != null) {
+                    //防呆：实例里只允许一份 Fabric API。
+                    //即使现有版本与计划版本不兼容，也不再落第二份文件；
+                    //是否兼容只记录日志，供排查使用。
+                    val compatible = isInstalledFabricApiCompatible(
                         installed = installed,
                         planned = current,
                         minecraftVersion = minecraftVersion,
                         loaderName = loaderName
                     )
-                ) {
                     Logger.info(
                         TAG,
-                        "Fabric API is already installed as ${installed.file.name}; " +
-                                "skip downloading ${current.versionId}"
+                        "Fabric API is already installed as ${installed.file.name} " +
+                                "(compatible=$compatible); skip downloading ${current.versionId}"
                     )
                     return
                 }

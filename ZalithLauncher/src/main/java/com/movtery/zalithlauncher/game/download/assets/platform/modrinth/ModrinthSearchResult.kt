@@ -30,6 +30,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.mapModrinthCategory
 import com.movtery.zalithlauncher.game.download.assets.platform.searchRankWithChineseBias
 import com.movtery.zalithlauncher.game.download.assets.utils.getTranslations
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.AssetsPage
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -250,7 +251,11 @@ class ModrinthSearchResult(
     }
 
     override fun getAssetsPage(classes: PlatformClasses): AssetsPage {
-        val mcmodData = hits.map {
+        val mcmodData = hits.mapNotNull {
+            //Fabric API 进入下载黑名单：只能由 Fabric 安装流程自动加入
+            if (ModIdentity.isFabricApiProject(Platform.MODRINTH, it.projectId)) {
+                return@mapNotNull null
+            }
             it to classes.getTranslations().getModBySlugId(it.slug)
         }
 

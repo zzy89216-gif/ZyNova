@@ -22,6 +22,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchResult
 import com.movtery.zalithlauncher.game.version.installed.Version
+import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.utils.logging.Logger
 
 private const val TAG = "ResourceManager"
@@ -87,6 +88,10 @@ object ResourceManager {
         type: ResourceType,
         instance: Version
     ): ResourceVersion {
+        //手动下载 Fabric API 一律拒绝（由 Fabric 安装流程自动加入）
+        if (ModIdentity.isFabricApiProject(platform, projectId)) {
+            throw ResourceMatchException.Blacklisted()
+        }
         return ResourceInstallManager.resolveCompatibleVersion(
             provider = ResourceProviders.of(platform),
             projectId = projectId,
@@ -110,6 +115,10 @@ object ResourceManager {
         instance: Version,
         onProgress: (ResourceDownloadProgress) -> Unit = {}
     ): ResourceInstallResult {
+        //兜底：即使调用方绕过 matchVersion，也不允许手动安装 Fabric API
+        if (ModIdentity.isFabricApiProject(version.provider, version.projectId)) {
+            throw ResourceMatchException.Blacklisted()
+        }
         val plan = ResourceInstallManager.buildInstallPlan(
             version = version,
             type = type,

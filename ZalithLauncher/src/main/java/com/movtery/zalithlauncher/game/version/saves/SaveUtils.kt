@@ -23,6 +23,7 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag
 import com.movtery.zalithlauncher.game.version.installed.utils.isBiggerOrEqualVer
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.nbt.asBooleanNotNull
+import com.movtery.zalithlauncher.utils.nbt.asByte
 import com.movtery.zalithlauncher.utils.nbt.asCompoundTag
 import com.movtery.zalithlauncher.utils.nbt.asInt
 import com.movtery.zalithlauncher.utils.nbt.asLong
@@ -73,8 +74,12 @@ suspend fun parseLevelDatFile(
         val gameMode = data.asInt("GameType", 0) //默认为生存模式
             ?.let { levelCode -> GameMode.entries.find { it.levelCode == levelCode } }
         //游戏难度
-        val difficulty = data.asInt("Difficulty", 2) //默认为普通
-            ?.let { levelCode -> Difficulty.entries.find { it.levelCode == levelCode } }
+        //原版 level.dat 存的是 ByteTag；旧代码只读 IntTag，会一直回退成「普通」。
+        //这里先按 Int 读（兼容个别工具写出的 Int），再回退到 Byte。
+        val difficultyCode = data.asInt("Difficulty", null)
+            ?: data.asByte("Difficulty", null)?.toInt()
+            ?: 2 //默认为普通
+        val difficulty = Difficulty.entries.find { it.levelCode == difficultyCode }
         //是否锁定了游戏难度
         val difficultyLocked = data.asBooleanNotNull("DifficultyLocked", false)
         //是否为极限模式
