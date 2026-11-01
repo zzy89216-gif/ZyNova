@@ -27,6 +27,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
 import com.movtery.zalithlauncher.game.download.resources.ResourceInstallOutcome
 import com.movtery.zalithlauncher.game.download.resources.ResourceManager
+import com.movtery.zalithlauncher.game.download.resources.ResourceProviders
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.ui.androidText
@@ -81,8 +82,19 @@ internal fun resourceTools(): List<AITool> = listOf(
                 .getVersionInfo()?.minecraftVersion
         }.getOrNull()
 
-        val platforms = args.str("platform")?.let { listOf(parsePlatform(it)) }
+        val requested = args.str("platform")?.let { listOf(parsePlatform(it)) }
             ?: listOf(Platform.MODRINTH, Platform.CURSEFORGE)
+
+        //平台不是什么都卖：Modrinth 没有存档，CurseForge 才有。
+        //先过滤掉不支持该类型的平台，否则模型只会拿到一句「搜索失败，可能是网络问题」
+        val platforms = requested.filter { runCatching { ResourceProviders.of(it).supports(type) }.getOrDefault(false) }
+        if (platforms.isEmpty()) {
+            return@aiTool "这个类型（${typeLabel(type)}）在 ${
+                requested.joinToString("、") { it.displayName }
+            } 上不存在。${
+                ResourceProviders.allFor(type).joinToString("、") { it.displayName }
+            } 支持${typeLabel(type)}，换那个平台再搜。"
+        }
 
         val sb = StringBuilder()
         sb.append("搜索「").append(query).append("」（类型=").append(type.name)
@@ -107,7 +119,7 @@ internal fun resourceTools(): List<AITool> = listOf(
             }.getOrNull()
 
             if (page == null) {
-                sb.append("   （搜索失败，可能是网络问题）\n\n")
+                sb.append("   （搜索失败：网络异常或来源不可用）\n\n")
                 return@forEach
             }
             if (page.data.isEmpty()) {
@@ -286,4 +298,13 @@ private fun parseResourceType(raw: String): ResourceType = when (raw.trim().lowe
     else -> throw IllegalArgumentException(
         "未知资源类型「$raw」，只能是 mod / resourcepack / shader / save"
     )
+}
+
+/** 资源类型的中文说法，用于给模型解释「哪个平台有这个类型」 */
+private fun typeLabel(type: ResourceType): String = when (type) {
+    ResourceType.MOD -> "模组"
+    ResourceType.RESOURCE_PACK -> "资源包"
+    ResourceType.SHADER -> "光影"
+    ResourceType.SAVE -> "存档"
+    ResourceType.MOD_PACK -> "整合包"
 }
