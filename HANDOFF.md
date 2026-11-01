@@ -137,7 +137,14 @@
 - 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，
   并把「游戏本体不能下载」的旧说法改成 `install_game` 的正确用法
 
-**十、涉及文件（27.8.0）**
+**十、27.8.0 发布后修复（同日）**
+
+- **点下载就自动弹出详细任务面板**：`launcherTaskMenuExpanded` 默认值 `true` → `false`；
+  任务清空时自动收起；老用户用 MMKV 键 `taskMenuCollapsedMigrated` 一次性迁移
+- **设置页动画参差不齐 / 滚动发卡**：`AnimatedColumn` / `AnimatedRow` / `AnimatedLazyColumn`
+  统一走 `staggeredDelay()`（默认增量 30ms、总量封顶 180ms），不再 `index * 50ms` 无限拖尾
+
+**十一、涉及文件（27.8.0）**
 
 | 文件 | 改动 |
 |---|---|
@@ -161,6 +168,10 @@
 | `ui/screens/content/download/DownloadGameScreen.kt` | 安装任务加标题 |
 | `res/values*/strings.xml` | 新增 `main_task_count` / `main_task_working` / `main_task_install_*`；AI 文案改写（en / zh-CN / zh-TW / ja） |
 | `ui/components/DownloadTasksIndicator.kt` | **删除**（大进度卡片残留，无调用方） |
+| `setting/AllSettings.kt` | `launcherTaskMenuExpanded` 默认值改为 `false` |
+| `setting/SettingsInitializer.kt` | 一次性迁移 `taskMenuCollapsedMigrated`（把旧用户的展开状态收起） |
+| `ui/screens/main/MainScreen.kt` | 任务清空时自动收起任务面板 |
+| `ui/components/_AnimatedColumn.kt` / `_AnimatedRow.kt` | 新增 `staggeredDelay()`，错峰延迟统一并封顶 |
 
 ### 27.7.2 渲染器页面拆分 + 资源收藏并入 ✅
 

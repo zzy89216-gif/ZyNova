@@ -49,7 +49,7 @@ fun AnimatedColumn(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
     baseDelay: Int = 0,
-    delayIncrement: Int = 50,
+    delayIncrement: Int = DEFAULT_DELAY_INCREMENT,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(12.dp),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     content: @Composable AnimatedColumnScope.(ColumnScope) -> Unit
@@ -96,7 +96,7 @@ private class AnimatedColumnScopeImpl(
     ) {
         val currentIndex = itemIndex++
         //优先使用显式设置的延迟，否则基于索引自动计算递增延迟
-        val actualDelay = delay ?: (baseDelay + currentIndex * delayIncrement)
+        val actualDelay = delay ?: staggeredDelay(baseDelay, currentIndex, delayIncrement)
 
         val yOffset by swapAnimateDpAsState(
             targetValue = targetValue.dp,
@@ -126,7 +126,7 @@ fun AnimatedLazyColumn(
     state: LazyListState = rememberLazyListState(),
     isVisible: Boolean,
     baseDelay: Int = 0,
-    delayIncrement: Int = 50,
+    delayIncrement: Int = DEFAULT_DELAY_INCREMENT,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(12.dp),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     content: AnimatedLazyListScope.(LazyListScope) -> Unit
@@ -189,7 +189,7 @@ private class AnimatedLazyListScopeImpl(
     ) {
         val currentIndex = itemIndex++
         //优先使用显式设置的延迟，否则基于索引自动计算递增延迟
-        val actualDelay = delay ?: (baseDelay + currentIndex * delayIncrement)
+        val actualDelay = delay ?: staggeredDelay(baseDelay, currentIndex, delayIncrement)
 
         lazyListScope.item(key = key) {
             val yOffset by swapAnimateDpAsState(
@@ -213,7 +213,7 @@ private class AnimatedLazyListScopeImpl(
             items = items,
             key = if (key != null) { _, item -> key(item) } else null
         ) { index, item ->
-            val actualDelay = delay + baseDelay + index * delayIncrement
+            val actualDelay = delay + staggeredDelay(baseDelay, index, delayIncrement)
             val yOffset by swapAnimateDpAsState(
                 targetValue = targetValue.dp,
                 swapIn = isVisible,
@@ -223,3 +223,20 @@ private class AnimatedLazyListScopeImpl(
         }
     }
 }
+/**
+ * 统一的列表入场错峰延迟。
+ *
+ * 以前是 `index * increment` 无上限：设置页十几张卡片会一路拖到 500ms+，
+ * 既显得「动画参差不齐」，又让每一帧都要重排十几个动画项。
+ * 现在把错峰总量封顶，超出部分不再继续加延迟。
+ */
+internal fun staggeredDelay(baseDelay: Int, index: Int, increment: Int): Int {
+    if (increment <= 0) return baseDelay
+    return baseDelay + (index * increment).coerceAtMost(MAX_STAGGER_MILLIS)
+}
+
+/** 错峰延迟默认增量（比原来的 50ms 更紧凑，滚起来更跟手） */
+internal const val DEFAULT_DELAY_INCREMENT = 30
+
+/** 所有子项的错峰延迟总和上限 */
+internal const val MAX_STAGGER_MILLIS = 180

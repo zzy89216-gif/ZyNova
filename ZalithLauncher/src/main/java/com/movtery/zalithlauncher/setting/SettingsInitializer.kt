@@ -51,6 +51,7 @@ fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     //必须直接读取原始字符串：旧档位名称已经不在枚举里，
     //经过 [AllSettings.glassLevel] 读取会直接回退成默认值，从而丢失用户原本的选择。
     migrateLegacyGlassLevel()
+    migrateTaskMenuCollapsed()
 
     if (AllSettings.ramAllocation.getValue() == null) {
         val ram = findBestRAMAllocation(context)
@@ -67,6 +68,20 @@ fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
  *
  * 幂等：当前档位名称（Off / On）会被解析为自身，重复执行不会改变配置。
  */
+/**
+ * 把 27.8.0 之前「默认展开」的任务面板一次性改为收起。
+ *
+ * 只在没有迁移标记时执行一次；之后用户自己点开 / 收起都会被尊重。
+ */
+private fun migrateTaskMenuCollapsed() {
+    val mmkv = launcherMMKV()
+    if (mmkv.getBoolean(KEY_TASK_MENU_COLLAPSED_MIGRATED, false)) return
+    AllSettings.launcherTaskMenuExpanded.save(false)
+    mmkv.putBoolean(KEY_TASK_MENU_COLLAPSED_MIGRATED, true)
+}
+
+private const val KEY_TASK_MENU_COLLAPSED_MIGRATED = "taskMenuCollapsedMigrated"
+
 private fun migrateLegacyGlassLevel() {
     val raw = launcherMMKV().getString(GLASS_LEVEL_KEY, null) ?: return
     val migrated = GlassLevel.fromLegacyName(raw) ?: return

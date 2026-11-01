@@ -138,6 +138,11 @@ fun MainScreen(
     LaunchedEffect(tasks) {
         if (tasks.isEmpty()) {
             eventViewModel.sendKeepScreen(false)
+            //任务全部结束：顺手把详细任务面板收起来。
+            //否则面板会一直挂在界面上，下一次点下载又会「自动弹大框」
+            if (AllSettings.launcherTaskMenuExpanded.state) {
+                AllSettings.launcherTaskMenuExpanded.save(false)
+            }
         } else {
             //有任务正在进行，避免熄屏
             eventViewModel.sendKeepScreen(true)

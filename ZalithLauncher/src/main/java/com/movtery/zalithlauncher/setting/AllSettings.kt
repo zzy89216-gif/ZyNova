@@ -781,9 +781,13 @@ object AllSettings : SettingsRegistry() {
     val currentGamePathId = stringSetting("currentGamePathId", GamePathManager.DEFAULT_ID)
 
     /**
-     * 启动器任务菜单是否展开
+     * 启动器任务菜单（顶部细进度条点开的详细任务面板）是否展开
+     *
+     * ⚠️ 默认 **false**：任务面板必须由用户点一下才出现。
+     * 以前默认 true，导致「点了下载，右上角直接弹出大面板」，
+     * 而顶部那条细进度条又被面板挡住 —— 用户既看不到进度、也被大框打断。
      */
-    val launcherTaskMenuExpanded = boolSetting("launcherTaskMenuExpanded", true)
+    val launcherTaskMenuExpanded = boolSetting("launcherTaskMenuExpanded", false)
 
     /**
      * 在游戏菜单悬浮窗上显示帧率

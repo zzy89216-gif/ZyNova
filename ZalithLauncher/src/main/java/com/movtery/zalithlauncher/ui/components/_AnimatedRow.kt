@@ -40,7 +40,7 @@ fun AnimatedRow(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
     baseDelay: Int = 0,
-    delayIncrement: Int = 50,
+    delayIncrement: Int = DEFAULT_DELAY_INCREMENT,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(12.dp),
     content: @Composable AnimatedRowScope.(RowScope) -> Unit
 ) {
@@ -85,7 +85,7 @@ private class AnimatedRowScopeImpl(
     ) {
         val currentIndex = itemIndex++
         //优先使用显式设置的延迟，否则基于索引自动计算递增延迟
-        val actualDelay = delay ?: (baseDelay + currentIndex * delayIncrement)
+        val actualDelay = delay ?: staggeredDelay(baseDelay, currentIndex, delayIncrement)
 
         val yOffset by swapAnimateDpAsState(
             targetValue = targetValue.dp,
