@@ -132,7 +132,7 @@ fun DownloadScreen(
                 modifier = Modifier.fillMaxHeight()
             )
 
-            //模组 / 资源下载时，底部常驻一条进度条，点开可以看每个任务的明细            }
+            }
         }
     }
 }
