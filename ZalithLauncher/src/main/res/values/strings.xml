@@ -1595,7 +1595,7 @@
     <string name="ai_config_title">AI Settings</string>
     <string name="ai_model_not_selected">No model selected</string>
     <string name="ai_clear">Clear</string>
-    <string name="ai_input_hint">Describe the problem, or tell it to fix it…</string>
+    <string name="ai_input_hint">Tell it what to do: install a game, add mods, change settings…</string>
     <string name="ai_send">Send</string>
     <string name="ai_stop">Stop</string>
     <string name="ai_error_title">AI not ready</string>
@@ -1605,8 +1605,8 @@
     <string name="ai_confirm_deny">Deny</string>
     <string name="ai_tool_calls">Called tools: %1$s</string>
     <string name="ai_thinking">Thinking…</string>
-    <string name="ai_welcome">The AI can read your logs, manage mods, edit configs and launch the game for you.</string>
-    <string name="ai_welcome_hint">Try: "Why can\'t this instance launch?"</string>
+    <string name="ai_welcome">It doesn\'t just chat — it really installs the game and modpacks, adds mods, edits settings and fixes crashes for you.</string>
+    <string name="ai_welcome_hint">Just say it: \"Install 1.20.1 Fabric and add Sodium\"</string>
     <string name="ai_welcome_need_key">Configure an API key and a model first.</string>
     <string name="ai_config_provider">AI Provider</string>
     <string name="ai_config_api_key">API Key</string>

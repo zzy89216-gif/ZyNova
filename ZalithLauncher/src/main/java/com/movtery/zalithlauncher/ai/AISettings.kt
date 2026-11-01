@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.ai
 
 import com.movtery.zalithlauncher.ai.provider.AIProviderType
 import com.movtery.zalithlauncher.setting.SettingsRegistry
+import com.movtery.zalithlauncher.setting.launcherMMKV
 
 /**
  * AI Agent 的独立配置
@@ -51,12 +52,19 @@ object AISettings : SettingsRegistry() {
     /**
      * 工具调用权限：完全控制 / 操作确认
      *
-     * ⚠️ 默认值是 [AIPermissionMode.CONFIRM]（操作确认）。
-     * 理由：Agent 能改 118 项设置、删模组、写文件、装资源，
-     * 而「完全控制 + 无轮数上限」的组合下，模型若陷入循环用户可能来不及注意。
-     * 每次写操作弹一次确认是最便宜的保险；用户信任建立后可自行切到「完全控制」。
+     * 27.8.0 起默认是 [AIPermissionMode.FULL_CONTROL]（完全控制）。
+     *
+     * 理由：ZyNova 的 AI 定位是 **Agent**，不是聊天机器人 —— 用户说「帮我装个 1.20.1 Fabric」，
+     * 它就应该直接把游戏装上，而不是每装一步弹一次确认、弹到用户放弃。
+     * 「每步都问」会让 Agent 退化成「只会给建议的聊天框」，这正好是它要解决的问题。
+     *
+     * 代价与控制手段（都保留着，没有删）：
+     * - 仍然有「操作确认」模式，随时可以在 AI 设置里切回去；
+     * - Agent 循环有死循环检测（同一工具 + 完全相同的参数反复调用会被判定为死循环并停止）；
+     * - 用户随时可以点「停止」中断这一轮；
+     * - 所有写操作都会写进 AI 审计日志（[com.movtery.zalithlauncher.ai.AIAuditLog]）。
      */
-    val permissionMode = enumSetting("aiPermissionMode", AIPermissionMode.CONFIRM)
+    val permissionMode = enumSetting("aiPermissionMode", AIPermissionMode.FULL_CONTROL)
 
     // ── 其它 ──────────────────────────────────────────────────────
     /** 采样温度 */
@@ -71,6 +79,24 @@ object AISettings : SettingsRegistry() {
      * 只在 AI 配置页**首次**打开时弹一次，之后不再打扰。
      */
     val privacyNoticeShown = boolSetting("aiPrivacyNoticeShown", false)
+
+    /**
+     * 老用户升级上来时，把权限模式切到「完全控制」。
+     *
+     * **只做一次**（MMKV 里留标记）：用户之后手动切回「操作确认」不会再被覆盖。
+     * 不做这一步的话，27.7.x 及更早版本装过的设备里已经存着 `CONFIRM`，
+     * 改默认值对它们毫无影响，Agent 依旧每步都要人点头。
+     */
+    private const val KEY_PERMISSION_MIGRATED = "aiPermissionModeMigratedToFull"
+
+    private fun migratePermissionModeOnce() {
+        runCatching {
+            val mmkv = launcherMMKV()
+            if (mmkv.getBoolean(KEY_PERMISSION_MIGRATED, false)) return
+            permissionMode.save(AIPermissionMode.FULL_CONTROL)
+            mmkv.putBoolean(KEY_PERMISSION_MIGRATED, true)
+        }
+    }
 
     // ── 便捷读取 ──────────────────────────────────────────────────
 
@@ -102,4 +128,8 @@ object AISettings : SettingsRegistry() {
 
     /** 是否已经可以发起对话 */
     fun isReady(): Boolean = hasKey() && hasModel()
+
+    init {
+        migratePermissionModeOnce()
+    }
 }

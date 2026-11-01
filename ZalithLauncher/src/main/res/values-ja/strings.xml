@@ -1152,7 +1152,7 @@
     <string name="ai_config_title">AI 設定</string>
     <string name="ai_model_not_selected">モデルが未選択です</string>
     <string name="ai_clear">クリア</string>
-    <string name="ai_input_hint">問題を書くか、そのまま修正を頼んでください…</string>
+    <string name="ai_input_hint">やることを指示：ゲーム導入 / MOD 追加 / 設定変更 / クラッシュ修正…</string>
     <string name="ai_send">送信</string>
     <string name="ai_stop">停止</string>
     <string name="ai_error_title">AI の準備ができていません</string>
@@ -1162,8 +1162,8 @@
     <string name="ai_confirm_deny">拒否</string>
     <string name="ai_tool_calls">使用したツール：%1$s</string>
     <string name="ai_thinking">考えています…</string>
-    <string name="ai_welcome">AI はログの確認、MOD 管理、設定の変更、ゲーム起動まで実際に実行できます。</string>
-    <string name="ai_welcome_hint">例：「このインスタンスが起動しないのはなぜ？」</string>
+    <string name="ai_welcome">チャットだけではありません。ゲーム本体・MOD パック・MOD の導入、設定変更、クラッシュ修正まで実際に実行します。</string>
+    <string name="ai_welcome_hint">例：「1.20.1 Fabric を入れて、Sodium も入れて」</string>
     <string name="ai_welcome_need_key">先に API キーを設定し、モデルを選択してください。</string>
     <string name="ai_config_provider">AI プロバイダー</string>
     <string name="ai_config_api_key">API キー</string>

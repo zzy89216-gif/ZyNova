@@ -1577,7 +1577,7 @@
     <string name="ai_config_title">AI 设置</string>
     <string name="ai_model_not_selected">尚未选择模型</string>
     <string name="ai_clear">清空</string>
-    <string name="ai_input_hint">描述问题，或直接让它帮你修…</string>
+    <string name="ai_input_hint">让它干活：装游戏 / 装模组 / 改设置 / 修崩溃…</string>
     <string name="ai_send">发送</string>
     <string name="ai_stop">停止</string>
     <string name="ai_error_title">AI 尚未就绪</string>
@@ -1587,8 +1587,8 @@
     <string name="ai_confirm_deny">拒绝</string>
     <string name="ai_tool_calls">调用了工具：%1$s</string>
     <string name="ai_thinking">正在思考…</string>
-    <string name="ai_welcome">AI 可以读日志、管模组、改配置、启动游戏，直接帮你动手处理。</string>
-    <string name="ai_welcome_hint">试试问：「为什么这个实例进不去？」</string>
+    <string name="ai_welcome">它不是只会聊天——装游戏本体、装整合包、装模组、改设置、修崩溃，全都直接替你动手做。</string>
+    <string name="ai_welcome_hint">直接下命令：「装个 1.20.1 Fabric，再装个 Sodium」</string>
     <string name="ai_welcome_need_key">请先配置 API Key 并选择模型。</string>
     <string name="ai_config_provider">AI 服务商</string>
     <string name="ai_config_api_key">API Key</string>
