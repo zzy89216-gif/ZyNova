@@ -21,9 +21,11 @@ package com.movtery.zalithlauncher.game.download.resources
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchResult
+import com.movtery.zalithlauncher.game.download.assets.platform.getProjectByVersion
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.mod.ModIdentity
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.CancellationException
 
 private const val TAG = "ResourceManager"
 
@@ -72,6 +74,31 @@ object ResourceManager {
         type: ResourceType
     ): List<ResourceVersion> {
         return ResourceProviders.of(platform).getVersions(projectId, type)
+    }
+
+    /**
+     * 探测某个项目在平台上的**真实资源类型**
+     *
+     * 调用方（尤其是 AI）经常只知道「我要装这个项目」，并不知道它是模组、资源包还是光影。
+     * 类型决定了文件往哪个目录装（mods / resourcepacks / shaderpacks / saves），
+     * 猜错的结果是「装好了但游戏里看不到」，比安装失败更难排查。
+     *
+     * 探测失败（网络 / 来源异常）时退回 [fallback]，不阻断安装。
+     */
+    suspend fun detectType(
+        platform: Platform,
+        projectId: String,
+        fallback: ResourceType = ResourceType.MOD
+    ): ResourceType {
+        return try {
+            val project = getProjectByVersion(projectId = projectId, platform = platform)
+            ResourceType.of(project.platformClasses(fallback.classes))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            Logger.warning(TAG, "Failed to detect the resource type of $platform:$projectId", e)
+            fallback
+        }
     }
 
     /**

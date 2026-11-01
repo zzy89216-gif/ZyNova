@@ -609,6 +609,14 @@ object ResourceInstallManager {
     ): ResourceInstallResult {
         if (plan.isEmpty()) return ResourceInstallResult(installedCount = 0)
 
+        //整合包没有可写的安装目录（VersionFolders.NONE），
+        //硬按普通资源装下去会把 .mrpack / .zip 直接丢进游戏根目录 —— 既装不好也认不出
+        if (type == ResourceType.MOD_PACK) {
+            throw ResourceProviderException(
+                "整合包不能作为普通资源安装，请使用整合包安装流程（下载 → 整合包）"
+            )
+        }
+
         val targetFolder = File(instance.getGameDir(), type.classes.versionFolder.folderName)
         if (!targetFolder.exists() && !targetFolder.mkdirs()) {
             throw IOException("Failed to create target folder: ${targetFolder.absolutePath}")

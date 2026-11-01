@@ -63,7 +63,19 @@
 - `set_game_option`：只改 `options.txt` 指定行，改前备份 `options.txt.bak`，`value` 传空串 = 删键
 - ⚠️ 不要再让模型直接 `write_file` 写 `version.config`（少字段 / 枚举拼错就会让整份配置失效）
 
-**四、下载与提示词**
+**四、资源下载与安装链路（本轮复查）**
+
+- `install_resource` 增加**资源类型自动探测**：`ResourceManager.detectType()` 走
+  `getProjectByVersion()` + `PlatformProject.platformClasses()`，探测失败退回模型给的类型
+  - 类型决定安装目录（`mods` / `resourcepacks` / `shaderpacks` / `saves`），猜错等于「装好了看不到」
+- **整合包在统一资源模型里没有安装目录**（`PlatformClasses.MOD_PACK.versionFolder = NONE`），
+  因此 `ResourceInstallManager.install()` 直接拒绝 MOD_PACK，AI 侧也会先拦截并提示去整合包流程
+  - ⚠️ 不要试图用 `install_resource` 装整合包：那会把压缩包丢进游戏根目录
+- AI 资源安装改为走 `TaskSystem`（`installResourceWithProgress`）：进度进顶部细进度条、可取消，
+  取消时通过 `onFinally` 兜底完成 deferred，模型不会卡在等待上
+- 「已装过」与「装好了」在返回文本里区分开（安装文件数 0 ≠ 失败）
+
+**五、下载与提示词**
 
 - 下载页移除大块进度卡片，只保留顶部细进度条；游戏本体安装静默无弹窗
 - 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，
