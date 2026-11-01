@@ -331,24 +331,8 @@ private fun GameInstallOperation(
             )
         }
         is GameInstallOperation.Install -> {
-            if (installer != null) {
-                val installGame = installer.tasksFlow.collectAsStateWithLifecycle()
-                if (installGame.value.isNotEmpty()) {
-                    //安装游戏流程对话框
-                    TitleTaskFlowDialog(
-                        title = stringResource(R.string.download_game_install_title),
-                        tasks = installGame.value,
-                        onCancel = {
-                            onCancel()
-                            updateOperation(GameInstallOperation.None)
-                        },
-                        onRunInBackground = {
-                            //只关掉对话框，安装继续在后台跑；回到本页再点安装会重新显示进度
-                            updateOperation(GameInstallOperation.None)
-                        }
-                    )
-                }
-            }
+            //按反馈：安装时不再弹出「安装游戏中」对话框，安装静默跑在后台，
+            //进度统一显示在下载页顶部的那条任务进度条里（TaskSystem 同一套数据）
         }
         is GameInstallOperation.Error -> {
             val th = gameInstallOperation.th
