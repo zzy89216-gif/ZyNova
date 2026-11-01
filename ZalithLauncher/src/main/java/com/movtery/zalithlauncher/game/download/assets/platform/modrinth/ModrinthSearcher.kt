@@ -24,13 +24,15 @@ import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformSearchFilter
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthSingleProject
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.models.ModrinthVersion
+import com.movtery.zalithlauncher.path.DownloadUrls
 import com.movtery.zalithlauncher.utils.network.httpGetJson
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.http.Parameters
 import java.io.File
 
 class ModrinthSearcher(
-    val api: String = MODRINTH_API,
+    //默认地址在每次构造时从「下载源修改器」读取，用户改了设置就能立刻生效
+    val api: String = DownloadUrls.modrinthApi(),
     source: String = "Official Modrinth"
 ): AbstractPlatformSearcher(
     platform = Platform.MODRINTH,

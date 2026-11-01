@@ -229,12 +229,6 @@ fun AIChatScreen(
                         )
                     }
 
-                    IconButton(onClick = toAIConfig) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_settings_filled),
-                            contentDescription = stringResource(R.string.ai_config_title)
-                        )
-                    }
                 }
 
                 // ── 消息列表 ─────────────────────────────────────────

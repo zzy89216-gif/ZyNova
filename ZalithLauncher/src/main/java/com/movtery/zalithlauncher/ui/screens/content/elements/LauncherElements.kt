@@ -28,6 +28,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -98,6 +99,7 @@ import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.VideoPlayer
 import com.movtery.zalithlauncher.ui.components.rememberDialogMaxHeight
 import com.movtery.zalithlauncher.ui.screens.content.FirstLoginMenu
+import com.movtery.zalithlauncher.ui.theme.backgroundColor
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 import com.movtery.zalithlauncher.utils.canHandlePermission
@@ -555,10 +557,14 @@ fun Background(
     allowVideo: Boolean = true
 ) {
     Box(
-        modifier = modifier.backgroundBlur(
-            blur = AllSettings.backgroundBlur.state,
-            hazeState = viewModel.hazeState,
-        )
+        modifier = modifier
+            //议题 #38：恒定的一层底色。视频首帧出来之前、以及首页半透明背景下，
+            //这一层始终与 Compose 的背景色一致，不会再透出窗口的白底/黑底。
+            .background(backgroundColor())
+            .backgroundBlur(
+                blur = AllSettings.backgroundBlur.state,
+                hazeState = viewModel.hazeState,
+            )
     ) {
         if (viewModel.isValid) {
             when {

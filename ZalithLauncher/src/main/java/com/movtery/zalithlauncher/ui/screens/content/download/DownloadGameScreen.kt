@@ -120,8 +120,16 @@ private class GameDownloadViewModel(): ViewModel() {
         onStart: () -> Unit = {},
         onStop: () -> Unit = {},
     ) {
+        //议题：下载 / 安装全部转为后台任务 —— 用应用级作用域，
+        //这样用户离开下载页去干别的，安装也不会被取消
+        installer?.let { running ->
+            //已经有一个安装在进行：把对话框重新显示出来，而不是再开一份
+            installOperation = GameInstallOperation.Install
+            onStart()
+            return
+        }
         installOperation = GameInstallOperation.Install
-        installer = GameInstaller(context, info, viewModelScope).also {
+        installer = GameInstaller(context, info, TaskSystem.appScope).also {
             it.installGame(
                 onInstalled = { version ->
                     installer = null
@@ -157,7 +165,8 @@ private class GameDownloadViewModel(): ViewModel() {
     }
 
     override fun onCleared() {
-        cancel()
+        //议题：不在这里取消安装。用户离开页面只是「关掉对话框」，
+        //安装继续在后台跑；只有用户明确点「取消安装」才真正取消。
     }
 }
 
@@ -330,6 +339,10 @@ private fun GameInstallOperation(
                         tasks = installGame.value,
                         onCancel = {
                             onCancel()
+                            updateOperation(GameInstallOperation.None)
+                        },
+                        onRunInBackground = {
+                            //只关掉对话框，安装继续在后台跑；回到本页再点安装会重新显示进度
                             updateOperation(GameInstallOperation.None)
                         }
                     )

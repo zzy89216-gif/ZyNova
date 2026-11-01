@@ -32,6 +32,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 object TaskSystem {
     private val scope = CoroutineScope(Dispatchers.Default)
+
+    /**
+     * 应用级作用域：给「离开页面也要继续跑」的长任务用（例如安装游戏）。
+     * ⚠️ 只允许放真正需要后台续跑的任务，不要拿它跑和页面生命周期强绑定的东西。
+     */
+    val appScope: CoroutineScope get() = scope
     private val _tasksFlow: MutableStateFlow<List<Task>> = MutableStateFlow(emptyList())
     val tasksFlow = _tasksFlow.asStateFlow()
 

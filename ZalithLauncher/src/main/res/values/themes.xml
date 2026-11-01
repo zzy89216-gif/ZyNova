@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme.ZalithLauncher" parent="Theme.Material3.Light.NoActionBar">
+        <!-- 议题 #38：窗口底色必须显式给，否则强制深色时会先闪一下白底 -->
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>

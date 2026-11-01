@@ -82,6 +82,14 @@ class BatchDownloader(
         requests.forEach { stats.registerFile(it.expectedSize) }
 
         val failures = ConcurrentHashMap<String, Throwable>()
+        //议题 #35：整批的「停摆」必须能自己暴露出来。
+        //以前只在单文件层面按速率判定，源只要以略高于阈值的速度涓流，
+        //任务就永远不结束、也不报错（界面看起来就是卡在某个百分比）。
+        val unfinished = ConcurrentHashMap.newKeySet<String>().apply {
+            requests.forEach { add(it.targetFile.absolutePath) }
+        }
+        var stalled = false
+
         coroutineScope {
             val reporter = launch(Dispatchers.Default) {
                 while (isActive) {
@@ -90,18 +98,54 @@ class BatchDownloader(
                 }
             }
 
-            try {
-                requests.map { request ->
-                    launch(Dispatchers.IO) {
-                        //先取得一个连接许可再打开 .part 文件：
-                        //否则全部作业同时持着打开的句柄排队，海量句柄会拖垮存储层
-                        connections.withPermit { }
-                        runOne(request, failures, fileClientFor(request))
+            val jobs = requests.map { request ->
+                launch(Dispatchers.IO) {
+                    //先取得一个连接许可再打开 .part 文件：
+                    //否则全部作业同时持着打开的句柄排队，海量句柄会拖垮存储层
+                    connections.withPermit { }
+                    runOne(request, failures, fileClientFor(request), unfinished)
+                }
+            }
+
+            val watchdog = launch(Dispatchers.Default) {
+                var lastBytes = stats.downloadedBytes
+                var lastChangeAt = System.currentTimeMillis()
+                while (isActive) {
+                    delay(STALL_CHECK_MS)
+                    val bytes = stats.downloadedBytes
+                    val now = System.currentTimeMillis()
+                    if (bytes != lastBytes) {
+                        lastBytes = bytes
+                        lastChangeAt = now
+                        continue
                     }
-                }.joinAll()
+                    if (now - lastChangeAt >= STALL_ABORT_MS && unfinished.isNotEmpty()) {
+                        stalled = true
+                        Logger.warning(
+                            TAG,
+                            "Batch stalled for ${STALL_ABORT_MS}ms, unfinished=${unfinished.size}"
+                        )
+                        //只取消本批的子任务，不取消 scope：这样不会把失败伪装成「用户取消」
+                        jobs.forEach { it.cancel() }
+                        return@launch
+                    }
+                }
+            }
+
+            try {
+                jobs.joinAll()
             } finally {
+                watchdog.cancelAndJoin()
                 reporter.cancelAndJoin()
             }
+        }
+
+        if (stalled) {
+            val sample = unfinished.take(5).joinToString("\n")
+            throw BatchDownloadException(
+                "下载停摆：${STALL_ABORT_MS / 1000} 秒内没有任何字节落盘。\n" +
+                        "还没下完的文件（共 ${unfinished.size} 个）：\n$sample"
+            )
         }
 
         val finished = stats.downloadedFiles
@@ -140,7 +184,8 @@ class BatchDownloader(
     private suspend fun runOne(
         request: DownloadRequest,
         failures: MutableMap<String, Throwable>,
-        transferClient: OkHttpClient
+        transferClient: OkHttpClient,
+        unfinished: MutableSet<String>,
     ) {
         var lastError: Throwable? = null
         repeat(retryRounds + 1) {
@@ -155,6 +200,7 @@ class BatchDownloader(
                 ).download()
                 onFileSuccess?.invoke(request)
                 stats.markFileFinished()
+                unfinished.remove(request.targetFile.absolutePath)
                 return
             } catch (e: CancellationException) {
                 throw e
@@ -179,6 +225,12 @@ class BatchDownloader(
         private const val TAG = "BatchDownloader"
         const val DEFAULT_MAX_CONNECTIONS = 64
         const val PROGRESS_INTERVAL_MS = 100L
+
+        /** 看门狗的检查间隔 */
+        private const val STALL_CHECK_MS = 1_000L
+
+        /** 整批连续这么久没有任何字节落盘 → 判定停摆并报错（2 分钟） */
+        private const val STALL_ABORT_MS = 120_000L
 
         /** 异常详情中最多列出的失败条数 */
         private const val MAX_FAILURE_DETAIL_LINES = 20

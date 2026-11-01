@@ -76,6 +76,7 @@ import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.model.AIModelInfo
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
+import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
 import com.movtery.zalithlauncher.ui.components.RadioCard
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
@@ -84,22 +85,26 @@ import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import kotlinx.coroutines.launch
 
 /**
- * AI 配置界面
+ * AI 设置的内容体（议题 #37 / #41）
  *
- * ⚠️ 刻意**独立于启动器通用设置**：它由聊天界面右上角的入口进入，
- * 配置项存在 [AISettings] 里，不会出现在「设置」页面中。
+ * 27.7.0 起不再有独立的「AI 配置页」：这些卡片直接渲染在
+ * 「设置 → AI 设置」分类里，由 [com.movtery.zalithlauncher.ui.screens.content.settings.AISettingsScreen] 承载。
+ *
+ * ⚠️ 只换渲染位置：配置仍然全部存在 [AISettings]（MMKV 键名一个都没改），
+ * 所以老用户填过的 API Key、模型、权限模式都还在。
  */
 @Composable
-fun AIConfigScreen(
-    key: NormalNavKey.AIConfig,
-    backStackViewModel: ScreenBackStackViewModel,
+fun AIConfigContent(
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     // 27.5.1 起固定使用 DeepSeek，不再有服务商选择
     var apiKey by remember { mutableStateOf(AISettings.getKey()) }
-    var baseUrl by remember { mutableStateOf(AISettings.getBaseUrl()) }
+    //保存「用户真正填过的值」，而不是回退后的默认值：
+    //这样输入框默认是空的，默认地址只作为灰字提示出现，聚焦时再淡出
+    var baseUrl by remember { mutableStateOf(AISettings.baseUrl.getValue()) }
     var showKey by remember { mutableStateOf(false) }
 
     var models by remember { mutableStateOf<List<AIModelInfo>>(emptyList()) }
@@ -126,16 +131,12 @@ fun AIConfigScreen(
         showPrivacyNotice = false
     }
 
-    BaseScreen(
-        screenKey = key,
-        currentKey = backStackViewModel.mainScreen.currentKey
-    ) { _ ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(all = 12.dp)
+    ) {
             // ── 2. API Key ────────────────────────────────────────
             ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_api_key))
@@ -181,18 +182,19 @@ fun AIConfigScreen(
             // ── 3. Base URL ───────────────────────────────────────
             ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_base_url))
-                SmallOutlinedEditField(
+                OwnOutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = baseUrl,
                     onValueChange = {
                         baseUrl = it
                         AISettings.saveBaseUrl(it)
                     },
-                    label = { Text(stringResource(R.string.ai_config_base_url)) },
                     placeholder = { Text(AISettings.DEFAULT_BASE_URL) },
                     singleLine = true,
+                    hidePlaceholderOnFocus = true,
+                    shape = MaterialTheme.shapes.large
                 )
-                HintText(stringResource(R.string.ai_config_base_url_note))
+                HintText(stringResource(R.string.settings_ai_base_url_hint))
             }
 
             Spacer(Modifier.height(8.dp))
@@ -365,7 +367,6 @@ fun AIConfigScreen(
             }
 
             Spacer(Modifier.height(24.dp))
-        }
     }
 
     // 审计记录变化时刷新条数（放到 IO 上，别卡主线程）

@@ -47,14 +47,29 @@ suspend fun Task.runBatchDownloads(
     maxConnections: Int,
     retryRounds: Int = 1,
     onSnapshot: suspend (BatchProgress) -> Unit = {},
-    acceptFailure: ((task: DownloadTask, error: Throwable) -> Boolean)? = null
+    acceptFailure: ((task: DownloadTask, error: Throwable) -> Boolean)? = null,
+    /** 把本批次的 0..1 映射到调用方的进度区间（例如只占整个分析阶段的 0.2..0.85） */
+    progressMapper: (Float) -> Float = { it },
 ) {
     val verifyStarted = System.currentTimeMillis()
     val (reusable, pending) = verifyExistingFilesConcurrently(tasks)
     Logger.info(TAG, "Local file check done: reusable=${reusable.size} pending=${pending.size}, took=${System.currentTimeMillis() - verifyStarted}ms")
 
-    //清单里只要有未声明大小的文件，字节数就不能构成可靠的进度分母
-    val sizesFullyKnown = tasks.all { it.size > 0 }
+    //议题 #35：进度分母不再「全有或全无」。
+    //
+    //NeoForge / Forge 的 install_profile 里，很多库只有 url 没有 size；
+    //旧逻辑只要发现一条没有 size，就把整批进度退化成「按文件个数」，
+    //于是「12/21 = 57.1%」这种数字会长时间不动（剩下的都是大文件），
+    //看起来就像卡死在 57%。
+    //
+    //现在的口径：已知大小求和 + 未知大小按同批平均大小估算（下限 64KiB），
+    //这样字节在动、百分比就在动；并且在真正下载完成之前最多显示到 99%。
+    val knownSizes = tasks.map { it.size }.filter { it > 0 }
+    val unknownCount = tasks.count { it.size <= 0 }
+    val estimatePerUnknown = knownSizes.takeIf { it.isNotEmpty() }
+        ?.let { it.sum() / it.size }
+        ?.coerceAtLeast(UNKNOWN_SIZE_FALLBACK_BYTES) ?: 0L
+    val progressTotalBytes = knownSizes.sum() + unknownCount * estimatePerUnknown
 
     val batch = BatchDownloader(
         requests = pending.map { it.toRequest() },
@@ -76,7 +91,7 @@ suspend fun Task.runBatchDownloads(
     }
 
     batch.onUpdate = { snapshot ->
-        updateProgress(progressFor(snapshot, sizesFullyKnown, hasFileCount = snapshot.totalFiles > 0))
+        updateProgress(progressMapper(progressFor(snapshot, progressTotalBytes)))
         onSnapshot(snapshot)
     }
     batch.onFileSuccess = { request ->
@@ -94,7 +109,12 @@ suspend fun Task.runBatchDownloads(
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
-        val failedDetail = batch.lastRunFailures.keys.joinToString("\n") { path -> path }
+        //议题 #35：失败详情必须带原因，否则界面只能说「一些文件下载失败」，
+        //用户和开发者都看不出到底是 404、超时还是校验不过
+        val failedDetail = batch.lastRunFailures.entries.joinToString("\n") { (path, error) ->
+            val reason = error.message?.lineSequence()?.firstOrNull() ?: error::class.simpleName
+            "$path -> $reason"
+        }
         throw DownloadFailedException("Failed downloads:\n$failedDetail", e)
     } finally {
         clearSpeed()
@@ -116,19 +136,27 @@ private suspend fun verifyExistingFilesConcurrently(
             .let { (reusable, pending) -> reusable.map { it.first } to pending.map { it.first } }
     }
 
+/** 未知大小文件的估算下限：太小会让百分比虚高，64KiB 是个够用的保守值 */
+private const val UNKNOWN_SIZE_FALLBACK_BYTES = 64L * 1024
+
+/** 还没全部下完时最多显示到 99%，避免「显示 100% 却还在下」 */
+private const val MAX_RATIO_BEFORE_DONE = 0.99f
+
 /**
- * 进度条的显示策略：
- * - 清单内所有文件都声明了大小时，按字节数计算最平滑的进度；
- * - 存在未知大小但文件总数确定时，退化为按完成文件数计算；
- * - 连文件总数都无法确定时，显示为不确定进度。
+ * 进度条的显示策略（议题 #35 起）：
+ * - 有可用分母时按字节比，**未完成前钳到 99%**；
+ * - 连分母都构不出来（空清单）时才显示为不确定进度。
  */
-private fun progressFor(snapshot: BatchProgress, sizesFullyKnown: Boolean, hasFileCount: Boolean): Float = when {
-    sizesFullyKnown && snapshot.totalBytes > 0 ->
-        (snapshot.downloadedBytes.toFloat() / snapshot.totalBytes).coerceIn(0f, 1f)
-
-    hasFileCount && snapshot.totalFiles > 0 ->
-        snapshot.downloadedFiles.toFloat() / snapshot.totalFiles
-
-    else -> -1f
+private fun progressFor(snapshot: BatchProgress, totalBytes: Long): Float {
+    if (snapshot.totalFiles <= 0) return -1f
+    if (totalBytes <= 0L || snapshot.totalBytes <= 0) {
+        return (snapshot.downloadedFiles.toFloat() / snapshot.totalFiles).coerceIn(0f, 1f)
+    }
+    val ratio = snapshot.downloadedBytes.toFloat() / totalBytes
+    return if (snapshot.downloadedFiles < snapshot.totalFiles) {
+        ratio.coerceIn(0f, MAX_RATIO_BEFORE_DONE)
+    } else {
+        ratio.coerceIn(0f, 1f)
+    }
 }
 

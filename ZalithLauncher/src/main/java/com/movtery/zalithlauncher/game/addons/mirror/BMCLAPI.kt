@@ -44,8 +44,10 @@ private val REPLACE_MIRROR_HOLDERS = mapOf(
     Pair("http://files.minecraftforge.net/maven", BMCLAPI.MAVEN.url),
     Pair("https://files.minecraftforge.net/maven", BMCLAPI.MAVEN.url),
     Pair("https://maven.minecraftforge.net", BMCLAPI.MAVEN.url),
-    Pair("https://maven.neoforged.net/releases/net/neoforged/forge", BMCLAPI.MAVEN.url + "/net/neoforged/forge"),
-    Pair("https://maven.neoforged.net/releases/net/neoforged/neoforge", BMCLAPI.MAVEN.url + "/net/neoforged/neoforge"),
+    //议题 #35：Forge 是整站前缀，NeoForge 以前只映射了 forge / neoforge 两个子树，
+    //导致 neoform、installertools、jarsplitter、mergetool 这些库只能直连国外源（最容易卡住）。
+    //这里改成整段前缀；镜像没有的制品会快速 404 并由换源机制回退官方，不会让原本能下的文件失败。
+    Pair("https://maven.neoforged.net/releases/net/neoforged", BMCLAPI.MAVEN.url + "/net/neoforged"),
     Pair("http://dl.liteloader.com/versions/versions.json", BMCLAPI.MAVEN.url + "/com/mumfrey/liteloader/versions.json"),
     Pair("http://dl.liteloader.com/versions", BMCLAPI.MAVEN.url),
     Pair("https://meta.fabricmc.net", BMCLAPI.BASE_URL.url + "/fabric-meta"),

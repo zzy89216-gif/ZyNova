@@ -29,6 +29,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.model
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.CurseForgeVersions
 import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.models.isApproved
 import com.movtery.zalithlauncher.utils.file.MurmurHash2Incremental
+import com.movtery.zalithlauncher.path.DownloadUrls
 import com.movtery.zalithlauncher.utils.network.httpGetJson
 import com.movtery.zalithlauncher.utils.network.httpPostJson
 import com.movtery.zalithlauncher.utils.network.withRetry
@@ -46,7 +47,8 @@ import java.io.File
 private const val API_MAX_ATTEMPTS = 2
 
 class CurseForgeSearcher(
-    val api: String = CURSEFORGE_API,
+    //默认地址在每次构造时从「下载源修改器」读取，用户改了设置就能立刻生效
+    val api: String = DownloadUrls.curseForgeApi(),
     source: String = "Official CurseForge"
 ): AbstractPlatformSearcher(
     platform = Platform.CURSEFORGE,

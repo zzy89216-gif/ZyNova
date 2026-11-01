@@ -33,6 +33,12 @@ import com.movtery.zalithlauncher.game.renderer.ironizedzink.Zink
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.applyIronizedZinkPreset
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.ironizedZinkOptions
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.ListSettingsCard
@@ -97,6 +103,49 @@ fun IronizedZinkConfigCards(modifier: Modifier = Modifier) {
             getItemId = { it }
         )
 
+        // ── 高级参数（议题 #40：全部迁移进来，但默认收起）──────────
+        //
+        //26.4.0 曾经把这 12 个开关从面板上撤掉、只留预设；#40 要求
+        //「渲染器现有全部配置项都要能改」，所以现在以「高级参数」折叠区放回来：
+        //默认不打扰普通用户，懂行的人展开就能逐项调。
+        //⚠️ 键名必须保持 ironizedZink*，预设写入链路（applyIronizedZinkPreset）也不要动。
+        var advancedExpanded by remember { mutableStateOf(false) }
+
+        SettingsCard(
+            modifier = Modifier.fillMaxWidth(),
+            position = CardPosition.Single,
+            title = stringResource(R.string.settings_renderer_advanced_title),
+            summary = stringResource(R.string.settings_renderer_advanced_summary),
+            onClick = { advancedExpanded = !advancedExpanded },
+            trailingIcon = {
+                Text(
+                    text = stringResource(
+                        if (advancedExpanded) R.string.settings_renderer_advanced_hide
+                        else R.string.settings_renderer_advanced_show
+                    ),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        )
+
+        AnimatedVisibility(visible = advancedExpanded) {
+            SettingsCardColumn(modifier = Modifier.fillMaxWidth()) {
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkThreadedGl, R.string.settings_zink_threaded_gl_title, R.string.settings_zink_threaded_gl_summary, CardPosition.Top)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkBigCoreAffinity, R.string.settings_zink_big_core_title, R.string.settings_zink_big_core_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkOutOfOrder, R.string.settings_zink_out_of_order_title, R.string.settings_zink_out_of_order_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkNoError, R.string.settings_zink_no_error_title, R.string.settings_zink_no_error_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkVsync, R.string.settings_zink_vsync_title, R.string.settings_zink_vsync_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkRelaxGlsl, R.string.settings_zink_relax_glsl_title, R.string.settings_zink_relax_glsl_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkAllExtensions, R.string.settings_zink_all_extensions_title, R.string.settings_zink_all_extensions_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkShaderCache, R.string.settings_zink_shader_cache_title, R.string.settings_zink_shader_cache_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkSingleFileCache, R.string.settings_zink_single_file_cache_title, R.string.settings_zink_single_file_cache_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkLazyDescriptors, R.string.settings_zink_lazy_descriptors_title, R.string.settings_zink_lazy_descriptors_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkInlineUniforms, R.string.settings_zink_inline_uniforms_title, R.string.settings_zink_inline_uniforms_summary, CardPosition.Middle)
+                ZinkAdvancedSwitch(AllSettings.ironizedZinkForceSoftware, R.string.settings_zink_force_software_title, R.string.settings_zink_force_software_summary, CardPosition.Bottom)
+            }
+        }
+
         //仅当老用户残留了已知有问题的参数组合时提示；重新选择任意预设即可恢复
         if (options.hasUnsafeCombo) {
             Text(
@@ -148,4 +197,21 @@ private fun IronizedPresetSummary(preset: ZinkPreset) {
             style = MaterialTheme.typography.labelSmall
         )
     }
+}
+
+/** 高级参数里的单个开关：标题与说明都用大白话，避免「mesa_glthread」这类术语直接怼到用户脸上 */
+@Composable
+private fun ZinkAdvancedSwitch(
+    unit: com.movtery.zalithlauncher.setting.unit.BooleanSettingUnit,
+    @androidx.annotation.StringRes title: Int,
+    @androidx.annotation.StringRes summary: Int,
+    position: CardPosition,
+) {
+    SwitchSettingsCard(
+        modifier = Modifier.fillMaxWidth(),
+        position = position,
+        unit = unit,
+        title = stringResource(title),
+        summary = stringResource(summary)
+    )
 }

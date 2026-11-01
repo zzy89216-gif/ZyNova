@@ -666,6 +666,62 @@ object AllSettings : SettingsRegistry() {
      */
     val assetPlatformSource = enumSetting("assetPlatformSource", MirrorSourceType.AUTO)
 
+    //网络与下载（议题 #37 / #41）
+    //
+    //⚠️ 这一组是 27.7.0 新增的配置。旧用户没有这些键 → 全部取默认值，
+    //   默认值 = 旧版本的写死行为，所以升级后下载行为与升级前一模一样。
+
+    /**
+     * 同一个文件最多同时用几条连接下载
+     *
+     * 值越大，单个大文件下载越快，但对下载源和手机流量的压力也越大。
+     */
+    val downloadConnections = intSetting("downloadConnections", 4, 1..12)
+
+    /**
+     * 连接超时（秒）：连上服务器最多等多久
+     */
+    val downloadConnectTimeout = intSetting("downloadConnectTimeout", 15, 5..60)
+
+    /**
+     * 读超时（秒）：连上之后，多久收不到数据就判定这条连接卡死并换源
+     */
+    val downloadReadTimeout = intSetting("downloadReadTimeout", 15, 5..120)
+
+    /**
+     * 下载失败后自动重试的次数（0 = 不自动重试）
+     */
+    val downloadRetryCount = intSetting("downloadRetryCount", 3, 0..5)
+
+    // ── 下载源修改器 ─────────────────────────────────────────────
+    //
+    //全部是「留空 = 用官方地址」。填写后必须是完整的 http(s) 地址，
+    //读取时由 `path/DownloadUrls.kt` 统一校验，校验不通过会静默回退到官方地址，
+    //不会把错误配置带进下载流程。
+    //
+    //⚠️ 各个下载服务是**分别**处理的：它们的数据格式与鉴权方式不同，
+    //   不能把一个服务的地址套到另一个服务上。
+
+    /**
+     * Minecraft 版本清单地址（默认 Mojang 官方）
+     */
+    val customVersionManifestUrl = stringSetting("customVersionManifestUrl", "")
+
+    /**
+     * Modrinth 接口地址（默认官方 api.modrinth.com）
+     */
+    val customModrinthApiUrl = stringSetting("customModrinthApiUrl", "")
+
+    /**
+     * CurseForge 接口地址（默认官方 api.curseforge.com）
+     */
+    val customCurseForgeApiUrl = stringSetting("customCurseForgeApiUrl", "")
+
+    /**
+     * MCIM 镜像站地址（默认 mod.mcimirror.top）
+     */
+    val customMcimMirrorUrl = stringSetting("customMcimMirrorUrl", "")
+
     //Control
     /**
      * 全局默认控制布局文件名

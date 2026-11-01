@@ -72,7 +72,8 @@ fun GameSettingsScreen(
     key: NestedNavKey.Settings,
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    toSettingsScreen: (TitledNavKey) -> Unit,
 ) {
     BaseScreen(
         Triple(key, mainScreenKey, false),
@@ -85,6 +86,47 @@ fun GameSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) { scope ->
+            //议题 #41：原来独占左侧栏的 Java / 控制 / 手柄入口收敛到「游戏设置」这里，
+            //页面本身不删，只是不再和七个主分类抢位置
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
+                        text = stringResource(R.string.settings_game_entries_title),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top,
+                        title = stringResource(R.string.settings_tab_java_manage),
+                        summary = stringResource(R.string.settings_game_java_entry_summary),
+                        onClick = { toSettingsScreen(NormalNavKey.Settings.JavaManager) }
+                    )
+
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        title = stringResource(R.string.settings_tab_control),
+                        summary = stringResource(R.string.settings_game_control_entry_summary),
+                        onClick = { toSettingsScreen(NormalNavKey.Settings.Control) }
+                    )
+
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        title = stringResource(R.string.settings_tab_gamepad),
+                        summary = stringResource(R.string.settings_game_gamepad_entry_summary),
+                        onClick = { toSettingsScreen(NormalNavKey.Settings.Gamepad) }
+                    )
+                }
+            }
+
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(
                     modifier = Modifier

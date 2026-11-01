@@ -22,6 +22,8 @@ import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor.TaskPhase
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.isInterruptedIOException
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
+import java.util.concurrent.TimeoutException
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -145,12 +147,23 @@ class TaskFlowExecutor(
                 //执行阶段完成回调
                 phase.onComplete?.invoke()
             } catch (th: Throwable) {
-                if (th is CancellationException || th.isInterruptedIOException()) {
-                    Logger.debug(TAG, "The current task flow has been cancelled. ${th.getMessageOrToString()}")
-                    onCancel()
-                } else {
-                    Logger.warning(TAG, "An exception occurred while executing the task flow.", th)
-                    onError(th)
+                when {
+                    //议题 #35：超时是「失败」，不是「用户点了取消」。
+                    //以前这里一律走 onCancel()，界面会停在最后一帧、不弹错误、无法恢复。
+                    th is TimeoutCancellationException -> {
+                        Logger.warning(TAG, "The task flow timed out.", th)
+                        onError(
+                            TimeoutException(th.message ?: "task flow timeout").apply { initCause(th) }
+                        )
+                    }
+                    th is CancellationException || th.isInterruptedIOException() -> {
+                        Logger.debug(TAG, "The current task flow has been cancelled. ${th.getMessageOrToString()}")
+                        onCancel()
+                    }
+                    else -> {
+                        Logger.warning(TAG, "An exception occurred while executing the task flow.", th)
+                        onError(th)
+                    }
                 }
                 return@withContext
             }

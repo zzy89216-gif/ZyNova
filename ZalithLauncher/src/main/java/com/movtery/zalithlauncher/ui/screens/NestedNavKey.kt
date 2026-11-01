@@ -45,7 +45,8 @@ sealed interface NestedNavKey {
     /** 设置屏幕 */
     @Serializable class Settings : BackStackNavKey<TitledNavKey>(androidText(R.string.generic_setting)) {
         init {
-            backStack.addIfEmpty(NormalNavKey.Settings.Renderer)
+            //议题 #41：默认落在第一个分类「基础设置」，与左侧栏顺序一致
+            backStack.addIfEmpty(NormalNavKey.Settings.Launcher)
         }
     }
     /** 版本详细设置屏幕 */

@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.path
 
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.BuildKeys
+import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.network.ResilientDns
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -200,31 +201,61 @@ fun createOkHttpClientBuilder(action: (OkHttpClient.Builder) -> Unit = { }): OkH
  * OkHttp 使用自实现的 AsyncTimeout 机制，比依赖操作系统 socket 超时的
  * HttpURLConnection 在 Android 上更加可靠，能有效避免"卡 0b/s"问题。
  */
-val DOWNLOAD_OKHTTP_CLIENT: OkHttpClient by lazy {
-    buildDownloadClient(listOf(Protocol.HTTP_1_1))
-}
+val DOWNLOAD_OKHTTP_CLIENT: OkHttpClient
+    get() = downloadClient(listOf(Protocol.HTTP_1_1), readTimeoutOverrideMs = null)
 
 /**
  * 支持 HTTP/2 多路复用的孪生客户端：用于海量小文件场景，
  * 数千次请求共享少数几条连接，消除逐文件 TCP+TLS 握手风暴。
  * 大文件的分段并发仍走强制 HTTP/1.1 的 [DOWNLOAD_OKHTTP_CLIENT]。
  *
- * 读超时较大文件客户端更短
- * 小文件的读停摆几乎必然意味着源/链路出问题，尽早超时才能尽快轮转到镜像源，而不是整批停在 0B/s
+ * 读超时较大文件客户端更短：小文件的读停摆几乎必然意味着源/链路出问题，
+ * 尽早超时才能尽快轮转到镜像源，而不是整批停在 0B/s。
+ * 因此这里**固定**用 [SMALL_FILE_READ_TIMEOUT_MS]，不跟随设置里的「读超时」。
  */
-val DOWNLOAD_OKHTTP_CLIENT_MULTIPLEX: OkHttpClient by lazy {
-    buildDownloadClient(null, readTimeoutMillis = SMALL_FILE_READ_TIMEOUT_MS)
+val DOWNLOAD_OKHTTP_CLIENT_MULTIPLEX: OkHttpClient
+    get() = downloadClient(allowedProtocols = null, readTimeoutOverrideMs = SMALL_FILE_READ_TIMEOUT_MS)
+
+/** 已构建的下载客户端缓存：key = 协议 + 连接超时 + 读超时 */
+private val downloadClientCache = java.util.concurrent.ConcurrentHashMap<String, OkHttpClient>()
+
+/**
+ * 按当前「网络与下载」设置取下载客户端。
+ *
+ * ⚠️ 27.7.0 起连接 / 读超时是可配置的，所以客户端**不能**再写成 `by lazy` 单例，
+ * 否则用户改完设置要重启才生效。这里按「协议 + 超时」做缓存：
+ * 配置没变时复用同一个实例（不会每次下载都新建连接池）。
+ */
+private fun downloadClient(
+    allowedProtocols: List<Protocol>?,
+    readTimeoutOverrideMs: Long?
+): OkHttpClient {
+    val connectTimeoutMs = TimeUnit.SECONDS.toMillis(
+        AllSettings.downloadConnectTimeout.getValue().toLong()
+    )
+    val readTimeoutMs = readTimeoutOverrideMs ?: TimeUnit.SECONDS.toMillis(
+        AllSettings.downloadReadTimeout.getValue().toLong()
+    )
+    val cacheKey = buildString {
+        append(allowedProtocols?.joinToString(",") ?: "multiplex")
+        append('|').append(connectTimeoutMs)
+        append('|').append(readTimeoutMs)
+    }
+    return downloadClientCache.getOrPut(cacheKey) {
+        buildDownloadClient(allowedProtocols, connectTimeoutMs, readTimeoutMs)
+    }
 }
 
 private fun buildDownloadClient(
     allowedProtocols: List<Protocol>?,
-    readTimeoutMillis: Long = 15_000L
+    connectTimeoutMillis: Long,
+    readTimeoutMillis: Long
 ): OkHttpClient {
     return OkHttpClient.Builder()
         .dns(ResilientDns) //系统 DNS 解析失败时，自动回退到 DoH 解析
         .apply { allowedProtocols?.let { protocols(it) } } //不指定时默认协商 h2：单条多路复用连接承载海量小请求
         .connectionPool(ConnectionPool(64, 5, TimeUnit.MINUTES))
-        .connectTimeout(15, TimeUnit.SECONDS)
+        .connectTimeout(connectTimeoutMillis, TimeUnit.MILLISECONDS)
         .readTimeout(readTimeoutMillis, TimeUnit.MILLISECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)

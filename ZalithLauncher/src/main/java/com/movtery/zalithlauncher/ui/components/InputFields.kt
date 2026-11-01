@@ -19,6 +19,8 @@
 package com.movtery.zalithlauncher.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -49,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -281,8 +284,22 @@ fun OwnOutlinedTextField(
     shape: Shape = OutlinedTextFieldDefaults.shape,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     imePanEnabled: Boolean = true,
+    /**
+     * 聚焦时把占位符淡出（默认关闭）。
+     *
+     * 打开后：输入框为空且没聚焦时显示灰字提示，一点进去灰字就平滑消失，
+     * 不会和光标、正在输入的内容挤在一起。
+     */
+    hidePlaceholderOnFocus: Boolean = false,
 ) {
     val focusManager = LocalFocusManager.current
+    val effectiveInteractionSource = interactionSource ?: remember { MutableInteractionSource() }
+    val isFocused = effectiveInteractionSource.collectIsFocusedAsState().value
+    val placeholderAlpha by animateFloatAsState(
+        targetValue = if (hidePlaceholderOnFocus && isFocused) 0f else 1f,
+        animationSpec = tween(durationMillis = 160),
+        label = "placeholderAlpha"
+    )
 
     OutlinedTextField(
         value = value,
@@ -298,7 +315,13 @@ fun OwnOutlinedTextField(
         readOnly = readOnly,
         textStyle = textStyle,
         label = label,
-        placeholder = placeholder,
+        placeholder = placeholder?.let { content ->
+            {
+                Box(modifier = Modifier.alpha(placeholderAlpha)) {
+                    content()
+                }
+            }
+        },
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         prefix = prefix,
@@ -338,7 +361,7 @@ fun OwnOutlinedTextField(
         singleLine = singleLine,
         maxLines = maxLines,
         minLines = minLines,
-        interactionSource = interactionSource,
+        interactionSource = effectiveInteractionSource,
         shape = shape,
         colors = colors,
     )

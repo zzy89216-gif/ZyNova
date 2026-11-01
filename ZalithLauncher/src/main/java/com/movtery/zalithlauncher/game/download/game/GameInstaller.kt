@@ -726,10 +726,26 @@ class GameInstaller(
      * 清除临时游戏目录
      */
     private suspend fun clearTempGameDir() = withContext(Dispatchers.IO) {
-        PathManager.DIR_CACHE_GAME_DOWNLOADER.takeIf { it.exists() }?.let { folder ->
+        val folder = PathManager.DIR_CACHE_GAME_DOWNLOADER.takeIf { it.exists() } ?: return@withContext
+        //议题 #35：开始安装时不再把整目录删掉。
+        //NeoForge / Forge 的支持库就下在 temp_game/.minecraft/libraries，
+        //以前一失败重试就全部重下；现在保留 libraries（下次会先做 sha1 校验再复用），
+        //只清理其余临时文件。
+        val minecraftDir = File(folder, ".minecraft")
+        if (!minecraftDir.isDirectory) {
             FileUtils.deleteQuietly(folder)
             Logger.info(TAG, "Temporary game directory cleared.")
+            return@withContext
         }
+        minecraftDir.listFiles()?.forEach { child ->
+            if (!child.name.equals("libraries", ignoreCase = true)) {
+                FileUtils.deleteQuietly(child)
+            }
+        }
+        folder.listFiles()?.forEach { child ->
+            if (child != minecraftDir) FileUtils.deleteQuietly(child)
+        }
+        Logger.info(TAG, "Temporary game directory cleared (libraries kept for resume).")
     }
 
     /**

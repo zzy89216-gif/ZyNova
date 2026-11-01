@@ -47,10 +47,13 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.plugin.driver.Driver
 import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer_v2.RendererV2Data
+import com.movtery.zalithlauncher.game.renderer.AutoRenderer
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
+import com.movtery.zalithlauncher.game.renderer.RendererVersions
 import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MOBILE_GLUES_UNIQUE_IDENTIFIER
+import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
 import com.movtery.zalithlauncher.path.URL_CLOUD_DRIVE_DRIVER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_CLOUD_RENDERER_PLUGINS
 import com.movtery.zalithlauncher.path.URL_GITHUB_DRIVER_PLUGINS
@@ -74,6 +77,18 @@ import com.movtery.zalithlauncher.utils.isAdrenoGPU
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.sendDLPlugin
 
+/**
+ * 设置中心 → 渲染器设置（议题 #40 / #41）
+ *
+ * 结构固定为三层：
+ * 1. **通用**：选渲染器 + 版本与状态（选谁就显示谁的版本、支持哪些游戏版本）；
+ * 2. **当前渲染器的专属配置**：按选中项动态显示，不混在一起、也不互相重置
+ *    （所有配置都是全局扁平 MMKV 键，切换渲染器不会写别的渲染器的键）；
+ * 3. **显示与高级**：分辨率、全屏、SurfaceView、持续性能、驱动与调试项。
+ *
+ * ⚠️ 三个渲染器的 UUID 是用户配置里的持久值，**不要改**；
+ * 「自动」只是设置界面的选项，不能混进 `Renderers.getRenderers()`。
+ */
 @Composable
 fun RendererSettingsScreen(
     key: NestedNavKey.Settings,
@@ -92,8 +107,19 @@ fun RendererSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) { scope ->
-            //当前选中的渲染器：决定是否在其下方展开 Ironized Zink 的配置面板
             val currentRendererId = AllSettings.renderer.state
+            val isAuto = currentRendererId == AutoRenderer.IDENTIFIER
+            val isMobileGlues = currentRendererId == MOBILE_GLUES_UNIQUE_IDENTIFIER
+            val isIronizedZink = currentRendererId == IRONIZED_ZINK_UNIQUE_IDENTIFIER
+            val isGL4ES = currentRendererId == GL4ESRenderer.getUniqueIdentifier()
+
+            val currentRenderer = remember(currentRendererId) {
+                Renderers.getRenderersForSelection()
+                    .firstOrNull { it.getUniqueIdentifier() == currentRendererId }
+            }
+            val isPluginRenderer = currentRenderer is RendererV2Data
+            //走 Vulkan 的才需要驱动：Zink、插件渲染器，以及「自动」（可能挑到 Zink）
+            val usesVulkan = isIronizedZink || isAuto || isPluginRenderer
 
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(
@@ -155,7 +181,6 @@ fun RendererSettingsScreen(
                         }
                     )
 
-                    //新一代渲染器插件的环境变量配置对话框
                     if (showV2ConfigDialog && v2PluginEnvUnits != null) {
                         RendererV2ConfigDialog(
                             units = v2PluginEnvUnits,
@@ -163,65 +188,107 @@ fun RendererSettingsScreen(
                         )
                     }
 
-                    ListSettingsCard(
+                    RendererStatusCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
-                        unit = AllSettings.vulkanDriver,
-                        items = DriverPluginManager.getDriverList(),
-                        title = stringResource(R.string.settings_renderer_global_vulkan_driver_title),
-                        getItemText = { it.name },
-                        getItemId = { it.id },
-                        getItemSummary = {
-                            DriverSummaryLayout(it)
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    eventViewModel.sendDLPlugin(
-                                        githubLink = URL_GITHUB_DRIVER_PLUGINS,
-                                        cloudDrives = listOf(
-                                            EventViewModel.Event.DownloadPlugins.CloudDrive(
-                                                language = "zh",
-                                                link = URL_CLOUD_DRIVE_DRIVER_PLUGINS
-                                            )
-                                        )
-                                    )
-                                }
+                        position = CardPosition.Bottom,
+                        renderer = currentRenderer,
+                        identifier = currentRendererId,
+                        isAuto = isAuto,
+                    )
+                }
+            }
+
+            // ── 当前渲染器的专属配置（按选中动态显示）────────────────
+            if (isMobileGlues) {
+                AnimatedItem(scope) { yOffset ->
+                    MobileGluesConfigCards(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                    )
+                }
+            }
+
+            if (isIronizedZink) {
+                AnimatedItem(scope) { yOffset ->
+                    IronizedZinkConfigCards(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                    )
+                }
+            }
+
+            if (isGL4ES) {
+                AnimatedItem(scope) { yOffset ->
+                    SettingsCardColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                    ) {
+                        SettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Single
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(all = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_download_2_filled),
-                                    contentDescription = stringResource(R.string.generic_download)
+                                Text(
+                                    text = stringResource(R.string.settings_renderer_gl4es_empty_title),
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                Text(
+                                    text = stringResource(R.string.settings_renderer_gl4es_empty_summary),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
-                    )
+                    }
+                }
+            }
 
-                    //图形 API（27.2.0 起改为全自动，不再提供手动选择）
-                    //首次启动某个实例时使用 OpenGL，之后跟随游戏自身的设置；
-                    //这里只做只读说明，让找不到入口的用户知道发生了什么
-                    SettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle
+            if (isAuto) {
+                AnimatedItem(scope) { yOffset ->
+                    SettingsCardColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
                     ) {
-                        Column(
-                            modifier = Modifier.padding(all = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        SettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Single
                         ) {
-                            Text(
-                                text = stringResource(R.string.settings_game_graphics_api_auto_title),
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                            Text(
-                                text = stringResource(R.string.settings_game_graphics_api_auto_summary),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            Column(
+                                modifier = Modifier.padding(all = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.settings_renderer_priority_title),
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                Text(
+                                    text = stringResource(R.string.settings_renderer_priority_summary),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
+                }
+            }
 
+            // ── 显示与性能（所有渲染器通用）────────────────────────
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
                     IntSliderSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
+                        position = CardPosition.Top,
                         unit = AllSettings.resolutionRatio,
                         title = stringResource(R.string.settings_renderer_resolution_scale_title),
                         summary = stringResource(R.string.settings_renderer_resolution_scale_summary),
@@ -232,51 +299,65 @@ fun RendererSettingsScreen(
 
                     SwitchSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Bottom,
+                        position = CardPosition.Middle,
                         unit = AllSettings.gameFullScreen,
                         title = stringResource(R.string.settings_renderer_full_screen_title),
                         summary = stringResource(R.string.settings_renderer_full_screen_summary)
                     )
-                }
-            }
 
-            //选中 Ironized Zink 后，在其下方自动展开配置（4 个官方预设 + OpenGL 版本）
-            if (currentRendererId == IRONIZED_ZINK_UNIQUE_IDENTIFIER) {
-                AnimatedItem(scope) { yOffset ->
-                    IronizedZinkConfigCards(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                    )
-                }
-            }
-
-            //选中 MobileGlues 后，在其下方自动展开配置（OpenGL 版本）
-            if (currentRendererId == MOBILE_GLUES_UNIQUE_IDENTIFIER) {
-                AnimatedItem(scope) { yOffset ->
-                    MobileGluesConfigCards(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                    )
-                }
-            }
-
-            AnimatedItem(scope) { yOffset ->
-                SettingsCardColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                ) {
                     SwitchSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Top,
+                        position = CardPosition.Middle,
+                        unit = AllSettings.useSurfaceView,
+                        title = stringResource(R.string.settings_renderer_surface_title),
+                        summary = stringResource(R.string.settings_renderer_surface_summary)
+                    )
+
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
                         unit = AllSettings.sustainedPerformance,
                         title = stringResource(R.string.settings_renderer_sustained_performance_title),
                         summary = stringResource(R.string.settings_renderer_sustained_performance_summary)
                     )
 
-                    run {
+                    //驱动只对走 Vulkan 的渲染器有意义：GL4ES / MobileGlues 下不显示，避免给出无效选项
+                    if (usesVulkan) {
+                        ListSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Middle,
+                            unit = AllSettings.vulkanDriver,
+                            items = DriverPluginManager.getDriverList(),
+                            title = stringResource(R.string.settings_renderer_global_vulkan_driver_title),
+                            getItemText = { it.name },
+                            getItemId = { it.id },
+                            getItemSummary = {
+                                DriverSummaryLayout(it)
+                            },
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        eventViewModel.sendDLPlugin(
+                                            githubLink = URL_GITHUB_DRIVER_PLUGINS,
+                                            cloudDrives = listOf(
+                                                EventViewModel.Event.DownloadPlugins.CloudDrive(
+                                                    language = "zh",
+                                                    link = URL_CLOUD_DRIVE_DRIVER_PLUGINS
+                                                )
+                                            )
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_download_2_filled),
+                                        contentDescription = stringResource(R.string.generic_download)
+                                    )
+                                }
+                            }
+                        )
+                    }
+
+                    if (isIronizedZink) {
                         var adrenoGPUAlert by remember { mutableStateOf(false) }
 
                         SwitchSettingsCard(
@@ -304,24 +385,17 @@ fun RendererSettingsScreen(
                                 }
                             )
                         }
+
+                        SwitchSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Middle,
+                            unit = AllSettings.vsyncInZink,
+                            title = stringResource(R.string.settings_renderer_vsync_in_zink_title),
+                            summary = stringResource(R.string.settings_renderer_vsync_in_zink_summary)
+                        )
                     }
 
-                    SwitchSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
-                        unit = AllSettings.vsyncInZink,
-                        title = stringResource(R.string.settings_renderer_vsync_in_zink_title),
-                        summary = stringResource(R.string.settings_renderer_vsync_in_zink_summary)
-                    )
-
-                    SwitchSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
-                        unit = AllSettings.useSurfaceView,
-                        title = stringResource(R.string.settings_renderer_surface_title),
-                        summary = stringResource(R.string.settings_renderer_surface_summary)
-                    )
-
+                    //调试用：默认收在最后，平时不用管
                     SwitchSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Bottom,
@@ -331,6 +405,64 @@ fun RendererSettingsScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * 渲染器状态卡：名称 + 实际内置版本 + 支持的游戏版本范围。
+ *
+ * 议题 #36 要求「不能只改界面版本号，必须能对得上实际核心文件」——
+ * 版本号现在从 [RendererVersions] 这个唯一事实来源读取，
+ * 与 `THIRD_PARTY_NOTICES.md` 里记录的官方发布版保持一致。
+ */
+@Composable
+private fun RendererStatusCard(
+    modifier: Modifier,
+    position: CardPosition,
+    renderer: RendererInterface?,
+    identifier: String,
+    isAuto: Boolean,
+) {
+    val version = RendererVersions.of(identifier)
+
+    SettingsCard(
+        modifier = modifier,
+        position = position
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = renderer?.getRendererName()
+                    ?: stringResource(R.string.settings_renderer_version_unknown),
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_renderer_version_label),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = when {
+                        version != null -> version
+                        isAuto -> "-"
+                        else -> stringResource(R.string.settings_renderer_version_unknown)
+                    },
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+
+            //支持的游戏版本范围
+            renderer?.let { RendererSummaryLayout(it) }
         }
     }
 }

@@ -68,6 +68,19 @@ class BackgroundViewModel: ViewModel() {
     var refreshTrigger by mutableStateOf(false)
         private set
 
+    /**
+     * 背景是否「已经可以看」。
+     *
+     * 图片：文件有效即可见；
+     * 视频：要等播放器**真正画出第一帧**才算可见（议题 #38）。
+     *
+     * 首页背景透明度、卡片配色都跟着这个值走：
+     * 视频还没出画时整屏保持不透明，出画后再一起变透明，
+     * 就不会出现「先变透明、视频过一会儿才出来」的二次跳变。
+     */
+    val isBackgroundVisible: Boolean
+        get() = isValid && (isImage || (isVideo && BackgroundVideoController.firstFrameRendered))
+
     private suspend fun updateState() {
         val (isImage0, isVideo0) = withContext(Dispatchers.IO) {
             val isImage = backgroundFile.isImageFile()
@@ -109,6 +122,17 @@ class BackgroundViewModel: ViewModel() {
             updateState()
         }
     }
+
+    /**
+     * 退出启动器（ViewModel 被清理）时才真正释放播放器。
+     *
+     * ⚠️ 不要放到 Activity.onDestroy：切深色模式 / 改字体大小会重建 Activity，
+     * 那样每次重建都要重新建一次解码器，正是议题 #38 里「卡顿、闪屏」的来源之一。
+     */
+    override fun onCleared() {
+        BackgroundVideoController.release()
+        super.onCleared()
+    }
 }
 
 /**
@@ -126,7 +150,8 @@ fun <E> influencedByBackground(
     enabled: Boolean = true
 ): E {
     return if (enabled) {
-        if (LocalBackgroundViewModel.current?.isValid == true) {
+        //议题 #38：视频要等首帧出画后才算「有背景」，卡片配色与画面同时变化
+        if (LocalBackgroundViewModel.current?.isBackgroundVisible == true) {
             influenced
         } else {
             value

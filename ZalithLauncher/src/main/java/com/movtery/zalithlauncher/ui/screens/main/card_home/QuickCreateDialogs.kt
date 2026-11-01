@@ -34,6 +34,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -75,6 +77,16 @@ private enum class CreateWorldMode(
     Creative(R.string.saves_manage_gamemode_creative),
     Hardcore(R.string.saves_manage_hardcore)
 }
+
+/**
+ * 极限模式下被锁定的选项文字颜色（议题 #34）。
+ *
+ * 未锁定时返回 [Color.Unspecified]，保持 [Text] 的默认取色，
+ * 不改变非极限模式下的原有观感。
+ */
+@Composable
+private fun quickCreateOptionColor(locked: Boolean): Color =
+    if (locked) LocalContentColor.current.copy(alpha = 0.38f) else Color.Unspecified
 
 /**
  * 首页「+ 创建世界」对话框（议题 #33）
@@ -106,6 +118,10 @@ fun CreateWorldDialog(
         minecraftVersion == null || !minecraftVersion.isLowerVer("1.4")
     }
 
+    //议题 #34：极限模式在游戏内固定「不允许作弊」「死亡不掉落」，
+    //这里直接把两个开关置灰并取消勾选，避免写出与极限模式自相矛盾的存档
+    val hardcore = mode == CreateWorldMode.Hardcore
+
     QuickCreateDialogFrame(
         title = stringResource(R.string.home_create_world_title),
         working = working,
@@ -132,8 +148,9 @@ fun CreateWorldDialog(
                             hardcore = mode == CreateWorldMode.Hardcore,
                             //极限模式在游戏内固定为困难
                             difficulty = if (mode == CreateWorldMode.Hardcore) Difficulty.HARD else difficulty,
-                            keepInventory = keepInventory,
-                            allowCheats = supportsCheats && allowCheats
+                            //极限模式不允许死亡不掉落与作弊，即使状态残留也按关闭写入
+                            keepInventory = keepInventory && !hardcore,
+                            allowCheats = supportsCheats && allowCheats && !hardcore
                         )
                     }.onSuccess { folderName ->
                         working = false
@@ -173,10 +190,12 @@ fun CreateWorldDialog(
             Text(
                 text = stringResource(R.string.home_create_world_keep_inventory),
                 style = MaterialTheme.typography.bodyMedium,
+                color = quickCreateOptionColor(hardcore),
                 modifier = Modifier.weight(1f)
             )
             Switch(
-                checked = keepInventory,
+                checked = keepInventory && !hardcore,
+                enabled = !hardcore,
                 onCheckedChange = { keepInventory = it }
             )
         }
@@ -189,10 +208,12 @@ fun CreateWorldDialog(
                 Text(
                     text = stringResource(R.string.home_create_world_allow_cheats),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = quickCreateOptionColor(hardcore),
                     modifier = Modifier.weight(1f)
                 )
                 Switch(
-                    checked = allowCheats,
+                    checked = allowCheats && !hardcore,
+                    enabled = !hardcore,
                     onCheckedChange = { allowCheats = it }
                 )
             }
@@ -215,6 +236,9 @@ fun CreateWorldDialog(
                             //极限模式在游戏内固定为困难，切换时同步一下界面
                             if (entry == CreateWorldMode.Hardcore) {
                                 difficulty = Difficulty.HARD
+                                //议题 #34：切到极限模式时把「死亡不掉落」「允许作弊」取消勾选
+                                keepInventory = false
+                                allowCheats = false
                             }
                         }
                     )

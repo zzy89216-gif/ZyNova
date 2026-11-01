@@ -48,6 +48,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -344,7 +345,9 @@ fun <I, O> ImportFileButton(
 fun TitleTaskFlowDialog(
     title: String,
     tasks: List<TitledTask>,
-    onCancel: () -> Unit = {}
+    onCancel: () -> Unit = {},
+    /** 传入后显示「后台运行」：关掉对话框但任务继续跑（议题：安装全部转后台） */
+    onRunInBackground: (() -> Unit)? = null,
 ) {
     Dialog(
         onDismissRequest = {},
@@ -394,6 +397,15 @@ fun TitleTaskFlowDialog(
                                 runningIcon = task.runningIcon,
                                 task = task.task
                             )
+                        }
+                    }
+
+                    if (onRunInBackground != null) {
+                        FilledTonalButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = onRunInBackground
+                        ) {
+                            MarqueeText(text = stringResource(R.string.download_run_in_background))
                         }
                     }
 

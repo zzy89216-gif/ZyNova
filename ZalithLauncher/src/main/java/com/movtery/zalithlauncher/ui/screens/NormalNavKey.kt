@@ -48,16 +48,6 @@ sealed interface NormalNavKey : TitledNavKey {
     @Serializable data object AIChat : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.ai_title)
     }
-
-    /**
-     * AI 配置屏幕
-     *
-     * ⚠️ 刻意独立于启动器通用设置：由聊天界面右上角进入，
-     * 不出现在「设置」页面里。
-     */
-    @Serializable data object AIConfig : NormalNavKey {
-        @Contextual override val title: AndroidStringText = androidText(R.string.ai_config_title)
-    }
     /** 账号管理屏幕 */
     @Serializable data class AccountManager(
         val loginMenu: FirstLoginMenu = FirstLoginMenu.NONE
@@ -113,9 +103,9 @@ sealed interface NormalNavKey : TitledNavKey {
         @Serializable data object Gamepad : Settings {
             @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_gamepad)
         }
-        /** 启动器设置屏幕 */
+        /** 基础设置屏幕（原「启动器设置」，议题 #41 起改为基础设置） */
         @Serializable data object Launcher : Settings {
-            @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_launcher)
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_basic)
         }
         /** Java管理屏幕 */
         @Serializable data object JavaManager : Settings {
@@ -124,6 +114,18 @@ sealed interface NormalNavKey : TitledNavKey {
         /** 控制管理屏幕 */
         @Serializable data object ControlManager : Settings {
             @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_control_manage)
+        }
+        /** 网络与下载屏幕（议题 #37 / #41 新增） */
+        @Serializable data object Network : Settings {
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_network)
+        }
+        /** AI 设置屏幕（议题 #37 / #41：AI 配置并入设置中心） */
+        @Serializable data object AI : Settings {
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_ai)
+        }
+        /** 高级设置屏幕（议题 #37 / #41 新增） */
+        @Serializable data object Advanced : Settings {
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_advanced)
         }
         /** 关于屏幕 */
         @Serializable data object AboutInfo : Settings {

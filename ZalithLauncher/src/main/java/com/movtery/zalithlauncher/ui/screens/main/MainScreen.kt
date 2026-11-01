@@ -29,6 +29,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -89,7 +91,6 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ai.ui.AIChatScreen
-import com.movtery.zalithlauncher.ai.ui.AIConfigScreen
 import com.movtery.zalithlauncher.ui.screens.content.AccountManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.DownloadScreen
 import com.movtery.zalithlauncher.ui.screens.content.FileSelectorScreen
@@ -156,12 +157,18 @@ fun MainScreen(
     val mainScreenKey = screenBackStackModel.mainScreen.currentKey
     val inLauncherScreen = mainScreenKey == null || mainScreenKey is NormalNavKey.LauncherMain
 
-    val isBackgroundValid = LocalBackgroundViewModel.current?.isValid == true
+    //议题 #38：视频背景要等真正出画后才算「可见」，
+    //图片背景仍然是文件有效即可见（行为与升级前完全一致）
+    val isBackgroundVisible = LocalBackgroundViewModel.current?.isBackgroundVisible == true
     val launcherBackgroundOpacity = AllSettings.launcherBackgroundOpacity.state.toFloat() / 100f
 
-    val backgroundColor = if (isBackgroundValid) {
-        backgroundColor().copy(alpha = launcherBackgroundOpacity)
-    } else backgroundColor()
+    //从「不透明」到「设置的不透明度」做 220ms 过渡，避免整屏颜色突变
+    val backgroundAlpha by animateFloatAsState(
+        targetValue = if (isBackgroundVisible) launcherBackgroundOpacity else 1f,
+        animationSpec = tween(durationMillis = 220),
+        label = "backgroundAlpha"
+    )
+    val backgroundColor = backgroundColor().copy(alpha = backgroundAlpha)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -683,9 +690,12 @@ private fun NavigationUI(
                         key = key,
                         backStackViewModel = screenBackStackModel,
                         toAIConfig = {
-                            screenBackStackModel.mainScreen.navigateTo(
-                                screenKey = NormalNavKey.AIConfig,
-                                useClassEquality = true
+                            //议题 #37 / #41：AI 配置已经并入设置中心，
+                            //这里直接把用户送到「设置 → AI 设置」，不再有独立配置页
+                            screenBackStackModel.settingsScreen.navigateTo(NormalNavKey.Settings.AI)
+                            screenBackStackModel.mainScreen.removeAndNavigateTo(
+                                removes = screenBackStackModel.clearBeforeNavKeys,
+                                screenKey = screenBackStackModel.settingsScreen
                             )
                         },
                         // 把启动器的启动链路交给 Agent：
@@ -695,12 +705,6 @@ private fun NavigationUI(
                                 EventViewModel.Event.Launch.Game(version)
                             )
                         },
-                    )
-                }
-                entry<NormalNavKey.AIConfig> { key ->
-                    AIConfigScreen(
-                        key = key,
-                        backStackViewModel = screenBackStackModel,
                     )
                 }
             }
