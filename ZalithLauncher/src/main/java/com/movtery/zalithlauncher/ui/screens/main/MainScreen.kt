@@ -783,6 +783,16 @@ private fun TaskMenu(
                     }
                 }
 
+                //任务数量：让用户一眼看出「有几个东西在同时下载」
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    text = stringResource(R.string.main_task_count, tasks.size),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = onBackgroundColor().copy(alpha = 0.7f)
+                )
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -790,11 +800,13 @@ private fun TaskMenu(
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     items(tasks) { task ->
+                        val taskTitle by task.title.collectAsStateWithLifecycle()
                         val taskProgress by task.progress.collectAsStateWithLifecycle()
                         val taskMessage by task.message.collectAsStateWithLifecycle()
                         val rateBytesPerSec by task.rateBytesPerSec.collectAsStateWithLifecycle()
 
                         TaskItem(
+                            taskTitle = taskTitle,
                             taskProgress = taskProgress,
                             taskMessage = taskMessage,
                             rateBytesPerSec = rateBytesPerSec,
@@ -818,6 +830,7 @@ private fun TaskItem(
     taskMessage: AndroidStringText?,
     rateBytesPerSec: Long?,
     modifier: Modifier = Modifier,
+    taskTitle: AndroidStringText? = null,
     shape: Shape = MaterialTheme.shapes.large,
     color: Color = cardColor(false),
     contentColor: Color = onCardColor(),
@@ -851,11 +864,23 @@ private fun TaskItem(
                     .weight(1f)
                     .align(Alignment.CenterVertically)
             ) {
-                taskMessage?.let { message ->
-                    AndroidStringText(
-                        text = message,
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                //标题：这条任务到底是什么（多个任务同时跑时全靠它区分）
+                AndroidStringText(
+                    text = taskTitle ?: taskMessage
+                        ?: androidText(stringResource(R.string.main_task_working)),
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 2
+                )
+
+                //当前步骤：标题有了才单独显示，否则上面那行就是步骤本身
+                if (taskTitle != null) {
+                    taskMessage?.let { message ->
+                        AndroidStringText(
+                            text = message,
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 2
+                        )
+                    }
                 }
 
                 if (taskProgress < 0) { //负数则代表不确定

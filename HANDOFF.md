@@ -100,7 +100,19 @@
 - 输入框：`SmallOutlinedEditField` 的 `label` 是**固定标题**，不能当提示语用；
   AI 输入框改用 `placeholder` + 新增的 `minLines` / `maxLines`（最多 5 行，超出框内滚动）
 
-**七、下载与提示词**
+**七、任务面板与下载反馈（27.8.0）**
+
+- 顶部那条**不确定进度**小进度条只在有任务时出现，任务结束自动隐藏；点击展开任务面板
+- 任务面板的每一条现在都是「详细条目」：标题 → 当前步骤 → 进度条 → 百分比 → 速度 → 取消
+  - `Task` 新增 `title` 状态（`updateTitle()`）；**没有加构造参数**，避免动到全部 `Task.runTask` 调用点
+  - 需要标题的任务自己调：`main_task_install_game` / `main_task_install_modpack` / `main_task_install_resource`
+  - 没设标题的任务回退显示 `message`，再没有就显示「正在处理…」
+- 游戏本体 / 整合包 / 资源安装全部进 `TaskSystem`：**同一个列表里共存**，可同时跑、可单独取消
+- 取消会连带取消真正的安装器（`GameInstaller.cancelInstall()` / `ModPackInstaller.cancelInstall()`），
+  不会出现「界面说取消了、后台还在下」
+- 已删除死代码 `ui/components/DownloadTasksIndicator.kt`（大进度卡片残留）
+
+**八、下载与提示词**
 
 - 下载页移除大块进度卡片，只保留顶部细进度条；游戏本体安装静默无弹窗
 - 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，

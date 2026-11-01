@@ -45,6 +45,18 @@ class Task private constructor(
     /** 任务进度状态 */
     val progress = _progress.asStateFlow()
 
+    private val _title = MutableStateFlow<AndroidStringText?>(null)
+    /**
+     * 任务标题：说明「这个任务在干什么」（例如：安装 1.20.1 Fabric）。
+     *
+     * 与 [message] 的区别：[message] 是**当前步骤**，会一直变；
+     * 标题是整条任务的名称，任务列表里靠它区分多个并行任务。
+     *
+     * ⚠️ 不在构造参数里加，避免影响全部已有的 `Task.runTask(...)` 调用点；
+     * 需要标题的任务在跑起来之后自己调 [updateTitle]。
+     */
+    val title = _title.asStateFlow()
+
     private val _message = MutableStateFlow<AndroidStringText?>(null)
     /** 任务消息状态 */
     val message = _message.asStateFlow()
@@ -68,6 +80,13 @@ class Task private constructor(
         this._progress.update {
             (percentage.takeIf { it.isFinite() } ?: 0f).coerceIn(-1f, 1f)
         }
+    }
+
+    /**
+     * 更新任务标题
+     */
+    fun updateTitle(text: AndroidStringText?) {
+        this._title.update { text }
     }
 
     /**

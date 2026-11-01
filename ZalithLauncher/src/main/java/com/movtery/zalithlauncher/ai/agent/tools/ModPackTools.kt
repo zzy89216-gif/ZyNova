@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ai.agent.tools
 
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.agent.AITool
 import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
@@ -190,6 +191,9 @@ private suspend fun installModPackWithProgress(
             id = taskId,
             task = { task ->
                 task.updateProgress(-1f)
+                task.updateTitle(
+                    androidText(R.string.main_task_install_modpack, version.platformDisplayName())
+                )
                 task.updateMessage(androidText("正在下载并解析整合包…"))
 
                 val installer = ModPackInstaller(

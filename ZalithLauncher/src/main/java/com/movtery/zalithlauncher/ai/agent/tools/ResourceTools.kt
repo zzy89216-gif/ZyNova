@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ai.agent.tools
 
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.agent.AITool
 import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
@@ -251,6 +252,7 @@ private suspend fun installResourceWithProgress(
             id = taskId,
             task = { task ->
                 task.updateProgress(-1f)
+                task.updateTitle(androidText(R.string.main_task_install_resource, projectId))
                 task.updateMessage(androidText("正在解析 ${projectId} 的兼容版本…"))
                 val outcome = ResourceManager.installToInstance(
                     platform = platform,

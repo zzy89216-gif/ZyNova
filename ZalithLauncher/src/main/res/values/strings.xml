@@ -172,6 +172,11 @@
     <!-- Main Menu -->
     <string name="main_launch_game">Launch</string>
     <string name="main_task_menu">Task Menu</string>
+    <string name="main_task_count">%1$d tasks running</string>
+    <string name="main_task_working">Working…</string>
+    <string name="main_task_install_game">Installing %1$s</string>
+    <string name="main_task_install_modpack">Installing modpack %1$s</string>
+    <string name="main_task_install_resource">Installing %1$s</string>
     <!--  Download  -->
     <string name="download_category_game">Game</string>
     <string name="download_category_modpack">Modpack</string>

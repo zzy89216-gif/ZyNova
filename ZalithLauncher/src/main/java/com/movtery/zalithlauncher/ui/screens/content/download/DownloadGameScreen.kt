@@ -57,6 +57,7 @@ import com.movtery.zalithlauncher.game.download.jvm_server.isProcessStartRefused
 import com.movtery.zalithlauncher.game.version.download.DownloadFailedException
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.notification.NotificationManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.NotificationCheck
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
@@ -140,6 +141,9 @@ private class GameDownloadViewModel(): ViewModel() {
                 id = mirrorId,
                 task = { task ->
                     task.updateProgress(0f)
+                    task.updateTitle(
+                        androidText(R.string.main_task_install_game, info.customVersionName)
+                    )
                     while (true) {
                         val current = installer
                         val list = current?.tasksFlow?.value.orEmpty()

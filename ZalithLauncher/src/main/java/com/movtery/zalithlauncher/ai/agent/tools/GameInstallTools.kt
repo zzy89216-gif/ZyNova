@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ai.agent.tools
 
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.agent.AITool
 import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
@@ -41,6 +42,7 @@ import com.movtery.zalithlauncher.game.download.game.GameInstaller
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersion
 import com.movtery.zalithlauncher.game.versioninfo.MinecraftVersions
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.toAndroidString
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CancellationException
@@ -430,6 +432,7 @@ internal object GameInstallRunner {
                     id = mirrorId,
                     task = { task ->
                         task.updateProgress(0f)
+                        task.updateTitle(androidText(R.string.main_task_install_game, name))
                         while (true) {
                             val current = active ?: break
                             val list = current.installer.tasksFlow.value

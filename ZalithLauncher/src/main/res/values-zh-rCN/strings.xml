@@ -173,6 +173,11 @@
     <!--  主菜单  -->
     <string name="main_launch_game">启动游戏</string>
     <string name="main_task_menu">任务菜单</string>
+    <string name="main_task_count">正在进行 %1$d 个任务</string>
+    <string name="main_task_working">正在处理…</string>
+    <string name="main_task_install_game">安装 %1$s</string>
+    <string name="main_task_install_modpack">安装整合包 %1$s</string>
+    <string name="main_task_install_resource">安装资源 %1$s</string>
     <!--  下载  -->
     <string name="download_category_game">游戏</string>
     <string name="download_category_modpack">整合包</string>

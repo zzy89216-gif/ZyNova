@@ -157,6 +157,11 @@
     <!--  主選單  -->
     <string name="main_launch_game">啟動遊戲</string>
     <string name="main_task_menu">任務選單</string>
+    <string name="main_task_count">正在進行 %1$d 個任務</string>
+    <string name="main_task_working">正在處理…</string>
+    <string name="main_task_install_game">安裝 %1$s</string>
+    <string name="main_task_install_modpack">安裝整合包 %1$s</string>
+    <string name="main_task_install_resource">安裝資源 %1$s</string>
     <!--  下載  -->
     <string name="download_category_game">遊戲</string>
     <string name="download_category_modpack">模組包</string>
