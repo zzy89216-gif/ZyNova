@@ -144,6 +144,14 @@ private class GameDownloadViewModel(): ViewModel() {
                     task.updateTitle(
                         androidText(R.string.main_task_install_game, info.customVersionName)
                     )
+                    //⚠️ installer 是在 submitTask **之后**才赋值的。
+                    //   这里如果不等它挂上，第一次读到的就是 null，会被当成「已经装完」，
+                    //   任务瞬间结束 —— 表现就是「点了下载，上面什么都不出现」。
+                    var waited = 0
+                    while (installer == null && waited < INSTALLER_ATTACH_TIMEOUT_MS) {
+                        delay(100)
+                        waited += 100
+                    }
                     while (true) {
                         val current = installer
                         val list = current?.tasksFlow?.value.orEmpty()
@@ -206,6 +214,9 @@ private class GameDownloadViewModel(): ViewModel() {
         //安装继续在后台跑；只有用户明确点「取消安装」才真正取消。
     }
 }
+
+/** 等待安装器挂到 ViewModel 上的最长时间：超过就认为这次安装没起来 */
+private const val INSTALLER_ATTACH_TIMEOUT_MS = 10_000L
 
 @Composable
 private fun rememberGameDownloadViewModel(

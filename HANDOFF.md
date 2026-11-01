@@ -140,6 +140,9 @@
 
 **十、27.8.0 发布后修复（同日）**
 
+- **点下载顶部完全没反馈（根因）**：`DownloadGameScreen.install()` 先提交镜像进度任务、
+  后赋值 `installer`，任务读到 `null` 就以为装完了 → 立刻结束，顶部进度条一闪都不闪。
+  修复：镜像任务先等安装器挂上（上限 10s），再镜像进度；只由 `onInstalled` / `onError` 结束
 - **点下载就自动弹出详细任务面板**：`launcherTaskMenuExpanded` 默认值 `true` → `false`；
   任务清空时自动收起；老用户用 MMKV 键 `taskMenuCollapsedMigrated` 一次性迁移
 - **设置页动画参差不齐 / 滚动发卡**：`AnimatedColumn` / `AnimatedRow` / `AnimatedLazyColumn`

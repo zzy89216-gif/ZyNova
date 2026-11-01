@@ -41,6 +41,13 @@
     改前自动备份 `options.txt.bak`，`value` 传空字符串表示删除该键、恢复游戏默认
   - 从此不再需要模型直接手写 `version.config` 的 JSON（那是最容易把整份配置写坏的做法）
 
+- **点下载后顶部完全没反馈（最严重的一个）**
+  - 根因：`DownloadGameScreen.install()` 先把「镜像进度任务」提交进 `TaskSystem`，**之后**才把
+    `GameInstaller` 赋给 `installer` 字段。镜像任务一起跑就读到 `null`，把「安装器没了」当成
+    「已经装完」，立刻推进度到 100% 并结束 —— 于是顶部细进度条**一闪都不闪**，任务列表也打不开；
+    但 `GameInstaller` 本身在 `TaskSystem.appScope` 里继续跑，所以下载其实正常
+  - 修复：镜像任务先**等安装器挂上**（最多 10 秒），再进入进度镜像循环；
+    只有安装器被 `onInstalled` / `onError` 清空时才结束任务
 - **点下载就弹出大面板、顶部细进度条看不到**
   - 根因：`launcherTaskMenuExpanded`（详细任务面板的展开状态）默认值是 `true`，
     于是一有任务，左侧大面板就自动滑出，同时把顶部那条细进度条挡掉
