@@ -2455,6 +2455,9 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 > - **开发与发布流程**：需求 → 源码分析 → 改代码 → push 触发 Actions 编译 → 真机验证 → Release
 > - **多语言文档**：简中 / 英 / 繁中 / 日 / 韩 / 俄，六份必须同步（版本徽标、更新要点、功能列表）
 > - **历史版本要点**：见本文件各版本章节；README 只列当前版本
+> - **文档入口必须是表格**（内容 / 文件两列），不要再退回一行「A · B · C」的写法
+> - **README 必须保留「支持」小节**（问题反馈 / Discord / 赞助 <https://afdian.com/a/hizzy>），
+>   精简时不要连赞助一起删掉
 > - **登录与渲染器细节**：见本文件 26.4.x / 27.4.0 / 27.7.2 章节与 `THIRD_PARTY_NOTICES.md`
 
 

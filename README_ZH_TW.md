@@ -37,9 +37,22 @@
 - 下載：<https://github.com/zzy89216-gif/ZyNova/releases>
 - 建置：JDK 17 + Android SDK / NDK，執行 `./gradlew ZalithLauncher:assembleRelease`
 
-## 📚 文档
+## 📚 文件
 
-[CHANGELOG.md](CHANGELOG.md) · [HANDOFF.md](HANDOFF.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · [LICENSE](LICENSE)
+| 內容 | 檔案 |
+|---|---|
+| 更新日誌 | [CHANGELOG.md](CHANGELOG.md) |
+| 交接 / 架構 / 開發流程 | [HANDOFF.md](HANDOFF.md) |
+| 第三方授權 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| 授權 | [LICENSE](LICENSE) |
+
+
+
+## 💖 支持
+
+- 回報問題：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>
+- 贊助：<https://afdian.com/a/hizzy>
 
 ## ⚖️ 授權
 

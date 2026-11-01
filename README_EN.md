@@ -39,7 +39,20 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 ## 📚 Docs
 
-[CHANGELOG.md](CHANGELOG.md) · [HANDOFF.md](HANDOFF.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · [LICENSE](LICENSE)
+| Content | File |
+|---|---|
+| Changelog | [CHANGELOG.md](CHANGELOG.md) |
+| Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
+| Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| License | [LICENSE](LICENSE) |
+
+
+
+## 💖 Support
+
+- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord: <https://discord.gg/QwPpZQHrTa>
+- Sponsor: <https://afdian.com/a/hizzy>
 
 ## ⚖️ License
 

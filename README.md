@@ -39,7 +39,20 @@
 
 ## 📚 文档
 
-[CHANGELOG.md](CHANGELOG.md) · [HANDOFF.md](HANDOFF.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · [LICENSE](LICENSE)
+| 内容 | 文件 |
+|---|---|
+| 更新日志 | [CHANGELOG.md](CHANGELOG.md) |
+| 交接 / 架构 / 开发流程 | [HANDOFF.md](HANDOFF.md) |
+| 第三方许可证 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| 许可证 | [LICENSE](LICENSE) |
+
+
+
+## 💖 支持
+
+- 反馈问题：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>
+- 赞助：<https://afdian.com/a/hizzy>
 
 ## ⚖️ 许可证
 

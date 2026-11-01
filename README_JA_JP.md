@@ -37,9 +37,22 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - ダウンロード：<https://github.com/zzy89216-gif/ZyNova/releases>
 - ビルド：JDK 17 と Android SDK / NDK を用意し `./gradlew ZalithLauncher:assembleRelease`
 
-## 📚 Docs
+## 📚 ドキュメント
 
-[CHANGELOG.md](CHANGELOG.md) · [HANDOFF.md](HANDOFF.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · [LICENSE](LICENSE)
+| 内容 | ファイル |
+|---|---|
+| 更新履歴 | [CHANGELOG.md](CHANGELOG.md) |
+| 引き継ぎ / 構成 / 開発手順 | [HANDOFF.md](HANDOFF.md) |
+| 第三者ライセンス | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| ライセンス | [LICENSE](LICENSE) |
+
+
+
+## 💖 サポート
+
+- 不具合報告：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>
+- 支援：<https://afdian.com/a/hizzy>
 
 ## ⚖️ ライセンス
 

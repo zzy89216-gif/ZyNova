@@ -37,9 +37,22 @@
 - Загрузка: <https://github.com/zzy89216-gif/ZyNova/releases>
 - Сборка: JDK 17 и Android SDK / NDK, затем `./gradlew ZalithLauncher:assembleRelease`
 
-## 📚 Docs
+## 📚 Документация
 
-[CHANGELOG.md](CHANGELOG.md) · [HANDOFF.md](HANDOFF.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · [LICENSE](LICENSE)
+| Содержание | Файл |
+|---|---|
+| История изменений | [CHANGELOG.md](CHANGELOG.md) |
+| Передача / архитектура / процесс | [HANDOFF.md](HANDOFF.md) |
+| Сторонние лицензии | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| Лицензия | [LICENSE](LICENSE) |
+
+
+
+## 💖 Поддержка
+
+- Проблемы: <https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord: <https://discord.gg/QwPpZQHrTa>
+- Поддержать: <https://afdian.com/a/hizzy>
 
 ## ⚖️ Лицензия
 
