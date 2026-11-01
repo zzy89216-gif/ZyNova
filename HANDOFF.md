@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.8.0**（`launcher_version_code=270800`）
+**当前版本：27.8.1**（`launcher_version_code=270801`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -34,13 +34,22 @@
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
 
+### 27.8.1 27.8.0 的补丁版（下载进度反馈 + 任务面板 + 动画）✅
+
+- **点下载后顶部没反馈（根因）**：`DownloadGameScreen.install()` 先提交镜像任务、后赋值 `installer`，
+  镜像任务读到 `null` 就当装完了 → 立刻结束。修复：先等安装器挂上（上限 10s）再镜像进度
+- **任务面板不再自动弹出**：`launcherTaskMenuExpanded` 默认 `false`；任务清空自动收起；
+  老用户一次性迁移（MMKV 键 `taskMenuCollapsedMigrated`）
+- **设置页动画统一**：`staggeredDelay()`，30ms 递增、总量封顶 180ms，不再 `index * 50ms` 无限拖尾
+- ⚠️ **为什么必须发新版本而不是覆盖 27.8.0**：应用内更新按 `versionCode` 判断，
+  同版本号替换 APK 老用户永远收不到更新
+
 ### 27.8.0 Agent 能装游戏 / 装整合包 / 改配置，下载彻底静默 ✅
 
 > **已发布（含修补）**：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0>
-> 首次打包的 APK 缺了三处修补（**点下载后顶部没反馈** / 任务面板默认收起 / 动画统一），
-> 已按维护者要求**保留 27.8.0 版本号**、
-> 把 tag 与 Release 产物重新指向修补提交后重发（`release_ci.yml` 自动构建并上传
-> `ZyNova-27.8.0.apk` 与 `mapping.universal.zip`）。之后再改文档仍以 `main` 为准。
+> 本版本已按原样发布（tag `v27.8.0` → `1f82bc2`）。它已知的三处体验问题
+> （点下载顶部没反馈 / 任务面板自动弹出 / 设置页动画拖尾）**不在 27.8.0 里修**，
+> 而是以 **27.8.1** 补丁版发布 —— 同版本号替换 APK 不会触发应用内更新。
 
 **一、收藏工具（`ai/agent/tools/FavoriteTools.kt`）**
 

@@ -2,44 +2,12 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
-## [27.8.0] - 2026-11-01
+## [27.8.1] - 2026-11-01
 
-本版本把 Agent 从「会说」推到「会做」：新增游戏本体 / 整合包 / 资源 / 实例配置四类工具（工具数 25 → 34），
-默认权限模式改为「完全控制」，下载与安装全部静默并统一进顶部任务面板；
-同时修掉了 NeoForge 因镜像覆盖不全而频繁下载失败、卡死的问题。
+27.8.0 的补丁版：只修三处体验问题，功能与 27.8.0 一致。
+**老用户必须升到本版本**——同一版本号下的 APK 即使被替换，应用内更新也不会提示。
 
-### ✨ 新增
-
-- **AI 工具：收藏（`list_favorites` / `remove_favorite`）**
-  - `list_favorites`：一次返回在线收藏（平台 / 项目 ID / 标题 / 类型 / 是否失效）与
-    本地归档（名称 / 类型 / 大小 / 导入时间 / 文件名），供模型直接引用
-  - `remove_favorite`：`target=online` 只取消在线标记、不动本地文件；
-    `target=archive` 只删本地副本、不动在线收藏 —— 两类收藏的独立性在工具层也是硬约束
-  - 在线收藏拿到 `platform + project_id` 后可直接交给 `install_resource` 安装（含必需前置）
-- **AI 工具：游戏本体安装（`install_game` / `install_status` / `list_downloadable_versions`）**
-  - `install_game`：真的下载并安装一个实例，走「下载 → 游戏」完全相同的 `GameInstaller` 链路
-    （原版核心 + 库 + 资源 + 加载器一起装好），支持 `vanilla` / `fabric` / `quilt` / `legacyfabric` /
-    `forge` / `neoforge` / `optifine` / `cleanroom`
-  - 只需给 `game_version`；加载器版本不指定就自动挑最新稳定版，实例名自动生成（例如 `1.20.1 Fabric 0.15.11`）
-  - Fabric / Quilt / Legacy Fabric 会自动带上对应 API 模组，与下载页行为一致
-  - 安装是**静默后台任务**：立即返回「已开始」，进度只显示在顶部细进度条；
-    `install_status` 可查真实进度、当前步骤与最终结果（成功 / 失败原因）
-  - 同名实例已存在时不会静默覆盖，必须显式传 `overwrite=true`
-  - `list_downloadable_versions`：列出可安装的正式版 / 快照版本号，避免模型瞎猜版本号
-- **AI 工具：整合包安装（`install_modpack`）**
-  - 走 `ModPackInstaller`，与「下载 → 整合包」页面完全同一条链路
-  - 只需 `platform` + `project_id`；整合包文件版本不传就自动选最新正式版
-  - 会**新建一个独立实例**（自动装好游戏版本、模组加载器、全部模组与配置），现有实例与它们的模组不受影响
-  - 实例重名会自动加序号（`名字 (2)`），文件名非法字符会被替换；工具**等到真正装完**才返回结果
-  - AI 发起的安装没有「是否使用移动网络」确认界面，因此按「同意」处理，避免永久卡在等待确认上
-- **AI 工具：实例配置（`get_instance_config` / `set_instance_config` / `set_game_option`）**
-  - `get_instance_config`：用人话读出渲染器、驱动、图形 API、Java 运行时、JVM 参数、内存分配、
-    版本隔离、完整性检查、控制布局、自定义游戏目录、自动进服地址，外加 `options.txt` 常用项
-  - `set_instance_config`：按**人话键名**改实例启动配置（`renderer` / `ram_mb` / `isolation` / `jvm_args` …），
-    一次只改一项，写前读、写后回读校验；渲染器标识符、图形 API、隔离状态都做取值校验
-  - `set_game_option`：只改 `options.txt` 里指定的那一行（视距 / GUI 缩放 / 语言 / FPS 上限 / 粒子 …），
-    改前自动备份 `options.txt.bak`，`value` 传空字符串表示删除该键、恢复游戏默认
-  - 从此不再需要模型直接手写 `version.config` 的 JSON（那是最容易把整份配置写坏的做法）
+### 🐞 修复
 
 - **点下载后顶部完全没反馈（最严重的一个）**
   - 根因：`DownloadGameScreen.install()` 先把「镜像进度任务」提交进 `TaskSystem`，**之后**才把
@@ -102,6 +70,51 @@
   - 修复（`game/addons/mirror/BMCLAPI.kt`）：镜像前缀改为整段 `https://maven.neoforged.net/releases`。
     实测 BMCLAPI 的 `/maven` 代理**整个仓库**（`/maven/cpw/mods/...`、`/maven/org/ow2/asm/...` 均 302 → 200），
     于是 47 个库全部走国内镜像；镜像缺的制品仍会快速 404，`HostHealth` 不会把 404/410 记成主机故障，由换源机制回退官方
+### 📝 说明
+
+- 只改了默认值、动画参数与一处任务启动顺序，未改动数据结构、MMKV 键名语义或 AI 工具行为
+- 回退：设置 → 启动器 → 任务菜单展开（点一次恢复常驻展开）；动画节奏在
+  `AnimatedColumn` / `AnimatedRow` / `AnimatedLazyColumn` 的 `delayIncrement` 参数
+
+## [27.8.0] - 2026-11-01
+
+本版本把 Agent 从「会说」推到「会做」：新增游戏本体 / 整合包 / 资源 / 实例配置四类工具（工具数 25 → 34），
+默认权限模式改为「完全控制」，下载与安装全部静默并统一进顶部任务面板；
+同时修掉了 NeoForge 因镜像覆盖不全而频繁下载失败、卡死的问题。
+
+### ✨ 新增
+
+- **AI 工具：收藏（`list_favorites` / `remove_favorite`）**
+  - `list_favorites`：一次返回在线收藏（平台 / 项目 ID / 标题 / 类型 / 是否失效）与
+    本地归档（名称 / 类型 / 大小 / 导入时间 / 文件名），供模型直接引用
+  - `remove_favorite`：`target=online` 只取消在线标记、不动本地文件；
+    `target=archive` 只删本地副本、不动在线收藏 —— 两类收藏的独立性在工具层也是硬约束
+  - 在线收藏拿到 `platform + project_id` 后可直接交给 `install_resource` 安装（含必需前置）
+- **AI 工具：游戏本体安装（`install_game` / `install_status` / `list_downloadable_versions`）**
+  - `install_game`：真的下载并安装一个实例，走「下载 → 游戏」完全相同的 `GameInstaller` 链路
+    （原版核心 + 库 + 资源 + 加载器一起装好），支持 `vanilla` / `fabric` / `quilt` / `legacyfabric` /
+    `forge` / `neoforge` / `optifine` / `cleanroom`
+  - 只需给 `game_version`；加载器版本不指定就自动挑最新稳定版，实例名自动生成（例如 `1.20.1 Fabric 0.15.11`）
+  - Fabric / Quilt / Legacy Fabric 会自动带上对应 API 模组，与下载页行为一致
+  - 安装是**静默后台任务**：立即返回「已开始」，进度只显示在顶部细进度条；
+    `install_status` 可查真实进度、当前步骤与最终结果（成功 / 失败原因）
+  - 同名实例已存在时不会静默覆盖，必须显式传 `overwrite=true`
+  - `list_downloadable_versions`：列出可安装的正式版 / 快照版本号，避免模型瞎猜版本号
+- **AI 工具：整合包安装（`install_modpack`）**
+  - 走 `ModPackInstaller`，与「下载 → 整合包」页面完全同一条链路
+  - 只需 `platform` + `project_id`；整合包文件版本不传就自动选最新正式版
+  - 会**新建一个独立实例**（自动装好游戏版本、模组加载器、全部模组与配置），现有实例与它们的模组不受影响
+  - 实例重名会自动加序号（`名字 (2)`），文件名非法字符会被替换；工具**等到真正装完**才返回结果
+  - AI 发起的安装没有「是否使用移动网络」确认界面，因此按「同意」处理，避免永久卡在等待确认上
+- **AI 工具：实例配置（`get_instance_config` / `set_instance_config` / `set_game_option`）**
+  - `get_instance_config`：用人话读出渲染器、驱动、图形 API、Java 运行时、JVM 参数、内存分配、
+    版本隔离、完整性检查、控制布局、自定义游戏目录、自动进服地址，外加 `options.txt` 常用项
+  - `set_instance_config`：按**人话键名**改实例启动配置（`renderer` / `ram_mb` / `isolation` / `jvm_args` …），
+    一次只改一项，写前读、写后回读校验；渲染器标识符、图形 API、隔离状态都做取值校验
+  - `set_game_option`：只改 `options.txt` 里指定的那一行（视距 / GUI 缩放 / 语言 / FPS 上限 / 粒子 …），
+    改前自动备份 `options.txt.bak`，`value` 传空字符串表示删除该键、恢复游戏默认
+  - 从此不再需要模型直接手写 `version.config` 的 JSON（那是最容易把整份配置写坏的做法）
+
 - **资源安装装错目录**：`install_resource` 现在先向平台确认项目的**真实资源类型**
   （模组 / 资源包 / 光影 / 存档），再决定装进 `mods` / `resourcepacks` / `shaderpacks` / `saves`；
   以前靠模型自己传 `type`，传错就会「装好了但游戏里看不到」。模型传错时会自动纠正并在结果里说明
