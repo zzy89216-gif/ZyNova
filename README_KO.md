@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
+[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **[한국어](README_KO.md)** | [Русский](README_RU.md)
 
@@ -32,8 +32,10 @@
 
 ---
 
-## ✨ 27.7.1 하이라이트
+## ✨ 27.7.2 하이라이트
 
+- **즐겨찾기 통합**: 온라인 즐겨찾기(Modrinth / CurseForge, 한 번에 설치 및 필수 선행 모드 자동 다운로드)와 로컬 보관을 한 페이지 두 구역으로 통합. 다운로드 화면 왼쪽에서도 진입 가능
+- **렌더러 페이지 분리**: MobileGlues / Ironized Zink / GL4ES 각각 별도 페이지로
 - **설정을 7개 분류로 재구성**: 기본 / 게임 / 렌더러 / 네트워크 및 다운로드 / AI / 고급 / 정보 및 지원
 - **네트워크 및 다운로드**: 연결 수, 연결/읽기 시간 초과, 재시도 횟수 조정 가능. 서비스별로 다운로드 소스를 변경할 수 있으며(잘못된 값은 공식 주소로 자동 복귀), 캐시 확인 및 정리 지원
 - **렌더러 설정 통합**: 선택한 렌더러의 설정만 표시하고, 모든 조정 가능한 매개변수를 '고급 설정'에 모음

@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
+[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **[Русский](README_RU.md)**
 
@@ -32,8 +32,10 @@
 
 ---
 
-## ✨ Что нового в 27.7.1
+## ✨ Что нового в 27.7.2
 
+- **Избранное объединено**: онлайн-избранное (Modrinth / CurseForge, установка в один клик с автозагрузкой зависимостей) и локальный архив — две секции на одной странице; также доступно из боковой панели загрузок
+- **Страницы рендереров разделены**: MobileGlues / Ironized Zink / GL4ES теперь на отдельных страницах
 - **Настройки разделены на семь категорий**: Основные / Игра / Рендерер / Сеть и загрузки / AI / Дополнительные / О программе
 - **Сеть и загрузки**: можно менять число соединений, таймауты подключения и чтения, число повторов; источник загрузки задаётся отдельно для каждого сервиса (неверный адрес автоматически откатывается к официальному); доступны просмотр и очистка кеша
 - **Настройки рендереров объединены**: показываются только параметры выбранного рендерера, все доступные параметры собраны в «Дополнительных настройках»

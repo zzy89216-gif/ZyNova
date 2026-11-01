@@ -222,7 +222,9 @@ object FavoriteProjectsRepository {
             //条目可能在刷新过程中被移除，仅更新仍然存在的条目
             mutex.withLock {
                 projects[key]?.let { current ->
-                    if (!remote.platformAvailable()) {
+                    //本仓库的 PlatformProject 没有 platformAvailable()，
+                    //用「拿得到标题」作为项目仍可用的近似判断（拿不到标题基本就是没了）
+                    if (remote.platformTitle().isBlank()) {
                         //项目被平台标记为不可见（如已删除），标记条目失效
                         markInvalid(key, current)
                     } else {
@@ -264,7 +266,7 @@ object FavoriteProjectsRepository {
         val iconUrl = remote.platformIconUrl()
         val title = remote.platformTitle()
         val description = remote.platformSummary() ?: ""
-        val authors = remote.platformAuthors()
+        val authors = listOfNotNull(remote.platformAuthor()?.takeIf { it.isNotBlank() })
 
         val unchanged = classes == cached.classes &&
                 iconUrl == cached.iconUrl &&
@@ -312,7 +314,7 @@ fun PlatformSearchData.toFavoriteProject(classes: PlatformClasses): FavoriteProj
     iconUrl = platformIconUrl(),
     title = platformTitle(),
     description = platformDescription(),
-    authors = platformAuthors(),
+    authors = platformAuthor()?.let { listOf(it) } ?: emptyList(),
     classes = classes,
     followTime = System.currentTimeMillis()
 )
@@ -325,7 +327,7 @@ fun PlatformProject.toFavoriteProject(defaultClasses: PlatformClasses): Favorite
     iconUrl = platformIconUrl(),
     title = platformTitle(),
     description = platformSummary() ?: "",
-    authors = platformAuthors(),
+    authors = platformAuthor()?.let { listOf(it) } ?: emptyList(),
     classes = platformClasses(defaultClasses),
     followTime = System.currentTimeMillis()
 )

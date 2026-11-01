@@ -18,6 +18,18 @@
 
 package com.movtery.zalithlauncher.ui.screens.content
 
+import com.movtery.zalithlauncher.game.download.resources.ResourceType
+import com.movtery.zalithlauncher.game.download.resources.ResourceManager
+import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
+import com.movtery.zalithlauncher.game.download.assets.platform.Platform
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
+import coil3.compose.AsyncImage
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.draw.clip
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Tab
+import androidx.compose.foundation.clickable
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -92,9 +104,8 @@ private const val LARGE_FILE_THRESHOLD = 512L * 1024L * 1024L
  * - 删除归档文件也**不会**取消在线收藏。
  */
 @Composable
-fun FavoritesScreen(
-    key: NormalNavKey.Favorites,
-    backStackViewModel: ScreenBackStackViewModel,
+private fun LocalArchiveContent(
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -180,13 +191,9 @@ fun FavoritesScreen(
         }
     }
 
-    BaseScreen(
-        screenKey = key,
-        currentKey = backStackViewModel.mainScreen.currentKey
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(all = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -378,6 +385,190 @@ fun FavoritesScreen(
                 message = text
             }
         )
+}
+
+/**
+ * 收藏（合并版，议题 #39 + 上游 ZL2 的资源收藏）
+ *
+ * 两个分段：
+ * - **在线收藏**：沿搬上游 ZalithLauncher2 的实现，收藏的是「资源项目」（Modrinth / CurseForge），
+ *   点进去可看详情并安装（走现有安装链路，含自动前置）；
+ * - **本地归档**：ZyNova 自己的实现，保存实际文件（私有目录 + SHA-256 去重），离线可用。
+ *
+ * ⚠️ 两段完全独立：删除本地副本不会取消在线收藏，取消在线收藏也不会动本地文件。
+ */
+@Composable
+fun FavoritesScreen(
+    screenKey: TitledNavKey,
+    currentKey: TitledNavKey?,
+) {
+    var tab by remember { mutableStateOf(0) }
+
+    BaseScreen(screenKey = screenKey, currentKey = currentKey) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TabRow(selectedTabIndex = tab, modifier = Modifier.fillMaxWidth()) {
+                Tab(
+                    selected = tab == 0,
+                    onClick = { tab = 0 },
+                    text = { Text(text = stringResource(R.string.favorites_tab_online)) }
+                )
+                Tab(
+                    selected = tab == 1,
+                    onClick = { tab = 1 },
+                    text = { Text(text = stringResource(R.string.favorites_tab_local)) }
+                )
+            }
+
+            when (tab) {
+                0 -> OnlineFavoritesContent()
+                else -> LocalArchiveContent()
+            }
+        }
+    }
+}
+
+/** 在线收藏：搬自上游 ZalithLauncher2 的 FavoriteProjectsRepository */
+@Composable
+private fun OnlineFavoritesContent() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        FavoriteProjectsRepository.ensureLoaded()
+    }
+
+    val entries = FavoriteProjectsRepository.projects.values
+        .sortedByDescending { it.project.followTime }
+
+    var detail by remember { mutableStateOf<FavoriteEntry?>(null) }
+    var installTarget by remember { mutableStateOf<FavoriteEntry?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(all = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.favorites_online_count, entries.size),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            FilledTonalButton(
+                enabled = !refreshing && entries.isNotEmpty(),
+                onClick = {
+                    refreshing = true
+                    scope.launch {
+                        runCatching { FavoriteProjectsRepository.refreshRemote() }
+                        refreshing = false
+                    }
+                }
+            ) {
+                Text(text = stringResource(R.string.favorites_online_refresh))
+            }
+        }
+
+        if (entries.isEmpty()) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.favorites_online_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        entries.forEach { entry ->
+            BackgroundCard(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val icon = entry.remote?.platformIconUrl() ?: entry.project.iconUrl
+                    if (!icon.isNullOrBlank()) {
+                        AsyncImage(
+                            model = icon,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { detail = entry }
+                    ) {
+                        Text(
+                            text = entry.remote?.platformTitle() ?: entry.project.title,
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = buildString {
+                                val remote = entry.remote
+                                val authors = remote?.platformAuthor()?.takeIf { it.isNotBlank() }
+                                    ?: entry.project.authors.joinToString(", ")
+                                if (authors.isNotBlank()) append(authors).append(" · ")
+                                append(
+                                    context.getString(
+                                        R.string.favorites_online_classes,
+                                        entry.project.classes.name
+                                    )
+                                )
+                                if (entry.invalid) {
+                                    append(" · ")
+                                    append(context.getString(R.string.favorites_online_invalid))
+                                }
+                            },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            FavoriteProjectsRepository.unfavorite(
+                                entry.platform,
+                                entry.project.projectId
+                            )
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_favorite_outlined),
+                            contentDescription = stringResource(R.string.favorites_online_remove)
+                        )
+                    }
+                }
+            }
+        }
+
+        detail?.let { entry ->
+            OnlineFavoriteDetailDialog(
+                entry = entry,
+                onDismiss = { detail = null },
+                onInstall = {
+                    detail = null
+                    installTarget = entry
+                }
+            )
+        }
+
+        installTarget?.let { entry ->
+            OnlineInstallDialog(entry = entry, onDismiss = { installTarget = null })
+        }
     }
 }
 
@@ -586,4 +777,141 @@ private fun entrySummary(context: Context, entry: FavoriteEntry): String {
         SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(entry.importedAt))
     }
     return "$type · $size · $time"
+}
+
+/** 在线收藏详情：显示项目信息，并提供「安装到实例」（走统一安装链路，含自动前置） */
+@Composable
+private fun OnlineFavoriteDetailDialog(
+    entry: FavoriteEntry,
+    onDismiss: () -> Unit,
+    onInstall: () -> Unit,
+) {
+    val remote = entry.remote
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = remote?.platformTitle() ?: entry.project.title, maxLines = 2) },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = entry.project.description.ifBlank { "—" },
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = stringResource(
+                        R.string.favorites_online_classes,
+                        entry.project.classes.name
+                    ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                if (entry.invalid) {
+                    Text(
+                        text = stringResource(R.string.favorites_online_invalid),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            if (!entry.invalid) {
+                TextButton(onClick = onInstall) {
+                    Text(stringResource(R.string.favorites_action_install))
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.generic_cancel))
+            }
+        }
+    )
+}
+
+/** 在线收藏 → 选实例 → 走 ResourceManager（matchVersion + installVersion，自动含必需前置） */
+@Composable
+private fun OnlineInstallDialog(
+    entry: FavoriteEntry,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val versions by VersionsManager.versions.collectAsStateWithLifecycle()
+    var running by remember { mutableStateOf(false) }
+    var result by remember { mutableStateOf<String?>(null) }
+
+    AlertDialog(
+        onDismissRequest = { if (!running) onDismiss() },
+        title = { Text(stringResource(R.string.favorites_install_title, entry.project.title)) },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                result?.let { Text(text = it, style = MaterialTheme.typography.bodySmall) }
+                if (result == null) {
+                    if (versions.isEmpty()) {
+                        Text(text = stringResource(R.string.favorites_install_no_instance))
+                    }
+                    versions.forEach { version ->
+                        TextButton(
+                            enabled = !running,
+                            onClick = {
+                                running = true
+                                scope.launch {
+                                    result = runCatching {
+                                        val type = ResourceType.of(entry.project.classes)
+                                        val resolved = ResourceManager.matchVersion(
+                                            platform = entry.platform,
+                                            projectId = entry.project.projectId,
+                                            type = type,
+                                            instance = version
+                                        )
+                                        val installResult = ResourceManager.installVersion(
+                                            version = resolved,
+                                            type = type,
+                                            instance = version
+                                        )
+                                        buildString {
+                                            append(
+                                                context.getString(
+                                                    R.string.favorites_install_done,
+                                                    version.getVersionName()
+                                                )
+                                            )
+                                            if (installResult.missingRequiredDependencies.isNotEmpty()) {
+                                                append("\n")
+                                                append(
+                                                    context.getString(
+                                                        R.string.favorites_install_missing,
+                                                        installResult.missingDependenciesText()
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }.getOrElse { th ->
+                                        context.getString(
+                                            R.string.favorites_import_failed,
+                                            th.message ?: th.javaClass.simpleName
+                                        )
+                                    }
+                                    running = false
+                                }
+                            }
+                        ) {
+                            Text(text = version.getVersionName())
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { if (result != null) onDismiss() else onDismiss() }) {
+                Text(stringResource(if (result == null) R.string.generic_cancel else R.string.generic_confirm))
+            }
+        }
+    )
 }

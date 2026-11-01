@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
+[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
 **[简体中文](README.md)** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -27,8 +27,10 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.7.1 更新要点
+## ✨ 27.7.2 更新要点
 
+- **收藏合并**：在线收藏（Modrinth / CurseForge，含一键安装与自动前置）+ 本地归档，同页两段切换；下载页左侧栏可直接进入
+- **渲染器参数拆页**：MobileGlues / Ironized Zink / GL4ES 各自独立页面，不再堆在高级设置里
 - **设置中心重构为七大分类**：基础设置 / 游戏设置 / 渲染器设置 / 网络与下载 / AI 设置 / 高级设置 / 关于与支持
 - **网络与下载**：连接数、连接超时、读超时、失败重试可调；支持按服务分别修改下载源（填错自动回退官方）；
   可查看并清理下载缓存、管理下载任务

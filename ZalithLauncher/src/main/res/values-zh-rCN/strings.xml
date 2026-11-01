@@ -1803,4 +1803,13 @@
     <string name="settings_mg_advanced_group">MobileGlues 高级键</string>
     <string name="settings_advanced_renderer_zink">Ironized Zink</string>
     <string name="settings_advanced_renderer_gl4es">GL4ES</string>
+    <string name="favorites_tab_online">在线收藏</string>
+    <string name="favorites_tab_local">本地归档</string>
+    <string name="favorites_online_count">共 %1$d 个收藏</string>
+    <string name="favorites_online_refresh">刷新</string>
+    <string name="favorites_online_empty">还没有收藏任何资源。在资源搜索页点「收藏」，这里就会出现。</string>
+    <string name="favorites_online_invalid">已失效</string>
+    <string name="favorites_online_classes">类型：%1$s</string>
+    <string name="favorites_online_remove">取消收藏</string>
+    <string name="download_category_favorites">收藏</string>
 </resources>

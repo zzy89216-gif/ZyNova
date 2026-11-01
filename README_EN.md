@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
+[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
 [简体中文](README.md) | **[English](README_EN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -27,8 +27,10 @@ ZalithLauncher2 release; it is an independently maintained, unofficial fork.
 - Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.7.1 Highlights
+## ✨ 27.7.2 Highlights
 
+- **Favorites merged**: online favorites (Modrinth / CurseForge, with one-click install and automatic dependencies) plus local archive, two sections in one page; also reachable from the download sidebar
+- **Renderer pages split**: MobileGlues / Ironized Zink / GL4ES each get their own page instead of a long list
 - **Settings reorganized into seven categories**: Basics / Game / Renderer / Network & Downloads / AI / Advanced / About & Support
 - **Network & Downloads**: adjust connections, connect/read timeouts and retries; override each download service separately (invalid values fall back to the official one); inspect and clear the download cache
 - **Renderer settings consolidated**: each renderer shows only its own options; every configurable parameter is available under Advanced settings

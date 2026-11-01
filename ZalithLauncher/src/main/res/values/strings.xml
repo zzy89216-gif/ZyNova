@@ -1821,4 +1821,13 @@
     <string name="settings_mg_advanced_group">MobileGlues advanced keys</string>
     <string name="settings_advanced_renderer_zink">Ironized Zink</string>
     <string name="settings_advanced_renderer_gl4es">GL4ES</string>
+    <string name="favorites_tab_online">Online favorites</string>
+    <string name="favorites_tab_local">Local archive</string>
+    <string name="favorites_online_count">%1$d favorites</string>
+    <string name="favorites_online_refresh">Refresh</string>
+    <string name="favorites_online_empty">No favorites yet. Tap the favorite button on a search result and it will show up here.</string>
+    <string name="favorites_online_invalid">Unavailable</string>
+    <string name="favorites_online_classes">Type: %1$s</string>
+    <string name="favorites_online_remove">Remove from favorites</string>
+    <string name="download_category_favorites">Favorites</string>
 </resources>

@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.7.1**（`launcher_version_code=270701`）
+**当前版本：27.7.2**（`launcher_version_code=270702`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,33 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.7.2 渲染器页面拆分 + 资源收藏并入 ✅
+
+**一、渲染器详细参数拆页（按反馈）**
+
+- 新增三个独立页面：`Settings.RendererAdvancedMobileGlues` / `RendererAdvancedZink` / `RendererAdvancedGl4es`
+- 「设置 → 高级设置」只保留三个入口卡；渲染器设置里的状态卡按当前选中项跳到对应页
+- 三页复用设置中心原生骨架，参数与接线位置不变（GL4ES 环境变量、MG `config.json`、Zink 的 MMKV 键）
+
+**二、资源收藏（搬上游 ZalithLauncher2）并入收藏页**
+
+- 数据层照搬：`game/download/assets/favorites/`（`FavoriteProject` / `_MMKV` / `FavoriteProjectsRepository`）
+- 存储沿用上游 MMKV 键名，便于以后从上游迁移
+- 收藏页改为两段：在线收藏 / 本地归档；在线条目可看详情并安装到实例（走统一安装链路，含自动前置）
+- 下载页左侧栏新增「收藏」分类
+- ⚠️ 上游用到 `PlatformProject.platformAvailable()` / `platformAuthors()`，本仓库没有：
+  已改为「标题判空」与单作者字段适配，不要照抄上游原样
+
+**三、涉及文件**
+
+| 文件 | 作用 |
+|---|---|
+| `game/download/assets/favorites/*` | 上游收藏数据层（FavoriteProject / MMKV / Repository） |
+| `ui/screens/content/settings/RendererAdvancedScreens.kt` | 三个渲染器参数独立页 |
+| `ui/screens/content/FavoritesScreen.kt` | 两段式收藏页（在线 + 本地归档） |
+| `ui/screens/NormalNavKey.kt` | 新增三个渲染器页导航键 |
+| `ui/screens/content/DownloadScreen.kt` | 左侧栏「收藏」入口 |
 
 ### 27.7.1 收藏与本地归档（议题 #39）✅
 
@@ -2465,7 +2492,7 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
 - 最新版本：**27.6.1**
-- 历史版本：27.7.0、27.6.0、27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 历史版本：27.7.1、27.7.0、27.6.0、27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：

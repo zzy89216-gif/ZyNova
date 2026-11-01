@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
+[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -27,8 +27,10 @@
 - Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.7.1 のハイライト
+## ✨ 27.7.2 のハイライト
 
+- **お気に入りの統合**: オンラインのお気に入り（Modrinth / CurseForge、ワンクリック導入と依存の自動取得）とローカル保管を 1 ページの 2 セクションに統合。ダウンロード画面の左側からも開けます
+- **レンダラーページの分割**: MobileGlues / Ironized Zink / GL4ES をそれぞれ独立したページに
 - **設定を 7 分類に再編**：基本 / ゲーム / レンダラー / ネットワークとダウンロード / AI / 詳細 / アプリ情報
 - **ネットワークとダウンロード**：接続数・接続タイムアウト・読み取りタイムアウト・再試行回数を調整可能。サービスごとにダウンロード元を変更でき（不正な値は公式に自動フォールバック）、キャッシュの確認と削除も可能
 - **レンダラー設定の統合**：選択中のレンダラーの設定だけを表示し、調整可能な全パラメータを「詳細設定」に集約

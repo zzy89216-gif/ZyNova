@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
+[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
 [简体中文](README.md) | [English](README_EN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -27,8 +27,10 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.7.1 更新重點
+## ✨ 27.7.2 更新重點
 
+- **收藏合併**：線上收藏（Modrinth / CurseForge，含一鍵安裝與自動前置）+ 本機封存，同頁兩段切換；下載頁左側欄可直接進入
+- **渲染器參數拆頁**：MobileGlues / Ironized Zink / GL4ES 各自獨立頁面
 - **設定中心重構為七大分類**：基礎設定 / 遊戲設定 / 渲染器設定 / 網路與下載 / AI 設定 / 進階設定 / 關於與支援
 - **網路與下載**：連線數、連線逾時、讀取逾時、失敗重試可調；可依服務分別修改下載來源（填錯自動回退官方）；可檢視並清理下載快取
 - **渲染器設定整合**：依目前選取的渲染器動態顯示專屬設定；三個渲染器的全部可調參數集中在「進階設定」

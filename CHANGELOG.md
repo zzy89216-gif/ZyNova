@@ -2,6 +2,35 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [27.7.2] - 2026-11-01
+
+本版本拆分渲染器详细参数页面，并把上游 ZalithLauncher2 的资源收藏并入本地归档。
+
+### ✨ 新增
+
+- **资源收藏并入收藏页（议题 #39 扩展）**
+  - 收藏页改为两个分段：**在线收藏** / **本地归档**
+  - 在线收藏搬自上游 ZalithLauncher2：按项目记录（Modrinth / CurseForge），
+    沿用上游 MMKV 键名 `FavoriteModrinthProject` / `FavoriteCurseForgeProject`，便于以后迁移数据
+  - 支持收藏时间排序、失效标记、刷新远端数据、取消收藏
+  - 点击条目可看详情，并可**安装到指定实例**（走统一安装链路 `ResourceManager.matchVersion / installVersion`，
+    必需前置仍然自动下载）
+  - 本地归档保持原有能力：导入、SHA-256 去重、详情与完整性校验、一键安装（含自动前置）、导出、独立删除
+  - 两段互不影响：取消在线收藏不删本地文件，删除本地文件也不取消在线收藏
+- **下载页左侧栏新增「收藏」分类**：资源搜索、收藏、下载集中在一处
+
+### 🔄 变更
+
+- **渲染器详细参数拆成三个独立页面**：MobileGlues / Ironized Zink / GL4ES 各一页，
+  「高级设置」里只保留三个入口，不再把一大串参数堆在同一页
+- 渲染器设置里的状态卡按当前选中的渲染器跳到对应页面（选「自动」时不可点击）
+- 三个新页面复用设置中心原生骨架（`BaseScreen` + `AnimatedColumn` + `SettingsCardColumn`），未另造视觉
+
+### 🐞 修复
+
+- 上游收藏仓库与本仓库 `PlatformProject` 的 API 差异：`platformAvailable()` / `platformAuthors()`
+  在本仓库不存在，改为用标题判空与单作者字段适配
+
 ## [27.7.1] - 2026-11-01
 
 本版本把议题 **#39「本地资源导入与私有收藏归档」** 的界面补齐，并处理下载与安装的几个收尾问题。

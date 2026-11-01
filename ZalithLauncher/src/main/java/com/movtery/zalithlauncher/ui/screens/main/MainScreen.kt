@@ -677,8 +677,8 @@ private fun NavigationUI(
                 }
                 entry<NormalNavKey.Favorites> { key ->
                     FavoritesScreen(
-                        key = key,
-                        backStackViewModel = screenBackStackModel,
+                        screenKey = key,
+                        currentKey = screenBackStackModel.mainScreen.currentKey,
                     )
                 }
                 entry<NormalNavKey.HomePageEditor> {
