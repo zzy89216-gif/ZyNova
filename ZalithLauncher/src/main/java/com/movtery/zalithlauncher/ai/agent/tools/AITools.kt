@@ -36,6 +36,7 @@ import com.movtery.zalithlauncher.ai.agent.AITool
  * | 启动游戏 | 现有启动事件链路（由 ViewModel 注入） |
  * | 搜索与安装 | `ResourceManager` 统一资源核心（含前置依赖递归安装） |
  * | 游戏本体安装 | `GameInstaller`（与「下载 → 游戏」页面同一条安装流程） |
+ * | 整合包安装 | `ModPackInstaller`（与「下载 → 整合包」页面同一条链路） |
  * | 实例配置 | `VersionConfig` / `options.txt`（结构化读写，改动可回读校验） |
  */
 internal fun builtinTools(): List<AITool> = buildList {
@@ -48,5 +49,6 @@ internal fun builtinTools(): List<AITool> = buildList {
     addAll(resourceTools())
     addAll(favoriteTools())
     addAll(gameInstallTools())
+    addAll(modPackTools())
     addAll(instanceConfigTools())
 }

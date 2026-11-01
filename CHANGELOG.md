@@ -27,6 +27,15 @@
     `install_status` 可以查到真实进度、当前步骤与最终结果（成功 / 失败原因）
   - 同名实例已存在时不会静默覆盖，会明确要求 `overwrite=true` 才重装
   - `list_downloadable_versions`：列出可安装的正式版 / 快照版本号，避免模型瞎猜版本号
+- **AI 工具：整合包安装（`install_modpack`）**
+  - 真的装整合包：走 `ModPackInstaller`，与「下载 → 整合包」页面完全同一条链路
+  - 只要 `platform` + `project_id`；整合包文件版本不传就自动选最新正式版
+  - 会**新建一个独立实例**（自动装好游戏版本、模组加载器、全部模组与配置），
+    现有实例与它们的模组完全不受影响；实例重名会自动加序号，非法字符会被替换
+  - 安装期间进度显示在顶部细进度条；工具会**等到真正装完**再返回，
+    失败原因（解析失败 / 加载器不匹配 / 下载失败）如实转述
+  - AI 发起的安装没有「是否使用移动网络」确认界面，因此按「同意」处理，
+    避免安装永远卡在等待确认上
 - **AI 工具：实例配置（`get_instance_config` / `set_instance_config` / `set_game_option`）**
   - `get_instance_config`：用人话读出实例的渲染器、驱动、图形 API、Java 运行时、JVM 参数、
     内存分配、版本隔离、完整性检查、控制布局、自定义游戏目录、自动进服地址，
@@ -42,6 +51,8 @@
 - **资源安装装错目录**：`install_resource` 现在会先向平台确认项目的**真实资源类型**
   （模组 / 资源包 / 光影 / 存档），再决定装进 `mods` / `resourcepacks` / `shaderpacks` / `saves`；
   以前靠模型自己传 `type`，传错就会「装好了但游戏里看不到」。模型传错时会自动纠正并在结果里说明
+- **整合包能被搜索到、能被 `install_resource` 命中**：`search_resources` 新增 `type=modpack`；
+  `install_resource` 命中整合包时会明确指向新的 `install_modpack`
 - **整合包被当成普通资源硬装**：整合包在统一资源模型里没有安装目录，以前会直接把
   `.mrpack` / `.zip` 丢进游戏根目录；现在 `install_resource` 会明确拒绝并提示去整合包安装流程，
   `ResourceInstallManager.install()` 也加了同样的兜底校验

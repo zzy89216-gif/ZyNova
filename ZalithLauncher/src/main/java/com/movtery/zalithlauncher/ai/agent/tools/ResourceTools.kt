@@ -59,7 +59,7 @@ internal fun resourceTools(): List<AITool> = listOf(
                 "query" to AIToolSchema.string("搜索关键词"),
                 "type" to AIToolSchema.string(
                     "资源类型",
-                    enumValues = listOf("mod", "resourcepack", "shader", "save"),
+                    enumValues = listOf("mod", "resourcepack", "shader", "save", "modpack"),
                     default = "mod",
                 ),
                 "platform" to AIToolSchema.string(
@@ -186,8 +186,8 @@ internal fun resourceTools(): List<AITool> = listOf(
         )
         if (actualType == ResourceType.MOD_PACK) {
             return@aiTool "这个项目其实是**整合包**（modpack），不是普通资源。" +
-                "整合包有自己的安装流程（会创建独立实例），当前 install_resource 装不了；" +
-                "请让用户到「下载 → 整合包」页面安装。"
+                "整合包装法不一样（会新建一个独立实例），请改用 install_modpack：" +
+                "install_modpack(platform=\"${platform.name.lowercase()}\", project_id=\"$projectId\")。"
         }
 
         //② 真正安装：交给 TaskSystem，进度出现在顶部细进度条，可以取消
@@ -295,8 +295,9 @@ private fun parseResourceType(raw: String): ResourceType = when (raw.trim().lowe
     "resourcepack", "resource_pack", "resourcepacks", "rp" -> ResourceType.RESOURCE_PACK
     "shader", "shaders", "shaderpack", "shaderpacks" -> ResourceType.SHADER
     "save", "saves", "world" -> ResourceType.SAVE
+    "modpack", "modpacks", "pack", "整合包" -> ResourceType.MOD_PACK
     else -> throw IllegalArgumentException(
-        "未知资源类型「$raw」，只能是 mod / resourcepack / shader / save"
+        "未知资源类型「$raw」，只能是 mod / resourcepack / shader / save / modpack（整合包用 install_modpack 装）"
     )
 }
 

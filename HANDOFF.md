@@ -63,7 +63,19 @@
 - `set_game_option`：只改 `options.txt` 指定行，改前备份 `options.txt.bak`，`value` 传空串 = 删键
 - ⚠️ 不要再让模型直接 `write_file` 写 `version.config`（少字段 / 枚举拼错就会让整份配置失效）
 
-**四、资源下载与安装链路（本轮复查）**
+**四、整合包安装（`ai/agent/tools/ModPackTools.kt`）**
+
+- `install_modpack`：复用 `ModPackInstaller`（与「下载 → 整合包」同一条链路）
+  - 只必填 `platform` + `project_id`；`version_id` 不传则优先最新**正式版**
+  - 会自动 `initFile()` 过滤掉拿不到下载链接的版本
+  - 两个必须「立刻答复」的回调：
+    - `waitForVersionName` → 直接用整合包名（非法字符替换、重名加序号）
+    - `waitForConfirmMobileData` → 直接 `true`（AI 侧没有确认弹窗，否则会永久挂起）
+  - 进度镜像 `installer.tasksFlow` 到 `TaskSystem`；**等安装器真正结束后**才把结果返回给模型
+- ⚠️ 整合包**不是**普通资源：`ResourceInstallManager.install()` 会拒绝 `MOD_PACK`，
+  `install_resource` 命中整合包时会把模型引导到 `install_modpack`
+
+**五、资源下载与安装链路（本轮复查）**
 
 - `install_resource` 增加**资源类型自动探测**：`ResourceManager.detectType()` 走
   `getProjectByVersion()` + `PlatformProject.platformClasses()`，探测失败退回模型给的类型
@@ -75,7 +87,7 @@
   取消时通过 `onFinally` 兜底完成 deferred，模型不会卡在等待上
 - 「已装过」与「装好了」在返回文本里区分开（安装文件数 0 ≠ 失败）
 
-**五、下载与提示词**
+**六、下载与提示词**
 
 - 下载页移除大块进度卡片，只保留顶部细进度条；游戏本体安装静默无弹窗
 - 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，
@@ -1104,7 +1116,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 **4）Agent 工具架构**
 
 - `ai/agent/AITool.kt`：工具接口 + `AIToolRisk`（READ / WRITE / DANGEROUS）+ `AIToolContext`
-- `ai/agent/AIToolRegistry.kt`：注册表，`builtinTools()` 汇总全部工具（27.1.0 为 25 个，27.8.0 起为 33 个）
+- `ai/agent/AIToolRegistry.kt`：注册表，`builtinTools()` 汇总全部工具（27.1.0 为 25 个，27.8.0 起为 34 个）
 - `ai/agent/AIAgent.kt`：主循环（请求 → 工具调用 → 执行 → 结果回灌 → 继续）
   - 权限裁决：**「操作确认」模式下若上层没有确认器，一律拒绝写操作**
   - 工具异常会转成可读文本回灌给模型，让它自行调整
@@ -1123,6 +1135,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 | 搜索与安装 | 2 | `ResourceManager` 统一资源核心（含递归安装必需前置） |
 | 收藏（27.8.0） | 2 | `FavoriteStore` / 上游收藏仓库；在线与本地归档严格分离 |
 | 游戏本体安装（27.8.0） | 3 | `GameInstaller`（与下载页同一条链路）+ `TaskSystem` + `VersionsManager` |
+| 整合包（27.8.0） | 1 | `ModPackInstaller`（与「下载 → 整合包」页面链路一致） |
 | 实例配置（27.8.0） | 3 | `VersionConfig`（结构化读写 + 回读校验）/ `options.txt` 逐行修改 |
 
 **6）UI**
@@ -1818,7 +1831,7 @@ HTTP 403
 | `ai/agent/AIToolRegistry.kt` | 工具注册表 |
 | `ai/agent/AIToolSchema.kt` | JSON Schema 辅助 |
 | `ai/agent/AIAgent.kt` | Agent 主循环 + 权限裁决 |
-| `ai/agent/tools/*.kt` | 33 个内置工具（实例 / 内容 / 文件 / 日志 / 设置 / 启动 / 搜索安装 / 收藏 / 游戏安装 / 实例配置） |
+| `ai/agent/tools/*.kt` | 34 个内置工具（实例 / 内容 / 文件 / 日志 / 设置 / 启动 / 搜索安装 / 收藏 / 游戏安装 / 整合包 / 实例配置） |
 | `ai/ui/AIChatScreen.kt` | AI 聊天界面（同时就是 Agent 界面） |
 | `ai/ui/AIConfigScreen.kt` | AI 配置内容体（27.7.1 起由设置中心承载，函数名为 `AIConfigContent`） |
 | `viewmodel/AIChatViewModel.kt` | 驱动 Agent 循环 + 注入启动/确认回调 |
