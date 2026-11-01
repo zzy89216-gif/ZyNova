@@ -34,14 +34,40 @@
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
 
-### 27.8.0 Agent 收藏工具 + 下载全静默 ✅
+### 27.8.0 Agent 能装游戏、能改配置、能读写收藏 ✅
 
-- 新增 `ai/agent/tools/FavoriteTools.kt`：`list_favorites` / `remove_favorite`
+**一、收藏工具（`ai/agent/tools/FavoriteTools.kt`）**
+
+- `list_favorites` / `remove_favorite`
   - 在线收藏与本地归档**分开返回、分开删除**，工具层也保证两者互不影响
   - 在线收藏可直接交给 `install_resource` 安装（复用现有链路，前置依赖照旧递归安装）
-- 下载页移除大块进度卡片，只保留顶部细进度条
-- 游戏本体安装接入 `TaskSystem`（镜像 `GameInstaller.tasksFlow`），安装静默无弹窗
-- ⚠️ 待办：系统提示词的「工具使用说明」与「下载游戏本体」工具尚未实现，下一轮补齐
+
+**二、游戏本体安装（`ai/agent/tools/GameInstallTools.kt`）**
+
+- `install_game`：真实安装，复用 `GameInstaller`（与「下载 → 游戏」同一条链路）
+  - 支持 vanilla / fabric / quilt / legacyfabric / forge / neoforge / optifine / cleanroom
+  - 只必填 `game_version`；加载器版本自动取最新稳定版，实例名自动按
+    `"<版本> <加载器> <加载器版本>"` 生成
+  - Fabric 系自动带上对应 API 模组（与下载页一致，不要重复装）
+  - 同名实例已存在且未传 `overwrite=true` 时**拒绝**，不静默覆盖
+- 安装由 `GameInstallRunner` 统管：跑在 `TaskSystem.appScope`，另提交一个镜像任务把
+  `GameInstaller.tasksFlow` 的平均进度写进全局任务队列 —— 顶部细进度条是唯一反馈
+- `install_status` 报真实进度 / 当前步骤 / 最终结果；`list_downloadable_versions` 报可装版本号
+
+**三、实例配置（`ai/agent/tools/InstanceConfigTools.kt`）**
+
+- `get_instance_config`：人话读出启动配置（渲染器 / 驱动 / 图形 API / Java 运行时 / JVM 参数 /
+  内存 / 隔离 / 完整性检查 / 控制布局 / 自定义目录 / 进服地址）+ `options.txt` 常用项
+- `set_instance_config`：人话键名改 `VersionConfig`，**一次一项**，写前读、写后回读校验；
+  渲染器标识符、图形 API、隔离状态都有取值校验
+- `set_game_option`：只改 `options.txt` 指定行，改前备份 `options.txt.bak`，`value` 传空串 = 删键
+- ⚠️ 不要再让模型直接 `write_file` 写 `version.config`（少字段 / 枚举拼错就会让整份配置失效）
+
+**四、下载与提示词**
+
+- 下载页移除大块进度卡片，只保留顶部细进度条；游戏本体安装静默无弹窗
+- 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，
+  并把「游戏本体不能下载」的旧说法改成 `install_game` 的正确用法
 
 ### 27.7.2 渲染器页面拆分 + 资源收藏并入 ✅
 
@@ -1066,7 +1092,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 **4）Agent 工具架构**
 
 - `ai/agent/AITool.kt`：工具接口 + `AIToolRisk`（READ / WRITE / DANGEROUS）+ `AIToolContext`
-- `ai/agent/AIToolRegistry.kt`：注册表，`builtinTools()` 汇总 25 个工具
+- `ai/agent/AIToolRegistry.kt`：注册表，`builtinTools()` 汇总全部工具（27.1.0 为 25 个，27.8.0 起为 33 个）
 - `ai/agent/AIAgent.kt`：主循环（请求 → 工具调用 → 执行 → 结果回灌 → 继续）
   - 权限裁决：**「操作确认」模式下若上层没有确认器，一律拒绝写操作**
   - 工具异常会转成可读文本回灌给模型，让它自行调整
@@ -1083,6 +1109,9 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 | 设置读写 | 3 | `AllSettings` + `SettingsRegistry.units()/findUnit()`（含敏感键拒绝名单） |
 | 启动游戏 | 1 | 现有启动事件链路（由 `MainScreen` 注入 `AIToolContext.launchGame`） |
 | 搜索与安装 | 2 | `ResourceManager` 统一资源核心（含递归安装必需前置） |
+| 收藏（27.8.0） | 2 | `FavoriteStore` / 上游收藏仓库；在线与本地归档严格分离 |
+| 游戏本体安装（27.8.0） | 3 | `GameInstaller`（与下载页同一条链路）+ `TaskSystem` + `VersionsManager` |
+| 实例配置（27.8.0） | 3 | `VersionConfig`（结构化读写 + 回读校验）/ `options.txt` 逐行修改 |
 
 **6）UI**
 
@@ -1777,7 +1806,7 @@ HTTP 403
 | `ai/agent/AIToolRegistry.kt` | 工具注册表 |
 | `ai/agent/AIToolSchema.kt` | JSON Schema 辅助 |
 | `ai/agent/AIAgent.kt` | Agent 主循环 + 权限裁决 |
-| `ai/agent/tools/*.kt` | 25 个内置工具（实例 / 内容 / 文件 / 日志 / 设置 / 启动 / 搜索安装） |
+| `ai/agent/tools/*.kt` | 33 个内置工具（实例 / 内容 / 文件 / 日志 / 设置 / 启动 / 搜索安装 / 收藏 / 游戏安装 / 实例配置） |
 | `ai/ui/AIChatScreen.kt` | AI 聊天界面（同时就是 Agent 界面） |
 | `ai/ui/AIConfigScreen.kt` | AI 配置内容体（27.7.1 起由设置中心承载，函数名为 `AIConfigContent`） |
 | `viewmodel/AIChatViewModel.kt` | 驱动 Agent 循环 + 注入启动/确认回调 |

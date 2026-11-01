@@ -49,6 +49,15 @@ internal fun JsonObject.str(key: String): String? =
 
 internal fun JsonObject.strOr(key: String, fallback: String): String = str(key) ?: fallback
 
+/**
+ * 读取「允许为空」的字符串参数：
+ * 键不存在 → null；传了空字符串 → ""（这是「清空这一项」的意思，不能和「没传」混为一谈）。
+ */
+internal fun JsonObject.strOrEmpty(key: String): String? {
+    val element = this[key] ?: return null
+    return element.jsonPrimitive.contentOrNull ?: ""
+}
+
 internal fun JsonObject.bool(key: String): Boolean? =
     this[key]?.jsonPrimitive?.booleanOrNull
         ?: this[key]?.jsonPrimitive?.contentOrNull?.let {
