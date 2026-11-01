@@ -63,7 +63,18 @@
 - 不要把归档目录放到外部存储：SAF 临时授权过期后文件就读不到了
 - 卸载应用会清掉私有目录，界面必须继续保留这条提示
 
-**四、涉及文件**
+**四、按反馈做的界面调整（同属 27.7.1）**
+
+| 反馈 | 处理 |
+|---|---|
+| 首页按钮材质放动态玻璃下面，只有开启玻璃才出现 | `LauncherSettingsScreen`：材质卡移到玻璃卡之后并加 `glassLevel == On` 条件；玻璃卡在材质卡隐藏时自己收底 |
+| 删掉界面世代，默认新版 | `Theme.kt` 固定 `isClassic = false`；`AllSettings.uiGeneration` 仅保留为旧配置兼容项，不再参与渲染 |
+| 启动器名称下移 | 独立成一张卡，放在「背景设置」与「主页设置」之间 |
+| 高级选项要能改三个渲染器的所有参数 | 新增 `settings/AdvancedSettingsScreen` 的渲染器详细参数分组：MobileGlues（GL 版本 + ANGLE + 7 个高级键）、Ironized Zink（预设 + GL 版本 + 12 个开关）、GL4ES（mipmap + 3 个开关）；GL4ES 的 5 个环境变量与 MobileGlues 的 `config.json` 高级键都已真正接线 |
+| 全局渲染器下面那张卡重做 | `RendererStatusCard`：`auto` 时 `onClick = null`（点了没反应、也不变灰）；选中具体渲染器后点击跳到「高级设置」的详细参数 |
+| 自动排列顺序写了两遍 | 删除独立的自动说明卡，只在状态卡里保留一处 |
+
+**五、涉及文件**
 
 | 文件 | 作用 |
 |---|---|
@@ -74,7 +85,10 @@
 | `ui/screens/NormalNavKey.kt` | 新增 `Favorites` |
 | `ui/screens/main/MainScreen.kt` | 注册收藏页路由 |
 | `ui/screens/content/settings/AdvancedSettingsScreen.kt` | 高级设置里的入口 |
-| `ui/screens/content/SettingsScreen.kt` | 传递 `toFavorites` 导航 |
+| `ui/screens/content/SettingsScreen.kt` | 传递 `toFavorites` / `toSettingsScreen` 导航 |
+| `game/favorites/FavoriteInstaller.kt` | 一键安装到实例 + SHA-1 反查平台版本 + 自动装前置 |
+| `game/renderer/RendererVersions.kt` | 内置渲染器版本唯一事实来源 |
+| `setting/AllSettings.kt` | 新增 GL4ES 与 MobileGlues 高级参数 |
 
 ### 27.6.1 首页按钮回修 + 允许作弊 ✅
 
