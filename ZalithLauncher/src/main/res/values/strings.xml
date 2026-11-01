@@ -1769,13 +1769,13 @@
     <string name="favorites_total_size">Local archive uses %1$s</string>
     <string name="favorites_title">Favorites and local archive</string>
     <string name="favorites_empty">Nothing archived yet. Tap "Import to favorites" and pick a mod, resource pack, shader or world.</string>
-    <string name="favorites_uninstall_note">Archived files live in ZyNova's private storage and are removed together with the app when you uninstall it.</string>
+    <string name="favorites_uninstall_note">Archived files live in ZyNova\'s private storage and are removed together with the app when you uninstall it.</string>
     <string name="favorites_importing">Importing...</string>
     <string name="favorites_action_install">Install</string>
     <string name="favorites_action_detail">Details</string>
     <string name="favorites_action_export">Export</string>
     <string name="favorites_large_file_title">This file is large</string>
-    <string name="favorites_large_file_message">It will be copied in full into ZyNova's private storage, using the same amount of space. Continue?</string>
+    <string name="favorites_large_file_message">It will be copied in full into ZyNova\'s private storage, using the same amount of space. Continue?</string>
     <string name="favorites_export_success">Exported: %1$s</string>
     <string name="favorites_detail_type">Type</string>
     <string name="favorites_detail_size">Size</string>
