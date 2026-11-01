@@ -467,7 +467,8 @@ Fabric API 是大量 Fabric 模组的必需前置，但手动装一份、安装�
   的扩展属性 `AllSettings.launcherDisplayTitle`：
   **填了就用填的，留空 / 只填空白则回退到 `BuildKeys.LAUNCHER_IDENTIFIER`**
 - 界面：`MainScreen` 的标题栏（原本硬编码 `BuildKeys.LAUNCHER_IDENTIFIER`）
-  + 设置 → 启动器 → **启动器名称**（`TextInputSettingsCard`，该组第一张卡）
+  + 设置 → 基础设置 → **启动器名称**（`TextInputSettingsCard`；27.7.1 起已从该组第一张卡移出，
+  单独成卡放在「背景设置」与「主页设置」之间）
 - ⚠️ **默认值必须是空字符串**，不能在设置里存默认名：
   - 用户「清空」输入框时要能回到默认，而不是留下一个空的标题栏
   - 升级后观感完全不变（老用户没有这个键 → 取空 → 显示默认名）
@@ -2639,10 +2640,9 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-11-01（27.7.1 已发布 —— 设置中心七大分类、网络与下载、AI 并入、
-渲染器配置整合（含 GL4ES / MobileGlues 高级参数接线）、视频背景启动优化、NeoForge 下载修复、
-下载/安装转后台、极限模式限制、收藏与本地归档（含一键安装与自动前置）。
-27.7.0 的内容见上文章节。）
+**最后更新**：2026-11-01（27.7.2 已发布 —— 渲染器详细参数拆成 MobileGlues / Ironized Zink / GL4ES 三个独立页面；
+收藏页合并为「在线收藏 + 本地归档」两段并搬入上游的收藏数据层；背景视频恢复循环播放；
+下载页顶部新增任务进度条；安装游戏不再弹对话框、改为静默后台执行。27.7.1 的内容见上文章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
