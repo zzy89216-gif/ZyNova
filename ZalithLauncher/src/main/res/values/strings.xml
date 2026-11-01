@@ -1830,4 +1830,7 @@
     <string name="favorites_online_classes">Type: %1$s</string>
     <string name="favorites_online_remove">Remove from favorites</string>
     <string name="download_category_favorites">Favorites</string>
+    <string name="download_tasks_running">Downloading: %1$d task(s)</string>
+    <string name="download_tasks_tap_for_details">Tap for details</string>
+    <string name="download_tasks_title">Download tasks</string>
 </resources>

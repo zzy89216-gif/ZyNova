@@ -72,6 +72,13 @@ object BackgroundVideoController {
     private var pendingRestart: Boolean = false
     private var building: Boolean = false
 
+    //播放器是延迟创建的：在它建好之前，界面已经通过 LaunchedEffect 设过这些值。
+    //必须记下来，等播放器建好后再应用一次，否则「循环播放」这类设置会丢
+    //（表现就是视频播完一遍就停在最后一帧）。
+    private var desiredLoop: Boolean = true
+    private var desiredPlayWhenReady: Boolean = true
+    private var desiredVolume: Float = 0f
+
     /**
      * 请求播放某个视频。
      *
@@ -115,6 +122,10 @@ object BackgroundVideoController {
                         Logger.warning(TAG, "Background video playback failed", error)
                     }
                 })
+                //先把延迟期间设置过的参数补上，再准备媒体
+                created.repeatMode = if (desiredLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+                created.volume = desiredVolume
+                created.playWhenReady = desiredPlayWhenReady
                 player = created
                 pendingUri?.let { applyMediaIfNeeded(created, it, restart = true) }
             }.onFailure { th ->
@@ -138,16 +149,20 @@ object BackgroundVideoController {
 
     /** 设置音量为 0..1；背景视频默认静音 */
     fun setVolume(volume: Float) {
-        player?.volume = volume.coerceIn(0f, 1f)
+        val value = volume.coerceIn(0f, 1f)
+        desiredVolume = value
+        player?.volume = value
     }
 
-    /** 设置是否循环 */
+    /** 设置是否循环（播放器还没建好时先记住，建好后再应用） */
     fun setLoop(loop: Boolean) {
+        desiredLoop = loop
         player?.repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
     }
 
-    /** 设置是否自动播放 */
+    /** 设置是否自动播放（同样要在播放器建好后补一次） */
     fun setPlayWhenReady(play: Boolean) {
+        desiredPlayWhenReady = play
         player?.playWhenReady = play
     }
 
@@ -173,7 +188,9 @@ object BackgroundVideoController {
         firstFrameRendered = false
         lastError = null
         target.setMediaItem(MediaItem.fromUri(uri))
+        //setMediaItem 不会重置 repeatMode，但为稳妥起见这里再对齐一次
+        target.repeatMode = if (desiredLoop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
         target.prepare()
-        target.playWhenReady = true
+        target.playWhenReady = desiredPlayWhenReady
     }
 }

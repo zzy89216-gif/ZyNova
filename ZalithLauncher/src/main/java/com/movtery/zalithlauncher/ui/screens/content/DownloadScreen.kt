@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.content
 
+import com.movtery.zalithlauncher.ui.components.DownloadTasksIndicator
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -106,7 +107,8 @@ fun DownloadScreen(
         currentKey = backScreenViewModel.mainScreen.currentKey,
         useClassEquality = true
     ) { isVisible: Boolean ->
-        Row(modifier = Modifier.fillMaxSize()) {
+        androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxSize()) {
             TabMenu(
                 modifier = Modifier.fillMaxHeight(),
                 isVisible = isVisible,
@@ -122,6 +124,12 @@ fun DownloadScreen(
                 submitError = submitError,
                 modifier = Modifier.fillMaxHeight()
             )
+
+            //模组 / 资源下载时，底部常驻一条进度条，点开可以看每个任务的明细
+            DownloadTasksIndicator(
+                modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)
+            )
+        }
         }
     }
 }
