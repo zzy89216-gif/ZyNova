@@ -44,10 +44,16 @@ private val REPLACE_MIRROR_HOLDERS = mapOf(
     Pair("http://files.minecraftforge.net/maven", BMCLAPI.MAVEN.url),
     Pair("https://files.minecraftforge.net/maven", BMCLAPI.MAVEN.url),
     Pair("https://maven.minecraftforge.net", BMCLAPI.MAVEN.url),
-    //议题 #35：Forge 是整站前缀，NeoForge 以前只映射了 forge / neoforge 两个子树，
-    //导致 neoform、installertools、jarsplitter、mergetool 这些库只能直连国外源（最容易卡住）。
-    //这里改成整段前缀；镜像没有的制品会快速 404 并由换源机制回退官方，不会让原本能下的文件失败。
-    Pair("https://maven.neoforged.net/releases/net/neoforged", BMCLAPI.MAVEN.url + "/net/neoforged"),
+    //⚠️ NeoForge 的库**不只在 net/neoforged 下面**：
+    //   securejarhandler（cpw/mods）、asm（org/ow2）、sponge-mixin（net/fabricmc）、
+    //   night-config（com/electronwill）、terminalconsoleappender（net/minecrell）
+    //   全都挂在同一个 maven.neoforged.net/releases 仓库里。
+    //   以前只映射 net/neoforged 子树，其余库只能直连国外源 —— 这就是
+    //   「NeoForge 动不动下载失败、一直卡」的主因（47 个库里三分之二没走镜像）。
+    //   BMCLAPI 的 /maven 代理的是**整个 maven.neoforged.net 仓库**（实测
+    //   /maven/cpw/mods/... 与 /maven/org/ow2/asm/... 都能 200），所以直接映射整段前缀。
+    //   镜像缺的制品会快速 404，由换源机制回退官方，不会让原本能下的文件失败。
+    Pair("https://maven.neoforged.net/releases", BMCLAPI.MAVEN.url),
     Pair("http://dl.liteloader.com/versions/versions.json", BMCLAPI.MAVEN.url + "/com/mumfrey/liteloader/versions.json"),
     Pair("http://dl.liteloader.com/versions", BMCLAPI.MAVEN.url),
     Pair("https://meta.fabricmc.net", BMCLAPI.BASE_URL.url + "/fabric-meta"),

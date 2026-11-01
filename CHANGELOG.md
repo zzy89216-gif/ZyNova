@@ -48,6 +48,16 @@
 
 ### 🐞 修复
 
+- **NeoForge 动不动下载失败 / 一直卡（议题反馈）**
+  - 根因：NeoForge 的库**不只在 `net/neoforged` 下面**。一个 1.21.1 的 NeoForge 实例有 47 个库，
+    其中 `cpw/mods/securejarhandler`、`org/ow2/asm`、`net/fabricmc/sponge-mixin`、
+    `com/electronwill/night-config`、`net/minecrell/terminalconsoleappender` 等**大部分**都挂在
+    同一个 `maven.neoforged.net/releases` 仓库里，而镜像映射只覆盖了 `net/neoforged` 子树
+  - 结果：这些库只能直连国外源 → 逐个超时 → 批量下载的停摆看门狗（120 秒无字节落盘）判定「下载停摆」→ 整次安装失败。
+    表现就是「经常失败」「一直卡」
+  - 修复：把镜像前缀改为整段 `https://maven.neoforged.net/releases`（实测 BMCLAPI 的 `/maven`
+    代理的是**整个仓库**，`/maven/cpw/mods/...`、`/maven/org/ow2/asm/...` 都返回 200），
+    于是 47 个库全部走国内镜像；镜像缺的制品仍然会快速 404 并由换源机制回退官方
 - **资源安装装错目录**：`install_resource` 现在会先向平台确认项目的**真实资源类型**
   （模组 / 资源包 / 光影 / 存档），再决定装进 `mods` / `resourcepacks` / `shaderpacks` / `saves`；
   以前靠模型自己传 `type`，传错就会「装好了但游戏里看不到」。模型传错时会自动纠正并在结果里说明

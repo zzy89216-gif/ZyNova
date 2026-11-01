@@ -112,7 +112,22 @@
   不会出现「界面说取消了、后台还在下」
 - 已删除死代码 `ui/components/DownloadTasksIndicator.kt`（大进度卡片残留）
 
-**八、下载与提示词**
+**八、NeoForge 下载失败/卡顿（27.8.0 修复）**
+
+- 根因：`BMCLAPI.kt` 的镜像映射只覆盖 `maven.neoforged.net/releases/net/neoforged`，
+  但 NeoForge 的 47 个库里有三分之二在**同一仓库的其它路径**下：
+  `cpw/mods/securejarhandler`、`org/ow2/asm/*`、`net/fabricmc/sponge-mixin`、
+  `com/electronwill/night-config/core`、`net/minecrell/terminalconsoleappender`
+  - 这些库直连国外 → 单个文件超时 → 批量下载的 `BatchDownloader` 停摆看门狗（`STALL_ABORT_MS = 120s`）
+    判定整批停摆 → 安装直接失败
+- 修复：前缀改为整段 `https://maven.neoforged.net/releases` → `BMCLAPI.MAVEN.url`
+  - ⚠️ 依据是实测：BMCLAPI 的 `/maven` 代理**整个** maven.neoforged.net 仓库
+    （`/maven/cpw/mods/...`、`/maven/org/ow2/asm/...`、`/maven/net/fabricmc/...` 均 302 → 200）
+  - 镜像缺的制品仍会快速 404（`HostHealth` 不会把 404/410 记成主机故障），由换源机制回退官方
+- 排查工具链提醒：`NeoForgeVersions` 的两个 meta 接口（官方 / BMCLAPI `neoforge/meta/...`）实测都可用，
+  版本列表不是这次的瓶颈
+
+**九、下载与提示词**
 
 - 下载页移除大块进度卡片，只保留顶部细进度条；游戏本体安装静默无弹窗
 - 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，
