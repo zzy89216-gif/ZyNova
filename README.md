@@ -13,8 +13,10 @@
 
 一个面向 Android 的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码开发，独立维护、独立发布。
 
-> 说人话版：这是你手机上的 MC 摆渡车。票不用买、行李不用自己搬（模组、整合包、光影它替你搬），
+> 说人话版：这是你手机上的 MC 摆渡车。票不用买，行李不用自己搬（模组、整合包、光影它替你搬），
 > 司机（AI）还会自己看路况、自己修车——你只要说一句「走」。
+> 车上没有方向盘，因为它不打算让你动手；也没有刹车，因为它相信自己。
+> 唯一的使用说明就是：想干什么，用中文说出来，然后等着。
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
