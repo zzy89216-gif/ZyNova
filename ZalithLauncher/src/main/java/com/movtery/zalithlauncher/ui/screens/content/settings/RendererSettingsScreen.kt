@@ -95,6 +95,7 @@ fun RendererSettingsScreen(
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
     eventViewModel: EventViewModel,
+    toSettingsScreen: (TitledNavKey) -> Unit,
 ) {
     BaseScreen(
         Triple(key, mainScreenKey, false),
@@ -194,6 +195,10 @@ fun RendererSettingsScreen(
                         renderer = currentRenderer,
                         identifier = currentRendererId,
                         isAuto = isAuto,
+                        //反馈：选「自动」时点它没意义；选了具体渲染器才跳转到详细参数
+                        onClick = if (isAuto) null else {
+                            { toSettingsScreen(NormalNavKey.Settings.Advanced) }
+                        },
                     )
                 }
             }
@@ -240,36 +245,6 @@ fun RendererSettingsScreen(
                                 )
                                 Text(
                                     text = stringResource(R.string.settings_renderer_gl4es_empty_summary),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (isAuto) {
-                AnimatedItem(scope) { yOffset ->
-                    SettingsCardColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                    ) {
-                        SettingsCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Single
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(all = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.settings_renderer_priority_title),
-                                    style = MaterialTheme.typography.titleSmall
-                                )
-                                Text(
-                                    text = stringResource(R.string.settings_renderer_priority_summary),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -423,12 +398,14 @@ private fun RendererStatusCard(
     renderer: RendererInterface?,
     identifier: String,
     isAuto: Boolean,
+    onClick: (() -> Unit)?,
 ) {
     val version = RendererVersions.of(identifier)
 
     SettingsCard(
         modifier = modifier,
-        position = position
+        position = position,
+        onClick = { onClick?.invoke() }
     ) {
         Column(
             modifier = Modifier
@@ -463,6 +440,21 @@ private fun RendererStatusCard(
 
             //支持的游戏版本范围
             renderer?.let { RendererSummaryLayout(it) }
+
+            //选「自动」时说明会按什么顺序挑渲染器（这段说明只在这里出现一次）
+            if (isAuto) {
+                Text(
+                    text = stringResource(R.string.settings_renderer_priority_summary),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else if (onClick != null) {
+                Text(
+                    text = stringResource(R.string.settings_renderer_status_open_advanced),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

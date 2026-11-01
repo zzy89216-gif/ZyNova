@@ -678,16 +678,16 @@ fun ZalithLauncherTheme(
         LocalBackgroundViewModel provides backgroundViewModel,
         LocalFestivals provides festivals
     ) {
-        //界面世代：新版（默认）/ 旧版。
-        //用户可以在「设置 → 启动器 → 界面世代」里随时双向切换，这里只负责按选择取对应的字阶与形状。
-        val uiGeneration = AllSettings.uiGeneration.state
-        val isClassic = uiGeneration == UiGeneration.Classic
+        //界面世代：27.7.1 起固定使用新版。
+        //旧版（Classic）的入口已从设置里移除，`AllSettings.uiGeneration` 只作为旧配置兼容项保留，
+        //不再参与渲染 —— 这样升级后所有人看到的都是同一套字阶与形状。
+        val isClassic = false
 
         //开启「减少动态效果」时降级为标准的 Material 动效方案：
         //Expressive 的弹性/过冲幅度更大，对动效敏感的用户应当可以避开。
         //新版界面本身也走标准动效 —— 苹果风的观感是干脆利落，没有回弹与过冲。
         val motionScheme = if (
-            AllSettings.launcherReduceMotion.state || uiGeneration == UiGeneration.Modern
+            AllSettings.launcherReduceMotion.state
         ) {
             MotionScheme.standard()
         } else {

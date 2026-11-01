@@ -118,6 +118,37 @@ object MobileGluesConfig {
             if (useAngle) ANGLE_ENABLE_IF_POSSIBLE else ANGLE_DISABLE_IF_POSSIBLE
         )
 
+        //议题：高级设置里暴露的其它键。DEFAULTS 已经补齐过，这里只做覆盖，
+        //不认识的老键仍然原样保留（不替用户删配置）
+        root.addProperty(
+            "enableNoError",
+            if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesNoError.getValue()) 1 else 0
+        )
+        root.addProperty(
+            "enableExtTimerQuery",
+            if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesExtTimerQuery.getValue()) 1 else 0
+        )
+        root.addProperty(
+            "enableExtComputeShader",
+            if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesExtComputeShader.getValue()) 1 else 0
+        )
+        root.addProperty(
+            "enableExtDirectStateAccess",
+            if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesExtDirectStateAccess.getValue()) 1 else 0
+        )
+        root.addProperty(
+            "maxGlslCacheSize",
+            com.movtery.zalithlauncher.setting.AllSettings.mobileGluesMaxGlslCacheSize.getValue()
+        )
+        root.addProperty(
+            "angleDepthClearFixMode",
+            if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesAngleDepthClearFix.getValue()) 1 else 0
+        )
+        root.addProperty(
+            "fsr1Setting",
+            if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesFsr1.getValue()) 1 else 0
+        )
+
         val target = configFile
         //先写临时文件再改名：中途失败也不会留下半截 JSON 让游戏读到损坏的配置
         val temp = File(directory, "${target.name}.tmp")

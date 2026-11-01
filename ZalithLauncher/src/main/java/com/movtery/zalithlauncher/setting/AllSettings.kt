@@ -289,6 +289,47 @@ object AllSettings : SettingsRegistry() {
      */
     val logBufferFlushInterval = intSetting("logBufferFlushInterval", 200, 100..1000)
 
+    // ── 渲染器高级参数（设置 → 高级设置）────────────────────────────
+    //
+    //议题：三个渲染器的「所有可改参数」都要能改，并且集中放在高级选项里。
+    //下面这些以前是写死在代码里的，现在提升为设置项；
+    //默认值 = 以前的写死值，所以升级后行为不变。
+
+    //GL4ES（opengles2 分支的 5 个环境变量）
+    /** LIBGL_MIPMAP：纹理 mipmap 生成级别，0 = 关闭 */
+    val gl4esMipmap = intSetting("gl4esMipmap", 3, 0..3)
+
+    /** LIBGL_NOERROR：关闭 GL 错误检查，快一点但更难排查 */
+    val gl4esNoError = boolSetting("gl4esNoError", true)
+
+    /** LIBGL_NOINTOVLHACK：避免整数溢出 hack 带来的兼容问题 */
+    val gl4esNoIntOverflowHack = boolSetting("gl4esNoIntOverflowHack", true)
+
+    /** LIBGL_NORMALIZE：自动归一化法线，老游戏更不容易黑屏 */
+    val gl4esNormalize = boolSetting("gl4esNormalize", true)
+
+    //MobileGlues（写进它自己的 config.json）
+    /** enableNoError：关闭 GL 错误检查 */
+    val mobileGluesNoError = boolSetting("mobileGluesNoError", false)
+
+    /** enableExtTimerQuery：时间查询扩展 */
+    val mobileGluesExtTimerQuery = boolSetting("mobileGluesExtTimerQuery", true)
+
+    /** enableExtComputeShader：计算着色器扩展 */
+    val mobileGluesExtComputeShader = boolSetting("mobileGluesExtComputeShader", false)
+
+    /** enableExtDirectStateAccess：直接状态访问扩展 */
+    val mobileGluesExtDirectStateAccess = boolSetting("mobileGluesExtDirectStateAccess", false)
+
+    /** maxGlslCacheSize：着色器缓存上限（MiB） */
+    val mobileGluesMaxGlslCacheSize = intSetting("mobileGluesMaxGlslCacheSize", 32, 4..512)
+
+    /** angleDepthClearFixMode：ANGLE 深度清除修正（0 关闭 / 1 开启） */
+    val mobileGluesAngleDepthClearFix = boolSetting("mobileGluesAngleDepthClearFix", false)
+
+    /** fsr1Setting：FSR1 超分辨率 */
+    val mobileGluesFsr1 = boolSetting("mobileGluesFsr1", false)
+
     //Control
     /**
      * 实体鼠标控制

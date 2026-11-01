@@ -178,33 +178,9 @@ fun LauncherSettingsScreen(
                         updateOperation = { customColorOperation = it }
                     )
 
-                    //议题 #18：标题栏左上角显示的名称可以自定义。
-                    //留空即用默认的 launcher_name（见 AllSettings.launcherDisplayTitle）
-                    TextInputSettingsCard(
+                    EnumSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Top,
-                        unit = AllSettings.launcherTitle,
-                        title = stringResource(R.string.settings_launcher_title_title),
-                        summary = stringResource(R.string.settings_launcher_title_summary),
-                        label = stringResource(R.string.settings_launcher_title_label)
-                    )
-
-                    //议题 #33：首页按钮材质（默认 / 透明 / 液态玻璃）
-                    EnumSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
-                        unit = AllSettings.homeButtonMaterial,
-                        entries = HomeButtonMaterial.entries,
-                        title = stringResource(R.string.settings_launcher_home_button_material_title),
-                        summary = stringResource(R.string.settings_launcher_home_button_material_summary),
-                        getRadioText = { stringResource(it.textRes) },
-                        getRadioEnable = { true },
-                        maxItemsInEachRow = 3
-                    )
-
-                    EnumSettingsCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
                         unit = AllSettings.launcherColorTheme,
                         title = stringResource(R.string.settings_launcher_color_theme_title),
                         summary = stringResource(R.string.settings_launcher_color_theme_summary),
@@ -361,7 +337,13 @@ fun LauncherSettingsScreen(
                         //27.3.0 起移除了「强效动态玻璃」档与配套的光敏性警告
                         EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Middle,
+                            //开启动态玻璃时下面还有「首页按钮材质」，这时它是中间卡；
+                            //关闭时它就是这一组的最后一张，自己收底
+                            position = if (AllSettings.glassLevel.state == GlassLevel.On) {
+                                CardPosition.Middle
+                            } else {
+                                CardPosition.Bottom
+                            },
                             value = AllSettings.glassLevel.state,
                             entries = GlassLevel.entries,
                             title = stringResource(R.string.settings_launcher_liquid_glass_title),
@@ -373,22 +355,42 @@ fun LauncherSettingsScreen(
                             }
                         )
 
-                        //界面世代：新版（默认）/ 旧版
-                        //⚠️ 这里必须用带 `unit =` 的重载：它会自动 unit.save(...)，
-                        //而 `value =` 重载的 onRadioClick 默认是空实现，会导致「点了没反应」。
-                        //这是一个普通的枚举单选，**两个方向都能切**：
-                        //切到「旧版」之后必须还能切回「新版」，不要改成单向的「切换一次」交互。
-                        EnumSettingsCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Bottom,
-                            unit = AllSettings.uiGeneration,
-                            entries = UiGeneration.entries,
-                            title = stringResource(R.string.settings_launcher_ui_generation_title),
-                            summary = stringResource(R.string.settings_launcher_ui_generation_summary),
-                            getRadioText = { stringResource(it.textRes) },
-                            getRadioEnable = { true }
-                        )
+                        //议题 #33 / 反馈：首页按钮材质只在开启「动态玻璃」后有意义的，
+                        //关掉玻璃时这一项完全不出现，避免用户以为「材质没生效」。
+                        if (AllSettings.glassLevel.state == GlassLevel.On) {
+                            EnumSettingsCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                position = CardPosition.Bottom,
+                                unit = AllSettings.homeButtonMaterial,
+                                entries = HomeButtonMaterial.entries,
+                                title = stringResource(R.string.settings_launcher_home_button_material_title),
+                                summary = stringResource(R.string.settings_launcher_home_button_material_summary),
+                                getRadioText = { stringResource(it.textRes) },
+                                getRadioEnable = { true },
+                                maxItemsInEachRow = 3
+                            )
+                        }
+
+
                     }
+                }
+            }
+
+            //议题 #18：标题栏名称 —— 低频，单独放一张卡，不再占着第一眼的位置
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
+                    TextInputSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Single,
+                        unit = AllSettings.launcherTitle,
+                        title = stringResource(R.string.settings_launcher_title_title),
+                        summary = stringResource(R.string.settings_launcher_title_summary),
+                        label = stringResource(R.string.settings_launcher_title_label)
+                    )
                 }
             }
 

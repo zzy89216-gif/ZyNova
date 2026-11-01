@@ -228,7 +228,13 @@ private fun NavigationUI(
             popTransitionSpec = rememberTransitionSpec(),
             entryProvider = entryProvider {
                 entry<NormalNavKey.Settings.Renderer> {
-                    RendererSettingsScreen(key, settingsScreenKey, mainScreenKey, eventViewModel)
+                    RendererSettingsScreen(
+                        key = key,
+                        settingsScreenKey = settingsScreenKey,
+                        mainScreenKey = mainScreenKey,
+                        eventViewModel = eventViewModel,
+                        toSettingsScreen = { target -> key.backStack.navigateTo(target) },
+                    )
                 }
                 entry<NormalNavKey.Settings.Game> {
                     GameSettingsScreen(

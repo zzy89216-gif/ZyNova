@@ -42,6 +42,9 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.IntSliderSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCardColumn
@@ -82,6 +85,127 @@ fun AdvancedSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) { scope ->
+            // ── 渲染器详细参数 ────────────────────────────────
+            //反馈：三个渲染器「所有能改的参数」都要能在这里改。
+            //版式沿用设置中心的原生分组：一个分组一张圆角卡列（Top / Middle / Bottom），
+            //不做成一堆互不相连的单卡。
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
+                    SectionLabel(stringResource(R.string.settings_advanced_renderer_mg))
+
+                    MobileGluesConfigCards(modifier = Modifier.fillMaxWidth())
+
+                    SectionLabel(stringResource(R.string.settings_mg_advanced_group))
+
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top,
+                        unit = AllSettings.mobileGluesNoError,
+                        title = stringResource(R.string.settings_mg_no_error_title),
+                        summary = stringResource(R.string.settings_mg_no_error_summary)
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.mobileGluesExtTimerQuery,
+                        title = stringResource(R.string.settings_mg_timer_query_title),
+                        summary = stringResource(R.string.settings_mg_timer_query_summary)
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.mobileGluesExtComputeShader,
+                        title = stringResource(R.string.settings_mg_compute_shader_title),
+                        summary = stringResource(R.string.settings_mg_compute_shader_summary)
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.mobileGluesExtDirectStateAccess,
+                        title = stringResource(R.string.settings_mg_dsa_title),
+                        summary = stringResource(R.string.settings_mg_dsa_summary)
+                    )
+                    IntSliderSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.mobileGluesMaxGlslCacheSize,
+                        title = stringResource(R.string.settings_mg_glsl_cache_title),
+                        summary = stringResource(R.string.settings_mg_glsl_cache_summary),
+                        valueRange = AllSettings.mobileGluesMaxGlslCacheSize.floatRange,
+                        suffix = "MiB"
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.mobileGluesAngleDepthClearFix,
+                        title = stringResource(R.string.settings_mg_angle_depth_title),
+                        summary = stringResource(R.string.settings_mg_angle_depth_summary)
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        unit = AllSettings.mobileGluesFsr1,
+                        title = stringResource(R.string.settings_mg_fsr1_title),
+                        summary = stringResource(R.string.settings_mg_fsr1_summary)
+                    )
+                }
+            }
+
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
+                    SectionLabel(stringResource(R.string.settings_advanced_renderer_zink))
+                    IronizedZinkConfigCards(modifier = Modifier.fillMaxWidth())
+                }
+            }
+
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
+                    SectionLabel(stringResource(R.string.settings_advanced_renderer_gl4es))
+
+                    IntSliderSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top,
+                        unit = AllSettings.gl4esMipmap,
+                        title = stringResource(R.string.settings_gl4es_mipmap_title),
+                        summary = stringResource(R.string.settings_gl4es_mipmap_summary),
+                        valueRange = AllSettings.gl4esMipmap.floatRange
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.gl4esNoError,
+                        title = stringResource(R.string.settings_gl4es_no_error_title),
+                        summary = stringResource(R.string.settings_gl4es_no_error_summary)
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.gl4esNoIntOverflowHack,
+                        title = stringResource(R.string.settings_gl4es_no_overflow_title),
+                        summary = stringResource(R.string.settings_gl4es_no_overflow_summary)
+                    )
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        unit = AllSettings.gl4esNormalize,
+                        title = stringResource(R.string.settings_gl4es_normalize_title),
+                        summary = stringResource(R.string.settings_gl4es_normalize_summary)
+                    )
+                }
+            }
+
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(
                     modifier = Modifier
@@ -179,4 +303,14 @@ fun AdvancedSettingsScreen(
             }
         }
     }
+}
+/** 分组标题：与设置中心其它分组保持同样的排版（小号 + 次要色 + 左缩进） */
+@Composable
+private fun SectionLabel(text: String) {
+    Text(
+        modifier = Modifier.padding(start = 4.dp, top = 8.dp, bottom = 4.dp),
+        text = text,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }

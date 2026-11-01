@@ -379,11 +379,13 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
     envMap["SDL_OPENGL_LIBRARY"] = rendererId
 
     if (rendererId.startsWith("opengles2")) {
+        //议题：GL4ES 的这些参数以前写死，现在可以在「设置 → 高级设置」里改。
+        //默认值与以前的写死值一致，升级后行为不变。
         envMap["LIBGL_ES"] = "2"
-        envMap["LIBGL_MIPMAP"] = "3"
-        envMap["LIBGL_NOERROR"] = "1"
-        envMap["LIBGL_NOINTOVLHACK"] = "1"
-        envMap["LIBGL_NORMALIZE"] = "1"
+        envMap["LIBGL_MIPMAP"] = AllSettings.gl4esMipmap.getValue().toString()
+        if (AllSettings.gl4esNoError.getValue()) envMap["LIBGL_NOERROR"] = "1"
+        if (AllSettings.gl4esNoIntOverflowHack.getValue()) envMap["LIBGL_NOINTOVLHACK"] = "1"
+        if (AllSettings.gl4esNormalize.getValue()) envMap["LIBGL_NORMALIZE"] = "1"
     }
 
     envMap += renderer.getRendererEnv().value
