@@ -107,8 +107,15 @@ fun DownloadScreen(
         currentKey = backScreenViewModel.mainScreen.currentKey,
         useClassEquality = true
     ) { isVisible: Boolean ->
-        androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.fillMaxSize()) {
+        androidx.compose.foundation.layout.Column(modifier = Modifier.fillMaxSize()) {
+            //下载进度放在顶部：一进来就能看到，和顶部任务入口是同一套数据
+            DownloadTasksIndicator()
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
             TabMenu(
                 modifier = Modifier.fillMaxHeight(),
                 isVisible = isVisible,
@@ -125,11 +132,7 @@ fun DownloadScreen(
                 modifier = Modifier.fillMaxHeight()
             )
 
-            //模组 / 资源下载时，底部常驻一条进度条，点开可以看每个任务的明细
-            DownloadTasksIndicator(
-                modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter)
-            )
-        }
+            //模组 / 资源下载时，底部常驻一条进度条，点开可以看每个任务的明细            }
         }
     }
 }
