@@ -2445,6 +2445,20 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 
 ### 附：README 精简后保留的说明
 
+> 27.7.2 起 README 只保留六段：简介 / 更新要点（4 条）/ 主要功能（5 条）/
+> 下载与构建 / 文档入口 / 许可证，六种语言逐段对齐。
+> 下面是**从 README 移出来、但仍需要记录**的内容，统一放在这里，不要再塞回 README：
+>
+> - **项目结构**：仓库同时是源码、开发、文档与 Release 仓库；Android 工程在根目录与
+>   `ZalithLauncher/`，文档为 `README*.md` / `CHANGELOG.md` / `HANDOFF.md` / `THIRD_PARTY_NOTICES.md`
+> - **技术栈**：Kotlin/Java + Compose、C/C++（NDK）、Gradle、GitHub Actions
+> - **开发与发布流程**：需求 → 源码分析 → 改代码 → push 触发 Actions 编译 → 真机验证 → Release
+> - **多语言文档**：简中 / 英 / 繁中 / 日 / 韩 / 俄，六份必须同步（版本徽标、更新要点、功能列表）
+> - **历史版本要点**：见本文件各版本章节；README 只列当前版本
+> - **登录与渲染器细节**：见本文件 26.4.x / 27.4.0 / 27.7.2 章节与 `THIRD_PARTY_NOTICES.md`
+
+
+
 README 已精简为「简介 / 当前版本要点 / 功能概览 / 下载与构建 / 注意事项 / 文档入口 /
 许可证 / 支持」几块，避免首页过长。以下内容不再放在 README，统一记录在这里：
 
