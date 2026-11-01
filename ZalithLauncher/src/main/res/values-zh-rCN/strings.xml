@@ -1733,4 +1733,20 @@
     <string name="settings_ai_base_url_hint">留空就是 DeepSeek 官方地址</string>
     <string name="settings_ai_entry_summary">填 API Key、选模型、设置 Agent 权限。</string>
     <string name="download_run_in_background">后台运行</string>
+    <string name="favorites_type_mod">模组</string>
+    <string name="favorites_type_modpack">整合包</string>
+    <string name="favorites_type_resource_pack">材质包</string>
+    <string name="favorites_type_shader">光影</string>
+    <string name="favorites_type_datapack">数据包</string>
+    <string name="favorites_type_world">存档</string>
+    <string name="favorites_type_game_core">游戏核心</string>
+    <string name="favorites_type_unknown">其他文件</string>
+    <string name="favorites_import">导入到收藏</string>
+    <string name="favorites_import_duplicate">这个文件已经在收藏里了：%1$s</string>
+    <string name="favorites_import_failed">导入失败：%1$s</string>
+    <string name="favorites_import_success">已归档：%1$s</string>
+    <string name="favorites_local_archive">本地归档</string>
+    <string name="favorites_online_only">仅在线收藏</string>
+    <string name="favorites_delete_confirm">只删除 ZyNova 里的归档副本，不会动手机里的原文件。确定吗？</string>
+    <string name="favorites_total_size">本地归档共占用 %1$s</string>
 </resources>

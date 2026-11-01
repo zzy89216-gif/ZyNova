@@ -1751,4 +1751,20 @@
     <string name="settings_ai_base_url_hint">Leave blank for the official DeepSeek endpoint</string>
     <string name="settings_ai_entry_summary">API key, model and Agent permission.</string>
     <string name="download_run_in_background">Run in background</string>
+    <string name="favorites_type_mod">Mod</string>
+    <string name="favorites_type_modpack">Modpack</string>
+    <string name="favorites_type_resource_pack">Resource pack</string>
+    <string name="favorites_type_shader">Shader</string>
+    <string name="favorites_type_datapack">Datapack</string>
+    <string name="favorites_type_world">World</string>
+    <string name="favorites_type_game_core">Game core</string>
+    <string name="favorites_type_unknown">Other</string>
+    <string name="favorites_import">Import to favorites</string>
+    <string name="favorites_import_duplicate">This file is already in your favorites: %1$s</string>
+    <string name="favorites_import_failed">Import failed: %1$s</string>
+    <string name="favorites_import_success">Archived: %1$s</string>
+    <string name="favorites_local_archive">Local archive</string>
+    <string name="favorites_online_only">Online only</string>
+    <string name="favorites_delete_confirm">This only removes the copy inside ZyNova; the original file on your phone is untouched. Continue?</string>
+    <string name="favorites_total_size">Local archive uses %1$s</string>
 </resources>
