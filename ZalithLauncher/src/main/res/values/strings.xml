@@ -1816,7 +1816,7 @@
     <string name="settings_gl4es_no_overflow_summary">On is usually safer; turn off if a specific game renders at wrong coordinates.</string>
     <string name="settings_gl4es_normalize_title">Normalize normals</string>
     <string name="settings_gl4es_normalize_summary">Keeps lighting correct in old games instead of a black screen.</string>
-    <string name="settings_renderer_status_open_advanced">Tap to open this renderer's detailed settings</string>
+    <string name="settings_renderer_status_open_advanced">Tap to open this renderer\'s detailed settings</string>
     <string name="settings_advanced_renderer_mg">MobileGlues</string>
     <string name="settings_mg_advanced_group">MobileGlues advanced keys</string>
     <string name="settings_advanced_renderer_zink">Ironized Zink</string>
