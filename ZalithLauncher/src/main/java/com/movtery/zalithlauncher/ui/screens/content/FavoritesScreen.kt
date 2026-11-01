@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.content
 
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteEntry as OnlineFavoriteEntry
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.download.resources.ResourceManager
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -336,7 +337,6 @@ private fun LocalArchiveContent(
                 }
             }
         }
-    }
 
     //大文件导入确认
     pendingLargeImport?.let { uri ->
@@ -385,6 +385,7 @@ private fun LocalArchiveContent(
                 message = text
             }
         )
+    }
 }
 
 /**
@@ -441,8 +442,8 @@ private fun OnlineFavoritesContent() {
     val entries = FavoriteProjectsRepository.projects.values
         .sortedByDescending { it.project.followTime }
 
-    var detail by remember { mutableStateOf<FavoriteEntry?>(null) }
-    var installTarget by remember { mutableStateOf<FavoriteEntry?>(null) }
+    var detail by remember { mutableStateOf<OnlineFavoriteEntry?>(null) }
+    var installTarget by remember { mutableStateOf<OnlineFavoriteEntry?>(null) }
 
     Column(
         modifier = Modifier
@@ -782,7 +783,7 @@ private fun entrySummary(context: Context, entry: FavoriteEntry): String {
 /** 在线收藏详情：显示项目信息，并提供「安装到实例」（走统一安装链路，含自动前置） */
 @Composable
 private fun OnlineFavoriteDetailDialog(
-    entry: FavoriteEntry,
+    entry: OnlineFavoriteEntry,
     onDismiss: () -> Unit,
     onInstall: () -> Unit,
 ) {
@@ -834,7 +835,7 @@ private fun OnlineFavoriteDetailDialog(
 /** 在线收藏 → 选实例 → 走 ResourceManager（matchVersion + installVersion，自动含必需前置） */
 @Composable
 private fun OnlineInstallDialog(
-    entry: FavoriteEntry,
+    entry: OnlineFavoriteEntry,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
