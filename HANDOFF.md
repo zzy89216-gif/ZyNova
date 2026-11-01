@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.8.1**（`launcher_version_code=270801`）
+**当前版本：27.8.0**（`launcher_version_code=270800`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,16 +33,6 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
-
-### 27.8.1 27.8.0 的补丁版（任务面板 + 动画）✅
-
-- **点下载不再自动弹出详细任务面板**：`launcherTaskMenuExpanded` 默认 `false`；
-  任务清空时自动收起；老用户一次性迁移（MMKV 键 `taskMenuCollapsedMigrated`）
-- **设置页动画统一、滚动更跟手**：`AnimatedColumn` / `AnimatedRow` / `AnimatedLazyColumn`
-  统一走 `staggeredDelay()`（默认增量 30ms、总量封顶 180ms），不再 `index * 50ms` 无限拖尾
-- 版本号：`launcher_version_name=27.8.1` / `launcher_version_code=270801`
-- 涉及文件：`setting/AllSettings.kt`、`setting/SettingsInitializer.kt`、
-  `ui/screens/main/MainScreen.kt`、`ui/components/_AnimatedColumn.kt`、`ui/components/_AnimatedRow.kt`
 
 ### 27.8.0 Agent 能装游戏 / 装整合包 / 改配置，下载彻底静默 ✅
 
@@ -2798,7 +2788,7 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-11-01（**27.8.1 已发布**（27.8.0 的任务面板 / 动画补丁）；27.8.0 内容： —— Agent 从「聊天机器人」正式变成会动手的 Agent：
+**最后更新**：2026-11-01（**27.8.0 已发布（含任务面板 / 动画修补）**： —— Agent 从「聊天机器人」正式变成会动手的 Agent：
 新增 `install_game` / `install_modpack` / `install_resource`（自动识别资源类型）/ 实例配置三件套，
 工具数 25 → 34；默认权限模式改为「完全控制」并带一次性迁移；下载与安装全部静默，
 任务面板升级成「标题 → 步骤 → 进度 → 速度 → 取消」的详细列表；
