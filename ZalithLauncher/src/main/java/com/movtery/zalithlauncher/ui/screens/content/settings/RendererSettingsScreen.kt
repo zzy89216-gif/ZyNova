@@ -195,9 +195,18 @@ fun RendererSettingsScreen(
                         renderer = currentRenderer,
                         identifier = currentRendererId,
                         isAuto = isAuto,
-                        //反馈：选「自动」时点它没意义；选了具体渲染器才跳转到详细参数
-                        onClick = if (isAuto) null else {
-                            { toSettingsScreen(NormalNavKey.Settings.Advanced) }
+                        //反馈：选「自动」时点它没意义；选了具体渲染器就跳到它自己的详细参数页
+                        onClick = when {
+                            isMobileGlues -> {
+                                { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedMobileGlues) }
+                            }
+                            isIronizedZink -> {
+                                { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedZink) }
+                            }
+                            isGL4ES -> {
+                                { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedGl4es) }
+                            }
+                            else -> null
                         },
                     )
                 }

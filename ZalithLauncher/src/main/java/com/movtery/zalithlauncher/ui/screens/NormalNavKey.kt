@@ -127,6 +127,18 @@ sealed interface NormalNavKey : TitledNavKey {
         @Serializable data object AI : Settings {
             @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_ai)
         }
+        /** MobileGlues 详细参数（独立页面） */
+        @Serializable data object RendererAdvancedMobileGlues : Settings {
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_advanced_renderer_mg)
+        }
+        /** Ironized Zink 详细参数（独立页面） */
+        @Serializable data object RendererAdvancedZink : Settings {
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_advanced_renderer_zink)
+        }
+        /** GL4ES 详细参数（独立页面） */
+        @Serializable data object RendererAdvancedGl4es : Settings {
+            @Contextual override val title: AndroidStringText = androidText(R.string.settings_advanced_renderer_gl4es)
+        }
         /** 高级设置屏幕（议题 #37 / #41 新增） */
         @Serializable data object Advanced : Settings {
             @Contextual override val title: AndroidStringText = androidText(R.string.settings_tab_advanced)

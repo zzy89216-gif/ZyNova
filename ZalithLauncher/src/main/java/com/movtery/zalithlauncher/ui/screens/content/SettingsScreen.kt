@@ -65,6 +65,9 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.GameSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.GamepadSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.JavaManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.LauncherSettingsScreen
+import com.movtery.zalithlauncher.ui.screens.content.settings.MobileGluesAdvancedSettingsScreen
+import com.movtery.zalithlauncher.ui.screens.content.settings.IronizedZinkAdvancedSettingsScreen
+import com.movtery.zalithlauncher.ui.screens.content.settings.Gl4esAdvancedSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.NetworkSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.RendererSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.navigateOnce
@@ -272,6 +275,27 @@ private fun NavigationUI(
                 }
                 entry<NormalNavKey.Settings.AI> {
                     AISettingsScreen(
+                        key = key,
+                        settingsScreenKey = settingsScreenKey,
+                        mainScreenKey = mainScreenKey,
+                    )
+                }
+                entry<NormalNavKey.Settings.RendererAdvancedMobileGlues> {
+                    MobileGluesAdvancedSettingsScreen(
+                        key = key,
+                        settingsScreenKey = settingsScreenKey,
+                        mainScreenKey = mainScreenKey,
+                    )
+                }
+                entry<NormalNavKey.Settings.RendererAdvancedZink> {
+                    IronizedZinkAdvancedSettingsScreen(
+                        key = key,
+                        settingsScreenKey = settingsScreenKey,
+                        mainScreenKey = mainScreenKey,
+                    )
+                }
+                entry<NormalNavKey.Settings.RendererAdvancedGl4es> {
+                    Gl4esAdvancedSettingsScreen(
                         key = key,
                         settingsScreenKey = settingsScreenKey,
                         mainScreenKey = mainScreenKey,
