@@ -37,7 +37,8 @@
 ### 27.8.0 Agent 能装游戏 / 装整合包 / 改配置，下载彻底静默 ✅
 
 > **已发布**：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0>
-> （tag 指向 `1f82bc2`，APK 与 mapping 由 `release_ci.yml` 在 Release 发布事件里自动构建并上传）
+> （tag 指向 `1f82bc2`；`release_ci.yml` 已构建并上传 `ZyNova-27.8.0.apk`（296.7 MB）与
+> `mapping.universal.zip`（11.1 MB）。发布后的文档修订以 `main` 为准，不回改 tag。）
 
 **一、收藏工具（`ai/agent/tools/FavoriteTools.kt`）**
 
