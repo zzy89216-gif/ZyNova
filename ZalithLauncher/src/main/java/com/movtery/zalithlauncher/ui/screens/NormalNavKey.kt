@@ -48,6 +48,10 @@ sealed interface NormalNavKey : TitledNavKey {
     @Serializable data object AIChat : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.ai_title)
     }
+    /** 收藏与本地归档屏幕（议题 #39） */
+    @Serializable data object Favorites : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.favorites_title)
+    }
     /** 账号管理屏幕 */
     @Serializable data class AccountManager(
         val loginMenu: FirstLoginMenu = FirstLoginMenu.NONE

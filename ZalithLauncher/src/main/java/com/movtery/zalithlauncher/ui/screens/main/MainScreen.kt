@@ -94,6 +94,7 @@ import com.movtery.zalithlauncher.ai.ui.AIChatScreen
 import com.movtery.zalithlauncher.ui.screens.content.AccountManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.DownloadScreen
 import com.movtery.zalithlauncher.ui.screens.content.FileSelectorScreen
+import com.movtery.zalithlauncher.ui.screens.content.FavoritesScreen
 import com.movtery.zalithlauncher.ui.screens.content.HomePageEditorScreen
 import com.movtery.zalithlauncher.ui.screens.content.LauncherScreen
 import com.movtery.zalithlauncher.ui.screens.content.LicenseScreen
@@ -672,6 +673,12 @@ private fun NavigationUI(
                     MultiplayerScreen(
                         backScreenViewModel = screenBackStackModel,
                         eventViewModel = eventViewModel
+                    )
+                }
+                entry<NormalNavKey.Favorites> { key ->
+                    FavoritesScreen(
+                        key = key,
+                        backStackViewModel = screenBackStackModel,
                     )
                 }
                 entry<NormalNavKey.HomePageEditor> {

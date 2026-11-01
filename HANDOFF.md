@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.6.1**（`launcher_version_code=270601`）
+**当前版本：27.7.1**（`launcher_version_code=270701`）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,48 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.7.1 收藏与本地归档（议题 #39）✅
+
+**一、能力**
+
+- 入口：`设置 → 高级设置 → 收藏与本地归档`（`NormalNavKey.Favorites`）
+- 用 SAF `OpenDocument` 选文件，不申请任何存储权限
+- 文件**复制**进 `files/favorites/files/<sha256 前 16 位>-<名字>`，原文件不动
+- 边复制边算 SHA-256；已存在同哈希 → 提示「已经收藏过了」，不重复占用空间
+- 索引：`files/favorites/index.json`（临时文件 + 改名写入，避免半个索引）
+- 删除归档只删副本 + 记录，二次确认；**在线收藏与本地归档互不影响**
+
+**二、类型识别（结构优先，扩展名兜底）**
+
+| 结构特征 | 类型 |
+|---|---|
+| `level.dat` | 存档 |
+| `modrinth.index.json`；或 `manifest.json` + `mods/` | 整合包 |
+| `pack.mcmeta` + `assets/` | 材质包 |
+| `pack.mcmeta` + `data/`（无 `assets/`） | 数据包 |
+| `shaders/` | 光影 |
+| `.jar` | 模组 |
+
+**三、⚠️ 约束**
+
+- 只存**相对文件名**，不存绝对路径（应用数据迁移后仍然有效）
+- 导入失败必须清理临时文件，不允许出现「提示成功但文件不完整」的记录
+- 不要把归档目录放到外部存储：SAF 临时授权过期后文件就读不到了
+- 卸载应用会清掉私有目录，界面必须继续保留这条提示
+
+**四、涉及文件**
+
+| 文件 | 作用 |
+|---|---|
+| `game/favorites/FavoriteEntry.kt` | 记录模型与类型枚举 |
+| `game/favorites/FavoriteStore.kt` | 索引读写、去重查询、总占用、删除 |
+| `game/favorites/FavoriteImporter.kt` | SAF 复制、SHA-256、结构识别、失败清理 |
+| `ui/screens/content/FavoritesScreen.kt` | 收藏页 UI（导入 / 列表 / 删除 / 总占用） |
+| `ui/screens/NormalNavKey.kt` | 新增 `Favorites` |
+| `ui/screens/main/MainScreen.kt` | 注册收藏页路由 |
+| `ui/screens/content/settings/AdvancedSettingsScreen.kt` | 高级设置里的入口 |
+| `ui/screens/content/SettingsScreen.kt` | 传递 `toFavorites` 导航 |
 
 ### 27.6.1 首页按钮回修 + 允许作弊 ✅
 

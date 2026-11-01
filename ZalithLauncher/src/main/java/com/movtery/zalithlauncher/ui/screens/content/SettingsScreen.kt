@@ -275,6 +275,9 @@ private fun NavigationUI(
                         toSettingsScreen = { target ->
                             key.backStack.navigateTo(target)
                         },
+                        toFavorites = {
+                            backStackViewModel.mainScreen.navigateTo(NormalNavKey.Favorites)
+                        },
                     )
                 }
                 entry<NormalNavKey.Settings.JavaManager> {

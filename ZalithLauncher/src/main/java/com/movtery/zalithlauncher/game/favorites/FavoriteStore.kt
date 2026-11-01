@@ -107,6 +107,20 @@ object FavoriteStore {
         }
     }
 
+    /**
+     * 取消「在线收藏」标记：**只清掉在线信息**，归档文件与本地记录都保留。
+     * 与 [delete] 刻意分开，取消在线收藏不应删本地文件。
+     */
+    suspend fun detachOnlineInfo(id: String) = withContext(Dispatchers.IO) {
+        mutex.withLock {
+            val all = readLocked().toMutableList()
+            val index = all.indexOfFirst { it.id == id }
+            if (index < 0) return@withLock
+            all[index] = all[index].copy(onlineProjectId = null, onlinePlatform = null)
+            writeLocked(all)
+        }
+    }
+
     private fun readLocked(): List<FavoriteEntry> {
         val file = indexFile()
         if (!file.isFile) return emptyList()

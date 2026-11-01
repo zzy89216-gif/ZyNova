@@ -67,6 +67,7 @@ fun AdvancedSettingsScreen(
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
     toSettingsScreen: (TitledNavKey) -> Unit,
+    toFavorites: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -113,10 +114,19 @@ fun AdvancedSettingsScreen(
 
                     SettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Bottom,
+                        position = CardPosition.Middle,
                         title = stringResource(R.string.settings_tab_control_manage),
                         summary = stringResource(R.string.settings_advanced_control_manage_entry_summary),
                         onClick = { toSettingsScreen(NormalNavKey.Settings.ControlManager) }
+                    )
+
+                    //议题 #39：收藏与本地归档（导入 / 查看 / 删除）
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        title = stringResource(R.string.favorites_title),
+                        summary = stringResource(R.string.favorites_import),
+                        onClick = toFavorites
                     )
                 }
             }
