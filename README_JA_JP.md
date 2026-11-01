@@ -1,105 +1,49 @@
 <p align="center">
-  <img src="assets/icon.png" width="180" alt="ZyNova">
+  <img src="assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> **Minecraft: Java Edition · Android Launcher**
->
-> ZalithLauncher2 のオープンソースコードを基にした独立非公式プロジェクト
-
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
-[![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
 
-[简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **[日本語](README_JA_JP.md)** | [한국어](README_KO.md) | [Русский](README_RU.md)
+[简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **日本語** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
 ---
 
-## ✦ 概要
+Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 のソースを基に独自に開発・配布しています。
 
-**ZyNova** は Android 向けの **Minecraft: Java Edition** ランチャーで、
-[ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) のオープンソースコードを
-基にしています。ZalithLauncher2 の公式版**ではなく**、独立して保守・配布される非公式フォークです。
+- GitHub：<https://github.com/zzy89216-gif/ZyNova>
+- Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>
 
-- GitHub: <https://github.com/zzy89216-gif/ZyNova>
-- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord: <https://discord.gg/QwPpZQHrTa>
+## ✨ 27.7.2 の更新内容
 
-## ✨ 27.7.2 のハイライト
-
-- **お気に入りの統合**: オンラインのお気に入り（Modrinth / CurseForge、ワンクリック導入と依存の自動取得）とローカル保管を 1 ページの 2 セクションに統合。ダウンロード画面の左側からも開けます
-- **レンダラーページの分割**: MobileGlues / Ironized Zink / GL4ES をそれぞれ独立したページに
-- **設定を 7 分類に再編**：基本 / ゲーム / レンダラー / ネットワークとダウンロード / AI / 詳細 / アプリ情報
-- **ネットワークとダウンロード**：接続数・接続タイムアウト・読み取りタイムアウト・再試行回数を調整可能。サービスごとにダウンロード元を変更でき（不正な値は公式に自動フォールバック）、キャッシュの確認と削除も可能
-- **レンダラー設定の統合**：選択中のレンダラーの設定だけを表示し、調整可能な全パラメータを「詳細設定」に集約
-- **AI 設定を設定アプリ内へ統合**：チャット画面の独立入口を削除（初回設定の案内は維持）。既存の API キー / モデル / 権限モードはそのまま
-- **お気に入りとローカル保管**：リソースをアプリ専用領域へコピーし SHA-256 で重複排除。インスタンスへの一括インストールと必須依存の自動取得、整合性確認、書き出し、個別削除に対応
-- **動画背景の起動最適化**：初期化時にプレイヤーを生成せず、最初のフレーム描画後にフェードイン（白画面・ちらつきを抑制）
-- **ダウンロードとインストールをバックグラウンド化**：ダウンロード画面を離れても中断しない
-- **ワールド作成**：ハードコアではチートとアイテム保持を強制的に無効化
-- **NeoForge のダウンロード**：実バイト数で進捗を計算し、停止時は理由付きで失敗、再試行時は既存ファイルを再利用
-
-> 完全な履歴は [CHANGELOG.md](CHANGELOG.md) を参照してください。
+- **設定を 7 分類に整理**：基本 / ゲーム / レンダラー / ネットワーク / AI / 詳細 / 情報
+- **レンダラー別ページ**：MobileGlues / Ironized Zink / GL4ES をそれぞれ独立ページに
+- **お気に入りの統合**：オンラインのお気に入り（依存も自動取得して導入）+ ローカル保管
+- **ダウンロード**：上部に進捗バー（詳細表示付き）、インストールは静かにバックグラウンド実行、動画背景のループを修正
 
 ## 🛠️ 主な機能
 
-- **設定は 7 分類**：基本 / ゲーム / レンダラー / ネットワークとダウンロード / AI / 詳細 / アプリ情報。
-  レンダラーの各パラメータとサービス別のダウンロード元をここで調整できます
-- **お気に入りとローカル保管**：リソースをアプリ専用領域へコピーし SHA-256 で重複排除。インスタンスへの
-  一括インストールと必須依存の自動取得、整合性確認、書き出し、個別削除に対応
-- **AI Agent**：既定は DeepSeek。ログ確認、MOD 管理、設定編集、リソース導入、ゲーム起動を実行
+- **AI Agent**：既定は DeepSeek。ログ閲覧、MOD 管理、設定変更、リソース導入、ゲーム起動が可能
 - **レンダラー**：自動 / MobileGlues / Ironized Zink / GL4ES
-- **カード型ホーム**：インスタンスごとにワールドとサーバーを表示し、作成 / 追加から quickPlay で起動
-- **統合リソース管理**：Modrinth / CurseForge 検索、依存解決、ダウンロード、SHA1 検証、インストール
-- **Fabric API 保護**：Fabric 導入フローが自動で追加。手動インストール・削除・無効化・重複導入は不可
+- **リソース基盤**：Modrinth / CurseForge 検索、依存解決、ダウンロード、検証、導入
+- **お気に入りと保管**：オンラインのお気に入り + アプリ専用領域の保管（SHA-256 で重複排除）
+- **Fabric API の保護**：Fabric の導入手順でのみ追加され、手動の重複導入はできません
 
 ## 📦 ダウンロードとビルド
 
-- **ダウンロード**：<https://github.com/zzy89216-gif/ZyNova/releases>
-  - ユニバーサル APK（arm64-v8a / armeabi-v7a / x86 / x86_64）
-  - `mapping.universal.zip`（難読化解除用マッピング）
-- **ローカルビルド**：JDK 17、Android SDK / NDK が必要です：
-  ```bash
-  ./gradlew ZalithLauncher:assembleRelease
-  ```
-- 公式ビルドは GitHub Actions で実行され、コード難読化とリソース圧縮が有効になります。
+- ダウンロード：<https://github.com/zzy89216-gif/ZyNova/releases>
+- ビルド：JDK 17 と Android SDK / NDK を用意し `./gradlew ZalithLauncher:assembleRelease`
 
-## ⚠️ 注意
+## 📚 Docs
 
-- ホームの「ワールド作成」は **26.1+** で新形式、**1.12.2~26.0** で互換パス、
-  **1.12.2 未満**では非表示です。
-- Fabric API は導入フローが自動処理します。手動インストールは拒否され、MOD 管理からも
-  削除・無効化できません。
-- quickPlay 非対応の旧バージョンでは、通常どおりメインメニューから起動します。
-- 既存の設定・ワールド・サーバー一覧はアップグレード後も保持されます。
-
-## 📚 ドキュメント
-
-| 内容 | ファイル |
-|---|---|
-| 更新履歴 | [CHANGELOG.md](CHANGELOG.md) |
-| 引き継ぎ / アーキテクチャ / 開発フロー | [HANDOFF.md](HANDOFF.md) |
-| サードパーティライセンス | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
-| ライセンス | [LICENSE](LICENSE) |
+[CHANGELOG.md](CHANGELOG.md) · [HANDOFF.md](HANDOFF.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · [LICENSE](LICENSE)
 
 ## ⚖️ ライセンス
 
-ZyNova は **GPL-3.0** で公開され、オープンソースを維持する必要があります。
-上流 ZalithLauncher2 の著作権・ライセンス表示は保持されています。全文と追加条項は
-[LICENSE](LICENSE)、サードパーティコンポーネントは [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
-を参照してください。
-
-## 💖 サポート
-
-- 問題報告：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- 支援：[assets/donate](assets/donate) とアプリ内の About ページ
-
-## 👥 メンテナー
-
-ZyNova は **zzy** が独立して開発・保守しています。
+GPL-3.0（オープンソースを維持）。第三者ライセンスは [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ---
 
