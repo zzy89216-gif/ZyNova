@@ -231,6 +231,7 @@ private fun NavigationUI(
                         key = key,
                         settingsScreenKey = settingsScreenKey,
                         mainScreenKey = mainScreenKey,
+                        eventViewModel = eventViewModel,
                         toSettingsScreen = { target ->
                             key.backStack.navigateTo(target)
                         },
