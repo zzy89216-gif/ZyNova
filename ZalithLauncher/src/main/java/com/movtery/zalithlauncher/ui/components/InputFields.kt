@@ -151,6 +151,10 @@ fun SmallOutlinedEditField(
     keyboardOptions: KeyboardOptions? = null,
     keyboardActions: KeyboardActions? = null,
     singleLine: Boolean = false,
+    /** 最少显示几行（多行输入框用，保证空内容时高度不塌） */
+    minLines: Int = 1,
+    /** 最多显示几行；超出后输入框内部自行滚动，不会无限长高 */
+    maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource? = null,
     imePanEnabled: Boolean = true,
 ) {
@@ -184,6 +188,8 @@ fun SmallOutlinedEditField(
         textStyle = effectiveTextStyle,
         cursorBrush = cursorBrush,
         singleLine = singleLine,
+        minLines = minLines,
+        maxLines = maxLines,
         keyboardOptions = keyboardOptions
             ?: if (singleLine) KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
             else KeyboardOptions.Default,

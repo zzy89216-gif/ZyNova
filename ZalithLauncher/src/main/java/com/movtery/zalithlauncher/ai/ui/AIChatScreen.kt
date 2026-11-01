@@ -69,10 +69,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -283,12 +285,28 @@ fun AIChatScreen(
                         .padding(start = 12.dp, end = 12.dp, bottom = 12.dp),
                     verticalAlignment = Alignment.Bottom
                 ) {
+                    //⚠️ 这里必须用 placeholder 而不是 label：
+                    //   SmallOutlinedEditField 的 label 是**固定显示在输入框上方的一行标题**，
+                    //   拿它当提示语会一直挂在上面，用户一输入就变成「提示 + 内容」两行，很难受。
+                    //   placeholder 只在该框为空时显示，输入后自动消失。
                     SmallOutlinedEditField(
                         modifier = Modifier.weight(1f),
                         value = input,
                         onValueChange = { input = it },
-                        label = { Text(stringResource(R.string.ai_input_hint)) },
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.ai_input_hint),
+                                style = TextStyle(fontSize = 12.sp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        textStyle = TextStyle(fontSize = 12.sp),
                         singleLine = false,
+                        //最多长到 5 行，再多就在框里滚动，避免输入框把聊天记录顶没
+                        minLines = 1,
+                        maxLines = 5,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                         keyboardActions = KeyboardActions(onSend = {
                             if (input.isNotBlank() && !busy) send()
