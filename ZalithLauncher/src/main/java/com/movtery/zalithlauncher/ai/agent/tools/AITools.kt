@@ -44,4 +44,5 @@ internal fun builtinTools(): List<AITool> = buildList {
     addAll(settingTools())
     addAll(launchTools())
     addAll(resourceTools())
+    addAll(favoriteTools())
 }
