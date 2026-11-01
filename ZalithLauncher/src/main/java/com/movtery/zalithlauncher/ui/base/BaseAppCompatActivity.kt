@@ -20,7 +20,7 @@ package com.movtery.zalithlauncher.ui.base
 
 import android.app.ActivityManager
 import android.content.res.Configuration
-import android.graphics.ColorDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import com.movtery.zalithlauncher.BuildKeys

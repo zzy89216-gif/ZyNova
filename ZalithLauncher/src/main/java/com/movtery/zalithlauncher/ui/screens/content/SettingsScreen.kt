@@ -68,6 +68,7 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.LauncherSettingsSc
 import com.movtery.zalithlauncher.ui.screens.content.settings.NetworkSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.RendererSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.navigateOnce
+import com.movtery.zalithlauncher.ui.screens.navigateTo
 import com.movtery.zalithlauncher.ui.screens.onBack
 import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
 import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
