@@ -109,6 +109,9 @@ fun SettingsScreen(
                 toHomePageEditor = {
                     backStackViewModel.mainScreen.navigateTo(NormalNavKey.HomePageEditor)
                 },
+                toFavorites = {
+                    backStackViewModel.mainScreen.navigateTo(NormalNavKey.Favorites)
+                },
                 eventViewModel = eventViewModel,
                 submitError = submitError,
                 modifier = Modifier.fillMaxHeight()
@@ -203,6 +206,7 @@ private fun NavigationUI(
     onCurrentKeyChange: (TitledNavKey?) -> Unit,
     openLicenseScreen: (raw: Int) -> Unit,
     toHomePageEditor: () -> Unit,
+    toFavorites: () -> Unit,
     eventViewModel: EventViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
     modifier: Modifier = Modifier
@@ -275,9 +279,7 @@ private fun NavigationUI(
                         toSettingsScreen = { target ->
                             key.backStack.navigateTo(target)
                         },
-                        toFavorites = {
-                            backStackViewModel.mainScreen.navigateTo(NormalNavKey.Favorites)
-                        },
+                        toFavorites = toFavorites,
                     )
                 }
                 entry<NormalNavKey.Settings.JavaManager> {
