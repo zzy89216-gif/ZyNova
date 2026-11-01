@@ -179,12 +179,7 @@ fun quickInstallResource(
             id = "quick_install_${instance.getVersionName()}_${platform.name}_$projectId",
             task = { task ->
                 task.updateProgress(-1f)
-                task.updateTitle(
-                    androidText(
-                        R.string.main_task_install_resource,
-                        projectId ?: version.platformFileName()
-                    )
-                )
+                task.updateTitle(androidText(R.string.main_task_install_resource, projectId))
                 task.updateMessage(androidText(R.string.download_assets_quick_install_resolving))
 
                 val outcome = ResourceManager.installToInstance(
