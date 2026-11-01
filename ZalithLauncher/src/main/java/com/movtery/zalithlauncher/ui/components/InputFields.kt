@@ -188,8 +188,9 @@ fun SmallOutlinedEditField(
         textStyle = effectiveTextStyle,
         cursorBrush = cursorBrush,
         singleLine = singleLine,
-        minLines = minLines,
-        maxLines = maxLines,
+        //singleLine 为真时行数固定为 1，避免给底层传「单行 + 多行」这种矛盾参数
+        minLines = if (singleLine) 1 else minLines,
+        maxLines = if (singleLine) 1 else maxLines,
         keyboardOptions = keyboardOptions
             ?: if (singleLine) KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
             else KeyboardOptions.Default,
