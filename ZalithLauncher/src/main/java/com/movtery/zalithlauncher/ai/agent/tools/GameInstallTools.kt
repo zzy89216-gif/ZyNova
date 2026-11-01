@@ -445,6 +445,16 @@ internal object GameInstallRunner {
                             delay(400)
                         }
                         task.updateProgress(1f)
+                    },
+                    onCancel = {
+                        //用户从顶部进度条上取消：必须把真正的安装也停掉，
+                        //否则「界面说取消了、后台还在下」。取消会清掉半成品目录。
+                        runCatching { item.installer.cancelInstall() }
+                        if (active === item) {
+                            active = null
+                            lastSuccess = false
+                            lastReport = "安装「$name」被取消了（半成品目录已清理）。"
+                        }
                     }
                 )
             )

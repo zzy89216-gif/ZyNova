@@ -181,6 +181,10 @@ private suspend fun installModPackWithProgress(
     val result = CompletableDeferred<Result<String>>()
     val taskId = "ai_install_modpack_${version.platformId()}_${System.currentTimeMillis()}"
 
+    //用户从顶部进度条上取消时，必须把真正的安装器也一起停掉，
+    //否则「AI 说取消了、后台还在下」——比不让取消更糟
+    var runningInstaller: ModPackInstaller? = null
+
     TaskSystem.submitTask(
         Task.runTask(
             id = taskId,
@@ -202,6 +206,8 @@ private suspend fun installModPackWithProgress(
                     //   用户已经在聊天里明确要求安装，就按同意处理。
                     waitForConfirmMobileData = { true }
                 )
+
+                runningInstaller = installer
 
                 installer.installModPack(
                     onInstalled = { name ->
@@ -235,6 +241,9 @@ private suspend fun installModPackWithProgress(
             },
             onError = { e ->
                 result.complete(Result.failure(e))
+            },
+            onCancel = {
+                runCatching { runningInstaller?.cancelInstall() }
             },
             onFinally = {
                 //被用户从进度条上取消时不会走 onError，这里兜底
