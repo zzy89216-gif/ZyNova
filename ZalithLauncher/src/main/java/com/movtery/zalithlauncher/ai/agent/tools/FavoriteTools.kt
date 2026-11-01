@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.ai.agent.tools
 
 import com.movtery.zalithlauncher.ai.agent.AIToolRisk
-import com.movtery.zalithlauncher.ai.agent.aiTool
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
