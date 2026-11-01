@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
+[![Release](https://img.shields.io/badge/Release-27.8.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0)
 
 [简体中文](README.md) | [English](README_EN.md) | **繁體中文** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,16 +17,16 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.7.2 更新重點
+## ✨ 27.8.0 更新重點
 
-- **設定中心七大分類**：基礎 / 遊戲 / 渲染器 / 網路與下載 / AI / 進階 / 關於
-- **渲染器參數獨立頁**：MobileGlues / Ironized Zink / GL4ES 各一頁，參數全部可調
-- **收藏合併**：線上收藏（可安裝、自動裝前置）+ 本機封存，同頁切換
-- **下載體驗**：頂部進度條可看明細；安裝靜默背景執行；影片背景恢復循環
+- **AI 是 Agent，不是聊天機器人**：說一句就能裝遊戲本體 / 裝整合包 / 裝資源 / 改實例設定，預設「完全控制」
+- **下載全部靜默**：安裝不再彈窗，進度只在頂部細進度條；點開是「標題 / 步驟 / 進度 / 速度 / 取消」的明細
+- **NeoForge 修好了**：鏡像涵蓋整個 maven.neoforged 倉庫，不再動不動下載失敗、卡住
+- **細節**：聊天輸入框提示語輸入即隱；收藏 / 資源 / 整合包共用同一個任務佇列
 
 ## 🛠️ 主要功能
 
-- **AI Agent**：預設 DeepSeek，能讀日誌、管理模組、改設定、裝資源、啟動遊戲
+- **AI Agent**：預設 DeepSeek，裝遊戲本體 / 裝整合包 / 裝資源 / 改設定 / 讀日誌 / 啟動遊戲，直接動手
 - **渲染器**：自動 / MobileGlues / Ironized Zink / GL4ES
 - **資源核心**：Modrinth / CurseForge 搜尋、依賴解析、下載、校驗、安裝
 - **收藏與封存**：線上收藏 + 私有目錄封存，SHA-256 去重，離線可用

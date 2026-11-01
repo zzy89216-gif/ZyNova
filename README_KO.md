@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
+[![Release](https://img.shields.io/badge/Release-27.8.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
 
@@ -17,16 +17,16 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.7.2 업데이트
+## ✨ 27.8.0 업데이트
 
-- **설정 7개 분류**: 기본 / 게임 / 렌더러 / 네트워크 및 다운로드 / AI / 고급 / 정보
-- **렌더러별 페이지**: MobileGlues / Ironized Zink / GL4ES 각각 독립 페이지
-- **즐겨찾기 통합**: 온라인 즐겨찾기(필수 선행 모드 자동 설치) + 로컬 보관
-- **다운로드**: 상단 진행률 표시(상세 보기), 설치는 백그라운드에서 조용히, 배경 동영상 반복 재생 수정
+- **AI는 에이전트**: 게임 본체·모드팩·모드 설치와 인스턴스 설정 변경을 말 한마디로 실행 (기본값 '완전 제어')
+- **다운로드는 완전히 조용히**: 대화상자 없이 상단 얇은 진행 표시줄에만 표시, 탭하면 제목 / 단계 / 진행률 / 속도 / 취소
+- **NeoForge 수정**: 미러가 maven.neoforged 저장소 전체를 커버해 실패와 멈춤 해결
+- **세부**: 입력창 안내 문구는 입력하면 사라짐, 즐겨찾기·리소스·모드팩이 같은 작업 큐 공유
 
 ## 🛠️ 주요 기능
 
-- **AI Agent**: 기본 DeepSeek. 로그 확인, 모드 관리, 설정 변경, 리소스 설치, 게임 실행
+- **AI Agent**: 기본 DeepSeek. 게임 본체·모드팩·모드 설치, 설정 변경, 로그 확인, 게임 실행까지 직접 수행
 - **렌더러**: 자동 / MobileGlues / Ironized Zink / GL4ES
 - **리소스 코어**: Modrinth / CurseForge 검색, 의존성 해석, 다운로드, 검증, 설치
 - **즐겨찾기와 보관**: 온라인 즐겨찾기 + 앱 전용 저장소(SHA-256 중복 제거)

@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.7.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.2)
+[![Release](https://img.shields.io/badge/Release-27.8.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,16 +17,16 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 27.7.2
+## ✨ What's new in 27.8.0
 
-- **Seven settings categories**: Basics / Game / Renderer / Network & Downloads / AI / Advanced / About
-- **Dedicated renderer pages**: MobileGlues / Ironized Zink / GL4ES, every parameter editable
-- **Favorites merged**: online favorites (install with automatic dependencies) plus local archive
-- **Downloads**: top progress bar with details, silent background install, video background loops again
+- **AI is an Agent, not a chatbot**: install the game, modpacks or mods, or edit instance settings just by asking — full control by default
+- **Everything downloads silently**: no dialogs, progress lives in the thin top bar; tap it for title / step / progress / speed / cancel
+- **NeoForge fixed**: mirrors now cover the whole maven.neoforged repository, no more endless failures and stalls
+- **Details**: the chat hint steps aside as you type; favorites, resources and modpacks share one task queue
 
 ## 🛠️ Features
 
-- **AI Agent**: DeepSeek by default; reads logs, manages mods, edits configs, installs resources, launches the game
+- **AI Agent**: DeepSeek by default — installs the game, modpacks and mods, edits configs, reads logs, launches the game
 - **Renderers**: Auto / MobileGlues / Ironized Zink / GL4ES
 - **Resource core**: Modrinth / CurseForge search, dependency resolution, download, verification, install
 - **Favorites & archive**: online favorites plus a private archive with SHA-256 dedupe

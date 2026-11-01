@@ -34,7 +34,10 @@
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
 
-### 27.8.0 Agent 能装游戏、能改配置、能读写收藏 ✅
+### 27.8.0 Agent 能装游戏 / 装整合包 / 改配置，下载彻底静默 ✅
+
+> **已发布**：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0>
+> （tag 指向 `1f82bc2`，APK 与 mapping 由 `release_ci.yml` 在 Release 发布事件里自动构建并上传）
 
 **一、收藏工具（`ai/agent/tools/FavoriteTools.kt`）**
 
@@ -132,6 +135,31 @@
 - 下载页移除大块进度卡片，只保留顶部细进度条；游戏本体安装静默无弹窗
 - 系统提示词新增「默认就能干活，不需要用户先配置」「实例配置」两节，
   并把「游戏本体不能下载」的旧说法改成 `install_game` 的正确用法
+
+**十、涉及文件（27.8.0）**
+
+| 文件 | 改动 |
+|---|---|
+| `ai/agent/tools/GameInstallTools.kt` | **新增**：`install_game` / `install_status` / `list_downloadable_versions` + `GameInstallRunner` |
+| `ai/agent/tools/ModPackTools.kt` | **新增**：`install_modpack`（复用 `ModPackInstaller`，含实例名去重与取消联动） |
+| `ai/agent/tools/InstanceConfigTools.kt` | **新增**：`get_instance_config` / `set_instance_config` / `set_game_option` |
+| `ai/agent/tools/FavoriteTools.kt` | **新增**：`list_favorites` / `remove_favorite` |
+| `ai/agent/tools/ResourceTools.kt` | `install_resource` 自动识别类型 + 走 `TaskSystem` + 拒绝整合包；`search_resources` 支持 `type=modpack` 并按平台支持类型过滤 |
+| `ai/agent/tools/AITools.kt` | 注册三组新工具（总数 34） |
+| `ai/agent/tools/AIToolBuilders.kt` | 新增 `strOrEmpty()`：区分「没传」与「传了空字符串」 |
+| `ai/AISettings.kt` | 默认权限模式 → `FULL_CONTROL` + 一次性迁移（`aiPermissionModeMigratedToFull`） |
+| `viewmodel/AIChatViewModel.kt` | 系统提示词新增「你是 Agent」「默认就能干活」「实例配置」等规范 |
+| `ai/ui/AIChatScreen.kt` | 输入框改用 `placeholder` + `maxLines`；文案改为 Agent 口吻 |
+| `ui/components/InputFields.kt` | `SmallOutlinedEditField` 新增 `minLines` / `maxLines`（单行时强制 1） |
+| `coroutine/Task.kt` | 新增 `title` 状态与 `updateTitle()`（**不改** `runTask` 构造参数） |
+| `ui/screens/main/MainScreen.kt` | 任务面板：标题 / 步骤 / 进度 / 速度 / 取消 + 「正在进行 N 个任务」 |
+| `game/addons/mirror/BMCLAPI.kt` | NeoForge 镜像前缀改为整个 `maven.neoforged.net/releases` 仓库 |
+| `game/download/resources/ResourceManager.kt` | 新增 `detectType()`（向平台确认真实资源类型） |
+| `game/download/resources/ResourceInstallManager.kt` | 拒绝 `MOD_PACK`（兜底，避免压缩包被丢进游戏根目录） |
+| `game/download/assets/_Download.QuickInstall.kt` | 安装任务加标题 |
+| `ui/screens/content/download/DownloadGameScreen.kt` | 安装任务加标题 |
+| `res/values*/strings.xml` | 新增 `main_task_count` / `main_task_working` / `main_task_install_*`；AI 文案改写（en / zh-CN / zh-TW / ja） |
+| `ui/components/DownloadTasksIndicator.kt` | **删除**（大进度卡片残留，无调用方） |
 
 ### 27.7.2 渲染器页面拆分 + 资源收藏并入 ✅
 
@@ -1140,6 +1168,8 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
   - `aiProvider` / `aiOpenAIKey` / `aiAnthropicKey` / `aiModel`
   - `aiOpenAIBaseUrl` / `aiAnthropicBaseUrl`
   - `aiPermissionMode` / `aiTemperature` / `aiMaxAgentSteps` / `aiShowToolCalls`
+  - ⚠️ `aiPermissionMode` 的默认值：27.1.1 为「操作确认」，**27.8.0 起改为「完全控制」**
+    （老设备一次性迁移，标记键 `aiPermissionModeMigratedToFull`）
 - **API Key 只保存在本机 MMKV**，不上传任何自有服务器
 - **模型不硬编码**：`GET {baseUrl}/models` 动态拉取后由用户选择
 
@@ -1162,7 +1192,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
   - 工具异常会转成可读文本回灌给模型，让它自行调整
   - 步数上限 `aiMaxAgentSteps`，避免模型死循环
 
-**5）25 个工具（全部复用现有系统，不重复实现）**
+**5）25 个工具（27.1.0 当时；27.8.0 起为 34 个，全部复用现有系统，不重复实现）**
 
 | 工具组 | 数量 | 复用的现有能力 |
 |---|---|---|
@@ -1756,11 +1786,13 @@ HTTP 403
 ### 后续待办 ⬜
 
 1. **Boat 后端双端**：用户曾想接入 Boat 后端（像老版 FCL 一样），目前未开始。
-2. ~~**AI 助手**~~ ✅ **已完成（27.1.0 – 27.1.2）**：
+2. ~~**AI 助手**~~ ✅ **已完成（27.1.0 – 27.8.0）**：
    已实现**全局 AI Agent**——Provider（DeepSeek / OpenAI，可扩展）、模型从服务商动态获取、
-   流式对话、历史对话与侧边栏、25 个可真正执行操作的工具（读日志 / 管模组 / 改启动器设置 /
-   写文件 / 装资源 / 启动游戏）。比当初设想的「接入 OpenAI 接口 + 自动加模组写配置」范围大得多。
-   后续可继续扩充工具集。
+   流式对话、历史对话与侧边栏、**34 个**可真正执行操作的工具。
+   27.8.0 起 Agent 能装**游戏本体 / 整合包 / 资源**、改实例配置（`install_game` / `install_modpack` /
+   `install_resource` / `set_instance_config` / `set_game_option`），默认权限模式为「完全控制」，
+   下载与安装统一进顶部任务面板（静默、可取消）。
+   比当初设想的「接入 OpenAI 接口 + 自动加模组写配置」范围大得多。后续可继续扩充工具集。
 3. **自定义主页数据接口**：`HomeDataProvider` 已可作为统一数据入口，可继续开放给自定义主页。
 4. **键位优化、渲染优化**：用户提过，未深入做。
 5. **继续收敛 ZL2 遗留逻辑**：资源系统已统一，其他模块仍可能残留上游耦合。
@@ -2060,6 +2092,7 @@ HTTP 403
 | `jniLibs/{armeabi-v7a,x86_64}/libvirglrenderer_1.so` | 仅被 VirGL 渲染器使用 |
 | `res/raw/ng_gl4es_license.txt` | 对应组件已不再分发 |
 | `res/raw/mesa_license.txt` | 由 `mesa_licenses.txt`（Mesa 完整许可集）取代 |
+| `ui/components/DownloadTasksIndicator.kt` | 27.8.0 移除大进度卡片后已无调用方 |
 
 > ⚠️ **注意**：`jniLibs/*/libvulkan_freedreno.so`（Turnip）**不是** Freedreno 渲染器专属，
 > 它是「Vulkan 驱动器」的默认内置驱动（`driver_helper.c` 里作为兜底），**必须保留**。
@@ -2743,9 +2776,13 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-11-01（27.7.2 已发布 —— 渲染器详细参数拆成 MobileGlues / Ironized Zink / GL4ES 三个独立页面；
-收藏页合并为「在线收藏 + 本地归档」两段并搬入上游的收藏数据层；背景视频恢复循环播放；
-下载页顶部新增任务进度条；安装游戏不再弹对话框、改为静默后台执行。27.7.1 的内容见上文章节。）
+**最后更新**：2026-11-01（**27.8.0 已发布** —— Agent 从「聊天机器人」正式变成会动手的 Agent：
+新增 `install_game` / `install_modpack` / `install_resource`（自动识别资源类型）/ 实例配置三件套，
+工具数 25 → 34；默认权限模式改为「完全控制」并带一次性迁移；下载与安装全部静默，
+任务面板升级成「标题 → 步骤 → 进度 → 速度 → 取消」的详细列表；
+修掉 NeoForge 因镜像只覆盖 `net/neoforged` 子树而频繁下载失败/卡死的问题。
+发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0>。
+27.7.2 的渲染器拆页与收藏合并见上文章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
