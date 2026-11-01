@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
+[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
 
 [简体中文](README.md) | **[English](README_EN.md)** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -27,25 +27,26 @@ ZalithLauncher2 release; it is an independently maintained, unofficial fork.
 - Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.6.1 Highlights
+## ✨ 27.7.1 Highlights
 
-- **Top five buttons restored**: folder / AI / multiplayer / download / settings are back to their
-  pre-27.6.0 look and no longer use the home button material.
-- **Ghost buttons**: launch / create-world / add-server / world-server entries use only a ~1.5–2%
-  luminance difference, no borders and retained transparency, so images and videos show through in
-  real time. Create-world and add-server are compact and sit next to Launch.
-- **Version-aware world creation**: 26.1+ writes the new split save format; 1.12.2–26.0 uses the
-  DataFixer compatibility path; below 1.12.2 the entry is hidden. The result is read back and
-  verified.
-- **Allow Cheats**: a version-aware switch in the create-world dialog.
-- **Fabric API loading state**: shows “loading” instead of “blocked” while the list loads; install
-  is allowed only after a successful load.
-- **27.6.0 retained**: Fabric API protection, icon fixes, and one-step world/server creation.
+- **Settings reorganized into seven categories**: Basics / Game / Renderer / Network & Downloads / AI / Advanced / About & Support
+- **Network & Downloads**: adjust connections, connect/read timeouts and retries; override each download service separately (invalid values fall back to the official one); inspect and clear the download cache
+- **Renderer settings consolidated**: each renderer shows only its own options; every configurable parameter is available under Advanced settings
+- **AI settings moved into Settings**: the separate entry in the AI chat is gone, first-time setup guidance stays, existing API key / model / permission mode are untouched
+- **Favorites & local archive**: copy resources into app-private storage with SHA-256 dedupe; install into an instance with automatic required dependencies, verify integrity, export and delete independently
+- **Video background startup**: the player is no longer created during first composition; the video fades in after the first frame, avoiding white flashes
+- **Downloads and installs run in the background**: leaving the download page no longer cancels an install
+- **World creation**: Hardcore forces cheats and keep-inventory off
+- **NeoForge downloads**: progress is byte-based, stalled batches fail with a reason, retries keep finished files
 
 > Full history: [CHANGELOG.md](CHANGELOG.md).
 
 ## 🛠️ Features
 
+- **Settings in seven categories**: Basics / Game / Renderer / Network & Downloads / AI / Advanced /
+  About & Support; renderer parameters and per-service download sources are all editable there
+- **Favorites & local archive**: copy resources into app-private storage with SHA-256 dedupe; install
+  into an instance with automatic required dependencies, verify integrity, export or delete independently
 - **AI Agent**: DeepSeek by default; it can read logs, manage mods, edit configs, install resources
   and launch the game — not just give advice.
 - **Renderers**: Auto / MobileGlues / Ironized Zink / GL4ES

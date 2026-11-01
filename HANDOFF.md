@@ -81,7 +81,7 @@
 | `game/favorites/FavoriteEntry.kt` | 记录模型与类型枚举 |
 | `game/favorites/FavoriteStore.kt` | 索引读写、去重查询、总占用、删除 |
 | `game/favorites/FavoriteImporter.kt` | SAF 复制、SHA-256、结构识别、失败清理 |
-| `ui/screens/content/FavoritesScreen.kt` | 收藏页 UI（导入 / 列表 / 删除 / 总占用） |
+| `ui/screens/content/FavoritesScreen.kt` | 收藏页 UI（导入 / 列表 / 详情 / 完整性校验 / 安装 / 导出 / 删除 / 总占用） |
 | `ui/screens/NormalNavKey.kt` | 新增 `Favorites` |
 | `ui/screens/main/MainScreen.kt` | 注册收藏页路由 |
 | `ui/screens/content/settings/AdvancedSettingsScreen.kt` | 高级设置里的入口 |
@@ -574,6 +574,10 @@ MobileGlues 声明 `getMinMCVersion() = "1.17"`，GL4ES 走 GLES2 路径，
 
 ### 27.3.0 认证入口调整 + 界面世代体系（处理议题 #17）✅
 
+> ⚠️ **历史记录：27.7.1 起「界面世代」设置已移除**，界面固定使用新版（`Theme.kt` 中
+> `isClassic = false`）。`AllSettings.uiGeneration` 只作为旧配置兼容项保留，不再参与渲染。
+> 下面关于「可双向切换」的描述仅用于说明当时的实现，**不要据此把入口加回来**。
+
 **一、本版本做了什么（四件事）**
 
 1. **认证入口调整（议题 #17）**：默认隐藏离线 / 第三方认证，Microsoft 正版认证优先
@@ -1002,7 +1006,9 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 
 **2）AI 配置（独立于启动器通用设置）**
 
-- 入口在**聊天界面右上角**，**不出现在「设置」页面**，配置存在独立的 `AISettings`
+- ⚠️ **27.7.1 起已改变**：AI 配置并入「设置 → AI 设置」，聊天页右上角的独立入口已移除
+  （首次配置的引导入口保留）。配置仍存在 `AISettings`，MMKV 键名一个都没改。
+- 以下为 27.1.x 当时的实现描述：入口在**聊天界面右上角**、不出现在「设置」页面
 - `ai/AISettings.kt`：复用 `SettingsRegistry` + MMKV，键名统一 `ai` 前缀
   - `aiProvider` / `aiOpenAIKey` / `aiAnthropicKey` / `aiModel`
   - `aiOpenAIBaseUrl` / `aiAnthropicBaseUrl`
@@ -1392,7 +1398,8 @@ HTTP 403
 
 `ui/screens/content/settings/RendererSettingsScreen.kt`：
 - `AllSettings.renderer.state == IRONIZED_ZINK_UNIQUE_IDENTIFIER` → 在渲染器列表卡片
-  **下方**插入 `IronizedZinkConfigCards()`（**26.4.0 起只剩预设卡 + OpenGL 版本下拉**）
+  **下方**插入 `IronizedZinkConfigCards()`（**26.4.0 起只剩预设卡 + OpenGL 版本下拉**；
+  ⚠️ 27.7.1 起另外多了「高级参数」折叠区，可改 12 个开关）
 - `AllSettings.renderer.state == MOBILE_GLUES_UNIQUE_IDENTIFIER` → 同样位置插入
   `MobileGluesConfigCards()`（**27.4.0 新增**，目前只有一张 OpenGL 版本下拉卡）
 - `"auto"` 不展开任何面板（它没有可配置项）
@@ -1628,6 +1635,8 @@ HTTP 403
 5. **继续收敛 ZL2 遗留逻辑**：资源系统已统一，其他模块仍可能残留上游耦合。
 5.1 ~~**Ironized Zink 的 OpenGL 版本不可在界面调整**~~ ✅ **已解决（27.1.2）**：
    已恢复**仅** OpenGL 版本这一个下拉（4.6 / 4.5 / 4.3 / 3.3），其余 12 个开关保持删除。
+   > ⚠️ **27.7.1 起已改变**：12 个开关以「高级参数」折叠区的形式放回
+   > （渲染器页与「高级设置 → 渲染器详细参数」两处都能改），键名与预设写入链路未变。
    实现见 27.1.2 章节；上游预设取值未被改动。
 5.2 **视觉体验升级（议题 #15）只落地了第一部分** ⬜：
    27.2.0 已做：真实页面转场、减少动态效果、强效动态玻璃 + 光敏性警告、
@@ -1733,7 +1742,7 @@ HTTP 403
 | `ai/agent/AIAgent.kt` | Agent 主循环 + 权限裁决 |
 | `ai/agent/tools/*.kt` | 25 个内置工具（实例 / 内容 / 文件 / 日志 / 设置 / 启动 / 搜索安装） |
 | `ai/ui/AIChatScreen.kt` | AI 聊天界面（同时就是 Agent 界面） |
-| `ai/ui/AIConfigScreen.kt` | AI 配置界面（独立于启动器通用设置） |
+| `ai/ui/AIConfigScreen.kt` | AI 配置内容体（27.7.1 起由设置中心承载，函数名为 `AIConfigContent`） |
 | `viewmodel/AIChatViewModel.kt` | 驱动 Agent 循环 + 注入启动/确认回调 |
 | `res/drawable/ic_ai_filled.xml` | AI 入口图标 |
 | `res/drawable/ic_send.xml` | 发送图标 |
@@ -2456,7 +2465,7 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
 - 最新版本：**27.6.1**
-- 历史版本：27.6.0、27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
+- 历史版本：27.7.0、27.6.0、27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`
 - 编译 workflow：
@@ -2571,11 +2580,10 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-10-25（27.6.1 已开发完成 —— 按真机截图回修首页：顶部 5 个入口回档且不再动；
-启动 / 创建世界 / 添加服务器 / 条目统一改为「幽灵按钮」（约 1.5%~2% 明暗差、无描边、保留透明度）；
-快捷按钮缩小并移到启动旁；创建世界按版本自适应（26.1+ 新格式 / 1.12.2~26.0 兼容层 / 低于 1.12.2 隐藏），
-新增「允许作弊」；Fabric API 加载中只显示「正在加载中」；中文改为默认 README，新增韩语 / 俄语并统一六语言入口，README 精简后详细内容移入本文件与 CHANGELOG。
-27.6.0 的内容见下方章节。）
+**最后更新**：2026-11-01（27.7.1 已发布 —— 设置中心七大分类、网络与下载、AI 并入、
+渲染器配置整合（含 GL4ES / MobileGlues 高级参数接线）、视频背景启动优化、NeoForge 下载修复、
+下载/安装转后台、极限模式限制、收藏与本地归档（含一键安装与自动前置）。
+27.7.0 的内容见上文章节。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在

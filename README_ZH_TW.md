@@ -11,7 +11,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Language](https://img.shields.io/badge/Primary-Kotlin-blue)](https://kotlinlang.org/)
 [![License](https://img.shields.io/badge/License-GPL--3.0-orange)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Release](https://img.shields.io/badge/Release-27.6.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.6.1)
+[![Release](https://img.shields.io/badge/Release-27.7.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.7.1)
 
 [简体中文](README.md) | [English](README_EN.md) | **[繁體中文](README_ZH_TW.md)** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -27,21 +27,26 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.6.1 更新重點
+## ✨ 27.7.1 更新重點
 
-- **頂部 5 個按鈕回檔**：資料夾 / AI / 多人 / 下載 / 設定恢復原樣，不再套用首頁按鈕材質
-- **幽靈按鈕**：啟動 / 建立世界 / 新增伺服器 / 條目只保留約 1.5%~2% 明暗差，無描邊、保留透明度，
-  圖片 / 影片背景即時透出；快捷按鈕縮小後並排放在啟動按鈕旁
-- **建立世界依版本自適應**：26.1+ 直接寫新存檔結構；1.12.2~26.0 走 DataFixer；
-  低於 1.12.2 隱藏入口；寫完回讀驗證
-- **允許作弊**：建立世界新增開關，依 Minecraft 版本自適應
-- **Fabric API 載入狀態**：載入中只顯示「正在載入中」，載入成功才允許安裝，失敗 / 為空才拒絕
-- **保留 27.6.0 內容**：Fabric API 防呆、圖示修正、一鍵建立世界 / 伺服器
+- **設定中心重構為七大分類**：基礎設定 / 遊戲設定 / 渲染器設定 / 網路與下載 / AI 設定 / 進階設定 / 關於與支援
+- **網路與下載**：連線數、連線逾時、讀取逾時、失敗重試可調；可依服務分別修改下載來源（填錯自動回退官方）；可檢視並清理下載快取
+- **渲染器設定整合**：依目前選取的渲染器動態顯示專屬設定；三個渲染器的全部可調參數集中在「進階設定」
+- **AI 設定併入設定中心**：聊天頁獨立入口移除，保留首次設定引導；既有 API Key / 模型 / 權限模式不受影響
+- **收藏與本機封存**：把資源複製進應用程式私有目錄，SHA-256 去重；可一鍵安裝到實例並自動下載必要前置，支援詳情、完整性檢查、匯出與獨立刪除
+- **影片背景啟動最佳化**：播放器不再於介面初始化時建立，首幀出現後淡入，避免白屏與閃爍
+- **下載與安裝轉為背景**：離開下載頁不會中斷安裝
+- **建立世界**：極限模式強制關閉作弊與死亡不掉落
+- **NeoForge 下載**：進度依實際位元組計算，整批停擺會主動報錯，重試不再從零下載
 
 > 完整歷史見 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 🛠️ 主要功能
 
+- **設定中心七大分類**：基礎設定 / 遊戲設定 / 渲染器設定 / 網路與下載 / AI 設定 / 進階設定 / 關於與支援；
+  渲染器參數與逐服務下載來源都能在此調整
+- **收藏與本機封存**：把資源複製進應用程式私有目錄並以 SHA-256 去重；可一鍵安裝到實例並自動下載必要前置，
+  支援完整性檢查、匯出與獨立刪除
 - **AI Agent**：預設 DeepSeek，能讀日誌、管理模組、改設定、裝資源、啟動遊戲
 - **渲染器**：自動 / MobileGlues / Ironized Zink / GL4ES
 - **卡片式首頁**：依實例展示世界與伺服器，可一鍵建立 / 新增並 quickPlay 進入
