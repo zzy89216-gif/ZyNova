@@ -18,6 +18,8 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.download
 
+import kotlinx.coroutines.delay
+import com.movtery.zalithlauncher.coroutine.Task
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -130,6 +132,36 @@ private class GameDownloadViewModel(): ViewModel() {
             return
         }
         installOperation = GameInstallOperation.Install
+        //完全静默：页面里不再弹任何进度界面，只把进度写进全局任务队列，
+        //顶部那条小进度条就是唯一的反馈来源
+        val mirrorId = "install_game_${info.gameVersion}_${info.customVersionName}"
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = mirrorId,
+                task = { task ->
+                    task.updateProgress(0f)
+                    while (true) {
+                        val current = installer
+                        val list = current?.tasksFlow?.value.orEmpty()
+                        if (list.isNotEmpty()) {
+                            val average = list
+                                .map { it.task.progress.value.coerceIn(0f, 1f) }
+                                .average()
+                                .toFloat()
+                            task.updateProgress(average)
+                            list.firstOrNull { it.task.stage.value.name == "RUNNING" }
+                                ?.let { task.updateMessage(it.title) }
+                        }
+                        if (current == null) {
+                            task.updateProgress(1f)
+                            break
+                        }
+                        delay(400)
+                    }
+                }
+            )
+        )
+
         installer = GameInstaller(context, info, TaskSystem.appScope).also {
             it.installGame(
                 onInstalled = { version ->

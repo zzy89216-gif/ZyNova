@@ -18,7 +18,6 @@
 
 package com.movtery.zalithlauncher.ui.screens.content
 
-import com.movtery.zalithlauncher.ui.components.DownloadTasksIndicator
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -108,9 +107,6 @@ fun DownloadScreen(
         useClassEquality = true
     ) { isVisible: Boolean ->
         androidx.compose.foundation.layout.Column(modifier = Modifier.fillMaxSize()) {
-            //下载进度放在顶部：一进来就能看到，和顶部任务入口是同一套数据
-            DownloadTasksIndicator()
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
