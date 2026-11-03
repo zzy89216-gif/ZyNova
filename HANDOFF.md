@@ -21,6 +21,27 @@
 
 ---
 
+### 文档中心（`docs/`，27.9.0 起）
+
+用户向说明、常见问题、故障排查**统一放在 `docs/`**，不要再散落进 README 或只写在本文件里。
+
+| 文件 | 内容 |
+|---|---|
+| `docs/README.md` | 文档索引 + 维护约定（新增文件必须登记） |
+| `docs/install.md` | 两个 APK 怎么选、首次启动、存储权限 |
+| `docs/usage.md` | 下载 / 实例 / 导出 / 收藏入口 |
+| `docs/renderers.md` | 自动 / MobileGlues / GL4ES / LTW 与选择建议 |
+| `docs/login.md` | 微软 / 离线 / 第三方认证与错误处理 |
+| `docs/favorites.md` | 在线收藏 vs 本地归档 |
+| `docs/ai-agent.md` | AI 配置、权限模式、能力与安全边界 |
+| `docs/troubleshooting.md` | 崩溃分析、日志、常见故障 |
+| `docs/faq.md` | 高频问题速查 |
+| `docs/data-and-privacy.md` | 数据位置、卸载影响、日志与 Key |
+| `docs/build.md` | 本地构建、两个 APK、CI 入口 |
+
+⚠️ **硬性要求**：以后新增功能 / 修 Bug / 改 UI 入口，必须同步更新对应 `docs/` 文件；
+新增文档必须登记到 `docs/README.md` 的目录表。只改代码不改文档，视为没完成。
+
 ## 二、当前版本与进度
 
 **当前版本：27.9.0**（`launcher_version_code=270900`，待真机验证，未发布）
@@ -2594,7 +2615,7 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 
 ## 十、给接手者的建议操作顺序
 
-1. 读本文件 + `README.md`（简体中文默认；另有 `README_EN.md` / `README_ZH_TW.md` / `README_JA_JP.md` / `README_KO.md` / `README_RU.md`）
+1. 读本文件 + `README.md`（简体中文默认；另有 `README_EN.md` / `README_ZH_TW.md` / `README_JA_JP.md` / `README_KO.md` / `README_RU.md`）+ `docs/README.md` 及其索引
    + `CHANGELOG.md` + `LICENSE` + `THIRD_PARTY_NOTICES.md`。
 2. 确认 GitHub 仓库状态（看 Actions 最新编译结果）。
 3. 在 ext4 工作副本中改代码 → 静态检查 → commit → push。

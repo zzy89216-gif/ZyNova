@@ -42,6 +42,11 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 | Content | File |
 |---|---|
+| User docs hub | [docs/README.md](docs/README.md) |
+| Install / usage / export | [docs/install.md](docs/install.md) · [docs/usage.md](docs/usage.md) |
+| Renderers / login / favorites / AI | [docs/renderers.md](docs/renderers.md) · [docs/login.md](docs/login.md) · [docs/favorites.md](docs/favorites.md) · [docs/ai-agent.md](docs/ai-agent.md) |
+| Troubleshooting / FAQ / data | [docs/troubleshooting.md](docs/troubleshooting.md) · [docs/faq.md](docs/faq.md) · [docs/data-and-privacy.md](docs/data-and-privacy.md) |
+| Building | [docs/build.md](docs/build.md) |
 | Changelog | [CHANGELOG.md](CHANGELOG.md) |
 | Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
 | Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

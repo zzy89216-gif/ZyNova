@@ -42,6 +42,11 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 
 | 내용 | 파일 |
 |---|---|
+| 사용자 문서 | [docs/README.md](docs/README.md) |
+| 설치 / 사용 / 내보내기 | [docs/install.md](docs/install.md) · [docs/usage.md](docs/usage.md) |
+| 렌더러 / 로그인 / 즐겨찾기 / AI | [docs/renderers.md](docs/renderers.md) · [docs/login.md](docs/login.md) · [docs/favorites.md](docs/favorites.md) · [docs/ai-agent.md](docs/ai-agent.md) |
+| 문제 해결 / FAQ / 데이터 | [docs/troubleshooting.md](docs/troubleshooting.md) · [docs/faq.md](docs/faq.md) · [docs/data-and-privacy.md](docs/data-and-privacy.md) |
+| 빌드 | [docs/build.md](docs/build.md) |
 | 변경 기록 | [CHANGELOG.md](CHANGELOG.md) |
 | 인수인계 / 구조 / 개발 흐름 | [HANDOFF.md](HANDOFF.md) |
 | 서드파티 라이선스 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

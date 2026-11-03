@@ -42,6 +42,11 @@
 
 | Содержание | Файл |
 |---|---|
+| Документация | [docs/README.md](docs/README.md) |
+| Установка / использование / экспорт | [docs/install.md](docs/install.md) · [docs/usage.md](docs/usage.md) |
+| Рендереры / вход / избранное / AI | [docs/renderers.md](docs/renderers.md) · [docs/login.md](docs/login.md) · [docs/favorites.md](docs/favorites.md) · [docs/ai-agent.md](docs/ai-agent.md) |
+| Диагностика / FAQ / данные | [docs/troubleshooting.md](docs/troubleshooting.md) · [docs/faq.md](docs/faq.md) · [docs/data-and-privacy.md](docs/data-and-privacy.md) |
+| Сборка | [docs/build.md](docs/build.md) |
 | История изменений | [CHANGELOG.md](CHANGELOG.md) |
 | Передача / архитектура / процесс | [HANDOFF.md](HANDOFF.md) |
 | Сторонние лицензии | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

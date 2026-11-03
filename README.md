@@ -66,6 +66,11 @@
 
 | 内容 | 文件 |
 |---|---|
+| 用户文档中心 | [docs/README.md](docs/README.md) |
+| 安装 / 使用 / 导出 | [docs/install.md](docs/install.md) · [docs/usage.md](docs/usage.md) |
+| 渲染器 / 登录 / 收藏 / AI | [docs/renderers.md](docs/renderers.md) · [docs/login.md](docs/login.md) · [docs/favorites.md](docs/favorites.md) · [docs/ai-agent.md](docs/ai-agent.md) |
+| 故障排查 / FAQ / 数据 | [docs/troubleshooting.md](docs/troubleshooting.md) · [docs/faq.md](docs/faq.md) · [docs/data-and-privacy.md](docs/data-and-privacy.md) |
+| 构建 | [docs/build.md](docs/build.md) |
 | 更新日志 | [CHANGELOG.md](CHANGELOG.md) |
 | 交接 / 架构 / 开发流程 | [HANDOFF.md](HANDOFF.md) |
 | 第三方许可证 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
