@@ -3,7 +3,7 @@
 User-facing guides, FAQ, troubleshooting, and maintenance notes.
 Chinese versions live in [`docs/zh/`](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/README.md).
 
-> 中文：[docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/README.md)
+> Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/README.md)
 
 ## Index
 

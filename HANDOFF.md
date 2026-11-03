@@ -43,7 +43,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.9.0**（`launcher_version_code=270900`，待真机验证，未发布）
+**当前版本：27.9.0**（`launcher_version_code=270900`，已发布，等待真机反馈）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -56,7 +56,8 @@
 
 ### 27.9.0 上游跟进 + 移除 Ironized Zink + LTW 实验性 + 收藏/导出/崩溃分析 🧪
 
-> 状态：代码已推送，**尚未发布 Release**。先出 universal / arm64-v8a 两个 APK 供真机验证。
+> 状态：**已发布** <https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0>，
+> 资产为 universal + arm64-v8a 两个 APK 与 `mapping.universal.zip`。
 
 **一、移除 Ironized Zink**
 
@@ -1893,6 +1894,7 @@ HTTP 403
    > ⚠️ **27.7.1 起已改变**：12 个开关以「高级参数」折叠区的形式放回
    > （渲染器页与「高级设置 → 渲染器详细参数」两处都能改），键名与预设写入链路未变。
    实现见 27.1.2 章节；上游预设取值未被改动。
+   > ⚠️ **27.9.0 起 Ironized Zink 已整体移除**，本条仅作为历史记录保留。
 5.2 **视觉体验升级（议题 #15）只落地了第一部分** ⬜：
    27.2.0 已做：真实页面转场、减少动态效果、强效动态玻璃 + 光敏性警告、
    卡片按压反馈、启动页淡入。**尚未做**：启动流程重新设计、整体视觉语言（圆角 / 间距 /
@@ -1917,10 +1919,10 @@ HTTP 403
    - 本机（arm64 容器）无法编译 native，硬套有打挂 CI 的风险。
    要跟进时请先在**能编译 native 的环境**里验证；`customDlsym` 的挂点
    （`sdl_dlopen_hook.c`）本仓库**已经存在**，所以工程上是可行的。
-5.6 **MobileGlues 未发布的 multidraw 修复无法跟进** ⬜：
-   上游主线在 V2.0.0 之后有一个未发布提交 `0f1e10b5`
-   （multidraw 间接命令缓冲的 grow-only 修复），**没有对应官方二进制**；
-   要采用必须自行用 Android NDK 编译 `MobileGlues-cpp`，本机不具备条件。
+5.6 ~~**MobileGlues 未发布的 multidraw 修复无法跟进**~~ ✅ **已解决（27.9.0）**：
+   已随 MobileGlues 2.0.1-dev 二进制跟进（上游 ZalithLauncher2 2.8.1 内置版本，
+   对应 MobileGlues 提交 `97558a69`，包含 `0f1e10b5` 的 multidraw grow-only 修复）；
+   同时把 `multidrawOrder` 与 5 个按函数覆盖键接入了设置页。
 6. ~~**配置 `CURSEFORGE_API_KEY`**~~ ✅ **已解决（27.5.0）**：
    - 仓库 Actions Secrets 里**已配置** `CURSEFORGE_API_KEY`，
      打包出的 APK 会把它编进 `BuildKeys.CURSEFORGE_API`，官方接口不再固定 403
@@ -1935,7 +1937,7 @@ HTTP 403
      关于页 Logo / 启动页 / 通知小图标
    - 详见 27.5.1 章节；后续更新遵循同一份入口清单
 8. **议题 #29 MobileGlues 火焰异常** ⬜（需要用户日志）：
-   - 二进制已核对为官方 V2.0.0，无更新可同步；上游修复仍在未合并 PR #61
+   - 27.9.0 已升级到 2.0.1-dev（含 multidraw 修复）；如果问题仍在，仍以日志为准
    - 截图里的紫黑棋盘格是 missingno（缺失贴图），**必须**先拿到
      `<外部私有目录>/mobileglues/latest.log` 才能定位（含 GPU、驱动、MG 全部 Setting）
    - 已提供 `设置 → 渲染器 → MobileGlues → ANGLE 渲染后端` 开关作为规避手段
@@ -2211,7 +2213,7 @@ HTTP 403
 | `lastIgnoredVersion`（整数） | 保留定义不再写入，新逻辑使用 `lastIgnoredVersionName`（字符串），避免存储类型冲突 |
 | `homePageType` | 新增 `Cards` 枚举值，旧值 `Blank / FromLocal / FromURL` 语义不变 |
 | `searchModPlatform` 等搜索平台 | 26.2.1 起新增 `SearchPlatform.ALL`，枚举名与旧 `Platform` 保持一致，旧值可直接反序列化 |
-| `renderer`（全局渲染器） | 26.3.0 起默认值改为 Ironized Zink 的 UUID，**沿用原 Kopper Zink 的 UUID**：老用户存过 Kopper Zink 会自动落到 Ironized Zink；存过已删除渲染器（如 NG-GL4ES）的 UUID 时 `Renderers.setCurrentRenderer` 会回退到**列表首个**（即 Ironized Zink）并打日志，不会卡死 |
+| `renderer`（全局渲染器） | 27.9.0 起 Ironized Zink 的 UUID 已失效；存过该 UUID（或更早的 Kopper Zink / NG-GL4ES）时 `Renderers.setCurrentRenderer` 会回退到**列表首个可用渲染器**并打日志，不会卡死 |
 | `versionConfig.renderer`（按版本渲染器） | 同上：空字符串 / 已删除 UUID 都会回退到全局默认或列表首个 |
 | `ironizedZink*`（14 个新设置） | 26.3.0 新增，默认值 = 上游 **Default** 预设。旧用户没有这些键 → 全部取默认值，行为与「Default 预设」一致；**不需要迁移** |
 
@@ -2353,17 +2355,17 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
 5.1 **第三方组件许可证合规（26.3.0 起加严）**：
    - **每个组件以其上游仓库里的实际 LICENSE 为准**，不要凭印象，也不要「因为某个依赖是 MIT 就认为整个项目是 MIT」：
      - 本项目自身 = **GPL-3.0**
-     - Ironized Zink（GoyDevv）= **GPL-3.0**
-     - Ironized Zink 承载的 Mesa / Zink / Kopper = **MIT**（GLX 部分 **SGI Free Software License B**，GL 头文件 **Khronos**）
      - MobileGlues = **LGPL-2.1**
      - GL4ES（gl4es_extra_extra）= **MIT**
+     - LTW-Turbo = **LGPL-3.0**（仅 arm64；二进制未修改）
    - **不删除上游作者信息**：任何保留文件的版权头、`CREDITS.md`、`NOTICE` 都不能删
    - **不把不同项目的许可证混为一谈**：`THIRD_PARTY_NOTICES.md` 里逐组件分开列出，
      应用内「关于 → 开源许可」也逐条分开
    - **重分发二进制要满足对应许可证**：
      - MobileGlues（LGPL-2.1）随包的是**未经修改**的 `libmobileglues.so`，
        必须在 `THIRD_PARTY_NOTICES.md` 里给出**对应源码的获取方式**，并说明可以替换该动态库
-     - Mesa 栈（MIT）+ Ironized Zink（GPL-3.0）同样要保留许可证文本与来源说明
+     - LTW-Turbo（LGPL-3.0）同样要保留许可证文本、来源与可替换说明；
+       它已随 27.9.0 内置，见 `res/raw/ltw_turbo_license.txt` 与 `assets/licenses/ltw-turbo-CREDITS.md`
    - **移除组件时同步移除其声明与许可资源**（例如 26.3.0 删除 NG-GL4ES 后，
      `_Libraries.kt` 条目、`res/raw/ng_gl4es_license.txt`、AAR 一起删）
    - 新增 / 更换任何第三方库或预编译二进制时，**必须同步更新**：
@@ -2398,9 +2400,11 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
    它不是 `RendererInterface` 的真实实现（env 为空、库名为空串），
    而且会破坏「找不到已保存渲染器时回退到列表首个」这条路径。
    真正做选择的是 `Renderers.resolveIdentifier()` / `AutoRenderer.pick()`。
-10. **不要为了「让预设成为唯一事实来源」而删除 `AllSettings` 里的 `ironizedZink*` 定义**：
-   26.4.0 移除了面板上的 13 个参数控件，但 14 个设置项定义**必须保留**——
-   `IronizedZinkSettings.kt` 仍在读写它们，删定义会导致 MMKV 读取类型不匹配。
+10. **Ironized Zink 已于 27.9.0 整体移除**：
+   `IronizedZinkRenderer`、`game/renderer/ironizedzink/`、`AllSettings.ironizedZink*`、
+   `kopper-zink-release.aar`、Mesa 许可与 CREDITS 全部删除。
+   **不要**为了兼容旧配置再把它们加回来；旧 UUID 会由 `Renderers.setCurrentRenderer`
+   回退到列表首个可用渲染器。需要 Zink 请走渲染器插件。
 11. **Fabric API 的防呆不要拆**（27.6.0 用户明确要求）：
    - 资源搜索 / 依赖列表不显示、不能手动安装（`ResourceMatchException.Blacklisted`）
    - 选择 Fabric 时强制自动选中；检测不到就拒绝下载
@@ -2725,8 +2729,8 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 
 - 正版登录使用 ZyNova 自己的 Microsoft 应用注册（设备代码流），入口为微软 / 离线 / 第三方认证；
   详细历史与红线见本文 26.4.2 / 27.3.0 / 27.4.0 章节
-- 内置渲染器：MobileGlues / Ironized Zink / GL4ES，另有「自动」选择；
-  上游来源、版本与许可见 `THIRD_PARTY_NOTICES.md` 与本文 27.4.0 章节
+- 内置渲染器：MobileGlues（默认）/ GL4ES / LTW（实验性，仅 arm64），另有「自动」选择；
+  上游来源、版本与许可见 `THIRD_PARTY_NOTICES.md` 与本文 27.9.0 章节
 
 **6. 详细历史与许可证**
 
@@ -2879,15 +2883,14 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ### Release 应包含的产物
 
-26.3.0 起**只有一个通用版本**：
+27.9.0 起**两个 APK**：
 
 - `ZyNova-<VERSION>.apk`（通用：`arm64-v8a` + `armeabi-v7a` + `x86` + `x86_64`，已代码混淆）
-- `mapping.universal.zip`（混淆映射，用于还原崩溃堆栈）
-  > 注意：workflow 里 artifact 名是 `mapping (universal)`、打包出的文件名是
-  > `mapping (universal).zip`，但 GitHub 上传 Release 资产时会把空格与括号**净化为点号**，
-  > 所以线上资产名固定是 `mapping.universal.zip`。
+- `ZyNova-<VERSION>-arm64-v8a.apk`（仅 arm64-v8a，体积更小）
+- `mapping.universal.zip` / 对应的 mapping 压缩包（混淆映射，用于还原崩溃堆栈）
+  > workflow 的 artifact 路径是 `apk/<flavor>/release/*.apk`，
+  > 不要再用旧的 `apk/release/*.apk`。
 
-> 不再有 `-arm64-v8a` / `-armeabi-v7a` / `-x86` / `-x86_64` 之类的架构后缀产物。
 > ⚠️ 大文件上传 / 下载可能中断，APK 下载可用 `curl -C -` 断点续传。
 
 ### ⚠️ 发布前的隐私复检（每次发布都要做）
@@ -2907,13 +2910,12 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ---
 
-**最后更新**：2026-11-01（**27.8.0 已发布（含任务面板 / 动画修补）**： —— Agent 从「聊天机器人」正式变成会动手的 Agent：
-新增 `install_game` / `install_modpack` / `install_resource`（自动识别资源类型）/ 实例配置三件套，
-工具数 25 → 34；默认权限模式改为「完全控制」并带一次性迁移；下载与安装全部静默，
-任务面板升级成「标题 → 步骤 → 进度 → 速度 → 取消」的详细列表；
-修掉 NeoForge 因镜像只覆盖 `net/neoforged` 子树而频繁下载失败/卡死的问题。
-发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.0>。
-27.7.2 的渲染器拆页与收藏合并见上文章节。）
+**最后更新**：2026-11-03（**27.9.0**：移除 Ironized Zink；MobileGlues 2.0.1 + multidraw；
+LTW 实验性（仅 arm64）；收藏按钮补到资源页与详情页；导出只留 Modrinth；
+崩溃页新增「崩溃分析 · 怎么处理」；AI 设置页与输入框重做；微软登录轮询修复；
+构建拆成 universal + arm64 两个 APK。发布地址：
+<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0>。
+用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 72 篇，入口 `docs/README.md`。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
