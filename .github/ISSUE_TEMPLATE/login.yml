@@ -1,0 +1,48 @@
+name: "🔐 登录 / 账号"
+description: "微软登录、离线账号、第三方认证、正版验证失败——选这个。"
+title: "[Login] "
+labels: [Bug]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: 登录方式
+      options:
+        - 微软正版
+        - 离线账号
+        - 第三方认证（Authlib-Injector）
+        - 账号切换 / 刷新令牌
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 卡在哪一步
+      description: "例如：设备码页面打不开、输完代码一直转圈、提示 invalid_grant、进游戏提示验证失败。"
+    validations:
+      required: true
+
+  - type: input
+    id: error
+    attributes:
+      label: 错误码 / 错误原文
+      placeholder: "例如 authorization_pending / invalid_grant / XErr 2148916233"
+    validations:
+      required: false
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志
+      description: "崩溃页分享日志，或启动器日志。"
+    validations:
+      required: true
+
+  - type: input
+    id: network
+    attributes:
+      label: 网络环境
+      placeholder: "例如 直连 / 代理 / 加速器；是否在中国大陆"
+    validations:
+      required: false

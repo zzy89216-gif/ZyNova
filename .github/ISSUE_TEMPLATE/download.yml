@@ -1,0 +1,55 @@
+name: "📦 下载 / 安装 / 整合包"
+description: "资源搜不到、下载失败、安装报错、整合包装不上——选这个。"
+title: "[Download] "
+labels: [Bug]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: 问题类型
+      options:
+        - 资源搜索 / 过滤
+        - 资源下载失败
+        - 模组安装失败
+        - 整合包安装失败
+        - 游戏本体 / 加载器安装失败
+        - 收藏 / 本地归档
+        - 其他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: 来源平台
+      options:
+        - Modrinth
+        - CurseForge
+        - 两者都试过
+        - 不涉及平台
+    validations:
+      required: true
+
+  - type: input
+    id: project
+    attributes:
+      label: 项目名 / 项目 ID / 版本
+      placeholder: "例如 Sodium / 1.20.1 Fabric"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 具体报错
+      description: "把弹窗或任务面板里的错误原文贴出来；不要只写「失败了」。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志
+      description: "版本概览 → 运行日志，或崩溃页分享日志。"
+    validations:
+      required: true

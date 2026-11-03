@@ -1,0 +1,28 @@
+name: "❓ 其他 / 不确定"
+description: "不属于上面任何一类，或者你也不确定是 Bug 还是功能请求。"
+title: "[Other] "
+labels: [question]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 你想问什么
+      description: "把现象、你试过的操作、期望结果写清楚。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: 已经试过什么
+      placeholder: "例如：换渲染器、重装实例、换 Java、看 HANDOFF..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 相关日志 / 截图
+      description: "有就贴，没有可留空。"
+    validations:
+      required: false

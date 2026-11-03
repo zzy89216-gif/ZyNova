@@ -1,0 +1,42 @@
+name: "💡 新功能 / 改进建议"
+description: "想要新功能、UI 改动、体验优化。不是故障请不要选崩溃/渲染。"
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: 类型
+      options:
+        - 新功能
+        - 现有功能改进
+        - UI / 交互
+        - 性能 / 稳定性
+        - 文档 / 翻译
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决什么问题
+      description: "先讲场景，再讲你想要的功能；不要只写「加一个 XX」。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你希望的方案
+      description: "可以描述交互、入口位置、默认行为；不确定也可以只写目标。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 有没有替代方案
+      description: "现在你是怎么绕过这个问题的？"
+    validations:
+      required: false

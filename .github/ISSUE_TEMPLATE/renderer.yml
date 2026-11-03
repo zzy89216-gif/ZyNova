@@ -1,0 +1,65 @@
+name: "🎨 渲染 / 画面问题"
+description: "黑屏、花屏、闪烁、贴图错、光影异常、帧率异常——选这个。"
+title: "[Renderer] "
+labels: [Bug]
+body:
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: 当前渲染器
+      options:
+        - 自动
+        - MobileGlues
+        - GL4ES
+        - LTW（实验性）
+        - 渲染器插件
+        - 不确定
+    validations:
+      required: true
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: 主要现象
+      options:
+        - 黑屏 / 进不去
+        - 花屏 / 贴图错乱
+        - 闪烁 / 抖动
+        - 光影异常
+        - 文字或 UI 异常
+        - 帧率异常 / 卡顿
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU / 驱动
+      placeholder: "例如 Adreno 740 / Turnip 驱动版本；不知道可以写「不知道」"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 现象与出现条件
+      description: "哪个版本、哪个整合包、开了什么光影/模组；换渲染器是否正常。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志
+      description: "崩溃页分享日志，或版本概览 → 运行日志。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 截图 / 录屏
+      description: "能看出画面问题最好；没有可留空。"
+    validations:
+      required: false

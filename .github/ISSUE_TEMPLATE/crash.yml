@@ -1,0 +1,58 @@
+name: "💥 崩溃 / 无法启动"
+description: "启动器崩溃、游戏进不去、启动到一半退出。先选这个，日志比截图有用。"
+title: "[Crash] "
+labels: [Bug]
+body:
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 发生在哪一步
+      options:
+        - 启动器一打开就崩
+        - 点启动后、游戏窗口还没出来
+        - 游戏窗口出来了，但很快退出
+        - 游戏中突然崩溃
+        - 退出游戏时崩溃
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 游戏版本 / 加载器
+      placeholder: "例如 1.20.1 Fabric 0.16.9，或 1.12.2 Forge 14.23.5.2860"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 现象
+      description: "尽量写清楚：报错文字、黑屏、卡在哪个界面、是否每次都出现。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: "1. 打开启动器\n2. 选择实例\n3. 点启动\n4. ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志
+      description: "崩溃页右上角「分享日志」；或版本概览 → 运行日志。直接把链接贴在这里。不要只发截图。"
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: 设备信息
+      placeholder: "例如 vivo V2270A / Android 15 / 骁龙 8 Gen 2 / 12GB"
+    validations:
+      required: true
