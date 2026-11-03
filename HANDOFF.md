@@ -27,17 +27,15 @@
 
 | 文件 | 内容 |
 |---|---|
-| `docs/README.md` | 文档索引 + 维护约定（新增文件必须登记） |
-| `docs/install.md` | 两个 APK 怎么选、首次启动、存储权限 |
-| `docs/usage.md` | 下载 / 实例 / 导出 / 收藏入口 |
-| `docs/renderers.md` | 自动 / MobileGlues / GL4ES / LTW 与选择建议 |
-| `docs/login.md` | 微软 / 离线 / 第三方认证与错误处理 |
-| `docs/favorites.md` | 在线收藏 vs 本地归档 |
-| `docs/ai-agent.md` | AI 配置、权限模式、能力与安全边界 |
-| `docs/troubleshooting.md` | 崩溃分析、日志、常见故障 |
-| `docs/faq.md` | 高频问题速查 |
-| `docs/data-and-privacy.md` | 数据位置、卸载影响、日志与 Key |
-| `docs/build.md` | 本地构建、两个 APK、CI 入口 |
+| `docs/README.md` | **文档总索引**（按分类列出全部 70+ 篇，新增文件必须登记） |
+| `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、两个 APK 怎么选 |
+| `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
+| `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
+| `docs/renderers*.md` / `docs/mobileglues.md` / `docs/gl4es.md` / `docs/ltw.md` | 渲染器总览与各渲染器专题 |
+| `docs/login*.md` / `docs/favorites*.md` / `docs/ai-*.md` | 登录、收藏、AI Agent |
+| `docs/crash-*.md` / `docs/troubleshooting.md` / `docs/faq.md` | 崩溃分析、日志、常见故障、FAQ |
+| `docs/data-*.md` / `docs/uninstall.md` / `docs/logs-upload.md` / `docs/api-keys.md` | 数据位置、卸载、日志上传、Key |
+| `docs/build*.md` / `docs/release.md` / `docs/issue-templates.md` | 构建、CI、发布、议题模板 |
 
 ⚠️ **硬性要求**：以后新增功能 / 修 Bug / 改 UI 入口，必须同步更新对应 `docs/` 文件；
 新增文档必须登记到 `docs/README.md` 的目录表。只改代码不改文档，视为没完成。
