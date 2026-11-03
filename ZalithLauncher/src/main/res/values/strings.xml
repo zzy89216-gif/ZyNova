@@ -122,7 +122,7 @@
     <string name="crash_analysis_mod_failed_action">Remove or update %1$s first. If it still crashes, remove half of the mods at a time to find the culprit.</string>
     <string name="crash_analysis_duplicate_title">Duplicate mods</string>
     <string name="crash_analysis_duplicate_detail">The same mod exists more than once (often different versions in the mods folder).</string>
-    <string name="crash_analysis_duplicate_action">Open the instance's mods folder, keep only one copy of each mod, then launch again.</string>
+    <string name="crash_analysis_duplicate_action">Open the instance\'s mods folder, keep only one copy of each mod, then launch again.</string>
     <string name="crash_analysis_java_title">Java version is too old</string>
     <string name="crash_analysis_java_detail">A mod or the game was compiled for a newer Java version than the selected runtime.</string>
     <string name="crash_analysis_java_action">Open the instance settings and switch the Java runtime to Java 17 or 21 (matching the game version).</string>
@@ -134,7 +134,7 @@
     <string name="crash_analysis_renderer_action">Open Settings → Renderer and switch to MobileGlues or GL4ES; disable shaders and try again.</string>
     <string name="crash_analysis_corrupt_title">Corrupted file</string>
     <string name="crash_analysis_corrupt_detail">A mod, library or modpack file is damaged or incomplete.</string>
-    <string name="crash_analysis_corrupt_action">Re-download the affected mod / modpack, or delete the instance's libraries folder and reinstall.</string>
+    <string name="crash_analysis_corrupt_action">Re-download the affected mod / modpack, or delete the instance\'s libraries folder and reinstall.</string>
     <string name="crash_analysis_class_title">Missing class or version mismatch</string>
     <string name="crash_analysis_class_detail">A class required by a mod is absent — usually a missing dependency or a mod built for another game version.</string>
     <string name="crash_analysis_class_action">Update the mod and its dependencies; make sure all mods target the same Minecraft version and loader.</string>
@@ -1809,7 +1809,7 @@
     <string name="settings_mg_fsr1_title">FSR1 upscaling</string>
     <string name="settings_mg_fsr1_summary">Sharper upscaled image at a small performance cost.</string>
     <string name="settings_mg_multidraw_title">Multi-draw order (multidraw)</string>
-    <string name="settings_mg_multidraw_summary">The order in which MobileGlues tries multidraw implementations. Native uses the driver's own path; only change this if blocks or entities render incorrectly.</string>
+    <string name="settings_mg_multidraw_summary">The order in which MobileGlues tries multidraw implementations. Native uses the driver\'s own path; only change this if blocks or entities render incorrectly.</string>
     <string name="settings_mg_multidraw_override_enabled">Using a custom order for this function</string>
     <string name="settings_mg_multidraw_override_disabled">Following the global order</string>
     <string name="settings_mg_multidraw_edit">Edit order</string>
@@ -1829,7 +1829,7 @@
     <string name="settings_renderer_ltw_summary">Experimental · not recommended — LTW-Turbo is an early-stage GL-to-GLES wrapper; crashes and rendering glitches are expected</string>
     <string name="settings_advanced_renderer_ltw">LTW (Experimental)</string>
     <string name="settings_renderer_ltw_warning_title">Experimental renderer</string>
-    <string name="settings_renderer_ltw_warning_message">LTW-Turbo is still in early development and only ships an arm64-v8a library. Use it only if you are willing to test crashes; do not report its bugs as launcher bugs. The options below map to LTW's native environment switches.</string>
+    <string name="settings_renderer_ltw_warning_message">LTW-Turbo is still in early development and only ships an arm64-v8a library. Use it only if you are willing to test crashes; do not report its bugs as launcher bugs. The options below map to LTW\'s native environment switches.</string>
     <string name="settings_ltw_never_flush_title">Never flush buffers</string>
     <string name="settings_ltw_never_flush_summary">LTW_NEVER_FLUSH_BUFFERS — on by default upstream; turning it off can fix a few mods but is slower and may expose driver bugs.</string>
     <string name="settings_ltw_coherent_title">Coherent dynamic storage</string>

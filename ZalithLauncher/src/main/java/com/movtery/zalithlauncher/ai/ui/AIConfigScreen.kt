@@ -20,6 +20,8 @@ package com.movtery.zalithlauncher.ai.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -44,6 +46,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -77,7 +81,6 @@ import com.movtery.zalithlauncher.ai.model.AIModelInfo
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.OwnOutlinedTextField
-import com.movtery.zalithlauncher.ui.components.RadioCard
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.toAndroidString
@@ -255,7 +258,7 @@ fun AIConfigContent(
                         modifier = Modifier.fillMaxWidth(),
                         value = modelFilter,
                         onValueChange = { modelFilter = it },
-                        label = { Text(stringResource(R.string.ai_config_model_filter)) },
+                        placeholder = { Text(stringResource(R.string.ai_config_model_filter)) },
                         singleLine = true,
                     )
                     Spacer(Modifier.height(6.dp))
@@ -272,20 +275,20 @@ fun AIConfigContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(max = 240.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f))
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.22f))
                         ) {
-                            Column(
+                            AiChoiceFlow(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .verticalScroll(rememberScrollState())
+                                    .padding(8.dp)
                             ) {
                                 shown.forEach { model ->
-                                    RadioCard(
-                                        selected = selectedModel == model.id,
+                                    AiChoicePill(
                                         text = model.displayName,
-                                        onClick = { AISettings.model.save(model.id) },
-                                        modifier = Modifier.fillMaxWidth()
+                                        selected = selectedModel == model.id,
+                                        onClick = { AISettings.model.save(model.id) }
                                     )
                                 }
                             }
@@ -299,13 +302,14 @@ fun AIConfigContent(
             // ── 5. Agent 权限模式 ────────────────────────────────
             ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_permission))
-                AIPermissionMode.entries.forEach { mode ->
-                    RadioCard(
-                        selected = permissionMode == mode,
-                        text = mode.displayName.toAndroidString(context),
-                        onClick = { AISettings.permissionMode.save(mode) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                AiChoiceFlow {
+                    AIPermissionMode.entries.forEach { mode ->
+                        AiChoicePill(
+                            text = mode.displayName.toAndroidString(context),
+                            selected = permissionMode == mode,
+                            onClick = { AISettings.permissionMode.save(mode) }
+                        )
+                    }
                 }
                 HintText(
                     stringResource(
@@ -448,6 +452,63 @@ fun AIConfigContent(
  * 2. 内边距：Card 会把内容裁到圆角内，没有内边距时标题贴边，
  *    圆角处就会把文字切掉一半（议题 #25 的「文字被垂直裁切」）。
  */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AiChoiceFlow(
+    modifier: Modifier = Modifier,
+    content: @Composable androidx.compose.foundation.layout.FlowRowScope.() -> Unit,
+) {
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        content = content
+    )
+}
+
+/**
+ * 与「设置 → 基础设置 → 颜色主题」同一种选择样式：
+ * 紧凑的圆形单选 + 文字，不再用整行大卡片堆在一起。
+ */
+@Composable
+private fun AiChoicePill(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Surface(
+        shape = RoundedCornerShape(50),
+        color = if (selected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+        },
+        contentColor = if (selected) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            RadioButton(
+                selected = selected,
+                onClick = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1
+            )
+        }
+    }
+}
+
 @Composable
 private fun ConfigCard(content: @Composable ColumnScope.() -> Unit) {
     BackgroundCard(modifier = Modifier.fillMaxWidth()) {
