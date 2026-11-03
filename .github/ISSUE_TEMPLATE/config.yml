@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "💬 不确定选哪个？先来 Discord 问一句"
+    url: https://discord.gg/QwPpZQHrTa
+    about: "分不清是 Bug 还是功能请求时，先在 Discord 描述现象，确认后再开议题，避免开错分类。"
+  - name: "📖 先看交接文档 / 常见问题"
+    url: https://github.com/zzy89216-gif/ZyNova/blob/main/HANDOFF.md
+    about: "构建、渲染器、登录、日志位置、常见坑都在这里；很多问题看完就能自己解决。"

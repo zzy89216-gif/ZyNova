@@ -1,5 +1,6 @@
-name: BUG Report / BUG 反馈
-description: 'Report a bug / 反馈一个 Bug'
+name: "🐞 出问题了 / Bug Report"
+description: "启动器崩溃、游戏进不去、渲染/下载/登录异常——选这个。不确定是 Bug 还是功能请求，先看下面的 Discord。"
+title: "[Bug] "
 labels: [Bug]
 body:
   - type: dropdown
@@ -10,8 +11,13 @@ body:
         The type of the current crash will be displayed at the top of the action bar on the right side of the crash page.  
         崩溃页面右侧操作栏顶部会显示本次的崩溃类型。
       options:
-        - 'Game Problem / 游戏问题'
-        - 'Launcher Problem / 启动器问题'
+        - '游戏崩溃 / 进不去（Game crash or cannot launch）'
+        - '启动器本身崩溃 / 卡死（Launcher crash or freeze）'
+        - '下载 / 安装 / 整合包失败（Download or install）'
+        - '登录 / 账号问题（Login or account）'
+        - '渲染 / 画面 / 性能问题（Rendering or performance）'
+        - 'UI / 交互问题（UI or interaction）'
+        - '其他 / 不确定（Other / not sure）'
     validations:
       required: true
 

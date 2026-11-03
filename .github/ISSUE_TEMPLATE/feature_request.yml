@@ -1,5 +1,6 @@
-name: Feature Request / 功能请求
-description: 'Submit a Feature Request / 提交一个功能请求'
+name: "💡 新功能 / 改进建议"
+description: "想要新功能、UI 改动、体验优化——选这个。不是故障请不要选 Bug。"
+title: "[Feature] "
 labels: [enhancement]
 body:
   - type: dropdown
