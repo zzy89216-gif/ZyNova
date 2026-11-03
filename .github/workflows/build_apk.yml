@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ZyNova-Launcher-apks
-          path: ZalithLauncher/build/outputs/apk/release/**/*.apk
+          path: ZalithLauncher/build/outputs/apk/**/release/**/*.apk
           if-no-files-found: error
 
       - name: Upload Mapping (obfuscation map)
