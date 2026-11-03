@@ -27,7 +27,8 @@
 
 | 文件 | 内容 |
 |---|---|
-| `docs/README.md` | **文档总索引**（按分类列出全部 70+ 篇，新增文件必须登记） |
+| `docs/README.md` | **中英双语文档入口**（跳转到 `docs/zh/` 或 `docs/en/`） |
+| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 72 篇，文件名一一对应 |
 | `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、两个 APK 怎么选 |
 | `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
 | `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
@@ -37,8 +38,8 @@
 | `docs/data-*.md` / `docs/uninstall.md` / `docs/logs-upload.md` / `docs/api-keys.md` | 数据位置、卸载、日志上传、Key |
 | `docs/build*.md` / `docs/release.md` / `docs/issue-templates.md` | 构建、CI、发布、议题模板 |
 
-⚠️ **硬性要求**：以后新增功能 / 修 Bug / 改 UI 入口，必须同步更新对应 `docs/` 文件；
-新增文档必须登记到 `docs/README.md` 的目录表。只改代码不改文档，视为没完成。
+⚠️ **硬性要求**：以后新增功能 / 修 Bug / 改 UI 入口，必须同步更新对应 `docs/` 文件，**并且中英两份都要写**；
+新增文档必须在 `docs/zh/README.md` 与 `docs/en/README.md` 同时登记，文件名保持一致。只改代码不改文档，视为没完成。
 
 ## 二、当前版本与进度
 

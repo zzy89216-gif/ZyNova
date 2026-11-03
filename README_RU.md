@@ -40,13 +40,17 @@
 
 ## 📚 Документация
 
+> 📚 **Полная документация (72 статьи, английский)**：[docs/en/README.md](docs/en/README.md)
+
+
+
 | Содержание | Файл |
 |---|---|
-| Документация | [docs/README.md](docs/README.md) |
-| Установка / использование / экспорт | [docs/install.md](docs/install.md) · [docs/usage.md](docs/usage.md) |
-| Рендереры / вход / избранное / AI | [docs/renderers.md](docs/renderers.md) · [docs/login.md](docs/login.md) · [docs/favorites.md](docs/favorites.md) · [docs/ai-agent.md](docs/ai-agent.md) |
-| Диагностика / FAQ / данные | [docs/troubleshooting.md](docs/troubleshooting.md) · [docs/faq.md](docs/faq.md) · [docs/data-and-privacy.md](docs/data-and-privacy.md) |
-| Сборка | [docs/build.md](docs/build.md) |
+| Документация | [docs/README.md](docs/en/README.md) |
+| Установка / использование / экспорт | [docs/install.md](docs/en/install.md) · [docs/usage.md](docs/en/usage.md) |
+| Рендереры / вход / избранное / AI | [docs/renderers.md](docs/en/renderers.md) · [docs/login.md](docs/en/login.md) · [docs/favorites.md](docs/en/favorites.md) · [docs/ai-agent.md](docs/en/ai-agent.md) |
+| Диагностика / FAQ / данные | [docs/troubleshooting.md](docs/en/troubleshooting.md) · [docs/faq.md](docs/en/faq.md) · [docs/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| Сборка | [docs/build.md](docs/en/build.md) |
 | История изменений | [CHANGELOG.md](CHANGELOG.md) |
 | Передача / архитектура / процесс | [HANDOFF.md](HANDOFF.md) |
 | Сторонние лицензии | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

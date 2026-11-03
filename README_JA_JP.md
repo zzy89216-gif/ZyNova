@@ -40,13 +40,17 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 
 ## 📚 ドキュメント
 
+> 📚 **ドキュメント一覧（72 記事、英語）**：[docs/en/README.md](docs/en/README.md)
+
+
+
 | 内容 | ファイル |
 |---|---|
-| ユーザードキュメント | [docs/README.md](docs/README.md) |
-| インストール / 使い方 / エクスポート | [docs/install.md](docs/install.md) · [docs/usage.md](docs/usage.md) |
-| レンダラー / ログイン / お気に入り / AI | [docs/renderers.md](docs/renderers.md) · [docs/login.md](docs/login.md) · [docs/favorites.md](docs/favorites.md) · [docs/ai-agent.md](docs/ai-agent.md) |
-| トラブルシューティング / FAQ / データ | [docs/troubleshooting.md](docs/troubleshooting.md) · [docs/faq.md](docs/faq.md) · [docs/data-and-privacy.md](docs/data-and-privacy.md) |
-| ビルド | [docs/build.md](docs/build.md) |
+| ユーザードキュメント | [docs/README.md](docs/en/README.md) |
+| インストール / 使い方 / エクスポート | [docs/install.md](docs/en/install.md) · [docs/usage.md](docs/en/usage.md) |
+| レンダラー / ログイン / お気に入り / AI | [docs/renderers.md](docs/en/renderers.md) · [docs/login.md](docs/en/login.md) · [docs/favorites.md](docs/en/favorites.md) · [docs/ai-agent.md](docs/en/ai-agent.md) |
+| トラブルシューティング / FAQ / データ | [docs/troubleshooting.md](docs/en/troubleshooting.md) · [docs/faq.md](docs/en/faq.md) · [docs/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| ビルド | [docs/build.md](docs/en/build.md) |
 | 更新履歴 | [CHANGELOG.md](CHANGELOG.md) |
 | 引き継ぎ / 構成 / 開発手順 | [HANDOFF.md](HANDOFF.md) |
 | 第三者ライセンス | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
