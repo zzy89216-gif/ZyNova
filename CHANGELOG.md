@@ -2,6 +2,57 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [27.9.0] - 2026-11-03
+
+本版本是一次「上游跟进 + 自有功能重做」的集中更新；**尚未发布 Release**，
+先出 universal / arm64-v8a 两个 APK 供真机验证。
+
+### ✨ 新增
+
+- **LTW-Turbo 实验性渲染器**（`libltw_turbo.so`，仅 arm64-v8a）
+  - 入口：设置 → 渲染器；列表中标注「实验性 / 不推荐」，自动模式不会选择它
+  - 详细参数页暴露 LTW native 真正读取的环境变量：`LTW_NEVER_FLUSH_BUFFERS`、
+    `LTW_COHERENT_DYNAMIC_STORAGE`、`LTW_HIDE_BUFFER_STORAGE`、`LIBGL_NOERROR`、
+    `LTW_SHADERCONV_CHECKNAN`、`LTW_DEBUG`、`LTW_GLERR_TRACE`
+  - 许可证 LGPL-3.0；二进制未修改，来源与对应源码见 `THIRD_PARTY_NOTICES.md`
+- **MobileGlues multidraw 配置**
+  - 全局 `multidrawOrder` + 5 个按函数覆盖的键（`multidrawOrderArrays` 等）
+  - 设置页可上下调整顺序；关闭覆盖时会从 `config.json` 删除对应键
+- **崩溃分析**
+  - 崩溃页新增「崩溃分析 · 怎么处理」，读取日志末尾 512KB 做启发式判断
+  - 覆盖缺前置、模组加载失败、重复模组、Java 版本过低、内存不足、渲染器启动失败、
+    文件损坏、缺类；每条给出具体操作建议
+- **资源收藏入口**
+  - 资源搜索结果卡片、项目详情页都新增收藏 / 取消收藏按钮
+- **两个 APK**
+  - `universal`（4 ABI）与 `arm64-v8a`；文件名分别为
+    `ZyNova-<版本>.apk` 与 `ZyNova-<版本>-arm64-v8a.apk`
+
+### 🔄 变更
+
+- **移除 Ironized Zink 渲染器**：删除渲染器实现、配置模型、设置项、独立参数页、
+  Mesa / Zink / Kopper 二进制与 `kopper-zink-release.aar`，以及对应许可条目
+  - 旧用户配置里保存的 Ironized Zink UUID 会在启动时回退到列表首个可用渲染器
+  - 自动模式顺序改为 MobileGlues → GL4ES
+- **MobileGlues 升级到 2.0.1-dev**：四个 ABI 的 `libmobileglues.so` 替换为
+  上游 ZalithLauncher2 2.8.1 内置版本（含 multidraw grow-only 修复）
+- **导出只保留 Modrinth**：删除 CurseForge / MCBBS / MultiMC 的导出器、枚举与入口
+- **AI 设置页**：模型列表与权限模式改为紧凑单选胶囊（FlowRow），
+  不再用整行大卡片堆叠；模型过滤框改用 placeholder
+- **AI 输入框**：12sp → 14sp，上下内边距 4dp → 10dp，24dp 圆角，最小高度 48dp
+
+### 🐞 修复
+
+- **微软登录设备码轮询**：显式关闭 `expectSuccess`，先读状态码与原始响应体；
+  `authorization_pending` / `slow_down` 不再被异常路径误判为致命错误；
+  4xx 立即失败，5xx / 网络错误仍按原有连续失败计数重试
+
+### 📝 说明
+
+- LTW 仅提供 arm64-v8a 库；非 arm64 设备请勿选择
+- 本版本先用于真机验证，确认后再发布 Release 并补全文档
+- 动态玻璃本轮未改动
+
 ## [27.8.1] - 2026-11-01
 
 27.8.0 的补丁版：只修三处体验问题，功能与 27.8.0 一致。

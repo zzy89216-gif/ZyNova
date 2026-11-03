@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.8.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.1)
+[![Release](https://img.shields.io/badge/Release-27.9.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
 
@@ -17,17 +17,18 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.8.0 업데이트
+## ✨ 27.9.0 업데이트
 
-- **AI는 에이전트**: 게임 본체·모드팩·모드 설치와 인스턴스 설정 변경을 말 한마디로 실행 (기본값 '완전 제어')
-- **다운로드는 완전히 조용히**: 대화상자 없이 상단 얇은 진행 표시줄에만 표시, 탭하면 제목 / 단계 / 진행률 / 속도 / 취소
-- **NeoForge 수정**: 미러가 maven.neoforged 저장소 전체를 커버해 실패와 멈춤 해결
-- **세부**: 입력창 안내 문구는 입력하면 사라짐, 즐겨찾기·리소스·모드팩이 같은 작업 큐 공유
+- **Ironized Zink 제거**: 유지 비용이 높아 내장 목록에서 제외했습니다. 이제 MobileGlues, GL4ES, 실험적 LTW만 제공합니다.
+- **MobileGlues 2.0.1**: 드로우 콜별 multidraw 순서를 조정할 수 있습니다.
+- **즐겨찾기 버튼 추가**: 리소스 목록과 프로젝트 상세 화면에서 바로 즐겨찾기할 수 있습니다.
+- **크래시 화면에 해결 방법 표시**: 누락된 의존성, 모드 충돌, Java 버전, 메모리 부족, 렌더러 실패에 대한 안내를 제공합니다.
+- **내보내기는 Modrinth만**: 다른 형식은 코드까지 제거했고, 릴리스는 universal + arm64-v8a 두 APK로 제공합니다.
 
 ## 🛠️ 주요 기능
 
 - **AI Agent**: 기본 DeepSeek. 게임 본체·모드팩·모드 설치, 설정 변경, 로그 확인, 게임 실행까지 직접 수행
-- **렌더러**: 자동 / MobileGlues / Ironized Zink / GL4ES
+- **렌더러**: 자동 / MobileGlues / GL4ES / LTW(실험적)
 - **리소스 코어**: Modrinth / CurseForge 검색, 의존성 해석, 다운로드, 검증, 설치
 - **즐겨찾기와 보관**: 온라인 즐겨찾기 + 앱 전용 저장소(SHA-256 중복 제거)
 - **Fabric API 보호**: Fabric 설치 흐름에서만 자동 추가, 수동 중복 설치 불가

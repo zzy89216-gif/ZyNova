@@ -23,7 +23,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.8.1**（`launcher_version_code=270801`）
+**当前版本：27.9.0**（`launcher_version_code=270900`，待真机验证，未发布）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -33,6 +33,52 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.9.0 上游跟进 + 移除 Ironized Zink + LTW 实验性 + 收藏/导出/崩溃分析 🧪
+
+> 状态：代码已推送，**尚未发布 Release**。先出 universal / arm64-v8a 两个 APK 供真机验证。
+
+**一、移除 Ironized Zink**
+
+- 删除渲染器实现、`game/renderer/ironizedzink/` 配置模型、`AllSettings.ironizedZink*`
+  14 个设置项、独立参数页与导航键、`kopper-zink-release.aar`、Mesa 许可与 CREDITS
+- 自动模式顺序改为 MobileGlues → GL4ES；旧配置中的 Ironized Zink UUID 会回退到列表首个
+- ⚠️ 以后不要再把 Mesa/Zink/Kopper 作为内置渲染器加回来；需要 Zink 时走渲染器插件
+
+**二、MobileGlues 2.0.1-dev**
+
+- 四个 ABI 的 `libmobileglues.so` 均替换为上游 ZalithLauncher2 2.8.1 内置版本
+- 新增 `MobileGluesMultidraw`：全局 `multidrawOrder` + 5 个按函数覆盖键
+  （`multidrawOrderArrays` / `Elements` / `ElementsBaseVertex` / `ArraysIndirect` / `ElementsIndirect`）
+- 设置页可上下调整顺序；关闭覆盖时从 `config.json` 删除对应键，避免「关了但还生效」
+- 二进制对应 MobileGlues 提交 `97558a69`（含 `0f1e10b5` 的 multidraw grow-only 修复）
+
+**三、LTW-Turbo（实验性，仅 arm64-v8a）**
+
+- `LTWRenderer`：`opengles3_ltw`，`getRendererLibrary()` / `getRendererEGL()` 均为
+  `libltw_turbo.so`；只注入 native 真正读取的 `LTW_*` / `LIBGL_NOERROR` 环境变量
+- UI 标注「实验性 / 不推荐」；`AutoRenderer` 不包含它
+- 许可 LGPL-3.0，二进制未修改；来源与源码见 `THIRD_PARTY_NOTICES.md`
+- ⚠️ 其他 ABI 没有 `libltw_turbo.so`，非 arm64 设备选择它会加载失败
+
+**四、收藏 / 导出 / 崩溃分析**
+
+- 资源搜索结果卡片与项目详情页新增收藏按钮，直接写入 `FavoriteProjectsRepository`
+- 导出只保留 Modrinth；CurseForge / MCBBS / MultiMC 导出器、枚举、入口全部删除
+- 崩溃页新增「崩溃分析 · 怎么处理」：读日志末尾 512KB，识别缺前置 / 模组加载失败 /
+  重复模组 / Java 版本 / 内存 / 渲染器 / 文件损坏 / 缺类，并给出操作建议
+
+**五、AI 与登录**
+
+- AI 设置页的模型与权限模式改为紧凑单选胶囊（FlowRow），不再整行大卡片堆叠
+- AI 输入框字号 / 内边距 / 圆角调整
+- 微软登录轮询改为显式读响应体，`authorization_pending` / `slow_down` 不再被误判为致命错误
+
+**六、构建**
+
+- Gradle 新增 `abi` flavor：`universal`（4 ABI）与 `arm64`（仅 arm64-v8a）
+- 产物：`ZyNova-<版本>.apk` 与 `ZyNova-<版本>-arm64-v8a.apk`
+- CI 上传路径改为 `**/*.apk`，两份 mapping 一并上传
 
 ### 27.8.1 27.8.0 的补丁版（下载进度反馈 + 任务面板 + 动画）✅
 
@@ -2123,7 +2169,7 @@ HTTP 403
 > ⚠️ **注意**：`jniLibs/*/libvulkan_freedreno.so`（Turnip）**不是** Freedreno 渲染器专属，
 > 它是「Vulkan 驱动器」的默认内置驱动（`driver_helper.c` 里作为兜底），**必须保留**。
 > 同理 `libEGL_mesa.so` / `libglxshim.so` / `libglapi.so` / `libzink_dri.so` / `libcutils.so`
-> 由 `libs/kopper-zink-release.aar` 提供，Ironized Zink 正在使用，**不要删**。
+> 该 AAR 已于 27.9.0 随 Ironized Zink 一起删除；历史记录仅用于说明当时的来源。
 
 ---
 
@@ -2172,8 +2218,8 @@ HTTP 403
 
 ### 构建形态（26.3.0 起）
 
-- **只产出一个通用版本 APK**（含 `arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`）
-- **不再**传 `-Darch`：`projectArch` 固定为 `"all"`，按架构裁剪 JRE / LWJGL 的逻辑已移除
+- **产出两个 APK**：`universal`（`arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`）与 `arm64-v8a`
+- `projectArch` 仍为 `"all"`；ABI 裁剪由 Gradle flavor 的 `ndk.abiFilters` 完成
 - Release 构建开启代码混淆：`isMinifyEnabled = true` + `isShrinkResources = true`，
   产物同时提供 `mapping.txt`（混淆映射）用于排查崩溃堆栈
 - 本地命令：`./gradlew ZalithLauncher:assembleRelease`
@@ -2671,7 +2717,7 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 
 - 仓库：`zzy89216-gif/ZyNova`（public）
 - 分支：`main`
-- 最新版本：**27.6.1**
+- 最新版本：**27.9.0（待发布）**
 - 历史版本：27.7.1、27.7.0、27.6.0、27.5.1、27.5.0、27.4.0、27.3.0、27.2.0、27.1.2、27.1.1、27.1.0、26.4.2、26.4.1、26.4.0、26.3.0、26.2.6、26.2.5、26.2.4、26.2.3、26.2.2、26.2.1、26.2.0、26.1.1、26.1.0、v2.5.1、v2.5
 - 更新日志：`CHANGELOG.md`
 - 第三方声明：`THIRD_PARTY_NOTICES.md`

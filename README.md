@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.8.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.8.1)
+[![Release](https://img.shields.io/badge/Release-27.9.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0)
 
 **简体中文** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -37,21 +37,19 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.8.1 更新要点（这版是来收尸的）
+## ✨ 27.9.0 更新要点
 
-- **点下载终于有反应了**：以前那条顶部进度条一闪都不闪——因为它比安装任务先跑，
-  看到「还没开始」就判定「已经结束」，然后心安理得地下班回家。现在它得等活儿真干完才能走，**加班费另算**。
-- **详细面板不再自己蹦出来吓人**：想看点那条进度条；不看就收着；任务干完它自己缩回去，安静得像不存在。
-- **动画不排队了**：设置页十几张卡片以前一个接一个入场，越往下越晚，看着零碎、滑着肉。
-  现在统一节奏，快得像后头有人拿鞭子 (╯°□°）╯︵ ┻━┻
-- **27.8.0 的大活都还在**：AI 能装游戏本体 / 整合包 / 资源 / 改实例配置，默认「完全控制」，说一句就动手；
-  NeoForge 镜像也修了，不再动不动下载失败、一直卡成 PPT。
+- **Ironized Zink 走了**：不是它不好，是它太重了。现在只剩 MobileGlues、GL4ES，以及一个明码标着「实验性」的 LTW。
+- **MobileGlues 升到 2.0.1**：multidraw 顺序现在能自己排；画面裂开的时候，至少有个地方可以调。
+- **收藏终于能收藏了**：以前收藏页像个空冰箱；现在资源列表和详情页都有收藏按钮。
+- **崩溃以后会说人话**：缺前置、模组打架、Java 太老、内存爆了，崩溃页下面会写清楚下一步怎么处理。
+- **导出只剩 Modrinth**：别的格式连代码一起删了；这一版也恢复成 universal + arm64 两个 APK。
 
 ## 🛠️ 它到底会什么（不是 PPT，是真能干）
 
 - **AI Agent**：默认 DeepSeek。装游戏、装整合包、装模组、改设置、读日志、启动游戏——
   它不是给你写教程，它是直接把锅端走 (๑•̀ㅂ•́)و✧
-- **渲染器**：自动 / MobileGlues / Ironized Zink / GL4ES，参数各回各屋，不再挤一个抽屉
+- **渲染器**：自动 / MobileGlues / GL4ES / LTW（实验性），参数各回各屋，不再挤一个抽屉
 - **资源核心**：Modrinth / CurseForge 搜索 → 依赖解析 → 下载 → 校验 → 安装，一条龙，中途不喊你
 - **收藏与归档**：在线收藏 + 私有目录归档，SHA-256 去重，断网也能用
 - **Fabric API 防呆**：只由 Fabric 流程自动加入，不可重复安装。别问，问就是它自己会装

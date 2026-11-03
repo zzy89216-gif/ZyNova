@@ -18,6 +18,8 @@
 
 package com.movtery.zalithlauncher.game.renderer
 
+import android.os.Build
+
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.LTWRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.MobileGluesRenderer
@@ -55,9 +57,13 @@ object Renderers {
 
         addRenderers(
             MobileGluesRenderer,
-            GL4ESRenderer,
-            LTWRenderer
+            GL4ESRenderer
         )
+
+        //LTW 只提供 arm64-v8a 的 libltw_turbo.so；其他 ABI 上不注册，避免选中后加载失败
+        if (Build.SUPPORTED_ABIS.contains("arm64-v8a")) {
+            addRenderer(LTWRenderer)
+        }
     }
 
     /**
