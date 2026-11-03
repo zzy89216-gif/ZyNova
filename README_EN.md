@@ -46,11 +46,11 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 | Content | File |
 |---|---|
-| User docs hub | [docs/README.md](docs/en/README.md) |
-| Install / usage / export | [docs/install.md](docs/en/install.md) · [docs/usage.md](docs/en/usage.md) |
-| Renderers / login / favorites / AI | [docs/renderers.md](docs/en/renderers.md) · [docs/login.md](docs/en/login.md) · [docs/favorites.md](docs/en/favorites.md) · [docs/ai-agent.md](docs/en/ai-agent.md) |
-| Troubleshooting / FAQ / data | [docs/troubleshooting.md](docs/en/troubleshooting.md) · [docs/faq.md](docs/en/faq.md) · [docs/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| Building | [docs/build.md](docs/en/build.md) |
+| User docs hub | [docs/en/README.md](docs/en/README.md) |
+| Install / usage / export | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
+| Renderers / login / favorites / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
+| Troubleshooting / FAQ / data | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| Building | [docs/en/build.md](docs/en/build.md) |
 | Changelog | [CHANGELOG.md](CHANGELOG.md) |
 | Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
 | Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

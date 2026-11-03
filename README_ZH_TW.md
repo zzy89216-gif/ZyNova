@@ -46,11 +46,11 @@
 
 | 內容 | 檔案 |
 |---|---|
-| 使用者文件中心 | [docs/README.md](docs/en/README.md) |
-| 安裝 / 使用 / 匯出 | [docs/install.md](docs/en/install.md) · [docs/usage.md](docs/en/usage.md) |
-| 渲染器 / 登入 / 收藏 / AI | [docs/renderers.md](docs/en/renderers.md) · [docs/login.md](docs/en/login.md) · [docs/favorites.md](docs/en/favorites.md) · [docs/ai-agent.md](docs/en/ai-agent.md) |
-| 疑難排解 / FAQ / 資料 | [docs/troubleshooting.md](docs/en/troubleshooting.md) · [docs/faq.md](docs/en/faq.md) · [docs/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| 建置 | [docs/build.md](docs/en/build.md) |
+| 使用者文件中心 | [docs/en/README.md](docs/en/README.md) |
+| 安裝 / 使用 / 匯出 | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
+| 渲染器 / 登入 / 收藏 / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
+| 疑難排解 / FAQ / 資料 | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| 建置 | [docs/en/build.md](docs/en/build.md) |
 | 更新日誌 | [CHANGELOG.md](CHANGELOG.md) |
 | 交接 / 架構 / 開發流程 | [HANDOFF.md](HANDOFF.md) |
 | 第三方授權 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

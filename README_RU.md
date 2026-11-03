@@ -46,11 +46,11 @@
 
 | Содержание | Файл |
 |---|---|
-| Документация | [docs/README.md](docs/en/README.md) |
-| Установка / использование / экспорт | [docs/install.md](docs/en/install.md) · [docs/usage.md](docs/en/usage.md) |
-| Рендереры / вход / избранное / AI | [docs/renderers.md](docs/en/renderers.md) · [docs/login.md](docs/en/login.md) · [docs/favorites.md](docs/en/favorites.md) · [docs/ai-agent.md](docs/en/ai-agent.md) |
-| Диагностика / FAQ / данные | [docs/troubleshooting.md](docs/en/troubleshooting.md) · [docs/faq.md](docs/en/faq.md) · [docs/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| Сборка | [docs/build.md](docs/en/build.md) |
+| Документация | [docs/en/README.md](docs/en/README.md) |
+| Установка / использование / экспорт | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
+| Рендереры / вход / избранное / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
+| Диагностика / FAQ / данные | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| Сборка | [docs/en/build.md](docs/en/build.md) |
 | История изменений | [CHANGELOG.md](CHANGELOG.md) |
 | Передача / архитектура / процесс | [HANDOFF.md](HANDOFF.md) |
 | Сторонние лицензии | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |

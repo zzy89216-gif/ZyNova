@@ -46,11 +46,11 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 
 | 내용 | 파일 |
 |---|---|
-| 사용자 문서 | [docs/README.md](docs/en/README.md) |
-| 설치 / 사용 / 내보내기 | [docs/install.md](docs/en/install.md) · [docs/usage.md](docs/en/usage.md) |
-| 렌더러 / 로그인 / 즐겨찾기 / AI | [docs/renderers.md](docs/en/renderers.md) · [docs/login.md](docs/en/login.md) · [docs/favorites.md](docs/en/favorites.md) · [docs/ai-agent.md](docs/en/ai-agent.md) |
-| 문제 해결 / FAQ / 데이터 | [docs/troubleshooting.md](docs/en/troubleshooting.md) · [docs/faq.md](docs/en/faq.md) · [docs/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| 빌드 | [docs/build.md](docs/en/build.md) |
+| 사용자 문서 | [docs/en/README.md](docs/en/README.md) |
+| 설치 / 사용 / 내보내기 | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
+| 렌더러 / 로그인 / 즐겨찾기 / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
+| 문제 해결 / FAQ / 데이터 | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| 빌드 | [docs/en/build.md](docs/en/build.md) |
 | 변경 기록 | [CHANGELOG.md](CHANGELOG.md) |
 | 인수인계 / 구조 / 개발 흐름 | [HANDOFF.md](HANDOFF.md) |
 | 서드파티 라이선스 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
