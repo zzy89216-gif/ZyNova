@@ -773,7 +773,7 @@
     <string name="settings_renderer_auto_title">自動</string>
     <string name="settings_renderer_auto_summary">依實例自動挑選合適的渲染器，不需要自己選。</string>
     <string name="settings_renderer_global_renderer_title">全域渲染器</string>
-    <string name="settings_renderer_global_renderer_summary">預設使用的渲染器。「自動」會依實例的 Minecraft 版本自動挑選（MobileGlues → Ironized Zink → GL4ES）；手動指定則一律優先採用你的選擇</string>
+    <string name="settings_renderer_global_renderer_summary">預設使用的渲染器。「自動」會依實例的 Minecraft 版本自動挑選（MobileGlues → GL4ES）；手動指定則一律優先採用你的選擇</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驅動程式</string>
     <string name="settings_renderer_env_title">環境變數：%s</string>
     <string name="settings_renderer_config_title">渲染器設定</string>
@@ -1499,8 +1499,6 @@
     <string name="settings_renderer_mobileglues_gl_version_summary">MobileGlues 向遊戲回報的 OpenGL 版本，預設 4.0（與上游外掛一致）。模組或光影包要求更高的 OpenGL 時調高；若驅動跑不動這個版本、出現畫面異常或進不去遊戲，就調低。</string>
     <string name="settings_renderer_mobileglues_angle_title">ANGLE 渲染後端</string>
     <string name="settings_renderer_mobileglues_angle_summary">預設關閉。如果出現雲層穿透地形、水/粒子/火焰遮擋異常，保持關閉——這是 ANGLE 這類嚴格 ES 宿主上已知的深度紋理缺陷（上游 issue #57）。只有原生 GLES 驅動本身有問題時，才需要開啟它。</string>
-    <string name="settings_renderer_ironized_gl_version_title">OpenGL 版本</string>
-    <string name="settings_renderer_ironized_gl_version_summary">4 個官方預設都使用 4.6。如果你的 GPU 驅動對 Vulkan→Zink 的 4.6 轉譯不完整（畫面異常或進不去），可以在這裡降到 4.5 / 4.3 / 3.3。改動此項只影響 OpenGL 版本，不動其它預設參數。</string>
     <string name="ai_stopped">已停止產生</string>
     <string name="ai_scroll_to_bottom">回到最底部</string>
 </resources>

@@ -45,12 +45,12 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSett
  * 渲染器详细参数（三个独立页面）
  *
  * 反馈：参数不要一股脑堆在「高级设置」里，也不要三个渲染器挤在同一页。
- * 所以拆成三页，每页只放这个渲染器自己的东西；
+ * 每个渲染器一页，每页只放这个渲染器自己的东西；
  * 版式沿用设置中心的原生骨架（BaseScreen + AnimatedColumn + SettingsCardColumn），
  * 不另造一套视觉。
  *
- * ⚠️ 所有参数都是真实的（GL4ES 的环境变量、MobileGlues 的 config.json、
- * Ironized Zink 的 MMKV 键），默认值等于历史写死值，升级后行为不变。
+ * ⚠️ 所有参数都是真实的（GL4ES 的环境变量、MobileGlues 的 config.json），
+ * 默认值等于历史写死值，升级后行为不变。
  */
 
 /** MobileGlues 详细参数 */
@@ -119,23 +119,25 @@ fun MobileGluesAdvancedSettingsScreen(
             title = stringResource(R.string.settings_mg_fsr1_title),
             summary = stringResource(R.string.settings_mg_fsr1_summary)
         )
+
+        MobileGluesMultidrawCards(modifier = Modifier.fillMaxWidth())
     }
 }
 
-/** Ironized Zink 详细参数 */
+/** LTW（实验性）详细参数 */
 @Composable
-fun IronizedZinkAdvancedSettingsScreen(
+fun LTWAdvancedSettingsScreen(
     key: NestedNavKey.Settings,
     settingsScreenKey: TitledNavKey?,
     mainScreenKey: TitledNavKey?,
 ) {
     RendererAdvancedPage(
-        normalKey = NormalNavKey.Settings.RendererAdvancedZink,
+        normalKey = NormalNavKey.Settings.RendererAdvancedLtw,
         settingsKey = key,
         settingsScreenKey = settingsScreenKey,
         mainScreenKey = mainScreenKey
     ) {
-        IronizedZinkConfigCards(modifier = Modifier.fillMaxWidth())
+        LTWConfigCards(modifier = Modifier.fillMaxWidth())
     }
 }
 

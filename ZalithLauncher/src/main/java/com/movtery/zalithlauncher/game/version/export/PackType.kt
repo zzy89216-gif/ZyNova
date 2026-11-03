@@ -23,47 +23,13 @@ package com.movtery.zalithlauncher.game.version.export
  */
 enum class PackType(val options: PackEditOptions) {
     /**
-     * MCBBS 导出格式
-     */
-    MCBBS(
-        PackEditOptions.Builder()
-            .requireAuthor()
-            .requireSummary()
-            .requireJvmArgs()
-            .requireJavaArgs()
-            .requireWebsiteUrl()
-            .requireMinMemory()
-            .build()
-    ),
-
-    /**
-     * Modrinth 标准导出格式
+     * Modrinth 标准导出格式（当前唯一支持的导出格式）
      */
     Modrinth(
         PackEditOptions.Builder()
             .requireSummary()
             .requirePackModrinth()
             .requirePackCurseForge()
-            .build()
-    ),
-
-    CurseForge(
-        PackEditOptions.Builder()
-            .requireAuthor()
-            .requirePackCurseForge()
-            .requireMinMemory()
-            .build()
-    ),
-
-    /**
-     * MultiMC 导出格式
-     */
-    MultiMC(
-        PackEditOptions.Builder()
-            .requireAuthor()
-            .requireSummary()
-            .requireMinMemory()
-            .requireMaxMemory()
             .build()
     ),
 }

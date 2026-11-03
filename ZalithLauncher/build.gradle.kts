@@ -27,10 +27,11 @@ val defaultKeyPassword = project.findProperty("default_key_password") as? String
 val defaultCurseForgeApiKey = project.findProperty("curseforge_api_key") as? String
 
 /**
- * 只发布**一个通用版本**（包含全部 4 个 ABI），不再按架构拆分。
+ * 发布两个 APK：
+ * 1. `universal`：包含全部 4 个 ABI；
+ * 2. `arm64`：只包含 arm64-v8a（LTW 也只提供 arm64 库）。
  *
- * 因此不再读取 `-Darch`：资源裁剪与 ABI 拆分同时取消，
- * Release 构建保持代码混淆（`isMinifyEnabled` / `isShrinkResources`，见 buildTypes.release）。
+ * 两个 flavor 共用同一份代码与资源，Release 构建保持代码混淆。
  */
 val projectArch: String = "all"
 
@@ -76,6 +77,19 @@ android {
         versionCode = launcherVersionCode
         versionName = launcherVersionName
         manifestPlaceholders["launcher_name"] = launcherAPPName
+    }
+
+    flavorDimensions += "abi"
+    productFlavors {
+        create("universal") {
+            dimension = "abi"
+        }
+        create("arm64") {
+            dimension = "abi"
+            ndk {
+                abiFilters.add("arm64-v8a")
+            }
+        }
     }
 
     buildTypes {
@@ -135,9 +149,11 @@ androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             if (output is VariantOutputImpl) {
-                //通用版本：只输出一个 APK，文件名不带架构后缀
                 val baseName = "$launcherName-${if (variant.buildType == "release") launcherVersionName else "Debug-$launcherVersionName"}"
-                output.outputFileName = "$baseName.apk"
+                //通用版不带后缀，arm64 版带 -arm64-v8a，避免两个 APK 同名覆盖
+                val flavor = variant.productFlavors.firstOrNull()?.second.orEmpty()
+                val abiSuffix = if (flavor == "arm64") "-arm64-v8a" else ""
+                output.outputFileName = "$baseName$abiSuffix.apk"
             }
         }
     }

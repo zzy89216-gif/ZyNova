@@ -46,8 +46,8 @@ object MobileGluesRenderer : RendererInterface {
     /**
      * 渲染器列表里的说明。
      *
-     * 前半句是渲染器本身的定位，后半句显示当前生效的 OpenGL 版本
-     * （与 Ironized Zink 显示预设名是同一个思路：选完就能在列表里看到结果）。
+     * 前半句是渲染器本身的定位，后半句显示当前生效的 OpenGL 版本，
+     * 选完就能在列表里看到结果。
      *
      * `GlobalContext` 缓存的是 application context，不受应用内语言切换影响，
      * 因此在渲染器对象里取字符串资源是安全的。
@@ -66,7 +66,7 @@ object MobileGluesRenderer : RendererInterface {
     /**
      * MobileGlues 的环境变量。
      *
-     * ⚠️ 这里**不能**像 Ironized Zink 那样用 `MESA_GL_VERSION_OVERRIDE` 表达 OpenGL 版本：
+     * ⚠️ 这里**不能**用 `MESA_GL_VERSION_OVERRIDE` 表达 OpenGL 版本：
      * MobileGlues 不读那个变量（它的源码里只认自己的 `config.json`）。
      * 因此 OpenGL 版本改为在启动前写进 config.json，
      * 并用 [MobileGluesConfig.ENV_DIR_PATH] 把该目录告诉 native 端。

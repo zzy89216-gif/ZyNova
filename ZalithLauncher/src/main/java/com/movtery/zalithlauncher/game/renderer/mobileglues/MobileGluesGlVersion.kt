@@ -24,8 +24,7 @@ package com.movtery.zalithlauncher.game.renderer.mobileglues
  * 这个值会存进用户配置（`AllSettings.renderer` / `VersionConfig.renderer`），
  * **永远不要改**，否则老用户已保存的渲染器选择会失效并回退到渲染器列表首个。
  *
- * 与 Ironized Zink 的 `IRONIZED_ZINK_UNIQUE_IDENTIFIER` 同理，**刻意放在这里**
- * 而不是挂在 `MobileGluesRenderer` 对象上：
+ * **刻意放在这里**而不是挂在 `MobileGluesRenderer` 对象上：
  * `AllSettings` 需要引用它作为默认值，若它挂在渲染器对象上就会形成
  * `AllSettings` → 渲染器 → `AllSettings` 的初始化成环
  * （`MobileGluesRenderer.getRendererEnv()` 要读 `AllSettings.mobileGluesGlVersion`）。

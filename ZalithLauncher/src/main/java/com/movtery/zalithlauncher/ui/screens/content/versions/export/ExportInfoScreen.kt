@@ -49,7 +49,6 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.version.export.ExportInfo
 import com.movtery.zalithlauncher.game.version.export.PackEditOptions
-import com.movtery.zalithlauncher.game.version.export.PackType
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedLazyColumn
 import com.movtery.zalithlauncher.ui.components.WarningCard
@@ -363,18 +362,8 @@ fun ExportInfoScreen(
             if (info.packType.options.requirePackCurseForge) {
                 //是否打包 CurseForge 的远程资源
                 animatedItem(scope) { yOffset ->
-                    val enabled = remember(info) {
-                        info.packType == PackType.CurseForge ||
-                                (info.packType == PackType.Modrinth && info.packModrinth)
-                    }
-                    val alsoText = stringResource(R.string.versions_export_pack_also_pack_curseforge)
-                    val packText = stringResource(
-                        id = R.string.versions_export_pack_pack_remote,
-                        Platform.CURSEFORGE.displayName
-                    )
-                    val finalText = remember(info) {
-                        if (info.packType == PackType.Modrinth) alsoText else packText
-                    }
+                    val enabled = info.packModrinth
+                    val finalText = stringResource(R.string.versions_export_pack_also_pack_curseforge)
                     SwitchSettingsCard(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -399,13 +388,7 @@ fun ExportInfoScreen(
                 ) {
                     Spacer(Modifier.height(8.dp))
 
-                    val packRemote = remember(info) {
-                        when (info.packType) {
-                            PackType.Modrinth -> info.packModrinth
-                            PackType.CurseForge -> info.packCurseForge
-                            else -> false
-                        }
-                    }
+                    val packRemote = info.packModrinth
 
                     //对于打包远端资源的提示
                     AnimatedVisibility(
@@ -437,12 +420,10 @@ fun ExportInfoScreen(
                                         text = stringResource(R.string.versions_export_tip_remote_1, platformText),
                                         style = MaterialTheme.typography.bodySmall
                                     )
-                                    if (info.packType == PackType.Modrinth) {
-                                        Text(
-                                            text = stringResource(R.string.versions_export_tip_remote_2),
-                                            style = MaterialTheme.typography.bodySmall
-                                        )
-                                    }
+                                    Text(
+                                        text = stringResource(R.string.versions_export_tip_remote_2),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
                                 }
                             )
 

@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.game.renderer.mobileglues
 
 import com.google.gson.JsonObject
 import com.movtery.zalithlauncher.path.PathManager
+import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.GSON
 import com.movtery.zalithlauncher.utils.file.ensureDirectorySilently
 import com.movtery.zalithlauncher.utils.logging.Logger
@@ -50,8 +51,7 @@ private const val TAG = "MobileGluesConfig"
  * 那个目录是官方 MobileGlues 插件的配置目录。用户如果在别的启动器里用官方插件
  * 调过参数，启动器再去改写它，就等于替用户改了另一个应用的设置。
  * 因此这里用启动器自己的目录（外部私有目录下的 `mobileglues/`）并通过
- * [ENV_DIR_PATH] 注入，与项目里 Ironized Zink「不再依赖 /sdcard 配置文件」
- * 的做法保持同一个方向。
+ * [ENV_DIR_PATH] 注入，不去碰任何公共目录。
  */
 object MobileGluesConfig {
     /** 注入给游戏进程的目录环境变量（MobileGlues native 端读取这个键） */
@@ -149,6 +149,44 @@ object MobileGluesConfig {
             if (com.movtery.zalithlauncher.setting.AllSettings.mobileGluesFsr1.getValue()) 1 else 0
         )
 
+        //multidraw 策略顺序（MobileGlues 2.0.1）
+        root.addProperty(
+            "multidrawOrder",
+            MobileGluesMultidraw.serialize(
+                MobileGluesMultidraw.parse(AllSettings.mobileGluesMultidrawOrder.state)
+            )
+        )
+        writeMultidrawOverride(
+            root,
+            MobileGluesMultidraw.OVERRIDES[0],
+            AllSettings.mobileGluesMultidrawArraysEnabled.state,
+            AllSettings.mobileGluesMultidrawArraysOrder.state
+        )
+        writeMultidrawOverride(
+            root,
+            MobileGluesMultidraw.OVERRIDES[1],
+            AllSettings.mobileGluesMultidrawElementsEnabled.state,
+            AllSettings.mobileGluesMultidrawElementsOrder.state
+        )
+        writeMultidrawOverride(
+            root,
+            MobileGluesMultidraw.OVERRIDES[2],
+            AllSettings.mobileGluesMultidrawElementsBaseVertexEnabled.state,
+            AllSettings.mobileGluesMultidrawElementsBaseVertexOrder.state
+        )
+        writeMultidrawOverride(
+            root,
+            MobileGluesMultidraw.OVERRIDES[3],
+            AllSettings.mobileGluesMultidrawArraysIndirectEnabled.state,
+            AllSettings.mobileGluesMultidrawArraysIndirectOrder.state
+        )
+        writeMultidrawOverride(
+            root,
+            MobileGluesMultidraw.OVERRIDES[4],
+            AllSettings.mobileGluesMultidrawElementsIndirectEnabled.state,
+            AllSettings.mobileGluesMultidrawElementsIndirectOrder.state
+        )
+
         val target = configFile
         //先写临时文件再改名：中途失败也不会留下半截 JSON 让游戏读到损坏的配置
         val temp = File(directory, "${target.name}.tmp")
@@ -163,6 +201,30 @@ object MobileGluesConfig {
     }.getOrElse { e ->
         Logger.error(TAG, "Failed to write MobileGlues config", e)
         false
+    }
+
+    /**
+     * 写入单个函数的 multidraw 覆盖顺序。
+     *
+     * 关闭时必须把键删掉：否则 native 仍会读到上一次开启时留下的覆盖顺序，
+     * 表现为「开关关了但行为没变」。
+     */
+    private fun writeMultidrawOverride(
+        root: JsonObject,
+        override: MultidrawOverride,
+        enabled: Boolean,
+        rawOrder: String,
+    ) {
+        if (!enabled) {
+            root.remove(override.key)
+            return
+        }
+        val order = MobileGluesMultidraw.parse(
+            raw = rawOrder,
+            options = override.options,
+            fallback = override.defaultOrder
+        )
+        root.addProperty(override.key, MobileGluesMultidraw.serialize(order))
     }
 
     /**

@@ -39,8 +39,8 @@ import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.game.renderer.AutoRenderer
-import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MobileGluesGlVersion
+import com.movtery.zalithlauncher.game.renderer.mobileglues.MobileGluesMultidraw
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.setting.enums.UiGeneration
 import com.movtery.zalithlauncher.ui.control.HotbarRule
@@ -68,8 +68,8 @@ object AllSettings : SettingsRegistry() {
      * 默认 **「自动」**：每个实例启动时按偏好顺序挑一个支持该 Minecraft 版本的渲染器
      * （见 `game/renderer/AutoRenderer.kt` 与 `Renderers.resolveIdentifier`）。
      *
-     * 之所以默认自动而不是直接写死某一个：内置三个渲染器的版本覆盖范围不同 ——
-     * MobileGlues 声明 `minMCVer = 1.17`，只有 Ironized Zink 不限制版本。
+     * 之所以默认自动而不是直接写死某一个：内置渲染器的版本覆盖范围不同 ——
+     * MobileGlues 声明 `minMCVer = 1.17`，GL4ES 声明 `maxMCVer = 1.21.4`。
      * 固定默认某一个，必然对一部分 Minecraft 版本是错的（旧版本实例每次启动都要先吃一次
      * 「渲染器可能不兼容」的警告）。自动模式把这个选择交给启动器。
      *
@@ -122,81 +122,6 @@ object AllSettings : SettingsRegistry() {
      * 启用着色器日志输出
      */
     val dumpShaders = boolSetting("dumpShaders", false)
-
-    //Ironized Zink
-    //以下参数完整对应上游 Ironized Zink 的原生配置（作者 GoyDevv，GPL-3.0）：
-    //https://github.com/GoyDevv/IronizedZink
-    //默认值与该上游的 Default 预设完全一致。
-
-    /**
-     * Ironized Zink 官方预设
-     */
-    val ironizedZinkPreset = enumSetting("ironizedZinkPreset", ZinkPreset.DEFAULT)
-
-    /**
-     * OpenGL 版本（3.3 / 4.3 / 4.5 / 4.6）
-     */
-    val ironizedZinkGlVersion = stringSetting("ironizedZinkGlVersion", "4.6")
-
-    /**
-     * 线程化 GL（mesa_glthread）
-     */
-    val ironizedZinkThreadedGl = boolSetting("ironizedZinkThreadedGl", true)
-
-    /**
-     * 大核绑定（POJAV_BIG_CORE_AFFINITY）
-     */
-    val ironizedZinkBigCoreAffinity = boolSetting("ironizedZinkBigCoreAffinity", false)
-
-    /**
-     * 允许乱序绘制（allow_draw_out_of_order）
-     */
-    val ironizedZinkOutOfOrder = boolSetting("ironizedZinkOutOfOrder", false)
-
-    /**
-     * 关闭 GL 错误检查（MESA_NO_ERROR，未定义行为，默认关闭）
-     */
-    val ironizedZinkNoError = boolSetting("ironizedZinkNoError", false)
-
-    /**
-     * 垂直同步（跟随屏幕真实刷新率）
-     */
-    val ironizedZinkVsync = boolSetting("ironizedZinkVsync", true)
-
-    /**
-     * 放宽 GLSL 限制（着色器兼容性）
-     */
-    val ironizedZinkRelaxGlsl = boolSetting("ironizedZinkRelaxGlsl", true)
-
-    /**
-     * 暴露全部扩展（关闭则限制到 2018 年）
-     */
-    val ironizedZinkAllExtensions = boolSetting("ironizedZinkAllExtensions", true)
-
-    /**
-     * 着色器磁盘缓存
-     */
-    val ironizedZinkShaderCache = boolSetting("ironizedZinkShaderCache", true)
-
-    /**
-     * 单文件着色器缓存
-     */
-    val ironizedZinkSingleFileCache = boolSetting("ironizedZinkSingleFileCache", true)
-
-    /**
-     * 延迟描述符（ZINK_DESCRIPTORS=lazy，实验性）
-     */
-    val ironizedZinkLazyDescriptors = boolSetting("ironizedZinkLazyDescriptors", false)
-
-    /**
-     * 内联 uniform（ZINK_INLINE_UNIFORMS，实验性）
-     */
-    val ironizedZinkInlineUniforms = boolSetting("ironizedZinkInlineUniforms", false)
-
-    /**
-     * 强制软件渲染（LIBGL_ALWAYS_SOFTWARE，实验性）
-     */
-    val ironizedZinkForceSoftware = boolSetting("ironizedZinkForceSoftware", false)
 
     //MobileGlues
     //MobileGlues 的 OpenGL 版本**不是**环境变量，而是它自己 config.json 里的
@@ -291,7 +216,7 @@ object AllSettings : SettingsRegistry() {
 
     // ── 渲染器高级参数（设置 → 高级设置）────────────────────────────
     //
-    //议题：三个渲染器的「所有可改参数」都要能改，并且集中放在高级选项里。
+    //议题：各渲染器的「所有可改参数」都要能改，并且集中放在高级选项里。
     //下面这些以前是写死在代码里的，现在提升为设置项；
     //默认值 = 以前的写死值，所以升级后行为不变。
 
@@ -329,6 +254,71 @@ object AllSettings : SettingsRegistry() {
 
     /** fsr1Setting：FSR1 超分辨率 */
     val mobileGluesFsr1 = boolSetting("mobileGluesFsr1", false)
+
+    /** multidrawOrder：全局 multidraw 策略顺序（逗号分隔，native 表示用驱动原生实现） */
+    val mobileGluesMultidrawOrder = stringSetting(
+        "mobileGluesMultidrawOrder",
+        MobileGluesMultidraw.DEFAULT_ORDER_VALUE
+    )
+
+    /** glMultiDrawArrays 单独覆盖顺序 */
+    val mobileGluesMultidrawArraysEnabled = boolSetting("mobileGluesMultidrawArraysEnabled", false)
+    val mobileGluesMultidrawArraysOrder = stringSetting(
+        "mobileGluesMultidrawArraysOrder",
+        MobileGluesMultidraw.serialize(MobileGluesMultidraw.OVERRIDES[0].defaultOrder)
+    )
+
+    /** glMultiDrawElements 单独覆盖顺序 */
+    val mobileGluesMultidrawElementsEnabled = boolSetting("mobileGluesMultidrawElementsEnabled", false)
+    val mobileGluesMultidrawElementsOrder = stringSetting(
+        "mobileGluesMultidrawElementsOrder",
+        MobileGluesMultidraw.serialize(MobileGluesMultidraw.OVERRIDES[1].defaultOrder)
+    )
+
+    /** glMultiDrawElementsBaseVertex 单独覆盖顺序 */
+    val mobileGluesMultidrawElementsBaseVertexEnabled = boolSetting("mobileGluesMultidrawElementsBaseVertexEnabled", false)
+    val mobileGluesMultidrawElementsBaseVertexOrder = stringSetting(
+        "mobileGluesMultidrawElementsBaseVertexOrder",
+        MobileGluesMultidraw.serialize(MobileGluesMultidraw.OVERRIDES[2].defaultOrder)
+    )
+
+    /** glMultiDrawArraysIndirect 单独覆盖顺序 */
+    val mobileGluesMultidrawArraysIndirectEnabled = boolSetting("mobileGluesMultidrawArraysIndirectEnabled", false)
+    val mobileGluesMultidrawArraysIndirectOrder = stringSetting(
+        "mobileGluesMultidrawArraysIndirectOrder",
+        MobileGluesMultidraw.serialize(MobileGluesMultidraw.OVERRIDES[3].defaultOrder)
+    )
+
+    /** glMultiDrawElementsIndirect 单独覆盖顺序 */
+    val mobileGluesMultidrawElementsIndirectEnabled = boolSetting("mobileGluesMultidrawElementsIndirectEnabled", false)
+    val mobileGluesMultidrawElementsIndirectOrder = stringSetting(
+        "mobileGluesMultidrawElementsIndirectOrder",
+        MobileGluesMultidraw.serialize(MobileGluesMultidraw.OVERRIDES[4].defaultOrder)
+    )
+
+    //LTW（实验性）
+    //LTW 原生库只读取环境变量，下面这些开关会直接注入游戏进程。
+
+    /** 禁止显式 buffer flush（LTW 默认开启） */
+    val ltwNeverFlushBuffers = boolSetting("ltwNeverFlushBuffers", true)
+
+    /** 强制动态 storage buffer 保持一致（LTW 默认开启） */
+    val ltwCoherentDynamicStorage = boolSetting("ltwCoherentDynamicStorage", true)
+
+    /** 对游戏隐藏 buffer storage 扩展（兼容性开关） */
+    val ltwHideBufferStorage = boolSetting("ltwHideBufferStorage", false)
+
+    /** 关闭 GL 错误检查（LIBGL_NOERROR） */
+    val ltwNoError = boolSetting("ltwNoError", false)
+
+    /** 着色器转换时检查 NaN（排障用） */
+    val ltwShaderConvCheckNan = boolSetting("ltwShaderConvCheckNan", false)
+
+    /** LTW 调试日志 */
+    val ltwDebug = boolSetting("ltwDebug", false)
+
+    /** LTW GL 错误追踪日志 */
+    val ltwGlErrorTrace = boolSetting("ltwGlErrorTrace", false)
 
     //Control
     /**

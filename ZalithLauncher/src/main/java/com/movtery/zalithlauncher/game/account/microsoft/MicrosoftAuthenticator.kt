@@ -47,6 +47,7 @@ import com.movtery.zalithlauncher.game.account.yggdrasil.findUsing
 import com.movtery.zalithlauncher.game.account.yggdrasil.getPlayerProfile
 import com.movtery.zalithlauncher.game.account.yggdrasil.getSkinModel
 import com.movtery.zalithlauncher.path.GLOBAL_CLIENT
+import com.movtery.zalithlauncher.path.GLOBAL_JSON
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.httpPostJson
 import com.movtery.zalithlauncher.utils.network.safeBodyAsJson
@@ -56,10 +57,13 @@ import com.movtery.zalithlauncher.utils.string.toUuidStr
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.request.forms.submitForm as submitFormRequest
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
@@ -68,6 +72,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
@@ -138,41 +143,58 @@ suspend fun getTokenResponse(
         context.ensureActive()
 
         try {
-            val response: JsonObject = submitForm(
-                "$MICROSOFT_AUTH_URL$TENANT/oauth2/v2.0/token",
-                parameters = Parameters.build {
-                    append("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
-                    append("device_code", codeResponse.deviceCode)
-                    append("client_id", BuildKeys.OAUTH_CLIENT_ID)
-                    append("tenant", TENANT)
-                },
-                context = context
-            )
+            // ⚠️ 不能依赖 expectSuccess 抛出的 ClientRequestException 再反读响应体：
+            // 设备码轮询的 authorization_pending / slow_down 都是 400 响应，
+            // 异常路径下响应体可能已经被消费，读不到 error 就会被误判成致命错误。
+            // 这里显式关闭 expectSuccess，先拿到状态码与原始响应体再自行解析。
+            val (httpResponse, responseBody) = withContext(context) {
+                val httpResponse = GLOBAL_CLIENT.submitFormRequest(
+                    url = "$MICROSOFT_AUTH_URL$TENANT/oauth2/v2.0/token",
+                    formParameters = Parameters.build {
+                        append("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+                        append("device_code", codeResponse.deviceCode)
+                        append("client_id", BuildKeys.OAUTH_CLIENT_ID)
+                        append("tenant", TENANT)
+                    }
+                ) {
+                    contentType(ContentType.Application.FormUrlEncoded)
+                    expectSuccess = false
+                }
+                httpResponse to httpResponse.safeBodyAsText()
+            }
+            val response = GLOBAL_JSON.decodeFromString<JsonObject>(responseBody)
             consecutiveFailures = 0
 
-            if (response["token_type"]?.jsonPrimitive?.content == "Bearer") {
-                Logger.debug(TAG, "Access token successfully retrieved")
-                return@coroutineScope TokenResponse(
-                    accessToken = response["access_token"].text(),
-                    refreshToken = response["refresh_token"].text(),
-                    expiresIn = response["expires_in"]?.jsonPrimitive?.int ?: 0
-                )
-            }
-            Logger.warning(TAG, "Token endpoint responded without a Bearer token, continuing to poll")
-        } catch (e: ClientRequestException) {
-            when (val error = e.errorCode()) {
-                // 服务器正常响应，说明网络可用
-                "authorization_pending" -> consecutiveFailures = 0 // 正常情况，继续轮询
+            when (val error = response["error"].text()) {
+                // 服务器正常响应，说明网络可用，继续轮询
+                "authorization_pending" -> Unit
                 "slow_down" -> {
-                    consecutiveFailures = 0
                     pollingInterval += 1000L
                     Logger.debug(TAG, "Slowing down polling to ${pollingInterval}ms")
                 }
                 else -> {
-                    Logger.error(TAG, "Token endpoint rejected the polling request: error = $error", e)
-                    throw e
+                    if (response["token_type"]?.jsonPrimitive?.content == "Bearer") {
+                        Logger.debug(TAG, "Access token successfully retrieved")
+                        return@coroutineScope TokenResponse(
+                            accessToken = response["access_token"].text(),
+                            refreshToken = response["refresh_token"].text(),
+                            expiresIn = response["expires_in"]?.jsonPrimitive?.int ?: 0
+                        )
+                    }
+                    when (httpResponse.status.value) {
+                        in 400..499 -> {
+                            val exception = ClientRequestException(httpResponse, responseBody)
+                            Logger.error(TAG, "Token endpoint rejected the polling request: error = $error", exception)
+                            throw exception
+                        }
+                        !in 200..299 -> throw ServerResponseException(httpResponse, responseBody)
+                    }
+                    Logger.warning(TAG, "Token endpoint responded without a Bearer token, continuing to poll")
                 }
             }
+        } catch (e: ClientRequestException) {
+            // 设备码已过期 / 用户拒绝等 4xx 是确定性失败，不重试
+            throw e
         } catch (e: CancellationException) {
             Logger.debug(TAG, "Authentication cancelled")
             throw e
@@ -202,14 +224,6 @@ suspend fun getTokenResponse(
     throw HttpRequestTimeoutException("Authentication timed out!", expireTime)
 }
 
-/**
- * 从 OAuth 错误响应中解析 error 字段
- */
-private suspend fun ClientRequestException.errorCode(): String? {
-    return runCatching {
-        response.safeBodyAsJson<JsonObject>()["error"]?.jsonPrimitive?.content
-    }.getOrNull()
-}
 
 /**
  * 使用不同的身份验证类型异步验证用户，并检索其 Minecraft 帐户信息
@@ -470,6 +484,10 @@ private suspend fun createAccount(
         this.skinModelType = profile.skins.findUsing()?.getSkinModel() ?: SkinModelType.NONE
     }
 }
+
+private suspend fun ClientRequestException.errorCode(): String? = runCatching {
+    response.safeBodyAsJson<JsonObject>()["error"]?.jsonPrimitive?.content
+}.getOrNull()
 
 private fun JsonElement?.text() = this?.jsonPrimitive?.content.orEmpty()
 

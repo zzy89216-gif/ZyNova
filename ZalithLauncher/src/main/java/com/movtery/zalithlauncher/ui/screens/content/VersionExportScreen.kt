@@ -178,8 +178,9 @@ private class ExportModpackViewModel(
     private fun defaultInfo(
         packType: PackType = PackType.Modrinth
     ): ExportInfo {
-        val packModrinth = packType == PackType.Modrinth
-        val packCurseForge = packType == PackType.Modrinth || packType == PackType.CurseForge
+        val packModrinth = true
+        //Modrinth 格式可以选择把 CurseForge 的远程资源也写进索引
+        val packCurseForge = true
         return ExportInfo(
             gamePath = gamePath,
             name = versionName,

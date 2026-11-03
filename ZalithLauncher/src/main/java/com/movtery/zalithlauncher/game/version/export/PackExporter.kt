@@ -26,10 +26,7 @@ import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
 import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
-import com.movtery.zalithlauncher.game.version.export.platform.CurseForgePackExporter
-import com.movtery.zalithlauncher.game.version.export.platform.MCBBSPackExporter
 import com.movtery.zalithlauncher.game.version.export.platform.ModrinthPackExporter
-import com.movtery.zalithlauncher.game.version.export.platform.MultiMCPackExporter
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.ui.androidText
@@ -57,12 +54,8 @@ class PackExporter(
     private val taskExecutor = TaskFlowExecutor(scope)
     val taskFlow: StateFlow<List<TitledTask>> = taskExecutor.tasksFlow
 
-    private val exporter: AbstractExporter = when (exportInfo.packType) {
-        PackType.MCBBS -> MCBBSPackExporter()
-        PackType.Modrinth -> ModrinthPackExporter()
-        PackType.CurseForge -> CurseForgePackExporter()
-        PackType.MultiMC -> MultiMCPackExporter()
-    }
+    //目前只保留 Modrinth 一种导出格式
+    private val exporter: AbstractExporter = ModrinthPackExporter()
 
     /**
      * 开始导出整合包

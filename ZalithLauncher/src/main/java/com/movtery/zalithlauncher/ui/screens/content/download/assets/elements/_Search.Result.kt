@@ -79,6 +79,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDisplayLabel
@@ -383,6 +384,8 @@ private fun ResultList(
             val modloaders = remember(item) { item.platformModLoaders() }
             val categories = remember(item, classes) { item.platformCategories(classes) }
 
+            val favorite = FavoriteProjectsRepository.isFavorite(platform, item.platformId())
+
             ResultProjectLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -401,6 +404,10 @@ private fun ResultList(
                 categories = categories?.sortedWith { o1, o2 -> o1.index() - o2.index() },
                 onInstall = onQuickInstall?.let { install ->
                     { install(platform, item.platformId(), iconUrl) }
+                },
+                isFavorite = favorite,
+                onFavoriteToggle = {
+                    FavoriteProjectsRepository.toggle(item, classes)
                 },
                 onClick = {
                     swapToDownload(platform, item.platformId(), iconUrl)
@@ -436,6 +443,10 @@ fun ResultProjectLayout(
      * 点击后直接完成「版本匹配 → 选文件 → 装前置 → 下载 → 校验 → 安装」。
      */
     onInstall: (() -> Unit)? = null,
+    /** 当前是否已收藏；调用方负责从仓库读取 */
+    isFavorite: Boolean = false,
+    /** 收藏 / 取消收藏；为 null 时不显示收藏按钮 */
+    onFavoriteToggle: (() -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -565,6 +576,31 @@ fun ResultProjectLayout(
                     if (classes != null) {
                         ClassesIdentifier(classes = classes)
                     }
+                }
+            }
+
+            //收藏按钮：资源列表里直接收藏，不用再绕去收藏页
+            onFavoriteToggle?.let { toggle ->
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    onClick = toggle
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(
+                            if (isFavorite) R.drawable.ic_favorite_filled
+                            else R.drawable.ic_favorite_outlined
+                        ),
+                        tint = if (isFavorite) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        contentDescription = stringResource(
+                            if (isFavorite) R.string.favorites_online_remove
+                            else R.string.favorites_action_favorite
+                        )
+                    )
                 }
             }
 

@@ -44,7 +44,6 @@ import com.movtery.zalithlauncher.game.plugin.driver.DriverPluginManager
 import com.movtery.zalithlauncher.game.plugin.renderer.RendererPluginManager
 import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
-import com.movtery.zalithlauncher.game.renderer.renderers.IronizedZinkRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.MobileGluesRenderer
 import com.movtery.zalithlauncher.game.support.touch_controller.ControllerProxy
 import com.movtery.zalithlauncher.game.version.installed.Version
@@ -422,12 +421,11 @@ private fun setRendererEnv(envMap: MutableMap<String, String>) {
 
     if (RendererPluginManager.selectedRendererPlugin != null) return
 
-    // Ironized Zink 与 MobileGlues 自带完整的图形环境变量（含 MESA_GL_VERSION_OVERRIDE
-    // 等可由用户在渲染器设置里调整的项），不能再被这里的通用兜底值覆盖。
+    // MobileGlues 自带完整的图形环境变量，不能再被这里的通用兜底值覆盖；
+    // GL4ES 走自己的 GLES2 路径，也不需要 Mesa 兜底。
     if (
         renderer != GL4ESRenderer &&
-        renderer != MobileGluesRenderer &&
-        renderer != IronizedZinkRenderer
+        renderer != MobileGluesRenderer
     ) {
         envMap["MESA_LOADER_DRIVER_OVERRIDE"] = "zink"
         envMap["MESA_GLSL_CACHE_DIR"] = PathManager.DIR_CACHE.absolutePath

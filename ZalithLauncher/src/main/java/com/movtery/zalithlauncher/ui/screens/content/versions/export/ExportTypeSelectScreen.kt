@@ -41,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.version.export.PackType
 import com.movtery.zalithlauncher.ui.base.BaseScreen
@@ -119,44 +118,14 @@ fun ExportTypeSelectScreen(
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    //MCBBS
+                    //Modrinth：目前唯一支持的导出格式
                     TypeItem(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Top,
-                        title = stringResource(R.string.versions_export_type_mcbbs),
-                        summary = stringResource(R.string.versions_export_type_mcbbs_summary, BuildKeys.LAUNCHER_SHORT_NAME),
-                        icon = painterResource(R.drawable.img_chest),
-                        onClick = { onTypeSelect(PackType.MCBBS) }
-                    )
-
-                    //Modrinth
-                    TypeItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
+                        position = CardPosition.Single,
                         title = stringResource(R.string.versions_export_type_modrinth),
                         summary = stringResource(R.string.versions_export_type_summary_common),
                         icon = painterResource(R.drawable.img_platform_modrinth),
                         onClick = { onTypeSelect(PackType.Modrinth) }
-                    )
-
-                    //CurseForge
-                    TypeItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Middle,
-                        title = stringResource(R.string.versions_export_type_curseforge),
-                        summary = stringResource(R.string.versions_export_type_summary_common),
-                        icon = painterResource(R.drawable.img_platform_curseforge),
-                        onClick = { onTypeSelect(PackType.CurseForge) }
-                    )
-
-                    //MultiMC
-                    TypeItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Bottom,
-                        title = stringResource(R.string.versions_export_type_multimc),
-                        summary = stringResource(R.string.versions_export_type_multimc_summary, BuildKeys.LAUNCHER_SHORT_NAME),
-                        icon = painterResource(R.drawable.img_platform_multimc),
-                        onClick = { onTypeSelect(PackType.MultiMC) }
                     )
                 }
             }

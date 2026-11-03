@@ -1,6 +1,6 @@
 name: Build ZyNova APK
 
-# push 到 main 时的验证编译：**只出一个通用版本**（含全部 4 个 ABI，已代码混淆）。
+# push 到 main 时的验证编译：出两个 APK（universal + arm64-v8a，均已代码混淆）。
 on:
   push:
     branches: [ "main", "master" ]
@@ -31,7 +31,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Release APK (universal)
+      - name: Build Release APK (universal + arm64)
         run: |
           chmod +x gradlew
           ./gradlew ZalithLauncher:assembleRelease
@@ -39,13 +39,13 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZyNova-Launcher-universal
-          path: ZalithLauncher/build/outputs/apk/release/*.apk
+          name: ZyNova-Launcher-apks
+          path: ZalithLauncher/build/outputs/apk/release/**/*.apk
           if-no-files-found: error
 
       - name: Upload Mapping (obfuscation map)
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: ZyNova-Launcher-universal-mapping
-          path: ZalithLauncher/build/outputs/mapping/release/mapping.txt
+          name: ZyNova-Launcher-mappings
+          path: ZalithLauncher/build/outputs/mapping/**/mapping.txt

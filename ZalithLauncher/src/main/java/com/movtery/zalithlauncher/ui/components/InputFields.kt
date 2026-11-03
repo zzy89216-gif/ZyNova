@@ -155,6 +155,8 @@ fun SmallOutlinedEditField(
     minLines: Int = 1,
     /** 最多显示几行；超出后输入框内部自行滚动，不会无限长高 */
     maxLines: Int = Int.MAX_VALUE,
+    /** 输入框内部内容与边框的间距（不同场景需要不同密度） */
+    contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
     interactionSource: MutableInteractionSource? = null,
     imePanEnabled: Boolean = true,
 ) {
@@ -229,7 +231,7 @@ fun SmallOutlinedEditField(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(contentPadding)
                 ) {
                     if (label != null) {
                         Box(

@@ -33,8 +33,7 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSett
 /**
  * MobileGlues 的配置面板
  *
- * 只在渲染器列表里选中 MobileGlues 时展示，位于渲染器选择卡片的下方 ——
- * 与 Ironized Zink 选中后展开预设面板是同一个位置、同一个交互。
+ * 只在渲染器列表里选中 MobileGlues 时展示，位于渲染器选择卡片的下方。
  *
  * 面板提供两个选项：
  * 1. **OpenGL 版本**下拉；

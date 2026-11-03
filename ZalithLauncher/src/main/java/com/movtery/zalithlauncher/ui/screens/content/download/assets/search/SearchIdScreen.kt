@@ -63,6 +63,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.download.assets.mapExceptionToMessage
 import com.movtery.zalithlauncher.game.download.assets.platform.SearchPlatform
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
@@ -383,6 +384,7 @@ private fun ResultLayout(
     val modloaders = remember(project) { project.platformModLoaders() }
     val classes = remember(project) { project.platformClasses(defaultClasses) }
     val categories = remember(project, classes) { project.platformCategories(classes) }
+    val isFavorite = FavoriteProjectsRepository.isFavorite(platform, project.platformId())
 
     val urls = remember { project.platformUrls(classes) }
     val screenshots = remember { project.platformScreenshots() }
@@ -405,6 +407,10 @@ private fun ResultLayout(
                 follows = follows,
                 modloaders = modloaders,
                 categories = categories?.sortedWith { o1, o2 -> o1.index() - o2.index() },
+                isFavorite = isFavorite,
+                onFavoriteToggle = {
+                    FavoriteProjectsRepository.toggle(project, defaultClasses)
+                },
                 onClick = {
                     onView(platform, classes, project.platformId(), iconUrl)
                 }

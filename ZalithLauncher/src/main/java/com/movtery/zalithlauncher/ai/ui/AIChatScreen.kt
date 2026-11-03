@@ -43,6 +43,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -293,20 +294,22 @@ fun AIChatScreen(
                         modifier = Modifier.weight(1f),
                         value = input,
                         onValueChange = { input = it },
+                        shape = RoundedCornerShape(24.dp),
                         placeholder = {
                             Text(
                                 text = stringResource(R.string.ai_input_hint),
-                                style = TextStyle(fontSize = 12.sp),
+                                style = TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         },
-                        textStyle = TextStyle(fontSize = 12.sp),
+                        textStyle = TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
                         singleLine = false,
                         //最多长到 5 行，再多就在框里滚动，避免输入框把聊天记录顶没
                         minLines = 1,
                         maxLines = 5,
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                         keyboardActions = KeyboardActions(onSend = {
                             if (input.isNotBlank() && !busy) send()
