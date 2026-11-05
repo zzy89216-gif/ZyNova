@@ -638,13 +638,14 @@ private fun relativeTime(timestamp: Long): String =
 private fun MessageBubble(message: AIMessage) {
     when (message.role) {
         AIRole.USER -> BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val bubbleMaxWidth = maxWidth * 0.82f
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
                 Box(
                     modifier = Modifier
-                        .widthIn(max = maxWidth * 0.82f)
+                        .widthIn(max = bubbleMaxWidth)
                         .clip(RoundedCornerShape(20.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(horizontal = 14.dp, vertical = 10.dp)
