@@ -29,6 +29,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -88,6 +90,7 @@ import com.movtery.zalithlauncher.ai.model.AIRole
 import com.movtery.zalithlauncher.ai.provider.AIProviderType
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.ui.components.SmallOutlinedEditField
+import com.movtery.zalithlauncher.ui.components.markdown.ZyMarkdown
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.theme.backgroundColor
 import com.movtery.zalithlauncher.ui.theme.onBackgroundColor
@@ -634,19 +637,29 @@ private fun relativeTime(timestamp: Long): String =
 @Composable
 private fun MessageBubble(message: AIMessage) {
     when (message.role) {
-        AIRole.USER -> Bubble(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            alignEnd = true
-        ) {
-            Text(message.text, style = MaterialTheme.typography.bodyMedium)
+        AIRole.USER -> BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Box(
+                    modifier = Modifier
+                        .widthIn(max = maxWidth * 0.82f)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .padding(horizontal = 14.dp, vertical = 10.dp)
+                ) {
+                    Text(
+                        text = message.text,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
 
-        AIRole.ASSISTANT -> Bubble(
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            alignEnd = false
-        ) {
+        AIRole.ASSISTANT -> Column(modifier = Modifier.fillMaxWidth()) {
             if (message.text.isNotBlank()) {
-                Text(message.text, style = MaterialTheme.typography.bodyMedium)
+                ZyMarkdown(content = message.text)
             }
             if (message.toolCalls.isNotEmpty()) {
                 Text(

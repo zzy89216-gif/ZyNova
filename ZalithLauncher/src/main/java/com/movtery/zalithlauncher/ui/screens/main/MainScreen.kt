@@ -186,10 +186,8 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            TopBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp),
+            LauncherTopBar(
+                modifier = Modifier.fillMaxWidth(),
                 mainScreenKey = mainScreenKey,
                 inLauncherScreen = inLauncherScreen,
                 taskRunning = tasks.isEmpty(),
@@ -200,6 +198,13 @@ fun MainScreen(
                 },
                 toMainScreen = toMainScreen,
                 toSettingsScreen = {
+                    screenBackStackModel.mainScreen.removeAndNavigateTo(
+                        removes = screenBackStackModel.clearBeforeNavKeys,
+                        screenKey = screenBackStackModel.settingsScreen
+                    )
+                },
+                // TODO: 独立的「个性化」页面（背景 / 模糊 / 圆角 / 玻璃强度），当前先落到设置
+                toPersonalization = {
                     screenBackStackModel.mainScreen.removeAndNavigateTo(
                         removes = screenBackStackModel.clearBeforeNavKeys,
                         screenKey = screenBackStackModel.settingsScreen
