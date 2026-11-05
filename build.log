@@ -18,14 +18,14 @@ Installing NDK (Side by side) 25.2.9519653 in /usr/local/lib/android/sdk/ndk/25.
 > Task :ColorPicker:copyReleaseJniLibsProjectOnly
 > Task :InputMap:mergeReleaseJniLibFolders
 > Task :InputMap:mergeReleaseNativeLibs NO-SOURCE
+> Task :InputMap:copyReleaseJniLibsProjectOnly
 > Task :LayerController:preBuild UP-TO-DATE
 > Task :LayerController:preReleaseBuild UP-TO-DATE
-> Task :InputMap:copyReleaseJniLibsProjectOnly
 > Task :LayerController:mergeReleaseJniLibFolders
 > Task :LayerController:mergeReleaseNativeLibs NO-SOURCE
 > Task :Terracotta:preBuild UP-TO-DATE
-> Task :LayerController:copyReleaseJniLibsProjectOnly
 > Task :Terracotta:preReleaseBuild UP-TO-DATE
+> Task :LayerController:copyReleaseJniLibsProjectOnly
 > Task :Terracotta:mergeReleaseJniLibFolders
 > Task :ZalithLauncher:preBuild UP-TO-DATE
 > Task :ZalithLauncher:preArm64ReleaseBuild UP-TO-DATE
@@ -116,15 +116,15 @@ C/C++: 1 warning generated.
 > Task :LayerController:packageReleaseResources
 > Task :LayerController:processReleaseNavigationResources
 > Task :InputMap:javaPreCompileRelease
-> Task :LayerController:parseReleaseLocalResources
 > Task :InputMap:parseReleaseLocalResources
+> Task :LayerController:parseReleaseLocalResources
 > Task :ZalithLauncher:stripArm64ReleaseDebugSymbols
 > Task :LayerController:javaPreCompileRelease
-> Task :LayerController:generateReleaseRFile
-> Task :InputMap:generateReleaseRFile
 > Task :ColorPicker:generateReleaseResources
-> Task :ZalithLauncher:extractArm64ReleaseNativeSymbolTables
+> Task :InputMap:generateReleaseRFile
+> Task :LayerController:generateReleaseRFile
 > Task :ColorPicker:packageReleaseResources
+> Task :ZalithLauncher:extractArm64ReleaseNativeSymbolTables
 > Task :ColorPicker:processReleaseNavigationResources
 > Task :ColorPicker:javaPreCompileRelease
 > Task :ColorPicker:parseReleaseLocalResources
@@ -159,14 +159,14 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 > Task :InputMap:compileReleaseLibraryResources
 > Task :LayerController:mapReleaseSourceSetPaths
 > Task :LayerController:compileReleaseLibraryResources
-> Task :Terracotta:mapReleaseSourceSetPaths
 > Task :ZalithLauncher:parseArm64ReleaseLocalResources
+> Task :Terracotta:mapReleaseSourceSetPaths
+> Task :ZalithLauncher:generateArm64ReleaseRFile
 > Task :Terracotta:compileReleaseLibraryResources
 > Task :ColorPicker:writeReleaseAarMetadata
 > Task :InputMap:writeReleaseAarMetadata
 > Task :LayerController:writeReleaseAarMetadata
 > Task :Terracotta:writeReleaseAarMetadata
-> Task :ZalithLauncher:generateArm64ReleaseRFile
 > Task :ZalithLauncher:mapArm64ReleaseSourceSetPaths
 > Task :ZalithLauncher:compileArm64ReleaseNavigationResources
 > Task :ZalithLauncher:checkArm64ReleaseAarMetadata
@@ -176,63 +176,64 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-fil/terracotta.xml:21:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
 /home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values/values.xml:1878:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values/strings.xml:668:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-it/terracotta.xml:20:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values/terracotta.xml:27:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-it/terracotta.xml:20:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-es/strings.xml:481:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 
 > Task :InputMap:compileReleaseJavaWithJavac
-> Task :InputMap:mergeReleaseGeneratedProguardFiles
+> Task :InputMap:bundleLibCompileToJarRelease
 
 > Task :ZalithLauncher:mergeArm64ReleaseResources
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-es/strings.xml:481:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt/strings.xml:123:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rCN/values-zh-rCN.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rCN/strings.xml:668:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rCN/terracotta.xml:27:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt/strings.xml:123:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ar/strings.xml:477:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-pt-rBR/values-pt-rBR.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ar/strings.xml:477:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-in/strings.xml:364:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ru/strings.xml:207:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-th/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-in/strings.xml:364:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ja/strings.xml:608:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-tr/strings.xml:373:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-tr/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ja/strings.xml:608:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ug/terracotta.xml:24:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
-/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rTW/values-zh-rTW.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
-/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rTW/strings.xml:534:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-vi/strings.xml:367:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-vi/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rTW/values-zh-rTW.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rTW/strings.xml:534:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 
-> Task :InputMap:bundleLibCompileToJarRelease
+> Task :InputMap:mergeReleaseGeneratedProguardFiles
 > Task :InputMap:exportReleaseConsumerProguardFiles
 > Task :InputMap:bundleLibRuntimeToJarRelease
-> Task :ColorPicker:compileReleaseKotlin
 > Task :ZalithLauncher:createArm64ReleaseCompatibleScreenManifests
-> Task :ColorPicker:compileReleaseJavaWithJavac NO-SOURCE
-> Task :ColorPicker:mergeReleaseGeneratedProguardFiles
-> Task :ColorPicker:bundleLibCompileToJarRelease
-> Task :ColorPicker:exportReleaseConsumerProguardFiles
 > Task :ColorPicker:extractDeepLinksRelease
-> Task :ColorPicker:bundleLibRuntimeToJarRelease
+> Task :ColorPicker:processReleaseManifest
 > Task :InputMap:extractDeepLinksRelease
 > Task :InputMap:processReleaseManifest
-> Task :ColorPicker:processReleaseManifest
 > Task :LayerController:extractDeepLinksRelease
+> Task :LayerController:processReleaseManifest
 > Task :Terracotta:extractDeepLinksRelease
 > Task :Terracotta:processReleaseManifest
-> Task :LayerController:processReleaseManifest
 > Task :ZalithLauncher:extractDeepLinksArm64Release
+> Task :ColorPicker:compileReleaseKotlin
 
 > Task :ZalithLauncher:processArm64ReleaseMainManifest
-[lwjgl-3.4.1-natives-release.aar] /home/runner/.gradle/caches/9.5.0/transforms/2ccaec1713dd6cc175f61ff4abc58a84/transformed/lwjgl-3.4.1-natives-release/AndroidManifest.xml Warning:
-	Namespace 'org.angelauramc.lwjgl3x' is used in multiple modules and/or libraries: lwjgl-3.4.1-natives-release.aar, lwjgl-3.3.3-natives-release.aar. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
+[lwjgl-3.3.3-natives-release.aar] /home/runner/.gradle/caches/9.5.0/transforms/d68f52d7207d744292b36f550465a7f7/transformed/lwjgl-3.3.3-natives-release/AndroidManifest.xml Warning:
+	Namespace 'org.angelauramc.lwjgl3x' is used in multiple modules and/or libraries: lwjgl-3.3.3-natives-release.aar, lwjgl-3.4.1-natives-release.aar. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
 
+> Task :ColorPicker:compileReleaseJavaWithJavac NO-SOURCE
+> Task :ColorPicker:mergeReleaseGeneratedProguardFiles
+> Task :ColorPicker:exportReleaseConsumerProguardFiles
+> Task :ColorPicker:bundleLibCompileToJarRelease
+> Task :ColorPicker:bundleLibRuntimeToJarRelease
 > Task :ZalithLauncher:processArm64ReleaseManifest
 > Task :ZalithLauncher:extractProguardFiles
 > Task :ColorPicker:processReleaseJavaRes
+> Task :ZalithLauncher:processArm64ReleaseManifestForPackage
 > Task :InputMap:processReleaseJavaRes
 > Task :Terracotta:processReleaseJavaRes NO-SOURCE
 > Task :ZalithLauncher:mergeArm64ReleaseStartupProfile
@@ -246,15 +247,14 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 > Task :Terracotta:mergeReleaseAssets
 > Task :ZalithLauncher:generateArm64ReleaseAssets UP-TO-DATE
 > Task :ZalithLauncher:mergeArm64ReleaseAssets
+> Task :ZalithLauncher:processArm64ReleaseResources
 > Task :ZalithLauncher:extractArm64ReleaseVersionControlInfo
 > Task :ColorPicker:extractProguardFiles
 > Task :ColorPicker:generateReleaseLintVitalModel
-> Task :ZalithLauncher:processArm64ReleaseManifestForPackage
-> Task :ZalithLauncher:compressArm64ReleaseAssets
 > Task :ColorPicker:prepareLintJarForPublish
 > Task :InputMap:extractProguardFiles
 > Task :InputMap:generateReleaseLintVitalModel
-> Task :ZalithLauncher:processArm64ReleaseResources
+> Task :ZalithLauncher:compressArm64ReleaseAssets
 > Task :InputMap:prepareLintJarForPublish
 > Task :InputMap:createFullJarRelease
 > Task :InputMap:generateReleaseLintModel
@@ -272,16 +272,16 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 > Task :Terracotta:generateReleaseLintVitalModel
 > Task :InputMap:lintVitalAnalyzeRelease
 > Task :Terracotta:prepareLintJarForPublish
-> Task :ColorPicker:createFullJarRelease
 > Task :Terracotta:lintVitalAnalyzeRelease
+> Task :ColorPicker:createFullJarRelease
 > Task :ColorPicker:generateReleaseLintModel
 > Task :Terracotta:createFullJarRelease
 > Task :Terracotta:generateReleaseLintModel
-> Task :LayerController:extractDeepLinksForAarRelease
 > Task :LayerController:checkReleaseAarMetadata
+> Task :LayerController:extractDeepLinksForAarRelease
 > Task :LayerController:extractReleaseAnnotations
-> Task :ColorPicker:checkReleaseAarMetadata
 > Task :ColorPicker:extractDeepLinksForAarRelease
+> Task :ColorPicker:checkReleaseAarMetadata
 > Task :ColorPicker:extractReleaseAnnotations
 > Task :ColorPicker:mergeReleaseConsumerProguardFiles
 > Task :ColorPicker:mergeReleaseJavaResource
@@ -291,11 +291,11 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 > Task :Terracotta:extractDeepLinksForAarRelease
 > Task :Terracotta:extractReleaseAnnotations
 > Task :Terracotta:mergeReleaseConsumerProguardFiles
-> Task :Terracotta:mergeReleaseJavaResource
 > Task :ColorPicker:writeReleaseLintModelMetadata
+> Task :Terracotta:mergeReleaseJavaResource
+> Task :LayerController:writeReleaseLintModelMetadata
 > Task :Terracotta:syncReleaseLibJars
 > Task :Terracotta:bundleReleaseLocalLintAar
-> Task :LayerController:writeReleaseLintModelMetadata
 > Task :Terracotta:writeReleaseLintModelMetadata
 > Task :ZalithLauncher:collectArm64ReleaseDependencies
 > Task :ZalithLauncher:sdkArm64ReleaseDependencyData
@@ -304,6 +304,7 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 > Task :ZalithLauncher:writeArm64ReleaseSigningConfigVersions
 > Task :ZalithLauncher:preUniversalReleaseBuild UP-TO-DATE
 > Task :ZalithLauncher:configureNdkBuildRelease[armeabi-v7a]
+> Task :LayerController:compileReleaseKotlin
 
 > Task :ZalithLauncher:buildNdkBuildRelease[armeabi-v7a]
 C/C++: rm: cannot remove '/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/../jniLibs/*/libawt_headless.so': No such file or directory
@@ -365,20 +366,21 @@ C/C++: #  define NULL ((void*)0)
 C/C++:                ^~~~~~~~~~
 C/C++: 1 warning generated.
 
-> Task :ColorPicker:lintVitalAnalyzeRelease
-> Task :LayerController:compileReleaseKotlin
-> Task :ZalithLauncher:configureNdkBuildRelease[x86]
 > Task :LayerController:compileReleaseJavaWithJavac NO-SOURCE
 > Task :LayerController:mergeReleaseGeneratedProguardFiles
 > Task :LayerController:exportReleaseConsumerProguardFiles
 > Task :LayerController:bundleLibCompileToJarRelease
 > Task :LayerController:processReleaseJavaRes
 > Task :LayerController:bundleLibRuntimeToJarRelease
+> Task :ColorPicker:lintVitalAnalyzeRelease
 > Task :LayerController:generateReleaseLintVitalModel
 > Task :LayerController:createFullJarRelease
 > Task :LayerController:generateReleaseLintModel
 > Task :LayerController:mergeReleaseConsumerProguardFiles
 > Task :LayerController:mergeReleaseJavaResource
+> Task :ZalithLauncher:configureNdkBuildRelease[x86]
+> Task :LayerController:syncReleaseLibJars
+> Task :LayerController:bundleReleaseLocalLintAar
 
 > Task :ZalithLauncher:buildNdkBuildRelease[x86]
 C/C++: rm: cannot remove '/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/../jniLibs/*/libawt_headless.so': No such file or directory
@@ -440,8 +442,6 @@ C/C++: #  define NULL ((void*)0)
 C/C++:                ^~~~~~~~~~
 C/C++: 1 warning generated.
 
-> Task :LayerController:syncReleaseLibJars
-> Task :LayerController:bundleReleaseLocalLintAar
 > Task :ZalithLauncher:configureNdkBuildRelease[x86_64]
 
 > Task :ZalithLauncher:buildNdkBuildRelease[x86_64]
@@ -555,18 +555,6 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-th/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
-
-> Task :LayerController:lintVitalAnalyzeRelease
-> Task :ZalithLauncher:createUniversalReleaseCompatibleScreenManifests
-> Task :ZalithLauncher:extractDeepLinksUniversalRelease
-
-> Task :ZalithLauncher:processUniversalReleaseMainManifest
-[lwjgl-3.4.1-natives-release.aar] /home/runner/.gradle/caches/9.5.0/transforms/2ccaec1713dd6cc175f61ff4abc58a84/transformed/lwjgl-3.4.1-natives-release/AndroidManifest.xml Warning:
-	Namespace 'org.angelauramc.lwjgl3x' is used in multiple modules and/or libraries: lwjgl-3.4.1-natives-release.aar, lwjgl-3.3.3-natives-release.aar. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
-
-> Task :ZalithLauncher:processUniversalReleaseManifest
-
-> Task :ZalithLauncher:mergeUniversalReleaseResources
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ar/strings.xml:477:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ru/strings.xml:207:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
@@ -577,10 +565,20 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 /home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rTW/values-zh-rTW.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
 /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rTW/strings.xml:534:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
 
+> Task :LayerController:lintVitalAnalyzeRelease
+> Task :ZalithLauncher:createUniversalReleaseCompatibleScreenManifests
+> Task :ZalithLauncher:extractDeepLinksUniversalRelease
+
+> Task :ZalithLauncher:processUniversalReleaseMainManifest
+[lwjgl-3.3.3-natives-release.aar] /home/runner/.gradle/caches/9.5.0/transforms/d68f52d7207d744292b36f550465a7f7/transformed/lwjgl-3.3.3-natives-release/AndroidManifest.xml Warning:
+	Namespace 'org.angelauramc.lwjgl3x' is used in multiple modules and/or libraries: lwjgl-3.3.3-natives-release.aar, lwjgl-3.4.1-natives-release.aar. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
+
+> Task :ZalithLauncher:processUniversalReleaseManifest
 > Task :ZalithLauncher:processUniversalReleaseManifestForPackage
 > Task :ZalithLauncher:mergeUniversalReleaseStartupProfile
 > Task :ZalithLauncher:generateUniversalReleaseAssets UP-TO-DATE
 > Task :ZalithLauncher:mergeUniversalReleaseAssets
+> Task :ZalithLauncher:kspArm64ReleaseKotlin
 > Task :ZalithLauncher:compressUniversalReleaseAssets
 > Task :ZalithLauncher:extractUniversalReleaseVersionControlInfo
 > Task :ZalithLauncher:collectUniversalReleaseDependencies
@@ -589,7 +587,6 @@ BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/gen
 > Task :ZalithLauncher:writeUniversalReleaseAppMetadata
 > Task :ZalithLauncher:writeUniversalReleaseSigningConfigVersions
 > Task :ZalithLauncher:processUniversalReleaseResources
-> Task :ZalithLauncher:kspArm64ReleaseKotlin
 > Task :ZalithLauncher:kspUniversalReleaseKotlin
 The Daemon will expire after the build after running out of JVM Metaspace.
 The project memory settings are likely not configured or are configured to an insufficient value.
@@ -599,39 +596,23 @@ The currently configured max heap space is '4 GiB' and the configured max metasp
 For more information on how to set these values, please refer to https://docs.gradle.org/9.5.0/userguide/build_environment.html#sec:configuring_jvm_memory in the Gradle documentation.
 To disable this warning, set 'org.gradle.daemon.performance.disable-logging=true'.
 Daemon will be stopped at the end of the build after running out of JVM Metaspace
-> Task :ZalithLauncher:compileUniversalReleaseKotlin
 > Task :ZalithLauncher:compileArm64ReleaseKotlin
-e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:231:33 Unresolved reference 'runTask'.
-e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:232:48 Suspend function 'suspend fun refresh(): Unit' can only be called from a coroutine or another suspend function.
-e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:233:48 Suspend function 'suspend fun loadNodes(): Unit' can only be called from a coroutine or another suspend function.
-
-> Task :ZalithLauncher:compileArm64ReleaseKotlin FAILED
+> Task :ZalithLauncher:compileUniversalReleaseKotlin
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ai/ui/AIChatScreen.kt:647:40 'val maxWidth: Dp' cannot be called in this context with an implicit receiver. Use an explicit receiver if necessary.
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/main/LauncherTopBar.kt:143:52 Unresolved reference 'launcherDisplayTitle'.
 
 > Task :ZalithLauncher:compileUniversalReleaseKotlin FAILED
-e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:231:33 Unresolved reference 'runTask'.
-e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:232:48 Suspend function 'suspend fun refresh(): Unit' can only be called from a coroutine or another suspend function.
-e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:233:48 Suspend function 'suspend fun loadNodes(): Unit' can only be called from a coroutine or another suspend function.
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793883423356.json
+
+> Task :ZalithLauncher:compileArm64ReleaseKotlin FAILED
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ai/ui/AIChatScreen.kt:647:40 'val maxWidth: Dp' cannot be called in this context with an implicit receiver. Use an explicit receiver if necessary.
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/main/LauncherTopBar.kt:143:52 Unresolved reference 'launcherDisplayTitle'.
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793885363598.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/ZyNova/ZyNova/build/reports/problems/problems-report.html
 
 FAILURE: Build completed with 2 failures.
 
 1: Task failed with an exception.
------------
-* What went wrong:
-Execution failed for task ':ZalithLauncher:compileArm64ReleaseKotlin' (registered by plugin 'com.android.internal.application').
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
-   > Compilation error. See log for more details
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights from a Build Scan (powered by Develocity).
-> Get more help at https://help.gradle.org.
-==============================================================================
-
-2: Task failed with an exception.
 -----------
 * What went wrong:
 Execution failed for task ':ZalithLauncher:compileUniversalReleaseKotlin' (registered by plugin 'com.android.internal.application').
@@ -645,5 +626,19 @@ Execution failed for task ':ZalithLauncher:compileUniversalReleaseKotlin' (regis
 > Get more help at https://help.gradle.org.
 ==============================================================================
 
-BUILD FAILED in 2m 20s
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':ZalithLauncher:compileArm64ReleaseKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 2m 34s
 224 actionable tasks: 224 executed
