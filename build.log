@@ -1,0 +1,649 @@
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :ZalithLauncher
+Checking the license for package NDK (Side by side) 25.2.9519653 in /usr/local/lib/android/sdk/licenses
+License for package NDK (Side by side) 25.2.9519653 accepted.
+Preparing "Install NDK (Side by side) 25.2.9519653 v.25.2.9519653".
+"Install NDK (Side by side) 25.2.9519653 v.25.2.9519653" ready.
+Installing NDK (Side by side) 25.2.9519653 in /usr/local/lib/android/sdk/ndk/25.2.9519653
+"Install NDK (Side by side) 25.2.9519653 v.25.2.9519653" complete.
+"Install NDK (Side by side) 25.2.9519653 v.25.2.9519653" finished.
+
+> Task :ColorPicker:preBuild UP-TO-DATE
+> Task :ColorPicker:preReleaseBuild UP-TO-DATE
+> Task :ColorPicker:mergeReleaseJniLibFolders
+> Task :ColorPicker:mergeReleaseNativeLibs NO-SOURCE
+> Task :InputMap:preBuild UP-TO-DATE
+> Task :InputMap:preReleaseBuild UP-TO-DATE
+> Task :ColorPicker:copyReleaseJniLibsProjectOnly
+> Task :InputMap:mergeReleaseJniLibFolders
+> Task :InputMap:mergeReleaseNativeLibs NO-SOURCE
+> Task :LayerController:preBuild UP-TO-DATE
+> Task :LayerController:preReleaseBuild UP-TO-DATE
+> Task :InputMap:copyReleaseJniLibsProjectOnly
+> Task :LayerController:mergeReleaseJniLibFolders
+> Task :LayerController:mergeReleaseNativeLibs NO-SOURCE
+> Task :Terracotta:preBuild UP-TO-DATE
+> Task :LayerController:copyReleaseJniLibsProjectOnly
+> Task :Terracotta:preReleaseBuild UP-TO-DATE
+> Task :Terracotta:mergeReleaseJniLibFolders
+> Task :ZalithLauncher:preBuild UP-TO-DATE
+> Task :ZalithLauncher:preArm64ReleaseBuild UP-TO-DATE
+> Task :Terracotta:mergeReleaseNativeLibs
+> Task :ZalithLauncher:configureNdkBuildRelease[arm64-v8a]
+> Task :Terracotta:copyReleaseJniLibsProjectOnly
+
+> Task :ZalithLauncher:buildNdkBuildRelease[arm64-v8a]
+C/C++: rm: cannot remove '/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/../jniLibs/*/libawt_headless.so': No such file or directory
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/gl_bridge.c:105:65: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         if (!bindResult) printf("EGLBridge: bind failed: %p\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/swap_interval_no_egl.c:236:29: warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+C/C++:                             sizeof(struct ANativeWindow_real), nativeWindowReal->common.version);
+C/C++:                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:35:71: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error: eglMakeCurrent() failed: %p\n", eglGetError_p());
+C/C++:                                                                ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:41:25: warning: passing 'const char *[5]' to parameter of type 'char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         vtest_main_p(3, (const char*[]){"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
+C/C++:                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:45:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+C/C++: }
+C/C++: ^
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:77:76: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error eglGetDefaultDisplay() failed: %p\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:85:65: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglInitialize() failed: %s\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:105:76: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error couldn't get an EGL visual config: %s\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:114:70: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglGetConfigAttrib() failed: %s\n", eglGetError_p());
+C/C++:                                                               ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                               %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:126:72: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglCreateWindowSurface failed: %p\n", eglGetError_p());
+C/C++:                                                                 ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                 %d
+C/C++: 8 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/jre_launcher.c:118:69: warning: format specifies type 'int' but the argument has type 'size_t' (aka 'unsigned long') [-Wformat]
+C/C++:             printf("Failed to set signal hander for signal %i: %s", i, strerror(errno));
+C/C++:                                                            ~~       ^
+C/C++:                                                            %zu
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/jre_launcher.c:190:37: warning: passing 'char **' to parameter of type 'const char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:     free_char_array(env, argsArray, argv);
+C/C++:                                     ^~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.h:41:75: note: passing argument to parameter 'charArray' here
+C/C++: void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray);
+C/C++:                                                                           ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:99:33: warning: passing 'const char *' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         android_update_LD_LIBRARY_PATH(ldLibPathUtf);
+C/C++:                                        ^~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:129:46: warning: incompatible pointer types passing 'void **' to parameter of type 'JNIEnv **' (aka 'const struct JNINativeInterface ***') [-Wincompatible-pointer-types]
+C/C++:         if ((*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL) == JNI_OK) {
+C/C++:                                              ^~~~~~~~~~~~
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/awt_bridge.c:120:109: warning: incompatible pointer to integer conversion passing 'void *' to parameter of type 'jint' (aka 'int') [-Wint-conversion]
+C/C++:     (*runtimeJNIEnvPtr_GRAPHICS)->ReleaseIntArrayElements(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray, rgbArray, NULL);
+C/C++:                                                                                                             ^~~~
+C/C++: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/14.0.7/include/stddef.h:89:16: note: expanded from macro 'NULL'
+C/C++: #  define NULL ((void*)0)
+C/C++:                ^~~~~~~~~~
+C/C++: 1 warning generated.
+
+> Task :ZalithLauncher:mergeArm64ReleaseJniLibFolders
+> Task :ColorPicker:prepareReleaseArtProfile
+> Task :InputMap:prepareReleaseArtProfile
+> Task :LayerController:prepareReleaseArtProfile
+> Task :Terracotta:prepareReleaseArtProfile
+> Task :InputMap:generateReleaseResources
+> Task :ZalithLauncher:mergeArm64ReleaseArtProfile
+> Task :InputMap:packageReleaseResources
+> Task :ZalithLauncher:mergeArm64ReleaseNativeLibs
+> Task :InputMap:processReleaseNavigationResources
+> Task :ZalithLauncher:expandArm64ReleaseL8ArtProfileWildcards
+> Task :LayerController:generateReleaseResources
+> Task :LayerController:packageReleaseResources
+> Task :LayerController:processReleaseNavigationResources
+> Task :InputMap:javaPreCompileRelease
+> Task :LayerController:parseReleaseLocalResources
+> Task :InputMap:parseReleaseLocalResources
+> Task :ZalithLauncher:stripArm64ReleaseDebugSymbols
+> Task :LayerController:javaPreCompileRelease
+> Task :LayerController:generateReleaseRFile
+> Task :InputMap:generateReleaseRFile
+> Task :ColorPicker:generateReleaseResources
+> Task :ZalithLauncher:extractArm64ReleaseNativeSymbolTables
+> Task :ColorPicker:packageReleaseResources
+> Task :ColorPicker:processReleaseNavigationResources
+> Task :ColorPicker:javaPreCompileRelease
+> Task :ColorPicker:parseReleaseLocalResources
+> Task :Terracotta:generateReleaseResources
+> Task :ColorPicker:generateReleaseRFile
+> Task :Terracotta:packageReleaseResources
+> Task :Terracotta:processReleaseNavigationResources
+> Task :Terracotta:parseReleaseLocalResources
+> Task :Terracotta:generateReleaseRFile
+> Task :Terracotta:compileReleaseKotlin NO-SOURCE
+> Task :Terracotta:javaPreCompileRelease
+> Task :Terracotta:compileReleaseJavaWithJavac
+> Task :Terracotta:mergeReleaseGeneratedProguardFiles
+> Task :Terracotta:exportReleaseConsumerProguardFiles
+> Task :Terracotta:bundleLibCompileToJarRelease
+> Task :Terracotta:bundleLibRuntimeToJarRelease
+> Task :ZalithLauncher:checkArm64ReleaseDuplicateClasses
+> Task :ZalithLauncher:generateArm64ReleaseBuildConfig
+
+> Task :ZalithLauncher:generateArm64ReleaseBuildKeys
+BuildKeys: generating for package 'com.movtery.zalithlauncher' with 7 entries (6 hidden strings)
+BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/generated/source/buildKeys/arm64Release/BuildKeys.kt
+
+> Task :ZalithLauncher:generateArm64ReleaseResources
+> Task :ZalithLauncher:mergeArm64ReleaseNativeDebugMetadata
+> Task :ZalithLauncher:packageArm64ReleaseResources
+> Task :ZalithLauncher:processArm64ReleaseNavigationResources
+> Task :ZalithLauncher:javaPreCompileArm64Release
+> Task :ColorPicker:mapReleaseSourceSetPaths
+> Task :ColorPicker:compileReleaseLibraryResources
+> Task :InputMap:mapReleaseSourceSetPaths
+> Task :InputMap:compileReleaseLibraryResources
+> Task :LayerController:mapReleaseSourceSetPaths
+> Task :LayerController:compileReleaseLibraryResources
+> Task :Terracotta:mapReleaseSourceSetPaths
+> Task :ZalithLauncher:parseArm64ReleaseLocalResources
+> Task :Terracotta:compileReleaseLibraryResources
+> Task :ColorPicker:writeReleaseAarMetadata
+> Task :InputMap:writeReleaseAarMetadata
+> Task :LayerController:writeReleaseAarMetadata
+> Task :Terracotta:writeReleaseAarMetadata
+> Task :ZalithLauncher:generateArm64ReleaseRFile
+> Task :ZalithLauncher:mapArm64ReleaseSourceSetPaths
+> Task :ZalithLauncher:compileArm64ReleaseNavigationResources
+> Task :ZalithLauncher:checkArm64ReleaseAarMetadata
+> Task :InputMap:compileReleaseKotlin
+
+> Task :ZalithLauncher:mergeArm64ReleaseResources
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-fil/terracotta.xml:21:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values/values.xml:1878:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values/strings.xml:668:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-it/terracotta.xml:20:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values/terracotta.xml:27:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+
+> Task :InputMap:compileReleaseJavaWithJavac
+> Task :InputMap:mergeReleaseGeneratedProguardFiles
+
+> Task :ZalithLauncher:mergeArm64ReleaseResources
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-es/strings.xml:481:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt/strings.xml:123:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rCN/values-zh-rCN.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rCN/strings.xml:668:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rCN/terracotta.xml:27:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-pt-rBR/values-pt-rBR.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ar/strings.xml:477:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ru/strings.xml:207:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-th/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-in/strings.xml:364:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-tr/strings.xml:373:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-tr/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ja/strings.xml:608:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ug/terracotta.xml:24:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rTW/values-zh-rTW.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rTW/strings.xml:534:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-vi/strings.xml:367:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-vi/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+
+> Task :InputMap:bundleLibCompileToJarRelease
+> Task :InputMap:exportReleaseConsumerProguardFiles
+> Task :InputMap:bundleLibRuntimeToJarRelease
+> Task :ColorPicker:compileReleaseKotlin
+> Task :ZalithLauncher:createArm64ReleaseCompatibleScreenManifests
+> Task :ColorPicker:compileReleaseJavaWithJavac NO-SOURCE
+> Task :ColorPicker:mergeReleaseGeneratedProguardFiles
+> Task :ColorPicker:bundleLibCompileToJarRelease
+> Task :ColorPicker:exportReleaseConsumerProguardFiles
+> Task :ColorPicker:extractDeepLinksRelease
+> Task :ColorPicker:bundleLibRuntimeToJarRelease
+> Task :InputMap:extractDeepLinksRelease
+> Task :InputMap:processReleaseManifest
+> Task :ColorPicker:processReleaseManifest
+> Task :LayerController:extractDeepLinksRelease
+> Task :Terracotta:extractDeepLinksRelease
+> Task :Terracotta:processReleaseManifest
+> Task :LayerController:processReleaseManifest
+> Task :ZalithLauncher:extractDeepLinksArm64Release
+
+> Task :ZalithLauncher:processArm64ReleaseMainManifest
+[lwjgl-3.4.1-natives-release.aar] /home/runner/.gradle/caches/9.5.0/transforms/2ccaec1713dd6cc175f61ff4abc58a84/transformed/lwjgl-3.4.1-natives-release/AndroidManifest.xml Warning:
+	Namespace 'org.angelauramc.lwjgl3x' is used in multiple modules and/or libraries: lwjgl-3.4.1-natives-release.aar, lwjgl-3.3.3-natives-release.aar. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
+
+> Task :ZalithLauncher:processArm64ReleaseManifest
+> Task :ZalithLauncher:extractProguardFiles
+> Task :ColorPicker:processReleaseJavaRes
+> Task :InputMap:processReleaseJavaRes
+> Task :Terracotta:processReleaseJavaRes NO-SOURCE
+> Task :ZalithLauncher:mergeArm64ReleaseStartupProfile
+> Task :ColorPicker:generateReleaseAssets UP-TO-DATE
+> Task :ColorPicker:mergeReleaseAssets
+> Task :InputMap:generateReleaseAssets UP-TO-DATE
+> Task :InputMap:mergeReleaseAssets
+> Task :LayerController:generateReleaseAssets UP-TO-DATE
+> Task :LayerController:mergeReleaseAssets
+> Task :Terracotta:generateReleaseAssets UP-TO-DATE
+> Task :Terracotta:mergeReleaseAssets
+> Task :ZalithLauncher:generateArm64ReleaseAssets UP-TO-DATE
+> Task :ZalithLauncher:mergeArm64ReleaseAssets
+> Task :ZalithLauncher:extractArm64ReleaseVersionControlInfo
+> Task :ColorPicker:extractProguardFiles
+> Task :ColorPicker:generateReleaseLintVitalModel
+> Task :ZalithLauncher:processArm64ReleaseManifestForPackage
+> Task :ZalithLauncher:compressArm64ReleaseAssets
+> Task :ColorPicker:prepareLintJarForPublish
+> Task :InputMap:extractProguardFiles
+> Task :InputMap:generateReleaseLintVitalModel
+> Task :ZalithLauncher:processArm64ReleaseResources
+> Task :InputMap:prepareLintJarForPublish
+> Task :InputMap:createFullJarRelease
+> Task :InputMap:generateReleaseLintModel
+> Task :LayerController:extractProguardFiles
+> Task :InputMap:checkReleaseAarMetadata
+> Task :InputMap:extractDeepLinksForAarRelease
+> Task :InputMap:extractReleaseAnnotations
+> Task :InputMap:mergeReleaseConsumerProguardFiles
+> Task :InputMap:mergeReleaseJavaResource
+> Task :InputMap:syncReleaseLibJars
+> Task :InputMap:bundleReleaseLocalLintAar
+> Task :InputMap:writeReleaseLintModelMetadata
+> Task :LayerController:prepareLintJarForPublish
+> Task :Terracotta:extractProguardFiles
+> Task :Terracotta:generateReleaseLintVitalModel
+> Task :InputMap:lintVitalAnalyzeRelease
+> Task :Terracotta:prepareLintJarForPublish
+> Task :ColorPicker:createFullJarRelease
+> Task :Terracotta:lintVitalAnalyzeRelease
+> Task :ColorPicker:generateReleaseLintModel
+> Task :Terracotta:createFullJarRelease
+> Task :Terracotta:generateReleaseLintModel
+> Task :LayerController:extractDeepLinksForAarRelease
+> Task :LayerController:checkReleaseAarMetadata
+> Task :LayerController:extractReleaseAnnotations
+> Task :ColorPicker:checkReleaseAarMetadata
+> Task :ColorPicker:extractDeepLinksForAarRelease
+> Task :ColorPicker:extractReleaseAnnotations
+> Task :ColorPicker:mergeReleaseConsumerProguardFiles
+> Task :ColorPicker:mergeReleaseJavaResource
+> Task :Terracotta:checkReleaseAarMetadata
+> Task :ColorPicker:syncReleaseLibJars
+> Task :ColorPicker:bundleReleaseLocalLintAar
+> Task :Terracotta:extractDeepLinksForAarRelease
+> Task :Terracotta:extractReleaseAnnotations
+> Task :Terracotta:mergeReleaseConsumerProguardFiles
+> Task :Terracotta:mergeReleaseJavaResource
+> Task :ColorPicker:writeReleaseLintModelMetadata
+> Task :Terracotta:syncReleaseLibJars
+> Task :Terracotta:bundleReleaseLocalLintAar
+> Task :LayerController:writeReleaseLintModelMetadata
+> Task :Terracotta:writeReleaseLintModelMetadata
+> Task :ZalithLauncher:collectArm64ReleaseDependencies
+> Task :ZalithLauncher:sdkArm64ReleaseDependencyData
+> Task :ZalithLauncher:validateSigningArm64Release
+> Task :ZalithLauncher:writeArm64ReleaseAppMetadata
+> Task :ZalithLauncher:writeArm64ReleaseSigningConfigVersions
+> Task :ZalithLauncher:preUniversalReleaseBuild UP-TO-DATE
+> Task :ZalithLauncher:configureNdkBuildRelease[armeabi-v7a]
+
+> Task :ZalithLauncher:buildNdkBuildRelease[armeabi-v7a]
+C/C++: rm: cannot remove '/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/../jniLibs/*/libawt_headless.so': No such file or directory
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/gl_bridge.c:105:65: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         if (!bindResult) printf("EGLBridge: bind failed: %p\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:35:71: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error: eglMakeCurrent() failed: %p\n", eglGetError_p());
+C/C++:                                                                ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:41:25: warning: passing 'const char *[5]' to parameter of type 'char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         vtest_main_p(3, (const char*[]){"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
+C/C++:                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:45:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+C/C++: }
+C/C++: ^
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:77:76: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error eglGetDefaultDisplay() failed: %p\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:85:65: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglInitialize() failed: %s\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:105:76: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error couldn't get an EGL visual config: %s\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:114:70: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglGetConfigAttrib() failed: %s\n", eglGetError_p());
+C/C++:                                                               ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                               %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:126:72: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglCreateWindowSurface failed: %p\n", eglGetError_p());
+C/C++:                                                                 ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                 %d
+C/C++: 8 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/jre_launcher.c:190:37: warning: passing 'char **' to parameter of type 'const char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:     free_char_array(env, argsArray, argv);
+C/C++:                                     ^~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.h:41:75: note: passing argument to parameter 'charArray' here
+C/C++: void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray);
+C/C++:                                                                           ^
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:99:33: warning: passing 'const char *' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         android_update_LD_LIBRARY_PATH(ldLibPathUtf);
+C/C++:                                        ^~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:129:46: warning: incompatible pointer types passing 'void **' to parameter of type 'JNIEnv **' (aka 'const struct JNINativeInterface ***') [-Wincompatible-pointer-types]
+C/C++:         if ((*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL) == JNI_OK) {
+C/C++:                                              ^~~~~~~~~~~~
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/awt_bridge.c:120:109: warning: incompatible pointer to integer conversion passing 'void *' to parameter of type 'jint' (aka 'int') [-Wint-conversion]
+C/C++:     (*runtimeJNIEnvPtr_GRAPHICS)->ReleaseIntArrayElements(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray, rgbArray, NULL);
+C/C++:                                                                                                             ^~~~
+C/C++: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/14.0.7/include/stddef.h:89:16: note: expanded from macro 'NULL'
+C/C++: #  define NULL ((void*)0)
+C/C++:                ^~~~~~~~~~
+C/C++: 1 warning generated.
+
+> Task :ColorPicker:lintVitalAnalyzeRelease
+> Task :LayerController:compileReleaseKotlin
+> Task :ZalithLauncher:configureNdkBuildRelease[x86]
+> Task :LayerController:compileReleaseJavaWithJavac NO-SOURCE
+> Task :LayerController:mergeReleaseGeneratedProguardFiles
+> Task :LayerController:exportReleaseConsumerProguardFiles
+> Task :LayerController:bundleLibCompileToJarRelease
+> Task :LayerController:processReleaseJavaRes
+> Task :LayerController:bundleLibRuntimeToJarRelease
+> Task :LayerController:generateReleaseLintVitalModel
+> Task :LayerController:createFullJarRelease
+> Task :LayerController:generateReleaseLintModel
+> Task :LayerController:mergeReleaseConsumerProguardFiles
+> Task :LayerController:mergeReleaseJavaResource
+
+> Task :ZalithLauncher:buildNdkBuildRelease[x86]
+C/C++: rm: cannot remove '/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/../jniLibs/*/libawt_headless.so': No such file or directory
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/gl_bridge.c:105:65: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         if (!bindResult) printf("EGLBridge: bind failed: %p\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:35:71: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error: eglMakeCurrent() failed: %p\n", eglGetError_p());
+C/C++:                                                                ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:41:25: warning: passing 'const char *[5]' to parameter of type 'char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         vtest_main_p(3, (const char*[]){"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
+C/C++:                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:45:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+C/C++: }
+C/C++: ^
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:77:76: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error eglGetDefaultDisplay() failed: %p\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:85:65: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglInitialize() failed: %s\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:105:76: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error couldn't get an EGL visual config: %s\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:114:70: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglGetConfigAttrib() failed: %s\n", eglGetError_p());
+C/C++:                                                               ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                               %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:126:72: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglCreateWindowSurface failed: %p\n", eglGetError_p());
+C/C++:                                                                 ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                 %d
+C/C++: 8 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/jre_launcher.c:190:37: warning: passing 'char **' to parameter of type 'const char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:     free_char_array(env, argsArray, argv);
+C/C++:                                     ^~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.h:41:75: note: passing argument to parameter 'charArray' here
+C/C++: void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray);
+C/C++:                                                                           ^
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:99:33: warning: passing 'const char *' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         android_update_LD_LIBRARY_PATH(ldLibPathUtf);
+C/C++:                                        ^~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:129:46: warning: incompatible pointer types passing 'void **' to parameter of type 'JNIEnv **' (aka 'const struct JNINativeInterface ***') [-Wincompatible-pointer-types]
+C/C++:         if ((*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL) == JNI_OK) {
+C/C++:                                              ^~~~~~~~~~~~
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/awt_bridge.c:120:109: warning: incompatible pointer to integer conversion passing 'void *' to parameter of type 'jint' (aka 'int') [-Wint-conversion]
+C/C++:     (*runtimeJNIEnvPtr_GRAPHICS)->ReleaseIntArrayElements(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray, rgbArray, NULL);
+C/C++:                                                                                                             ^~~~
+C/C++: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/14.0.7/include/stddef.h:89:16: note: expanded from macro 'NULL'
+C/C++: #  define NULL ((void*)0)
+C/C++:                ^~~~~~~~~~
+C/C++: 1 warning generated.
+
+> Task :LayerController:syncReleaseLibJars
+> Task :LayerController:bundleReleaseLocalLintAar
+> Task :ZalithLauncher:configureNdkBuildRelease[x86_64]
+
+> Task :ZalithLauncher:buildNdkBuildRelease[x86_64]
+C/C++: rm: cannot remove '/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/../jniLibs/*/libawt_headless.so': No such file or directory
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/gl_bridge.c:105:65: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         if (!bindResult) printf("EGLBridge: bind failed: %p\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/swap_interval_no_egl.c:236:29: warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+C/C++:                             sizeof(struct ANativeWindow_real), nativeWindowReal->common.version);
+C/C++:                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: 1 warning generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:35:71: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error: eglMakeCurrent() failed: %p\n", eglGetError_p());
+C/C++:                                                                ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:41:25: warning: passing 'const char *[5]' to parameter of type 'char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         vtest_main_p(3, (const char*[]){"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
+C/C++:                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:45:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+C/C++: }
+C/C++: ^
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:77:76: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:             printf("EGLBridge: Error eglGetDefaultDisplay() failed: %p\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:85:65: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglInitialize() failed: %s\n", eglGetError_p());
+C/C++:                                                          ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                          %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:105:76: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error couldn't get an EGL visual config: %s\n", eglGetError_p());
+C/C++:                                                                     ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                     %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:114:70: warning: format specifies type 'char *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglGetConfigAttrib() failed: %s\n", eglGetError_p());
+C/C++:                                                               ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                               %d
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/ctxbridges/virgl_bridge.c:126:72: warning: format specifies type 'void *' but the argument has type 'EGLint' (aka 'int') [-Wformat]
+C/C++:         printf("EGLBridge: Error eglCreateWindowSurface failed: %p\n", eglGetError_p());
+C/C++:                                                                 ~~     ^~~~~~~~~~~~~~~
+C/C++:                                                                 %d
+C/C++: 8 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/jre_launcher.c:118:69: warning: format specifies type 'int' but the argument has type 'size_t' (aka 'unsigned long') [-Wformat]
+C/C++:             printf("Failed to set signal hander for signal %i: %s", i, strerror(errno));
+C/C++:                                                            ~~       ^
+C/C++:                                                            %zu
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/jre_launcher.c:190:37: warning: passing 'char **' to parameter of type 'const char **' discards qualifiers in nested pointer types [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:     free_char_array(env, argsArray, argv);
+C/C++:                                     ^~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.h:41:75: note: passing argument to parameter 'charArray' here
+C/C++: void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray);
+C/C++:                                                                           ^
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:99:33: warning: passing 'const char *' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+C/C++:         android_update_LD_LIBRARY_PATH(ldLibPathUtf);
+C/C++:                                        ^~~~~~~~~~~~
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/utils.c:129:46: warning: incompatible pointer types passing 'void **' to parameter of type 'JNIEnv **' (aka 'const struct JNINativeInterface ***') [-Wincompatible-pointer-types]
+C/C++:         if ((*jvm)->AttachCurrentThread(jvm, (void**)&env, NULL) == JNI_OK) {
+C/C++:                                              ^~~~~~~~~~~~
+C/C++: 2 warnings generated.
+C/C++: /home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/jni/awt_bridge.c:120:109: warning: incompatible pointer to integer conversion passing 'void *' to parameter of type 'jint' (aka 'int') [-Wint-conversion]
+C/C++:     (*runtimeJNIEnvPtr_GRAPHICS)->ReleaseIntArrayElements(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray, rgbArray, NULL);
+C/C++:                                                                                                             ^~~~
+C/C++: /usr/local/lib/android/sdk/ndk/25.2.9519653/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/14.0.7/include/stddef.h:89:16: note: expanded from macro 'NULL'
+C/C++: #  define NULL ((void*)0)
+C/C++:                ^~~~~~~~~~
+C/C++: 1 warning generated.
+
+> Task :ZalithLauncher:mergeUniversalReleaseJniLibFolders
+> Task :ZalithLauncher:mergeUniversalReleaseArtProfile
+> Task :ZalithLauncher:expandUniversalReleaseL8ArtProfileWildcards
+> Task :ZalithLauncher:checkUniversalReleaseDuplicateClasses
+> Task :ZalithLauncher:generateUniversalReleaseBuildConfig
+
+> Task :ZalithLauncher:generateUniversalReleaseBuildKeys
+BuildKeys: generating for package 'com.movtery.zalithlauncher' with 7 entries (6 hidden strings)
+BuildKeys: generated -> /home/runner/work/ZyNova/ZyNova/ZalithLauncher/build/generated/source/buildKeys/universalRelease/BuildKeys.kt
+
+> Task :ZalithLauncher:generateUniversalReleaseResources
+> Task :ZalithLauncher:packageUniversalReleaseResources
+> Task :ZalithLauncher:processUniversalReleaseNavigationResources
+> Task :ZalithLauncher:parseUniversalReleaseLocalResources
+> Task :ZalithLauncher:generateUniversalReleaseRFile
+> Task :ZalithLauncher:mergeUniversalReleaseNativeLibs
+> Task :ZalithLauncher:stripUniversalReleaseDebugSymbols
+> Task :ZalithLauncher:extractUniversalReleaseNativeSymbolTables
+> Task :ZalithLauncher:mergeUniversalReleaseNativeDebugMetadata
+> Task :ZalithLauncher:javaPreCompileUniversalRelease
+> Task :ZalithLauncher:checkUniversalReleaseAarMetadata
+> Task :ZalithLauncher:mapUniversalReleaseSourceSetPaths
+> Task :ZalithLauncher:compileUniversalReleaseNavigationResources
+
+> Task :ZalithLauncher:mergeUniversalReleaseResources
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values/values.xml:1878:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values/strings.xml:668:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values/terracotta.xml:27:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-in/strings.xml:364:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ja/strings.xml:608:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-vi/strings.xml:367:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-vi/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-fil/terracotta.xml:21:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-it/terracotta.xml:20:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-es/strings.xml:481:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rCN/values-zh-rCN.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rCN/strings.xml:668:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rCN/terracotta.xml:27:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt/strings.xml:123:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-pt-rBR/values-pt-rBR.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-pt-rBR/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-th/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+
+> Task :LayerController:lintVitalAnalyzeRelease
+> Task :ZalithLauncher:createUniversalReleaseCompatibleScreenManifests
+> Task :ZalithLauncher:extractDeepLinksUniversalRelease
+
+> Task :ZalithLauncher:processUniversalReleaseMainManifest
+[lwjgl-3.4.1-natives-release.aar] /home/runner/.gradle/caches/9.5.0/transforms/2ccaec1713dd6cc175f61ff4abc58a84/transformed/lwjgl-3.4.1-natives-release/AndroidManifest.xml Warning:
+	Namespace 'org.angelauramc.lwjgl3x' is used in multiple modules and/or libraries: lwjgl-3.4.1-natives-release.aar, lwjgl-3.3.3-natives-release.aar. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
+
+> Task :ZalithLauncher:processUniversalReleaseManifest
+
+> Task :ZalithLauncher:mergeUniversalReleaseResources
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ar/strings.xml:477:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ru/strings.xml:207:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/strings.xml:503:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ko/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-tr/strings.xml:373:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-tr/terracotta.xml:25:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-ug/terracotta.xml:24:4: Multiple substitutions specified in non-positional format of string resource string/terracotta_notification_desc. Did you mean to add the formatted="false" attribute?
+/home/runner/.gradle/caches/9.5.0/transforms/124f6ced500bfb8b8a54104975d215a2/transformed/material-1.14.0/res/values-zh-rTW/values-zh-rTW.xml:19:4: Multiple substitutions specified in non-positional format of string resource string/duration_format. Did you mean to add the formatted="false" attribute?
+/home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/res/values-zh-rTW/strings.xml:534:4: Multiple substitutions specified in non-positional format of string resource string/file_invalid_length. Did you mean to add the formatted="false" attribute?
+
+> Task :ZalithLauncher:processUniversalReleaseManifestForPackage
+> Task :ZalithLauncher:mergeUniversalReleaseStartupProfile
+> Task :ZalithLauncher:generateUniversalReleaseAssets UP-TO-DATE
+> Task :ZalithLauncher:mergeUniversalReleaseAssets
+> Task :ZalithLauncher:compressUniversalReleaseAssets
+> Task :ZalithLauncher:extractUniversalReleaseVersionControlInfo
+> Task :ZalithLauncher:collectUniversalReleaseDependencies
+> Task :ZalithLauncher:sdkUniversalReleaseDependencyData
+> Task :ZalithLauncher:validateSigningUniversalRelease
+> Task :ZalithLauncher:writeUniversalReleaseAppMetadata
+> Task :ZalithLauncher:writeUniversalReleaseSigningConfigVersions
+> Task :ZalithLauncher:processUniversalReleaseResources
+> Task :ZalithLauncher:kspArm64ReleaseKotlin
+> Task :ZalithLauncher:kspUniversalReleaseKotlin
+The Daemon will expire after the build after running out of JVM Metaspace.
+The project memory settings are likely not configured or are configured to an insufficient value.
+The daemon will restart for the next build, which may increase subsequent build times.
+These settings can be adjusted by setting 'org.gradle.jvmargs' in 'gradle.properties'.
+The currently configured max heap space is '4 GiB' and the configured max metaspace is '512 MiB'.
+For more information on how to set these values, please refer to https://docs.gradle.org/9.5.0/userguide/build_environment.html#sec:configuring_jvm_memory in the Gradle documentation.
+To disable this warning, set 'org.gradle.daemon.performance.disable-logging=true'.
+Daemon will be stopped at the end of the build after running out of JVM Metaspace
+> Task :ZalithLauncher:compileUniversalReleaseKotlin
+> Task :ZalithLauncher:compileArm64ReleaseKotlin
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:231:33 Unresolved reference 'runTask'.
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:232:48 Suspend function 'suspend fun refresh(): Unit' can only be called from a coroutine or another suspend function.
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:233:48 Suspend function 'suspend fun loadNodes(): Unit' can only be called from a coroutine or another suspend function.
+
+> Task :ZalithLauncher:compileArm64ReleaseKotlin FAILED
+
+> Task :ZalithLauncher:compileUniversalReleaseKotlin FAILED
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:231:33 Unresolved reference 'runTask'.
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:232:48 Suspend function 'suspend fun refresh(): Unit' can only be called from a coroutine or another suspend function.
+e: file:///home/runner/work/ZyNova/ZyNova/ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/FrpScreen.kt:233:48 Suspend function 'suspend fun loadNodes(): Unit' can only be called from a coroutine or another suspend function.
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793883423356.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/ZyNova/ZyNova/build/reports/problems/problems-report.html
+
+FAILURE: Build completed with 2 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':ZalithLauncher:compileArm64ReleaseKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':ZalithLauncher:compileUniversalReleaseKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 2m 20s
+224 actionable tasks: 224 executed
