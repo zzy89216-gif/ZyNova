@@ -3,7 +3,8 @@ name: Build ZyNova APK
 # push 到 main 时的验证编译：出两个 APK（universal + arm64-v8a，均已代码混淆）。
 on:
   push:
-    branches: [ "main", "master" ]
+    # ⚠️ feat/sakurafrp 为临时验证分支，合并前必须移除
+    branches: [ "main", "master", "feat/sakurafrp" ]
   workflow_dispatch:
 
 jobs:
