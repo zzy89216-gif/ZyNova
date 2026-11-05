@@ -1,5 +1,9 @@
 name: Build ZyNova APK
 
+# 临时：允许失败时把编译日志推回分支（问题修好后连同临时触发条件一起回滚）
+permissions:
+  contents: write
+
 # push 到 main 时的验证编译：出两个 APK（universal + arm64-v8a，均已代码混淆）。
 on:
   push:
@@ -35,7 +39,18 @@ jobs:
       - name: Build Release APK (universal + arm64)
         run: |
           chmod +x gradlew
-          ./gradlew ZalithLauncher:assembleRelease
+          set -o pipefail
+          ./gradlew ZalithLauncher:assembleRelease 2>&1 | tee build.log
+
+      # ⚠️ 临时排查步骤：把编译日志提交回分支，便于无 Token 环境读取；问题修好后删除
+      - name: Publish build log on failure
+        if: failure()
+        run: |
+          git config user.name "ZyNova CI"
+          git config user.email "ci@zynova.local"
+          git add -f build.log || true
+          git commit -m "ci: 编译失败日志 [skip ci]" || true
+          git push origin HEAD:refs/heads/feat/sakurafrp || true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
