@@ -77,6 +77,12 @@ Chinese versions live in [`docs/zh/`](https://github.com/zzy89216-gif/ZyNova/blo
 | [What the AI can do](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-tools.md) | `ai-tools.md` |
 | [AI safety](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-safety.md) | `ai-safety.md` |
 
+### Multiplayer
+
+| Document | Content |
+|---|---|
+| [SakuraFrp tunnel](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/frp.md) | `frp.md` |
+
 ### Downloads and network
 
 | Document | Content |

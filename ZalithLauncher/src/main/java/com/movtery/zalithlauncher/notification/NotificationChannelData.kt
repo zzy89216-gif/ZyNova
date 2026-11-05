@@ -42,5 +42,10 @@ enum class NotificationChannelData(
     /**
      * 陶瓦联机 VPN 状态显示服务
      */
-    TERRACOTTA_VPN_CHANNEL("terracotta_vpn_channel", { "Terracotta VPN" }, { it.getString(R.string.terracotta_terracotta) }, IMPORTANCE_LOW, false)
+    TERRACOTTA_VPN_CHANNEL("terracotta_vpn_channel", { "Terracotta VPN" }, { it.getString(R.string.terracotta_terracotta) }, IMPORTANCE_LOW, false),
+
+    /**
+     * 樱花内网穿透前台服务（保持 frpc 进程存活）
+     */
+    FRP_SERVICE_CHANNEL("frp.service", { it.getString(R.string.frp_title) }, { it.getString(R.string.frp_notification_text) }, IMPORTANCE_LOW, false)
 }

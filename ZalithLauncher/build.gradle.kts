@@ -122,6 +122,9 @@ android {
         jniLibs {
             useLegacyPackaging = true
             pickFirsts += listOf("**/libbytehook.so")
+            // libfrpc.so 是樱花 frpc 的可执行文件（Go + UPX），不是真正的共享库；
+            // 必须阻止 AGP 用 llvm-strip 处理它，否则会破坏 UPX 头部导致无法启动。
+            keepDebugSymbols += listOf("**/libfrpc.so")
         }
     }
 

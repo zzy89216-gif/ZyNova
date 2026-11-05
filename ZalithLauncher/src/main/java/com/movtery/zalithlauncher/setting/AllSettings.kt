@@ -875,6 +875,14 @@ object AllSettings : SettingsRegistry() {
     val terracottaNoticeVer = intSetting("terracottaNoticeVer", -1)
 
     /**
+     * 樱花内网穿透：访问密钥（保存的是 Android Keystore 加密后的密文，不是明文）
+     *
+     * ⚠️ 读写请统一走 [com.movtery.zalithlauncher.frp.FrpManager.token]，
+     * 不要直接拿这里的值去请求接口或写日志。
+     */
+    val frpToken = stringSetting("frpToken", "")
+
+    /**
      * 上次检查更新的时间戳
      */
     val lastUpgradeCheck = longSetting("lastUpgradeCheck", 0L)

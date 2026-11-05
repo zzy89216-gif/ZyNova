@@ -23,6 +23,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
     <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
 
+    <!-- 樱花内网穿透：引导用户把启动器加入电池优化白名单，避免息屏后 frpc 被杀 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <application
         android:name=".ZLApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -166,6 +169,16 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_TYPE"
                 android:value="Running the game engine and maintaining game process" />
+        </service>
+
+        <service
+            android:name=".frp.FrpService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_TYPE"
+                android:value="Keep the SakuraFrp tunnel process alive while the screen is off" />
         </service>
 
         <service

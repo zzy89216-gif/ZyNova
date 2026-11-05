@@ -77,6 +77,12 @@
 | [AI 能做什么](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-tools.md) | `ai-tools.md` |
 | [AI 安全边界](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-safety.md) | `ai-safety.md` |
 
+### 联机
+
+| 文档 | 内容 |
+|---|---|
+| [樱花内网穿透](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/frp.md) | `frp.md` |
+
 ### 下载与网络
 
 | 文档 | 内容 |

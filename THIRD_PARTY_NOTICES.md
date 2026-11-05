@@ -75,6 +75,24 @@ artDev、SerpentSpirale、CADIndie；LTW-Turbo 由 MathCode 等维护。
 对应源码即上述 GitHub 仓库的 `v1.0.3-preview.1` 对应提交。该库以独立动态库形式
 随 APK 分发，用户可替换为自己编译的同名库。
 
+### 2.3 frp（樱花内网穿透的 frpc 客户端）
+
+| | |
+|---|---|
+| 上游 | https://github.com/fatedier/frp |
+| 分发者 | SakuraFrp（https://www.natfrp.com/），使用其定制构建 |
+| 版本 | `0.51.0-sakura-15.1`（构建于 2026-10-24，commit `cbfb558`） |
+| 许可证 | **Apache License 2.0** — 完整文本见 `ZalithLauncher/src/main/res/raw/apache_license_2.txt` |
+| 随附形式 | 未经修改的预编译可执行文件 `libfrpc.so`（arm64-v8a / armeabi-v7a / x86 / x86_64），由启动器在本地启动 |
+| 二进制来源 | SakuraFrp 官方客户端清单 `https://api.natfrp.com/v4/system/clients` 的 `frpc.archs` 对应架构下载地址 |
+
+`frpc` 仅作为「把本机端口映射到公网」的客户端使用：不修改其二进制，不改动其协议，
+不内置任何账号或密钥——访问密钥由用户自行填写，并以 Android Keystore 加密保存在本机。
+
+**对应源码**：SakuraFrp 分发的 frpc 基于 frp 定制构建（加入其节点协议与 DKC 加密等），
+二进制本身未做修改；frp 上游源码见上述仓库，SakuraFrp 的客户端下载与说明见
+<https://doc.natfrp.com/frpc/usage.html>。
+
 ---
 
 ## 3. 本项目其余第三方依赖

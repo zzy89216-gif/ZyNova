@@ -53,6 +53,7 @@ val libraryData = listOf(
     LibraryInfo("Coil Gifs", "Copyright © 2025 Coil Contributors", LICENSE_APACHE_2, "https://github.com/coil-kt/coil"),
     LibraryInfo("Coil SVG", "Copyright © 2025 Coil Contributors", LICENSE_APACHE_2, "https://github.com/coil-kt/coil"),
     LibraryInfo("Fishnet", "Copyright © 2025 Kyant", LICENSE_APACHE_2, "https://github.com/Kyant0/Fishnet"),
+    LibraryInfo("frp (SakuraFrp build)", "Copyright © 2015-2026 The frp Authors; SakuraFrp build distributed by natfrp.com", LICENSE_APACHE_2, "https://github.com/fatedier/frp"),
     LibraryInfo("gl4es_extra_extra", "Copyright © 2016-2018 Sebastien Chevalier; Copyright © 2013-2016 Ryan Hileman", License(LICENSE_MIT, R.raw.gl4es_license), "https://github.com/PojavLauncherTeam/gl4es_extra_extra"),
     LibraryInfo("Gson", "Copyright © 2008 Google Inc.", LICENSE_APACHE_2, "https://github.com/google/gson"),
     LibraryInfo("kotlinx.coroutines", "Copyright © 2000-2020 JetBrains s.r.o.", LICENSE_APACHE_2, "https://github.com/Kotlin/kotlinx.coroutines"),

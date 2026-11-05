@@ -116,6 +116,9 @@ fun MultiplayerScreen(
                         } else {
                             eventViewModel.sendToast(androidText(R.string.terracotta_export_log_share_null))
                         }
+                    },
+                    onOpenFrp = {
+                        backScreenViewModel.mainScreen.navigateTo(NormalNavKey.Frp)
                     }
                 )
             }
@@ -172,7 +175,8 @@ private fun MultiplayerOperation(
 private fun MainMenu(
     modifier: Modifier = Modifier,
     eventViewModel: EventViewModel,
-    onShareLogs: () -> Unit
+    onShareLogs: () -> Unit,
+    onOpenFrp: () -> Unit
 ) {
     val context = LocalContext.current
     var operation by remember { mutableStateOf<MultiplayerOperation>(MultiplayerOperation.None) }
@@ -215,6 +219,27 @@ private fun MainMenu(
 //                style = MaterialTheme.typography.titleSmall
 //            )
 //        }
+
+        //樱花内网穿透入口（与陶瓦并列的第二种联机方式）
+        BackgroundCard(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onOpenFrp
+        ) {
+            Column(
+                modifier = Modifier.padding(all = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.frp_entry_title),
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(
+                    text = stringResource(R.string.frp_entry_summary),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
 
         //多人联机设置菜单
         SettingsCardColumn(

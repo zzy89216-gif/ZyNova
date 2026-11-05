@@ -82,6 +82,11 @@ sealed interface NormalNavKey : TitledNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.terracotta_terracotta)
     }
 
+    /** 樱花内网穿透屏幕 */
+    @Serializable data object Frp : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.frp_title)
+    }
+
     /** 查看日志屏幕 */
     @Serializable data class LogView(
         val logPath: String
