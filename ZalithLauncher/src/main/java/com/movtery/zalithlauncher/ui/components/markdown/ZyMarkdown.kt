@@ -21,10 +21,10 @@ package com.movtery.zalithlauncher.ui.components.markdown
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,22 +50,22 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 /**
  * ZyNova 自研的轻量 Markdown 渲染器（专供 AI 消息使用）。
  *
- * 为什么不用现成库：
- * - 项目里已有的 `compose-richtext` 是给主页富文本用的，样式偏「文档」；
- * - AI 消息需要更克制的排版（Codex 风格）：通栏正文、紧凑列表、代码块独立底、无多余留白；
- * - 只需要一个**只读、流式友好**的子集，自己实现反而更小更可控。
+ * 性能约定（改这个文件前请先读）：
+ * - 行内样式在**解析阶段**一次性构建成 [AnnotatedString]，渲染时不再逐帧重建；
+ * - 解析结果用 `remember(content)` 缓存，内容不变就不会重新解析；
+ * - 代码块只有横向滚动，不与外部 LazyColumn 抢手势；
+ * - 表格固定列数 + weight 布局，避免每帧测量大量文本。
  *
- * 支持：标题、段落、加粗、斜体、删除线、行内代码、围栏代码块、无序/有序列表、引用、分割线、链接。
- * 不支持（刻意）：表格、图片、HTML、脚注 —— 这些在启动器聊天里没有使用场景。
+ * 支持：标题、段落、加粗、斜体、删除线、行内代码、围栏代码块、表格、
+ * 无序/有序列表、引用、分割线、链接。
  */
 @Composable
 fun ZyMarkdown(
@@ -75,6 +76,15 @@ fun ZyMarkdown(
 ) {
     val blocks = remember(content) { parseMarkdown(content) }
 
+    val codeBackground = if (MaterialTheme.colorScheme.surface.luminanceLike() < 0.5f) {
+        Color.White.copy(alpha = 0.06f)
+    } else {
+        Color.Black.copy(alpha = 0.05f)
+    }
+    val quoteColor = color.copy(alpha = 0.25f)
+    val mutedColor = color.copy(alpha = 0.72f)
+    val dividerColor = color.copy(alpha = 0.12f)
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -82,7 +92,7 @@ fun ZyMarkdown(
         blocks.forEach { block ->
             when (block) {
                 is MdBlock.Heading -> Text(
-                    text = inlineMarkdown(block.text),
+                    text = block.text,
                     style = when (block.level) {
                         1 -> MaterialTheme.typography.titleLarge
                         2 -> MaterialTheme.typography.titleMedium
@@ -93,7 +103,7 @@ fun ZyMarkdown(
                 )
 
                 is MdBlock.Paragraph -> Text(
-                    text = inlineMarkdown(block.text),
+                    text = block.text,
                     style = style,
                     color = color
                 )
@@ -104,10 +114,10 @@ fun ZyMarkdown(
                             Text(
                                 text = "•",
                                 style = style,
-                                color = color.copy(alpha = 0.7f),
+                                color = mutedColor,
                                 modifier = Modifier.padding(end = 8.dp)
                             )
-                            Text(text = inlineMarkdown(item), style = style, color = color)
+                            Text(text = item, style = style, color = color)
                         }
                     }
                 }
@@ -118,10 +128,10 @@ fun ZyMarkdown(
                             Text(
                                 text = "${index + 1}.",
                                 style = style,
-                                color = color.copy(alpha = 0.7f),
+                                color = mutedColor,
                                 modifier = Modifier.padding(end = 8.dp)
                             )
-                            Text(text = inlineMarkdown(item), style = style, color = color)
+                            Text(text = item, style = style, color = color)
                         }
                     }
                 }
@@ -136,24 +146,33 @@ fun ZyMarkdown(
                             .padding(end = 10.dp)
                             .width(3.dp)
                             .fillMaxHeight()
-                            .background(color.copy(alpha = 0.25f), RoundedCornerShape(2.dp))
+                            .background(quoteColor, RoundedCornerShape(2.dp))
                     ) {}
                     Text(
-                        text = inlineMarkdown(block.text),
+                        text = block.text,
                         style = style,
-                        color = color.copy(alpha = 0.75f)
+                        color = mutedColor
                     )
                 }
 
                 is MdBlock.Code -> CodeBlock(
                     code = block.code,
                     language = block.language,
-                    style = style
+                    style = style,
+                    background = codeBackground
+                )
+
+                is MdBlock.Table -> MarkdownTable(
+                    header = block.header,
+                    rows = block.rows,
+                    style = style,
+                    color = color,
+                    dividerColor = dividerColor
                 )
 
                 is MdBlock.Divider -> HorizontalDivider(
                     modifier = Modifier.padding(vertical = 4.dp),
-                    color = color.copy(alpha = 0.12f)
+                    color = dividerColor
                 )
             }
         }
@@ -165,18 +184,13 @@ private fun CodeBlock(
     code: String,
     language: String,
     style: TextStyle,
+    background: Color,
 ) {
-    val container = if (MaterialTheme.colorScheme.surface.luminanceLike() < 0.5f) {
-        Color.White.copy(alpha = 0.06f)
-    } else {
-        Color.Black.copy(alpha = 0.05f)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(container)
+            .background(background)
             .padding(vertical = 10.dp)
     ) {
         if (language.isNotBlank()) {
@@ -184,7 +198,7 @@ private fun CodeBlock(
                 text = language,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 0.dp)
+                modifier = Modifier.padding(horizontal = 12.dp)
             )
         }
 
@@ -200,6 +214,50 @@ private fun CodeBlock(
                 .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 12.dp, vertical = 6.dp)
         )
+    }
+}
+
+@Composable
+private fun MarkdownTable(
+    header: List<AnnotatedString>,
+    rows: List<List<AnnotatedString>>,
+    style: TextStyle,
+    color: Color,
+    dividerColor: Color,
+) {
+    val columns = header.size.coerceAtLeast(1)
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            header.forEach { cell ->
+                Text(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 6.dp, horizontal = 4.dp),
+                    text = cell,
+                    style = style.copy(fontWeight = FontWeight.SemiBold),
+                    color = color
+                )
+            }
+        }
+
+        HorizontalDivider(color = dividerColor)
+
+        rows.forEach { row ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                for (index in 0 until columns) {
+                    val cell = row.getOrNull(index) ?: AnnotatedString("")
+                    Text(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(vertical = 5.dp, horizontal = 4.dp),
+                        text = cell,
+                        style = style,
+                        color = color
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -308,17 +366,19 @@ private fun inlineMarkdown(text: String): AnnotatedString = buildAnnotatedString
 // ─────────────────────────────────────────────────────────────────
 
 internal sealed interface MdBlock {
-    data class Heading(val level: Int, val text: String) : MdBlock
-    data class Paragraph(val text: String) : MdBlock
-    data class Bullet(val items: List<String>) : MdBlock
-    data class Ordered(val items: List<String>) : MdBlock
-    data class Quote(val text: String) : MdBlock
+    data class Heading(val level: Int, val text: AnnotatedString) : MdBlock
+    data class Paragraph(val text: AnnotatedString) : MdBlock
+    data class Bullet(val items: List<AnnotatedString>) : MdBlock
+    data class Ordered(val items: List<AnnotatedString>) : MdBlock
+    data class Quote(val text: AnnotatedString) : MdBlock
     data class Code(val language: String, val code: String) : MdBlock
+    data class Table(val header: List<AnnotatedString>, val rows: List<List<AnnotatedString>>) : MdBlock
     data object Divider : MdBlock
 }
 
 private val bulletRegex = Regex("^\\s*[-*+]\\s+(.*)$")
 private val orderedRegex = Regex("^\\s*\\d+[.)]\\s+(.*)$")
+private val tableSeparatorRegex = Regex("^\\s*\\|?[\\s:|-]+\\|?\\s*$")
 
 internal fun parseMarkdown(source: String): List<MdBlock> {
     val lines = source.replace("\r\n", "\n").split('\n')
@@ -338,13 +398,13 @@ internal fun parseMarkdown(source: String): List<MdBlock> {
                     code.append(lines[i])
                     i++
                 }
-                if (i < lines.size) i++ // 跳过结束围栏
+                if (i < lines.size) i++
                 blocks += MdBlock.Code(language, code.toString())
             }
 
             line.startsWith("#") -> {
                 val level = line.takeWhile { it == '#' }.length.coerceIn(1, 3)
-                blocks += MdBlock.Heading(level, line.dropWhile { it == '#' }.trim())
+                blocks += MdBlock.Heading(level, inlineMarkdown(line.dropWhile { it == '#' }.trim()))
                 i++
             }
 
@@ -360,24 +420,38 @@ internal fun parseMarkdown(source: String): List<MdBlock> {
                     quote.append(lines[i].trimStart().removePrefix(">").trim())
                     i++
                 }
-                blocks += MdBlock.Quote(quote.toString())
+                blocks += MdBlock.Quote(inlineMarkdown(quote.toString()))
+            }
+
+            isTableStart(lines, i) -> {
+                val header = splitTableRow(lines[i])
+                i += 2 // 跳过表头与分隔行
+                val rows = mutableListOf<List<AnnotatedString>>()
+                while (i < lines.size && lines[i].contains('|') && lines[i].isNotBlank()) {
+                    rows += splitTableRow(lines[i]).map { inlineMarkdown(it) }
+                    i++
+                }
+                blocks += MdBlock.Table(
+                    header = header.map { inlineMarkdown(it) },
+                    rows = rows
+                )
             }
 
             bulletRegex.matches(line) -> {
-                val items = mutableListOf<String>()
+                val items = mutableListOf<AnnotatedString>()
                 while (i < lines.size) {
                     val match = bulletRegex.matchEntire(lines[i]) ?: break
-                    items += match.groupValues[1]
+                    items += inlineMarkdown(match.groupValues[1])
                     i++
                 }
                 blocks += MdBlock.Bullet(items)
             }
 
             orderedRegex.matches(line) -> {
-                val items = mutableListOf<String>()
+                val items = mutableListOf<AnnotatedString>()
                 while (i < lines.size) {
                     val match = orderedRegex.matchEntire(lines[i]) ?: break
-                    items += match.groupValues[1]
+                    items += inlineMarkdown(match.groupValues[1])
                     i++
                 }
                 blocks += MdBlock.Ordered(items)
@@ -386,7 +460,6 @@ internal fun parseMarkdown(source: String): List<MdBlock> {
             line.isBlank() -> i++
 
             else -> {
-                // 段落：连续的非空行合并（代码块等特殊行会中断
                 val paragraph = StringBuilder()
                 while (i < lines.size) {
                     val current = lines[i]
@@ -395,14 +468,27 @@ internal fun parseMarkdown(source: String): List<MdBlock> {
                     if (current.startsWith("#")) break
                     if (current.trimStart().startsWith(">")) break
                     if (bulletRegex.matches(current) || orderedRegex.matches(current)) break
+                    if (isTableStart(lines, i)) break
                     if (paragraph.isNotEmpty()) paragraph.append('\n')
                     paragraph.append(current)
                     i++
                 }
-                blocks += MdBlock.Paragraph(paragraph.toString())
+                blocks += MdBlock.Paragraph(inlineMarkdown(paragraph.toString()))
             }
         }
     }
 
     return blocks
 }
+
+private fun isTableStart(lines: List<String>, index: Int): Boolean {
+    val header = lines.getOrNull(index) ?: return false
+    val separator = lines.getOrNull(index + 1) ?: return false
+    if (!header.contains('|')) return false
+    if (!separator.contains('-')) return false
+    if (!tableSeparatorRegex.matches(separator)) return false
+    return splitTableRow(header).size >= 2
+}
+
+private fun splitTableRow(line: String): List<String> =
+    line.trim().removePrefix("|").removeSuffix("|").split('|').map { it.trim() }
