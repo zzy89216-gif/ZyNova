@@ -228,9 +228,15 @@ fun FrpScreen(
                     ) {
                         OutlinedButton(
                             onClick = {
-                                runTask {
-                                    FrpManager.refresh()
-                                    FrpManager.loadNodes()
+                                scope.launch {
+                                    loading = true
+                                    runCatching {
+                                        FrpManager.refresh()
+                                        FrpManager.loadNodes()
+                                    }.onFailure {
+                                        toast(context.getString(R.string.frp_error, it.message ?: ""))
+                                    }
+                                    loading = false
                                 }
                             },
                             enabled = !loading
