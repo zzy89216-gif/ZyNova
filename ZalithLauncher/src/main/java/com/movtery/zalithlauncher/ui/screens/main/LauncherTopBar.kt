@@ -176,17 +176,20 @@ fun LauncherTopBar(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CapsuleItem(
-                    selected = false,
-                    painter = painterResource(R.drawable.ic_folder_filled),
-                    label = stringResource(R.string.fm_activity_name),
-                    onClick = openFileManager
-                )
+                // 顺序：主菜单 → AI → 多人 → 下载 → 文件 → 个性化 → 设置
+                // 主菜单放最左（选中态最稳定），AI 是核心入口放第二，
+                // 高频的联机/下载居中，文件与两个「配置类」入口靠右。
                 CapsuleItem(
                     selected = inLauncherScreen,
                     painter = painterResource(R.drawable.ic_home_filled),
                     label = stringResource(R.string.generic_main_menu),
                     onClick = { if (!inLauncherScreen) toMainScreen() }
+                )
+                CapsuleItem(
+                    selected = inAIChatScreen,
+                    painter = painterResource(R.drawable.ic_ai_filled),
+                    label = stringResource(R.string.ai_title),
+                    onClick = { if (!inAIChatScreen) toAIChat() }
                 )
                 CapsuleItem(
                     selected = inMultiplayerScreen,
@@ -202,6 +205,12 @@ fun LauncherTopBar(
                 )
                 CapsuleItem(
                     selected = false,
+                    painter = painterResource(R.drawable.ic_folder_filled),
+                    label = stringResource(R.string.fm_activity_name),
+                    onClick = openFileManager
+                )
+                CapsuleItem(
+                    selected = false,
                     painter = painterResource(R.drawable.ic_format_paint_outlined),
                     label = stringResource(R.string.settings_tab_launcher),
                     onClick = toPersonalization
@@ -211,12 +220,6 @@ fun LauncherTopBar(
                     painter = painterResource(R.drawable.ic_settings_filled),
                     label = stringResource(R.string.generic_setting),
                     onClick = { if (!inSettingsScreen) toSettingsScreen() }
-                )
-                CapsuleItem(
-                    selected = inAIChatScreen,
-                    painter = painterResource(R.drawable.ic_ai_filled),
-                    label = stringResource(R.string.ai_title),
-                    onClick = { if (!inAIChatScreen) toAIChat() }
                 )
 
                 // 任务小圆环：有任务且面板收起时出现
