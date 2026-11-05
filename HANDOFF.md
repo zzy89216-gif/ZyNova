@@ -28,7 +28,7 @@
 | 文件 | 内容 |
 |---|---|
 | `docs/README.md` | **中英双语文档入口**（跳转到 `docs/zh/` 或 `docs/en/`） |
-| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 72 篇，文件名一一对应 |
+| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 74 篇，文件名一一对应 |
 | `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、两个 APK 怎么选 |
 | `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
 | `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
@@ -43,7 +43,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.9.0**（`launcher_version_code=270900`，已发布，等待真机反馈）
+**当前版本：27.10.1**（`launcher_version_code=271001`，**测试版 pre-release**，等待真机反馈）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -53,6 +53,49 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.10.1 樱花内网穿透 + 顶部胶囊 + AI Markdown（测试版）🧪
+
+> 状态：**测试版（pre-release）**，只用于验证新功能，不是正式发行版。
+
+**一、樱花内网穿透（SakuraFrp）**
+
+- 入口：多人联机 → 樱花内网穿透；填入访问密钥即可使用
+- 能力：隧道列表 / 新建 / 编辑 / 删除 / 启动停止 / 复制地址 / 端口检测 / frpc 日志
+- 安全：访问密钥用 Android Keystore AES-GCM 加密后存入 MMKV，只经 `NATFRP_TOKEN`
+  环境变量传给子进程；命令行、日志、URL 里都不会出现明文
+- 保活：`FrpService` 前台服务 + 常驻通知；页面提供电池优化白名单引导
+- 组件：4 个 ABI 的 `libfrpc.so`（SakuraFrp 0.51.0-sakura-15.1），AGP 禁止 strip
+- ⚠️ 同一条隧道不能被两个客户端同时连接（会互踢）；公开游戏服务器只能用「多线」节点
+
+**二、顶部栏重做**
+
+- 单行布局：左侧标题（内容与样式保持原样），正中液态玻璃胶囊
+- 顺序：主菜单 / AI / 多人 / 下载 / 文件 / 个性化 / 设置；有下载任务时右端出现小圆环
+- 新增 `ui/components/CodexGlass.kt`：半透明渐变 + 1px 亮边，**不做逐元素实时模糊**
+
+**三、AI 聊天 Markdown（自研）**
+
+- `ui/components/markdown/ZyMarkdown.kt`：标题、段落、加粗/斜体/删除线、行内代码、
+  围栏代码块、表格、无序/有序列表、引用、分割线、链接
+- 行内样式在解析阶段一次性生成 `AnnotatedString`，`remember(content)` 缓存解析结果
+- 助手消息通栏显示，用户消息最大 82% 宽度
+
+**四、未改动**
+
+- 陶瓦联机保持 27.9.0 的实现，本次没有修改
+
+**五、关键文件**
+
+| 文件 | 说明 |
+|---|---|
+| `frp/FrpManager.kt` | 隧道 / 进程 / 端口检测 |
+| `frp/FrpApi.kt` | SakuraFrp OpenAPI v4 |
+| `frp/FrpSecret.kt` | Android Keystore 加密 |
+| `frp/FrpService.kt` | 前台服务保活 |
+| `ui/screens/content/FrpScreen.kt` | 内网穿透管理页 |
+| `ui/screens/main/LauncherTopBar.kt` | 顶部玻璃胶囊 |
+| `ui/components/markdown/ZyMarkdown.kt` | 自研 Markdown |
 
 ### 27.9.0 上游跟进 + 移除 Ironized Zink + LTW 实验性 + 收藏/导出/崩溃分析 🧪
 
@@ -2915,7 +2958,7 @@ LTW 实验性（仅 arm64）；收藏按钮补到资源页与详情页；导出�
 崩溃页新增「崩溃分析 · 怎么处理」；AI 设置页与输入框重做；微软登录轮询修复；
 构建拆成 universal + arm64 两个 APK。发布地址：
 <https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0>。
-用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 72 篇，入口 `docs/README.md`。）
+用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 74 篇，入口 `docs/README.md`。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在

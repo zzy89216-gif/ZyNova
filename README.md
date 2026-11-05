@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.9.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0)
+[![Release](https://img.shields.io/badge/Release-27.10.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.1)
 
 **简体中文** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -37,13 +37,13 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.9.0 更新要点
+## ✨ 27.10.1 更新要点
 
-- **Ironized Zink 走了**：不是它不好，是它太重了。现在只剩 MobileGlues、GL4ES，以及一个明码标着「实验性」的 LTW。
-- **MobileGlues 升到 2.0.1**：multidraw 顺序现在能自己排；画面裂开的时候，至少有个地方可以调。
-- **收藏终于能收藏了**：以前收藏页像个空冰箱；现在资源列表和详情页都有收藏按钮。
-- **崩溃以后会说人话**：缺前置、模组打架、Java 太老、内存爆了，崩溃页下面会写清楚下一步怎么处理。
-- **导出只剩 Modrinth**：别的格式连代码一起删了；这一版也恢复成 universal + arm64 两个 APK。
+- **樱花内网穿透**：多人联机页填入访问密钥就能用——隧道新建 / 编辑 / 删除 / 启停、地址复制一条龙；密钥用 Android Keystore 加密，前台服务负责保活。
+- **新界面**：顶部改成居中的液态玻璃胶囊（主菜单 / AI / 多人 / 下载 / 文件 / 个性化 / 设置），标题留在左侧。
+- **AI 会排版了**：自研 Markdown（标题、列表、表格、代码块、链接），助手消息通栏、用户消息自适应宽度。
+- **陶瓦联机原样保留**，这次没有动它。
+- **测试版**：这是 pre-release，用来验证上面这些新东西。
 
 ## 🛠️ 它到底会什么（不是 PPT，是真能干）
 
@@ -64,7 +64,7 @@
 
 ## 📚 文档（这里是正经人待的地方）
 
-> 📚 **完整文档中心（72 篇，中文）**：[docs/zh/README.md](docs/zh/README.md)
+> 📚 **完整文档中心（74 篇，中文）**：[docs/zh/README.md](docs/zh/README.md)
 
 
 

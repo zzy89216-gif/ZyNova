@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.9.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0)
+[![Release](https://img.shields.io/badge/Release-27.10.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.1)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
 
@@ -17,13 +17,13 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.9.0 업데이트
+## ✨ 27.10.1 업데이트
 
-- **Ironized Zink 제거**: 유지 비용이 높아 내장 목록에서 제외했습니다. 이제 MobileGlues, GL4ES, 실험적 LTW만 제공합니다.
-- **MobileGlues 2.0.1**: 드로우 콜별 multidraw 순서를 조정할 수 있습니다.
-- **즐겨찾기 버튼 추가**: 리소스 목록과 프로젝트 상세 화면에서 바로 즐겨찾기할 수 있습니다.
-- **크래시 화면에 해결 방법 표시**: 누락된 의존성, 모드 충돌, Java 버전, 메모리 부족, 렌더러 실패에 대한 안내를 제공합니다.
-- **내보내기는 Modrinth만**: 다른 형식은 코드까지 제거했고, 릴리스는 universal + arm64-v8a 두 APK로 제공합니다.
+- **SakuraFrp 터널**: 멀티플레이 화면에서 액세스 토큰만 붙여넣으면 사용할 수 있습니다. 터널 생성/편집/삭제/시작·중지/주소 복사를 지원합니다. 토큰은 Android Keystore로 암호화되고 포그라운드 서비스가 유지합니다.
+- **새 상단 바**: 중앙에 액체 유리 캡슐(홈 / AI / 멀티 / 다운로드 / 파일 / 개인 설정 / 설정). 제목은 왼쪽에 유지됩니다.
+- **AI 채팅 Markdown 렌더링**: 제목, 목록, 표, 코드 블록, 링크. 어시스턴트는 전체 폭, 사용자는 최대 82%.
+- **Terracotta는 변경되지 않았습니다.**
+- **프리릴리스 버전**: 위 기능을 검증하기 위한 빌드입니다.
 
 ## 🛠️ 주요 기능
 

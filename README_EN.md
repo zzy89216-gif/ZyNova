@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.9.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0)
+[![Release](https://img.shields.io/badge/Release-27.10.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.1)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,13 +17,13 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 27.9.0
+## ✨ What's new in 27.10.1
 
-- **Ironized Zink removed**: too heavy to keep maintaining; the built-in list is now MobileGlues, GL4ES, and an explicitly experimental LTW.
-- **MobileGlues 2.0.1**: multidraw ordering is configurable per draw call when a driver needs it.
-- **Favorites actually work**: the favorite button now appears on resource cards and project details, not just in the favorites page.
-- **Crash page explains what to do**: missing dependencies, mod conflicts, old Java, low memory and renderer failures are summarized with concrete next steps.
-- **Modrinth-only export**: other export formats are gone, and releases now ship universal + arm64-v8a APKs.
+- **SakuraFrp tunnels**: paste an access token on the Multiplayer screen and go — create, edit, delete, start/stop tunnels and copy the address. The token is encrypted with Android Keystore and a foreground service keeps the tunnel alive.
+- **New top bar**: a centered liquid-glass capsule (Home / AI / Multiplayer / Downloads / Files / Personalization / Settings); the title stays on the left.
+- **AI chat now renders Markdown**: headings, lists, tables, code blocks and links. Assistant messages are full-width, user messages adapt up to 82%.
+- **Terracotta is unchanged** in this build.
+- **Pre-release**: this build exists to verify the features above.
 
 ## 🛠️ Features
 

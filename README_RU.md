@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.9.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0)
+[![Release](https://img.shields.io/badge/Release-27.10.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.1)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **Русский**
 
@@ -17,13 +17,13 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ Что нового в 27.9.0
+## ✨ Что нового в 27.10.1
 
-- **Ironized Zink удалён**: поддержка слишком тяжёлая; остались MobileGlues, GL4ES и экспериментальный LTW.
-- **MobileGlues 2.0.1**: порядок multidraw можно настраивать для каждого вызова отрисовки.
-- **Кнопка избранного**: теперь доступна в списке ресурсов и на странице проекта.
-- **Экран краша объясняет, что делать**: отсутствующие зависимости, конфликты модов, старая Java, нехватка памяти и сбой рендерера — с конкретными шагами.
-- **Экспорт только в Modrinth**: остальные форматы удалены вместе с кодом; релиз выходит двумя APK — universal и arm64-v8a.
+- **Туннели SakuraFrp**: вставьте токен доступа на экране «Сетевая игра» — создание, редактирование, удаление, запуск/остановка туннелей и копирование адреса. Токен шифруется через Android Keystore, туннель удерживает foreground-сервис.
+- **Новый верхний бар**: центральная капсула из «жидкого стекла» (Главная / AI / Сеть / Загрузки / Файлы / Персонализация / Настройки), заголовок слева.
+- **AI-чат поддерживает Markdown**: заголовки, списки, таблицы, блоки кода, ссылки. Ответы ассистента на всю ширину, сообщения пользователя — до 82%.
+- **Terracotta не изменён.**
+- **Предварительная версия (pre-release)** для проверки этих функций.
 
 ## 🛠️ Возможности
 
