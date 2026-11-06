@@ -32,7 +32,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - **Renderers**: Auto / MobileGlues / GL4ES / LTW (experimental)
 - **Resource core**: Modrinth / CurseForge search, dependency resolution, download, verification, install
 - **Favorites & archive**: online favorites plus a private archive with SHA-256 dedupe
-- **Fabric API guard**: only added by the Fabric flow; no manual duplicate install
+- **Preload API guard**: Fabric API / Quilted Fabric API / Legacy Fabric API are added by the install flow and can't be duplicated, searched, deleted or disabled manually
 
 ## 📦 Download and build
 

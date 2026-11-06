@@ -32,7 +32,8 @@
 - **渲染器**：自動 / MobileGlues / GL4ES / LTW（實驗性）
 - **資源核心**：Modrinth / CurseForge 搜尋、依賴解析、下載、校驗、安裝
 - **收藏與封存**：線上收藏 + 私有目錄封存，SHA-256 去重，離線可用
-- **Fabric API 防呆**：只由 Fabric 流程自動加入，不可重複安裝
+- **前置 API 防呆**：Fabric API / Quilted Fabric API / Legacy Fabric API 由安裝流程自動加入，
+  不可重複安裝、搜不到、刪不掉、也禁不住
 
 ## 📦 下載與建置
 

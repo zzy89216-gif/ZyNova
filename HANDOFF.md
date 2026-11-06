@@ -2091,7 +2091,7 @@ HTTP 403
 | `game/renderer/mobileglues/MobileGluesGlVersion.kt` | MobileGlues 的 OpenGL 版本枚举 + `MOBILE_GLUES_UNIQUE_IDENTIFIER`（27.4.0） |
 | `game/renderer/mobileglues/MobileGluesConfig.kt` | 读写 MobileGlues 的 `config.json`（`customGLVersion`）与 `MG_DIR_PATH`（27.4.0） |
 | `ui/screens/content/settings/MobileGluesConfigCards.kt` | 选中 MobileGlues 后展开的 OpenGL 版本下拉（27.4.0） |
-| `ui/theme/Shapes.kt` | 界面世代的形状体系（新版 `ModernShapes` / 经典 `ClassicShapes`）（27.3.0） |
+| `ui/theme/Shapes.kt` | 形状体系：`modernShapes()` 按「卡片圆角」设置生成（27.10.2 起可调）/ `ClassicShapes`（27.3.0） |
 | `setting/enums/UiGeneration.kt` | 界面世代枚举：新版 / 旧版，可随时双向切换（27.3.0） |
 | `game/version/installed/AutoGraphicsApi.kt` | 图形 API 全自动策略：按**版本发布时间**判定是否需要图形后端选项 + 只读本地取值（27.2.0） |
 | `ai/audit/AIAuditLog.kt` | Agent 写操作审计日志（27.1.2） |
@@ -2126,10 +2126,19 @@ HTTP 403
 | `game/download/resources/ResourceManager.kt` | 资源管理核心统一流程入口 |
 | `game/home/HomeDataProvider.kt` | 主页统一数据访问接口 |
 | `ui/screens/main/card_home/CardHomePage.kt` | 卡片式主页 |
-| `setting/enums/GlassLevel.kt` | 玻璃效果枚举（26.2.2 由三档简化为两档；27.2.0 追加 `Intense` 强效档） |
 | `upgrade/ZyNovaRelease.kt` | ZyNova 自有更新体系数据模型 + ABI 自动挑选 |
 | `utils/device/VulkanRequirement.kt` | Minecraft 的 Vulkan 要求档案 |
 | `utils/device/VulkanCheckResult.kt` | Vulkan 三态检测结果模型 |
+| `ui/screens/content/PersonalizationScreen.kt` | 个性化页：壁纸入口 / 不透明度 / 模糊 / 圆角 / 玻璃强度（27.10.2，议题 #42） |
+| `ui/components/CodexGlass.kt` | Codex 单色玻璃：`Modifier.codexGlass(shape, strength, borderWidth)`，不读任何玻璃开关（27.10.1） |
+| `ui/screens/main/LauncherTopBar.kt` | 顶部单行栏：独立返回 / 主页按钮 + 居中玻璃胶囊 + 任务圆环（27.10.1） |
+| `ui/components/markdown/ZyMarkdown.kt` | 自研 Markdown 渲染：标题 / 列表 / 引用 / 代码 / 表格 / 行内样式（27.10.1） |
+| `terracotta/RoomCode.kt` | 陶瓦房间码：34 进制 16 位归一化 + `mod 7` 双端序校验（27.10.2，议题 #42） |
+| `frp/FrpApi.kt` | 樱花内网穿透 OpenAPI v4 客户端（27.10.1；27.10.2 修复 `user/info` 解析） |
+| `frp/FrpModels.kt` | 樱花数据模型（`FrpUser` 对 `realname`/`group`/`sign` 采用 `JsonElement` 宽松解析） |
+| `frp/FrpSecret.kt` | 访问密钥的 Android Keystore（AES-GCM）加密存储 |
+| `frp/FrpManager.kt` / `frp/FrpService.kt` | 穿透状态机 / 前台服务保活 |
+| `ui/screens/content/FrpScreen.kt` | 樱花内网穿透页面：登录 / 隧道 CRUD / 启停 / 地址复制 / 端口检查 |
 
 ### 主要修改文件
 
