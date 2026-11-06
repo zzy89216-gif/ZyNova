@@ -17,14 +17,14 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.0
+## ✨ Что нового в 28.0.1
 
-- **Back navigation that makes sense**: the five capsule entries are tabs — back always returns to the main menu; inside a tab (settings sub-pages, download sub-pages, personalization → more settings) it steps back one level instead of jumping to an unrelated tab
-- **Home empty state**: a "Download an instance" button that jumps straight to Downloads → Game
-- **Palette entry**: real palette icon with a selected state, so tapping it gives feedback
-- **AI chat layout**: fixed the ragged spacing of the "Run command" rows (empty assistant messages no longer take a list slot)
-- **SakuraFrp**: new-tunnel dialog auto-selects a node, shows readable validation errors, reloads nodes when empty, and the battery card alignment is fixed
-- Everything from 27.10.x (glass foundation, personalization page, Quilt protection) is now in a stable build
+- **SakuraFrp теперь действительно подключается**: `frpc` запускается в официальном виде `frpc -f <ключ доступа>:<ID туннеля>` (прежний способ через переменные окружения frpc от Sakura игнорирует и сразу завершается)
+- **Обновление списка больше не падает с ошибкой**: поддерживаются ответы с BOM, массивы и обёртка `{data}`; адрес подключения извлекается из лога frpc, **показывается сверху и копируется одним нажатием**
+- **Кнопка «назад» больше не закрывает весь экран**: верхняя «назад» не идёт через системную (без обработчика экран просто завершался), отступает ровно на один уровень и не опустошает стек
+- **Из игры можно вернуться в лаунчер, не останавливая игру**: первый пункт игрового меню «Вернуться в лаунчер» **не останавливает игру**; внизу лаунчера появляется кнопка «Вернуться в игру»
+- **Не нужно разбираться в портах и типах**: тип всегда TCP, локальный порт определяется автоматически из `/proc/net/tcp`, узлы фильтруются по уровню аккаунта
+- **ИИ полностью автоматизирует сетевую игру**: `frp_status` / `frp_create_tunnel` / `frp_start_tunnel` / `frp_stop_tunnel` / `multiplayer_status`
 
 ## 🛠️ Возможности
 

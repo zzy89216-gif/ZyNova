@@ -17,14 +17,14 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.0
+## ✨ 28.0.1 업데이트
 
-- **Back navigation that makes sense**: the five capsule entries are tabs — back always returns to the main menu; inside a tab (settings sub-pages, download sub-pages, personalization → more settings) it steps back one level instead of jumping to an unrelated tab
-- **Home empty state**: a "Download an instance" button that jumps straight to Downloads → Game
-- **Palette entry**: real palette icon with a selected state, so tapping it gives feedback
-- **AI chat layout**: fixed the ragged spacing of the "Run command" rows (empty assistant messages no longer take a list slot)
-- **SakuraFrp**: new-tunnel dialog auto-selects a node, shows readable validation errors, reloads nodes when empty, and the battery card alignment is fixed
-- Everything from 27.10.x (glass foundation, personalization page, Quilt protection) is now in a stable build
+- **SakuraFrp가 실제로 연결됩니다**: `frpc`를 공식 형식 `frpc -f <액세스 키>:<터널 ID>`로 실행합니다(예전 환경 변수 방식은 Sakura 버전 frpc가 무시해서 바로 종료되었습니다)
+- **새로고침해도 오류가 나지 않습니다**: BOM / 배열 / `{data}` 래핑 응답을 지원하고, 연결 주소는 frpc 로그에서 추출해 **맨 위에 표시 + 원탭 복사**
+- **뒤로 가기로 화면 전체가 종료되지 않습니다**: 상단 뒤로 가기가 시스템 뒤로 가기를 거치지 않고(콜백이 없어 화면이 종료되었습니다), 한 단계만 되돌아가며 스택을 비우지 않습니다
+- **게임을 끄지 않고 런처로 돌아갈 수 있습니다**: 게임 내 메뉴 첫 항목 "런처로 돌아가기"는 **게임을 중지하지 않습니다**. 런처 하단에 "게임으로 돌아가기" 알약 버튼이 나타납니다
+- **포트와 유형을 몰라도 됩니다**: 유형은 TCP 고정, 로컬 포트는 `/proc/net/tcp`에서 자동 감지, 노드는 계정 등급으로 필터링
+- **AI가 멀티플레이를 전자동으로 시작**: `frp_status` / `frp_create_tunnel` / `frp_start_tunnel` / `frp_stop_tunnel` / `multiplayer_status`
 
 ## 🛠️ 주요 기능
 
