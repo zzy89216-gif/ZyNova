@@ -4,7 +4,7 @@ ZyNova offers two ways to play together. They are independent — pick whichever
 
 | Mode | How it works | Requires | Good for |
 |---|---|---|---|
-| Terracotta | P2P overlay network (EasyTier); both sides join the same virtual LAN | Both players use ZyNova | Friends who do not want to expose a port |
+| [Terracotta](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) | P2P overlay network (EasyTier); both sides join the same virtual LAN | Both players use ZyNova | Friends who do not want to expose a port |
 | SakuraFrp tunnel | Maps a local port to a public node (frp) | A SakuraFrp account + access token | Friends on the desktop client, or anyone not using Terracotta |
 
 Entry: **Multiplayer → SakuraFrp tunnel**.
