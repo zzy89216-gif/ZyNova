@@ -30,6 +30,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -815,8 +816,19 @@ private fun LogsCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     } else {
+                        val context = LocalContext.current
+                        val copiedTip = stringResource(R.string.frp_copied)
                         logs.takeLast(60).forEach { line ->
+                            //日志里会出现节点地址（frpc 输出形如 `start proxy success` + `节点:端口`），
+                            //点一下就能把其中的地址复制走，不用手抄
                             Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        copyText(context, extractAddress(line) ?: line)
+                                        Toast.makeText(context, copiedTip, Toast.LENGTH_SHORT).show()
+                                    }
+                                    .padding(vertical = 1.dp),
                                 text = line,
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontFamily = FontFamily.Monospace
@@ -1108,6 +1120,13 @@ private fun formatBytes(bytes: Long): String {
     return if (gb >= 1) String.format("%.1f GB", gb)
     else String.format("%.0f MB", bytes / 1024.0 / 1024.0)
 }
+
+
+/** 从 frpc 日志里抽出可复制的地址（`host:port`），抽不到就返回 null �� 由调用方复制整行 */
+private val ADDRESS_REGEX = Regex("([A-Za-z0-9._-]+\\.(?:natfrp\\.(?:io|com|net)|[A-Za-z0-9.-]+)):(\\d{2,5})")
+
+private fun extractAddress(line: String): String? =
+    ADDRESS_REGEX.find(line)?.value
 
 private fun openUrl(context: Context, url: String) {
     runCatching {
