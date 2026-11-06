@@ -1964,7 +1964,7 @@
     <string name="about_compliance_license_text">GPL-3.0 text</string>
     <string name="about_compliance_agpl">⚠️ The bundled Terracotta is licensed under AGPL-3.0 and shipped unmodified. AGPL is stricter than GPL: if you modify it and redistribute, you must publish the corresponding source.</string>
     <string name="about_compliance_agpl_source">Terracotta source</string>
-    <string name="frp_edit_name_locked">The official API can't rename a tunnel — delete and recreate it to change the name</string>
+    <string name="frp_edit_name_locked">The official API cannot rename a tunnel — delete and recreate it to change the name</string>
     <string name="frp_field_note">Note (optional)</string>
     <string name="frp_warning_title">SakuraFrp notice</string>
     <string name="frp_name_rule">Letters, digits, - and _ only (SakuraFrp rejects spaces and non-ASCII)</string>
