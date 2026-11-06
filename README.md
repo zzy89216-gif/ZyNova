@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.10.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2)
+[![Release](https://img.shields.io/badge/Release-28.0.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0)
 
 **简体中文** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -37,14 +37,14 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.10.2 更新要点
+## ✨ 28.0.0 更新要点
 
-- **个性化页**：壁纸、不透明度、背景模糊、卡片圆角、玻璃强度一页调完（顶部胶囊调色盘直达）
-- **玻璃地基重做**：全应用只保留一层背景模糊，删除全部常驻流光动画；卡片统一为单色渐变 + 1px 亮边
-- **AI 对话界面**：工具调用改为单行 `运行命令 · 概括`，原始输出默认收起；模型必须先写一句动作概括
-- **Quilt 保护对齐 Fabric API**：Quilted / Legacy Fabric API 与 Fabric API 一样「搜不到、装不上、删不掉、禁不掉」
-- **修复**：返回键无法返回上一页 / 闪屏、樱花内网穿透输入密钥直接报错、弹窗叠第二层模糊
-- 本版本为**测试版（pre-release）**
+- **返回键终于讲道理了**：5 个胶囊入口是标签页，返回只回主界面；标签页内部（设置子项、下载子项、个性化 → 更多设置）逐级回退，不再乱跳
+- **首页空状态**：没有已安装版本时直接给一个「下载一个实例」按钮，一键进下载 → 游戏
+- **调色盘入口**：换成真正的调色盘图标 + 选中态，点了有反馈
+- **AI 对话排版**：修掉「运行命令」行距参差不齐（空助手消息不再占位）
+- **樱花内网穿透**：新建隧道自动选节点、保存给可读校验提示、节点为空自动补拉、电池优化卡片错位修复
+- 27.10.x 的玻璃地基、个性化页、Quilt 保护全部转正
 
 ## 🛠️ 它到底会什么（不是 PPT，是真能干）
 

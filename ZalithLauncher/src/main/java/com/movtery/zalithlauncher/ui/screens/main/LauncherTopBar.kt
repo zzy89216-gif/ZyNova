@@ -101,6 +101,7 @@ fun LauncherTopBar(
     val inDownloadScreen = mainScreenKey is NestedNavKey.Download
     val inSettingsScreen = mainScreenKey is NestedNavKey.Settings
     val inAIChatScreen = mainScreenKey is NormalNavKey.AIChat
+    val inPersonalizationScreen = mainScreenKey is NormalNavKey.Personalization
 
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Box(
@@ -211,10 +212,10 @@ fun LauncherTopBar(
                     onClick = openFileManager
                 )
                 CapsuleItem(
-                    selected = false,
-                    painter = painterResource(R.drawable.ic_format_paint_outlined),
-                    label = stringResource(R.string.settings_tab_launcher),
-                    onClick = toPersonalization
+                    selected = inPersonalizationScreen,
+                    painter = painterResource(R.drawable.ic_palette_filled),
+                    label = stringResource(R.string.personalization_title),
+                    onClick = { if (!inPersonalizationScreen) toPersonalization() }
                 )
                 CapsuleItem(
                     selected = inSettingsScreen,

@@ -27,11 +27,16 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -98,6 +104,8 @@ fun cardHomePage(
     onLaunchVersion: (Version) -> Unit = {},
     onPlayWorld: (Version, String) -> Unit = { _, _ -> },
     onJoinServer: (Version, String) -> Unit = { _, _ -> },
+    /** 点「下载一个实例」时跳转到下载游戏本体页 */
+    onOpenDownload: () -> Unit = {},
 ) {
     var instances by remember { mutableStateOf<List<HomeInstance>>(emptyList()) }
     var loaded by remember { mutableStateOf(false) }
@@ -165,11 +173,27 @@ fun cardHomePage(
         verticalArrangement = Arrangement.spacedBy(14.dp * cardScale)
     ) {
         if (instances.isEmpty()) {
-            Text(
-                text = stringResource(R.string.home_instance_none),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            //空状态：左边一大片空白很难看，也让人不知道下一步干什么。
+            //直接给一个「下载一个实例」的入口，点了就进下载游戏本体页。
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp * cardScale)
+            ) {
+                Text(
+                    text = stringResource(R.string.home_instance_none),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Button(onClick = onOpenDownload) {
+                    Icon(
+                        modifier = Modifier.size(18.dp),
+                        painter = painterResource(R.drawable.ic_download_2_filled),
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.home_download_instance))
+                }
+            }
         } else {
             instances.forEach { instance ->
                 val instanceKey = instance.orderKey()

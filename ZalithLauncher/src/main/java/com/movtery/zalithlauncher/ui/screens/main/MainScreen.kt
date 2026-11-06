@@ -162,6 +162,26 @@ fun MainScreen(
         screenBackStackModel.mainScreen.clearWith(NormalNavKey.LauncherMain)
     }
 
+    /**
+     * 切换「标签页」级别的界面（顶部胶囊上的入口：主菜单 / AI / 多人 / 下载 / 个性化 / 设置）
+     *
+     * 27.10.2 的返回键乱跳根因就是这里：原来用 `removeAndNavigateTo(clearBeforeNavKeys)`，
+     * 那个列表只包含 设置 / 下载 / 多人，于是「设置 → 个性化 → 返回」会退回到栈里还没被移除的
+     * AI 页面，看起来就是「返回键乱跳」。
+     *
+     * 现在的规则很简单：
+     * - **标签页之间平级**：进任何标签页前，先把栈里除主界面以外的页面全部清掉，再压入目标页，
+     *   所以任何标签页的返回都严格回到主界面；
+     * - **标签页内部逐级**：设置子项、下载子项、个性化 → 更多设置 这些是「上一级」关系，
+     *   用普通 navigateTo 追加，返回时逐级回退，不会跨标签跳。
+     */
+    fun openTab(screenKey: NormalNavKey) {
+        val stack = screenBackStackModel.mainScreen.backStack
+        stack.removeIf { it !is NormalNavKey.LauncherMain }
+        if (stack.isEmpty()) stack.add(NormalNavKey.LauncherMain)
+        stack.navigateTo(screenKey)
+    }
+
     val mainScreenKey = screenBackStackModel.mainScreen.currentKey
     val inLauncherScreen = mainScreenKey == null || mainScreenKey is NormalNavKey.LauncherMain
 
@@ -205,28 +225,13 @@ fun MainScreen(
                     if (stack.size > 1) onBack(stack)
                 },
                 toMainScreen = toMainScreen,
-                toSettingsScreen = {
-                    screenBackStackModel.mainScreen.removeAndNavigateTo(
-                        removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = screenBackStackModel.settingsScreen
-                    )
-                },
+                toSettingsScreen = { openTab(screenBackStackModel.settingsScreen) },
                 //个性化：独立的「个性化」页面（壁纸 / 不透明度 / 模糊 / 圆角 / 玻璃强度）
-                toPersonalization = {
-                    screenBackStackModel.mainScreen.removeAndNavigateTo(
-                        removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = NormalNavKey.Personalization
-                    )
-                },
+                toPersonalization = { openTab(NormalNavKey.Personalization) },
                 toDownloadScreen = {
                     screenBackStackModel.navigateToDownload()
                 },
-                toMultiplayerScreen = {
-                    screenBackStackModel.mainScreen.removeAndNavigateTo(
-                        removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = NormalNavKey.Multiplayer
-                    )
-                },
+                toMultiplayerScreen = { openTab(NormalNavKey.Multiplayer) },
                 openFileManager = {
                     eventViewModel.sendEvent(
                         EventViewModel.Event.OpenFileManager(
@@ -234,12 +239,7 @@ fun MainScreen(
                         )
                     )
                 },
-                toAIChat = {
-                    screenBackStackModel.mainScreen.removeAndNavigateTo(
-                        removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = NormalNavKey.AIChat
-                    )
-                },
+                toAIChat = { openTab(NormalNavKey.AIChat) },
                 changeExpandedState = {
                     changeTasksExpandedState()
                 },
@@ -729,11 +729,9 @@ private fun NavigationUI(
                         toAIConfig = {
                             //议题 #37 / #41：AI 配置已经并入设置中心，
                             //这里直接把用户送到「设置 → AI 设置」，不再有独立配置页
+                            //从 AI 进设置：追加在栈顶，返回时回到 AI 对话（不跨标签跳）
                             screenBackStackModel.settingsScreen.navigateTo(NormalNavKey.Settings.AI)
-                            screenBackStackModel.mainScreen.removeAndNavigateTo(
-                                removes = screenBackStackModel.clearBeforeNavKeys,
-                                screenKey = screenBackStackModel.settingsScreen
-                            )
+                            screenBackStackModel.mainScreen.navigateTo(screenBackStackModel.settingsScreen)
                         },
                         // 把启动器的启动链路交给 Agent：
                         // AI 启动游戏与用户点「启动」走的是同一条路径

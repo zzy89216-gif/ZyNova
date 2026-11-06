@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.10.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2)
+[![Release](https://img.shields.io/badge/Release-28.0.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
 
@@ -17,14 +17,14 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.10.2 업데이트
+## ✨ What's new in 28.0.0
 
-- **개인화 화면**: 배경, 배경 불투명도, 흐림, 모서리 반경, 유리 강도를 한 페이지에서 조정 (상단 캡슐의 팔레트 버튼)
-- **유리 기반 재작업**: 앱 전체에서 배경 흐림은 한 층만, 상시 애니메이션 전부 제거. 카드는 단색 그라데이션 + 1px 테두리
-- **AI 채팅**: 도구 호출은 `명령 실행 · 요약` 한 줄로 표시하고 원본 출력은 기본 접힘. 도구 실행 전 모델이 한 줄 요약을 먼저 작성
-- **Quilt 보호**: Quilted / Legacy Fabric API도 Fabric API와 동일하게 "검색 불가·설치 불가·삭제 불가·비활성화 불가"
-- **수정**: 뒤로 가기 버튼이 동작하지 않거나 화면이 깜빡이던 문제, SakuraFrp 접속 키 입력 직후 오류, 다이얼로그 이중 흐림
-- 이 빌드는 **테스트판(pre-release)** 입니다
+- **Back navigation that makes sense**: the five capsule entries are tabs — back always returns to the main menu; inside a tab (settings sub-pages, download sub-pages, personalization → more settings) it steps back one level instead of jumping to an unrelated tab
+- **Home empty state**: a "Download an instance" button that jumps straight to Downloads → Game
+- **Palette entry**: real palette icon with a selected state, so tapping it gives feedback
+- **AI chat layout**: fixed the ragged spacing of the "Run command" rows (empty assistant messages no longer take a list slot)
+- **SakuraFrp**: new-tunnel dialog auto-selects a node, shows readable validation errors, reloads nodes when empty, and the battery card alignment is fixed
+- Everything from 27.10.x (glass foundation, personalization page, Quilt protection) is now in a stable build
 
 ## 🛠️ 주요 기능
 

@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.10.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2)
+[![Release](https://img.shields.io/badge/Release-28.0.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **Русский**
 
@@ -17,14 +17,14 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ Что нового в 27.10.2
+## ✨ What's new in 28.0.0
 
-- **Страница персонализации**: обои, прозрачность фона, размытие, радиус углов и сила «стекла» в одном месте (кнопка-палитра в верхней капсуле)
-- **Переработанная основа «стекла»**: во всём приложении только одно размытие фона, все постоянные анимации убраны; карточки — плоский градиент + рамка 1px
-- **AI-чат**: вызовы инструментов показываются одной строкой `Выполнение команды · описание`, исходный вывод свёрнут; перед запуском инструмента модель обязана написать краткое описание
-- **Защита Quilt**: Quilted / Legacy Fabric API теперь так же «не находятся, не ставятся, не удаляются и не отключаются», как Fabric API
-- **Исправления**: кнопка «назад» не работала / мерцание экрана, SakuraFrp падал сразу после ввода ключа доступа, диалоги накладывали второе размытие
-- Это **тестовая сборка (pre-release)**
+- **Back navigation that makes sense**: the five capsule entries are tabs — back always returns to the main menu; inside a tab (settings sub-pages, download sub-pages, personalization → more settings) it steps back one level instead of jumping to an unrelated tab
+- **Home empty state**: a "Download an instance" button that jumps straight to Downloads → Game
+- **Palette entry**: real palette icon with a selected state, so tapping it gives feedback
+- **AI chat layout**: fixed the ragged spacing of the "Run command" rows (empty assistant messages no longer take a list slot)
+- **SakuraFrp**: new-tunnel dialog auto-selects a node, shows readable validation errors, reloads nodes when empty, and the battery card alignment is fixed
+- Everything from 27.10.x (glass foundation, personalization page, Quilt protection) is now in a stable build
 
 ## 🛠️ Возможности
 

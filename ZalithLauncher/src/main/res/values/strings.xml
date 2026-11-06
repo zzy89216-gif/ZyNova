@@ -1180,6 +1180,7 @@
     <string name="home_instance_launch">Launch</string>
     <string name="home_instance_empty">This version has no worlds or servers yet</string>
     <string name="home_instance_none">No installed game versions yet</string>
+    <string name="home_download_instance">Download an instance</string>
     <string name="home_quick_create_world">Create World</string>
     <string name="home_quick_add_server">Add Server</string>
     <string name="home_create_world_title">Create World</string>
@@ -1884,6 +1885,9 @@
     <string name="frp_tunnels_title">Tunnels</string>
     <string name="frp_tunnels_empty">No tunnels yet. Create one below.</string>
     <string name="frp_tunnel_create">New tunnel</string>
+    <string name="frp_error_name_required">Please enter a tunnel name</string>
+    <string name="frp_error_port_invalid">Local port must be between 1 and 65535</string>
+    <string name="frp_error_node_required">Please choose a node</string>
     <string name="frp_tunnel_refresh">Refresh</string>
     <string name="frp_tunnel_node">Node</string>
     <string name="frp_tunnel_local_port">Local port %1$d</string>

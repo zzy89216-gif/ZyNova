@@ -245,7 +245,19 @@ fun FrpScreen(
                         }
 
                         Button(
-                            onClick = { showCreateDialog = true },
+                            onClick = {
+                                showCreateDialog = true
+                                //节点列表还没拉到（或上次失败）时补拉一次，
+                                //否则新建对话框里没有节点可选，保存按钮会「点了没反应」
+                                if (nodes.isEmpty()) {
+                                    scope.launch {
+                                        runCatching { FrpManager.loadNodes() }
+                                            .onFailure {
+                                                toast(context.getString(R.string.frp_error, it.message ?: ""))
+                                            }
+                                    }
+                                }
+                            },
                             enabled = !loading
                         ) {
                             Text(stringResource(R.string.frp_tunnel_create))
@@ -415,7 +427,9 @@ private fun BatteryCard() {
 
     BackgroundCard(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(all = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
@@ -624,6 +638,9 @@ private fun TunnelDialog(
     var remote by remember { mutableStateOf(tunnel?.remote.orEmpty()) }
     var nodeMenuExpanded by remember { mutableStateOf(false) }
     var portStatus by remember { mutableStateOf<String?>(null) }
+    //保存时的可读校验提示：以前是静默 return，用户只会觉得「按钮点了没反应」
+    var errorText by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     val availableNodes = remember(nodes) {
         nodes.entries
@@ -633,6 +650,13 @@ private fun TunnelDialog(
 
     val selectedNodeName = availableNodes.firstOrNull { it.key == nodeId.toString() }?.value?.name
         ?: stringResource(R.string.frp_field_node)
+
+    //节点列表是异步拉取的：到了就自动选中第一个可用节点，省掉一次「没选节点 → 保存无效」
+    LaunchedEffect(availableNodes) {
+        if (tunnel == null && nodeId == 0 && availableNodes.isNotEmpty()) {
+            nodeId = availableNodes.first().key.toIntOrNull() ?: 0
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -716,6 +740,14 @@ private fun TunnelDialog(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
+                errorText?.let { message ->
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -752,9 +784,15 @@ private fun TunnelDialog(
             TextButton(
                 onClick = {
                     val port = localPort.toIntOrNull()
-                    if (name.isBlank() || port == null || port !in 1..65535) return@TextButton
-                    if (tunnel == null && nodeId == 0) return@TextButton
-                    onConfirm(name.trim(), type, nodeId, port, remote.ifBlank { null })
+                    errorText = when {
+                        name.isBlank() -> context.getString(R.string.frp_error_name_required)
+                        port == null || port !in 1..65535 -> context.getString(R.string.frp_error_port_invalid)
+                        tunnel == null && nodeId == 0 -> context.getString(R.string.frp_error_node_required)
+                        else -> null
+                    }
+                    if (errorText == null) {
+                        onConfirm(name.trim(), type, nodeId, port!!, remote.ifBlank { null })
+                    }
                 }
             ) {
                 Text(stringResource(R.string.frp_save))

@@ -8,3 +8,5 @@
 6. Sign in (Microsoft / offline / third-party) and start the instance.
 
 Overwriting an installation keeps instances and settings. Uninstalling deletes the private app directory.
+
+> Tip: when no instance is installed yet, the home screen shows a “Download an instance” button that jumps straight here.

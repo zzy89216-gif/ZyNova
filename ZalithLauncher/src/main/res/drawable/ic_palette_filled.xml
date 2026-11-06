@@ -1,0 +1,22 @@
+<!--
+  ~ ZyNova Launcher
+  ~
+  ~ 自绘「调色盘」图标（Material Symbols palette 风格）：
+  ~ 一个圆盘 + 四个颜料孔 + 右下角的拇指缺口（用 evenOdd 挖空）。
+  ~ 与项目其它图标一致：24dp / 960 viewport，颜色由 Compose 的 Icon(tint=...) 覆盖。
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+  <path
+      android:fillColor="#1f1f1f"
+      android:fillType="evenOdd"
+      android:pathData="M120,480a360,360 0 1,0 720,0a360,360 0 1,0 -720,0Z
+                        M304,330a46,46 0 1,0 92,0a46,46 0 1,0 -92,0Z
+                        M434,290a46,46 0 1,0 92,0a46,46 0 1,0 -92,0Z
+                        M564,330a46,46 0 1,0 92,0a46,46 0 1,0 -92,0Z
+                        M644,470a46,46 0 1,0 92,0a46,46 0 1,0 -92,0Z
+                        M540,640a120,120 0 1,0 240,0a120,120 0 1,0 -240,0Z" />
+</vector>

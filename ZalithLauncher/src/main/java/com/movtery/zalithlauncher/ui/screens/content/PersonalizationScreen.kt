@@ -97,11 +97,9 @@ fun PersonalizationScreen(
                         }
                     ),
                     onClick = {
+                        //追加在栈顶：从个性化进设置后，返回会回到个性化页（上一级），而不是跳主界面
                         settingsScreen.navigateTo(NormalNavKey.Settings.Launcher)
-                        backScreenViewModel.mainScreen.removeAndNavigateTo(
-                            removes = backScreenViewModel.clearBeforeNavKeys,
-                            screenKey = settingsScreen
-                        )
+                        backScreenViewModel.mainScreen.navigateTo(settingsScreen)
                     },
                     trailingIcon = {
                         Icon(
@@ -165,11 +163,9 @@ fun PersonalizationScreen(
                     title = stringResource(R.string.personalization_more_settings),
                     summary = stringResource(R.string.personalization_more_settings_summary),
                     onClick = {
+                        //追加在栈顶：从个性化进设置后，返回会回到个性化页（上一级），而不是跳主界面
                         settingsScreen.navigateTo(NormalNavKey.Settings.Launcher)
-                        backScreenViewModel.mainScreen.removeAndNavigateTo(
-                            removes = backScreenViewModel.clearBeforeNavKeys,
-                            screenKey = settingsScreen
-                        )
+                        backScreenViewModel.mainScreen.navigateTo(settingsScreen)
                     },
                     trailingIcon = {
                         Icon(

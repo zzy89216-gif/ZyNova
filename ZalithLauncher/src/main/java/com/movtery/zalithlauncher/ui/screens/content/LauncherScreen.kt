@@ -190,7 +190,8 @@ fun LauncherScreen(
                         onHomePageEvent = onHomePageEvent,
                         onLaunchGame = onLaunchGame,
                         onPlayWorld = onPlayWorld,
-                        onJoinServer = onJoinServer
+                        onJoinServer = onJoinServer,
+                        onOpenDownload = { backStackViewModel.navigateToDownload() }
                     )
                 }
 
@@ -243,6 +244,7 @@ private fun ContentMenu(
     onLaunchGame: (Version?) -> Unit = {},
     onPlayWorld: (Version, String) -> Unit = { _, _ -> },
     onJoinServer: (Version, String) -> Unit = { _, _ -> },
+    onOpenDownload: () -> Unit = {},
 ) {
     val yOffset by swapAnimateDpAsState(
         targetValue = (-40).dp,
@@ -326,7 +328,9 @@ private fun ContentMenu(
                         modifier = Modifier.fillMaxWidth(),
                         onLaunchVersion = { version -> onLaunchGame(version) },
                         onPlayWorld = onPlayWorld,
-                        onJoinServer = onJoinServer
+                        onJoinServer = onJoinServer,
+                        //空状态里的「下载一个实例」：直接进下载 → 游戏本体
+                        onOpenDownload = onOpenDownload
                     )
                 }
             }

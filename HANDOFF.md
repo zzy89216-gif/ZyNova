@@ -43,10 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.10.2**（`launcher_version_code=271002`，**测试版 pre-release**，等待真机反馈）
+**当前版本：28.0.0**（`launcher_version_code=280000`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2>
-> tag 指向 `57bf828`（即 `build_apk.yml` 编译通过的那个提交）；之后只追加了文档提交。
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -56,6 +55,40 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.0 导航重做 + 首页空状态 + AI 排版 + 樱花修复（正式版）✅
+
+> 27.10.x 全部功能转正；本版主要是**把真机反馈的导航问题彻底修掉**。
+
+**1. 返回键（重点，改动在 `ui/screens/main/MainScreen.kt`）**
+
+教训：不要再用 `removeAndNavigateTo(clearBeforeNavKeys)` 做标签切换 —— 那个列表只包含
+设置 / 下载 / 多人，栈里残留的 AI / 个性化会让「返回」跳到不相干的页面。
+
+新模型（`openTab()`）：
+
+- **标签页平级**：胶囊上的 5 个入口（AI / 多人 / 下载 / 个性化 / 设置）切换时，
+  先 `backStack.removeIf { it !is LauncherMain }`，再压入目标页 → 任何标签页返回都回主界面；
+- **标签页内部逐级**：设置子项、下载子项、「个性化 → 更多设置」用普通 `navigateTo` 追加 →
+  返回回上一级（例如 个性化 → 更多设置 → 个性化）；
+- `navigateToDownload()` 同步改成「清到主界面 + 压入下载」；
+- 顶部返回按钮统一走 `onBack(stack)`，只剩一级时什么都不做。
+
+**2. 首页空状态**：`cardHomePage()` 新增 `onOpenDownload`，
+没有实例时显示「下载一个实例」按钮 → `LauncherScreen` 里接到 `navigateToDownload()`（下载 → 游戏）。
+
+**3. 调色盘入口**：新增 `res/drawable/ic_palette_filled.xml`，胶囊里的个性化按钮改为调色盘图标，
+并带选中态（`mainScreenKey is NormalNavKey.Personalization`）。
+
+**4. AI 对话排版**：`AIChatScreen` 只渲染「有内容」的消息
+（AI 每轮工具调用都会产生一条只有 toolCalls、没有正文的助手消息，之前它占一个列表项 + 一份间距，
+导致「运行命令」行距参差）；行距统一 6dp、每行 `heightIn(min = 22.dp)`；滚动索引一并改用可见列表。
+
+**5. 樱花内网穿透**
+
+- 新建隧道：打开对话框时若节点为空会自动补拉；节点到达后自动选中第一个；
+- 保存时给出可读错误（名称 / 端口 / 节点），不再静默 return（这是「点了没反应」的根因）；
+- 修掉「电池优化」卡片材质只画在文字宽度上的错位（`BackgroundCard` 内容列补 `fillMaxWidth()`）。
 
 ### 27.10.2 玻璃地基 + 个性化页 + Quilt 保护 + AI 界面重做（测试版）🧪
 

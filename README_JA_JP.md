@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.10.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2)
+[![Release](https://img.shields.io/badge/Release-28.0.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **日本語** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,14 +17,14 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.10.2 の更新内容
+## ✨ What's new in 28.0.0
 
-- **パーソナライズ画面**：壁紙・背景の不透明度・ぼかし・角丸・ガラス強度を 1 ページで調整（上部カプセルのパレットから）
-- **ガラス基盤の作り直し**：アプリ全体で背景ぼかしは 1 層のみ、常時アニメーションを全廃。カードは単色グラデーション + 1px の縁
-- **AI チャット**：ツール呼び出しは `コマンド実行 · 要約` の 1 行表示、生の出力は既定で折りたたみ。ツール実行前にモデルが一言要約を書く仕様に
-- **Quilt 保護**：Quilted / Legacy Fabric API も Fabric API と同じく「検索不可・インストール不可・削除不可・無効化不可」
-- **修正**：戻るボタンが効かない／画面のちらつき、SakuraFrp のアクセスキー入力直後のエラー、ダイアログの二重ぼかし
-- 本ビルドは**テスト版（pre-release）**です
+- **Back navigation that makes sense**: the five capsule entries are tabs — back always returns to the main menu; inside a tab (settings sub-pages, download sub-pages, personalization → more settings) it steps back one level instead of jumping to an unrelated tab
+- **Home empty state**: a "Download an instance" button that jumps straight to Downloads → Game
+- **Palette entry**: real palette icon with a selected state, so tapping it gives feedback
+- **AI chat layout**: fixed the ragged spacing of the "Run command" rows (empty assistant messages no longer take a list slot)
+- **SakuraFrp**: new-tunnel dialog auto-selects a node, shows readable validation errors, reloads nodes when empty, and the battery card alignment is fixed
+- Everything from 27.10.x (glass foundation, personalization page, Quilt protection) is now in a stable build
 
 ## 🛠️ 主な機能
 

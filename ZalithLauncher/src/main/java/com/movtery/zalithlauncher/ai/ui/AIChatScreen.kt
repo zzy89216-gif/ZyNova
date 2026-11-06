@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -119,6 +120,23 @@ fun AIChatScreen(
     val viewModel: AIChatViewModel = hiltViewModel(key = "zynova_ai_chat")
 
     val messages by viewModel.messages.collectAsStateWithLifecycle()
+
+    /**
+     * 只渲染「真的有东西可显示」的消息。
+     *
+     * AI 每调用一次工具都会产生一条只有 toolCalls、没有正文的助手消息：
+     * 它不画任何东西，却仍然占一个列表项和一份间距 —— 这正是
+     * 27.10.2 里「运行命令」行距参差不齐的原因。列表与滚动都统一用这个集合。
+     */
+    val visibleMessages = remember(messages) {
+        messages.filter { message ->
+            message.text.isNotBlank() ||
+                    message.toolResults.isNotEmpty() ||
+                    message.error != null ||
+                    message.streaming ||
+                    message.interrupted
+        }
+    }
     val busy by viewModel.busy.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
     val pendingConfirm by viewModel.pendingConfirm.collectAsStateWithLifecycle()
@@ -170,17 +188,17 @@ fun AIChatScreen(
     // ⚠️ scrollToItem(index) 只把「条目顶部」对齐到视口顶部；一条很长的回答会因此
     // 只露出开头。这里传一个足够大的 scrollOffset，让它一直滚到列表真正的末尾。
     LaunchedEffect(
-        messages.size,
+        visibleMessages.size,
         messages.lastOrNull()?.id,
         messages.lastOrNull()?.text?.length,
         busy,
         isCurrentScreen,
         scrollToBottomRequested,
     ) {
-        if (!isCurrentScreen || messages.isEmpty()) return@LaunchedEffect
+        if (!isCurrentScreen || visibleMessages.isEmpty()) return@LaunchedEffect
         if (scrollToBottomRequested || atBottom) {
             scrollToBottomRequested = false
-            listState.scrollToItem(messages.lastIndex, Int.MAX_VALUE)
+            listState.scrollToItem(visibleMessages.lastIndex, Int.MAX_VALUE)
         }
     }
 
@@ -256,9 +274,9 @@ fun AIChatScreen(
                             modifier = Modifier.fillMaxSize(),
                             state = listState,
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            items(messages, key = { it.id }) { message ->
+                            items(visibleMessages, key = { it.id }) { message ->
                                 MessageBubble(message)
                             }
                         }
@@ -271,7 +289,9 @@ fun AIChatScreen(
                                     .padding(16.dp),
                                 onClick = {
                                     scope.launch {
-                                        listState.animateScrollToItem(messages.lastIndex, Int.MAX_VALUE)
+                                        if (visibleMessages.isNotEmpty()) {
+                                            listState.animateScrollToItem(visibleMessages.lastIndex, Int.MAX_VALUE)
+                                        }
                                     }
                                 }
                             ) {
@@ -722,8 +742,8 @@ private fun ToolCommandRow(result: AIToolResult) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
-                .clickable(enabled = canExpand) { expanded = !expanded }
-                .padding(vertical = 4.dp),
+                .heightIn(min = 22.dp)
+                .clickable(enabled = canExpand) { expanded = !expanded },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -757,7 +777,7 @@ private fun ToolCommandRow(result: AIToolResult) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 2.dp, top = 2.dp, bottom = 6.dp)
+                    .padding(top = 4.dp, bottom = 2.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
                     .padding(horizontal = 10.dp, vertical = 8.dp),

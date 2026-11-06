@@ -70,3 +70,6 @@ Entry: **Multiplayer → SakuraFrp tunnel**.
 | "frpc component not found" | Reinstall the APK (`libfrpc.so` is bundled) |
 | Tunnel online but friends cannot join | Check the address/port and that the local port matches the game |
 | Disconnects when the screen turns off | Whitelist battery optimization and allow background running |
+
+> When creating a tunnel the first available node is selected automatically, and the dialog validates
+> name / local port / node with an inline error message (it used to do nothing at all).
