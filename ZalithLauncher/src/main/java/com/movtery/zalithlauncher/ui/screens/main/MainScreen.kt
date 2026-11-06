@@ -175,7 +175,7 @@ fun MainScreen(
      * - **标签页内部逐级**：设置子项、下载子项、个性化 → 更多设置 这些是「上一级」关系，
      *   用普通 navigateTo 追加，返回时逐级回退，不会跨标签跳。
      */
-    fun openTab(screenKey: NormalNavKey) {
+    fun openTab(screenKey: TitledNavKey) {
         val stack = screenBackStackModel.mainScreen.backStack
         stack.removeIf { it !is NormalNavKey.LauncherMain }
         if (stack.isEmpty()) stack.add(NormalNavKey.LauncherMain)
