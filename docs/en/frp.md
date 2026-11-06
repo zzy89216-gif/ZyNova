@@ -32,16 +32,28 @@ Entry: **Multiplayer → SakuraFrp**.
 4. Once it is running, a `node:remote-port` line appears **at the top of the page** with a **Copy** button —
    send that to your friend, who can use "Direct connect" in Minecraft.
 
-## About the port (detected from the game log since 28.0.2)
+## About the port (since 28.0.3)
 
-- Android 10+ blocks `/proc/net/tcp` for normal apps (`EACCES: Permission denied` in real-device logs),
-  so detection now reads the **game log** instead: vanilla always writes
-  `[Server thread/INFO]: Local game hosted on port 5xxxx` when you open a world to LAN,
-  and the launcher takes that line from the tail of `logs/latest.log` under each game directory;
-- So **changing worlds or ports no longer requires editing the tunnel** — just tap **Detect again**;
-- You only need to type the port manually when the world was never opened to LAN, or the log was wiped;
-- Starting with no listener on that port fails early with a clear message, so you never end up with
-  "the tunnel is online but nobody can join".
+The **local port is always an editable field, defaulting to 25565**:
+
+- Clear it and type the port shown in the game chat;
+- Once you edit it manually, *Detect again* will not overwrite your value;
+- *Detect again* reads the port from the **game log** (see below).
+
+Why the game log: since Android 10 normal apps may not read `/proc/net/tcp`
+(real devices report `EACCES: Permission denied`). But when a world is opened to LAN, the game always
+writes a line — and **that line is localized**:
+
+| Client language | Log line |
+|---|---|
+| English | `Local game hosted on port 25565` |
+| Chinese (simplified) | `本地游戏已在端口[25565]上开启` |
+
+The launcher tries English → Chinese → a generic "digits after `port` / `端口`" fallback, and only reads the
+**last 128 KB** of `logs/latest.log` under each game directory.
+
+> Changing worlds or ports needs no tunnel edit — just tap *Detect again*.
+> Starting with no listener on the port fails early with a clear message.
 
 ## What you can edit (since 28.0.2)
 

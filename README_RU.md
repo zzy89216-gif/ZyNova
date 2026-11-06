@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
+[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **Русский**
 
@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ Что нового в 28.0.2
+## ✨ Что нового в 28.0.3
 
-- **SakuraFrp сверен с официальным OpenAPI**: исправлен разбор нестабильных полей `export` / `remote`, определение порта переведено на лог игры (`Local game hosted on port`), при редактировании туннеля меняются только порт и заметка (в API нет переименования), на экране «О программе» появился блок «Open source и соответствие лицензиям»
+- **Исправлена серьёзная ошибка «назад» на экранах загрузки**: переход идёт по одному уровню (детали версии → список → категория → загрузки → домой). Порт SakuraFrp теперь редактируемое поле со значением 25565 по умолчанию, поддерживаются логи клиентов на китайском
 
 ## 🛠️ Возможности
 

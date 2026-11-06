@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
+[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
 
 **简体中文** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -18,17 +18,13 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.2 更新要点
+## ✨ 28.0.3 更新要点
 
-- **樱花穿透按官方 OpenAPI 逐条核对了一遍**：`export` / `remote` 类型不稳定的字段改成宽松解析
-  （真机日志里的 `Unable to decode tunnels` 就是它），隧道列表终于能正常出来
-- **端口自动识别在真机上真的能用了**：Android 10+ 读不了 `/proc/net/tcp`，
-  改成读游戏日志里的 `Local game hosted on port`（原版「对局域网开放」必写的一行）
-- **编辑隧道不再假装能改名**：官方接口根本不支持改名，现在只让改本机端口和备注，并写清楚原因
-- **删除失败、创建警告都会说**：`failed` 列表会提示去面板确认；服务端的
-  `important_warning_for_ai`（公开服务器必须用多线节点）会弹窗提醒，不再静默
-- **关于页新增「开源与合规」**：GPL-3.0 全文 / 第三方声明 / 源码入口 + 版本号与包名 +
-  **Terracotta = AGPL-3.0** 的显著提示（已公开发布，这块必须让用户直接看到）
+- **修掉下载页的严重返回 bug**：游戏 / 模组 / 整合包 / 资源包 / 光影 / 存档，点返回只会退一层
+  （版本详情 → 版本列表 → 资源类型 → 下载 → 主界面），不会再一下子跳回启动器主界面
+- **樱花端口改成默认 25565 的可编辑输入框**：可以直接删掉手填，改过之后不会被自动识别覆盖
+- **樱花端口识别支持中文客户端**：之前只认英文日志行 `Local game hosted on port`，
+  而中文客户端写的是 `本地游戏已在端口[25565]上开启` —— 现在两种都认，还兼容共享 gameDir 的日志路径
 
 ## 🛠️ 能做什么
 

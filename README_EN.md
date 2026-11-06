@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
+[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,13 +17,11 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.2
+## ✨ What's new in 28.0.3
 
-- **SakuraFrp audited line-by-line against the official OpenAPI**: the unstable `export` / `remote` fields are now decoded tolerantly (that was the real-device `Unable to decode tunnels`), so the tunnel list finally loads
-- **Port auto-detection actually works on real devices now**: Android 10+ blocks `/proc/net/tcp`, so it falls back to the game log line `Local game hosted on port` that vanilla always writes when you open to LAN
-- **Editing a tunnel no longer pretends to rename it**: the official API has no `name` field on edit — the dialog now only changes the local port and note, and says so
-- **Delete failures and creation warnings are surfaced**: the `failed` list tells you to check the panel, and `important_warning_for_ai` (public servers must use a "multi-line" node) is shown instead of being dropped
-- **New "Open source & compliance" block on the About page**: GPL-3.0 text / third-party notices / source links, plus version name (code) · package name and a prominent **Terracotta = AGPL-3.0** notice
+- **Fixed the severe download-screen back bug**: in games / mods / modpacks / resource packs / shaders / worlds, back now steps exactly one level (version detail → version list → category → Downloads → home) instead of jumping straight back to the launcher home
+- **SakuraFrp port is now an editable field defaulting to 25565**: clear it and type your own; manual edits are never overwritten by auto-detection
+- **Port detection now works with localized clients**: it only matched the English line `Local game hosted on port`, while Chinese clients log `本地游戏已在端口[25565]上开启` — both are handled now, plus shared-gameDir log paths
 
 ## 🛠️ Features
 

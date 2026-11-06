@@ -977,18 +977,26 @@ private fun TunnelDialog(
     var nodeId by remember { mutableStateOf(tunnel?.node ?: 0) }
     var nodeMenuExpanded by remember { mutableStateOf(false) }
     var errorText by remember { mutableStateOf<String?>(null) }
-    var manualPort by remember { mutableStateOf(tunnel?.localPort?.takeIf { it in 1..65535 }?.toString().orEmpty()) }
+    //端口：**永远是一个可以直接改的输入框**，默认 25565（Minecraft 局域网默认端口）。
+    //用户可以直接把数字删掉手填，也可以点「重新识别」让启动器去读游戏日志。
+    var portText by remember {
+        mutableStateOf(
+            tunnel?.localPort?.takeIf { it in 1..65535 }?.toString()
+                ?: DEFAULT_LAN_PORT.toString()
+        )
+    }
     var detected by remember { mutableStateOf<List<Int>>(emptyList()) }
-    var selectedPort by remember { mutableStateOf<Int?>(tunnel?.localPort?.takeIf { it in 1..65535 }) }
     var detectToken by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
+    //用户是否手动改过端口：改过之后就不再被自动识别覆盖
+    var portTouched by remember { mutableStateOf(tunnel != null) }
 
-    //端口自动检测：MC 服务端与本应用同 uid，读 /proc/net/tcp* 即可拿到监听端口
+    //端口自动检测：读 /proc/net/tcp（部分 ROM 允许），拿不到就读游戏日志
     LaunchedEffect(detectToken) {
         val ports = FrpManager.detectLanPorts()
         detected = ports
-        if (selectedPort == null || selectedPort !in ports) {
-            selectedPort = ports.firstOrNull() ?: selectedPort
+        if (!portTouched && ports.isNotEmpty()) {
+            portText = ports.first().toString()
         }
     }
 
@@ -1112,47 +1120,42 @@ private fun TunnelDialog(
                     }
                 }
 
-                //本机端口：自动识别，拿不到才让用户手填
+                //本机端口：默认 25565，随时可以删掉手填；「重新识别」会用游戏日志再试一次
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = when {
-                                detected.isNotEmpty() -> stringResource(
-                                    R.string.frp_port_auto,
-                                    selectedPort ?: detected.first()
-                                )
-                                else -> stringResource(R.string.frp_port_none)
-                            },
-                            style = MaterialTheme.typography.labelSmall,
-                            color = if (detected.isNotEmpty()) {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            } else {
-                                MaterialTheme.colorScheme.error
-                            }
-                        )
-                    }
-                    TextButton(onClick = { detectToken++ }) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = if (detected.isNotEmpty()) {
+                            stringResource(R.string.frp_port_auto, detected.first())
+                        } else {
+                            stringResource(R.string.frp_port_default_hint)
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    TextButton(onClick = {
+                        portTouched = false
+                        detectToken++
+                    }) {
                         Text(stringResource(R.string.frp_port_retry))
                     }
                 }
 
-                if (detected.isEmpty()) {
-                    OwnOutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = manualPort,
-                        onValueChange = { input ->
-                            manualPort = input.filter { it.isDigit() }
-                            errorText = null
-                        },
-                        label = { Text(stringResource(R.string.frp_field_local_port)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
-                }
+                OwnOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = portText,
+                    onValueChange = { input ->
+                        portTouched = true
+                        portText = input.filter { it.isDigit() }.take(5)
+                        errorText = null
+                    },
+                    label = { Text(stringResource(R.string.frp_field_local_port)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
 
                 errorText?.let { message ->
                     Text(
@@ -1166,14 +1169,9 @@ private fun TunnelDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    //⚠️ 自动检测成功 → 用检测到的端口；检测失败 → 必须用**手填**的端口。
-                    //以前写的是 `selectedPort ?: manualPort`，检测失败时 selectedPort 还留着上一轮
-                    //的旧值，用户手填的端口被静默忽略（填了等于没填）。
-                    val port = if (detected.isNotEmpty()) {
-                        selectedPort ?: manualPort.toIntOrNull()
-                    } else {
-                        manualPort.toIntOrNull()
-                    }
+                    //端口就是输入框里的值：不管是自动识别填进去的还是用户手改的，
+                    //都只看这一个来源，不会再出现「填了被旧值覆盖」的情况
+                    val port = portText.toIntOrNull()
                     errorText = when {
                         name.isBlank() -> context.getString(R.string.frp_error_name_required)
                         port == null || port !in 1..65535 -> context.getString(R.string.frp_error_port_invalid)
@@ -1222,6 +1220,8 @@ private fun formatBytes(bytes: Long): String {
  *
  * 抽不到就返回 null，由调用方决定要不要复制整行。
  */
+private const val DEFAULT_LAN_PORT = 25565
+
 private val NODE_ADDRESS_REGEX = Regex("([A-Za-z0-9._-]+\\.natfrp\\.[a-z]{2,4}):(\\d{2,5})", RegexOption.IGNORE_CASE)
 private val GENERIC_ADDRESS_REGEX = Regex("([A-Za-z0-9][A-Za-z0-9.-]*\\.[A-Za-z]{2,10}):(\\d{2,5})")
 

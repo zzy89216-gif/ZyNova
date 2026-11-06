@@ -59,34 +59,47 @@ fun <E: TitledNavKey> onBack(owner: BackStackNavKey<E>): Boolean {
     val stack = owner.backStack
     val top = stack.lastOrNull() ?: return false
 
-    if (top is BackStackNavKey<*>) {
-        if (top.backStack.size > 1) {
-            //先退嵌套屏幕自己的栈顶，外层不动
-            top.backStack.removeLastOrNull()
-            @Suppress("UNCHECKED_CAST")
-            (top as BackStackNavKey<TitledNavKey>).currentKey = top.backStack.lastOrNull()
-            return true
-        }
-    }
+    //优先往**最深处**退：下载 / 设置这类屏幕里还嵌着自己的栈
+    //（主界面 → 下载 → 下载游戏 → 版本详情，一共三四层）。
+    //28.0.2 之前只下探一层，于是在「下载 → 某个版本」里点返回会直接把外层栈弹掉，
+    //表现就是「直接退回启动器主界面」——这就是那个极其严重的返回 bug。
+    if (top is BackStackNavKey<*> && popDeepest(top)) return true
 
     if (stack.size <= 1) return false
-
     stack.removeLastOrNull()
-    //同步外层 currentKey：NavBackStack 是普通 ArrayList，弹栈不会自动触发重组
     owner.currentKey = stack.lastOrNull()
     return true
 }
 
 /**
- * 当前是否还有可以返回的一层。
+ * 在最深的、还能退的层级弹掉一层。
  *
- * 用于注册系统返回键（[onBack] 的 `enabled`）：没有上一层时必须**让出**返回键，
- * 否则用户按返回永远退不出启动器。
+ * @return 是否真的弹掉了什么
  */
-fun <E: TitledNavKey> canGoBack(owner: BackStackNavKey<E>): Boolean {
+private fun popDeepest(owner: BackStackNavKey<*>): Boolean {
+    val stack = owner.backStack
+    val top = stack.lastOrNull()
+
+    //更深一层优先
+    if (top is BackStackNavKey<*> && popDeepest(top)) return true
+
+    if (stack.size <= 1) return false
+    stack.removeLastOrNull()
+    //每一层都要同步自己的 currentKey：NavBackStack 是普通 ArrayList，不会触发重组
+    @Suppress("UNCHECKED_CAST")
+    (owner as BackStackNavKey<TitledNavKey>).currentKey = stack.lastOrNull()
+    return true
+}
+
+/**
+ * 当前是否还有可以返回的一层（含嵌套层级）。
+ */
+fun <E: TitledNavKey> canGoBack(owner: BackStackNavKey<E>): Boolean = canPopAny(owner)
+
+private fun canPopAny(owner: BackStackNavKey<*>): Boolean {
     val stack = owner.backStack
     val top = stack.lastOrNull() ?: return false
-    if (top is BackStackNavKey<*> && top.backStack.size > 1) return true
+    if (top is BackStackNavKey<*> && canPopAny(top)) return true
     return stack.size > 1
 }
 

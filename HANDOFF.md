@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.2**（`launcher_version_code=280002`，**正式版**）
+**当前版本：28.0.3**（`launcher_version_code=280003`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -55,6 +55,19 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.3 下载页返回 + 樱花端口（正式版）✅
+
+1. **返回只退一层 → 递归退到最深层**（`ui/screens/_Navigation.kt`）
+   层级实际是「主界面 → 下载 → 资源类型 → 版本列表 → 版本详情」，
+   之前只下探一层，退一层就把「下载」整块丢掉 → 直接回主界面。
+   现在 `onBack` / `canGoBack` 递归找最深可退点。
+2. **樱花端口识别支持中文客户端**（`frp/FrpManager.kt#LAN_PORT_REGEXES`）
+   真机日志实测：中文客户端写的是 `本地游戏已在端口[25565]上开启`，英文才是
+   `Local game hosted on port 25565`。现在英文 → 简中 → 通用兜底依次匹配；
+   日志路径同时支持 `<gameDir>/logs/latest.log` 与 `<gameDir>/versions/<ver>/logs/latest.log`。
+3. **端口输入框默认 25565 且始终可编辑**（`ui/screens/content/FrpScreen.kt`）
+   去掉「识别成功就不给填」的逻辑；手动改过（`portTouched`）不被自动识别覆盖。
 
 ### 28.0.2 樱花按官方 OpenAPI 逐条核对 + 关于页合规补全（正式版）✅
 

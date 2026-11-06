@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
+[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **日本語** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.2 の新機能
+## ✨ 28.0.3 の新機能
 
-- **SakuraFrp を公式 OpenAPI と突き合わせて修正**：`export` / `remote` の型ゆれによる解析失敗を解消、ポート検出はゲームログ（`Local game hosted on port`）へフォールバック、トンネル編集はポートとメモのみ（公式 API に改名は無し）、「このアプリについて」に「オープンソースとコンプライアンス」欄を追加
+- **ダウンロード画面の重大な戻るバグを修正**：バージョン詳細 → 一覧 → カテゴリ → ダウンロード → ホーム と 1 段ずつ戻ります。SakuraFrp のポートは既定 25565 の編集可能な入力欄になり、中国語クライアントのログ行にも対応
 
 ## 🛠️ 主な機能
 

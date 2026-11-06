@@ -1969,4 +1969,5 @@
     <string name="frp_warning_title">SakuraFrp notice</string>
     <string name="frp_name_rule">Letters, digits, - and _ only (SakuraFrp rejects spaces and non-ASCII)</string>
     <string name="game_menu_option_send_escape">Send ESC (game pause menu)</string>
+    <string name="frp_port_default_hint">Defaults to 25565 and is editable; tap &quot;Detect again&quot; to read it from the game log</string>
 </resources>

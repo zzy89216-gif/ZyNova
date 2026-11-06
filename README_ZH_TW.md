@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
+[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
 
 [简体中文](README.md) | [English](README_EN.md) | **繁體中文** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.2 更新重點
+## ✨ 28.0.3 更新重點
 
-- **櫻花穿透依官方 OpenAPI 逐條核對**：`export` / `remote` 型別不穩定造成解析失敗，已改為寬鬆解析；連接埠偵測改用遊戲日誌（Android 10+ 讀不到 `/proc/net/tcp`）；編輯隧道只改連接埠與備註（官方不支援改名）；關於頁新增「開源與合規」區塊（GPL 全文 / 第三方聲明 / 原始碼 / AGPL 提示）
+- **修掉下載頁的嚴重返回 bug**：版本詳情 → 版本列表 → 資源類型 → 下載 → 主介面，一層一層退，不再直接跳回主介面；櫻花連接埠改為預設 25565 的可編輯輸入框，並支援中文客戶端的日誌行
 
 ## 🛠️ 主要功能
 

@@ -38,8 +38,22 @@ import java.net.ServerSocket
 
 private const val TAG = "FrpManager"
 
-/** 原版「对局域网开放」时写进日志的端口行 */
-private val LAN_PORT_REGEX = Regex("Local game hosted on port (\\d{2,5})")
+/**
+ * 「对局域网开放」时写进日志的端口行。
+ *
+ * ⚠️ 这一行是**跟着游戏语言变**的（同一个 `commands.publish.started` 翻译键）：
+ *
+ * - 英文：`Local game hosted on port 25565`
+ * - 简体中文（真机实测）：`本地游戏已在端口[25565]上开启`
+ *
+ * 28.0.2 只认英文，所以中文客户端永远识别不到端口。现在按优先级依次尝试，
+ * 最后一条是「只认 端口/port 后面跟的数字」的兜底，能覆盖大部分其它语言。
+ */
+private val LAN_PORT_REGEXES = listOf(
+    Regex("Local game hosted on port (\\d{1,5})"),
+    Regex("本地游戏已在端口\\[(\\d{1,5})\\]"),
+    Regex("(?i)(?:端口|port)\\s*\\[?(\\d{2,5})\\]?")
+)
 
 /**
  * 樱花内网穿透的运行核心。
@@ -453,15 +467,24 @@ object FrpManager {
         }
 
         val logs = roots
-            .mapNotNull { root -> File(root, "versions").listFiles()?.map { File(it, "logs/latest.log") } }
+            .mapNotNull { root ->
+                buildList {
+                    //共享 gameDir：<gameDir>/logs/latest.log
+                    add(File(root, "logs/latest.log"))
+                    //每个版本独立目录：<gameDir>/versions/<ver>/logs/latest.log
+                    File(root, "versions").listFiles()?.forEach { add(File(it, "logs/latest.log")) }
+                }
+            }
             .flatten()
             .filter { it.isFile && it.length() > 0L }
             .sortedByDescending { it.lastModified() }
 
         for (log in logs.take(3)) {
             val port = runCatching {
-                readTail(log, 128 * 1024)
-                    .let { text -> LAN_PORT_REGEX.findAll(text).lastOrNull()?.groupValues?.get(1)?.toIntOrNull() }
+                val tail = readTail(log, 128 * 1024)
+                LAN_PORT_REGEXES.firstNotNullOfOrNull { regex ->
+                    regex.findAll(tail).lastOrNull()?.groupValues?.get(1)?.toIntOrNull()
+                }
             }.getOrNull()
             if (port != null && port in 1..65535) {
                 Logger.info(TAG, "Detected LAN port $port from ${log.absolutePath}")
