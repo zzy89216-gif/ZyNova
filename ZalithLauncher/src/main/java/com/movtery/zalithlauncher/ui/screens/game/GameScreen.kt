@@ -683,8 +683,12 @@ fun GameScreen(
             gamepadViewModel = gamepadViewModel,
             closeScreen = { viewModel.gameMenuState = MenuState.HIDE },
             onForceClose = { viewModel.forceCloseState = ForceCloseOperation.Show },
-            //回到启动器主界面（不停止游戏）：只把 MainActivity 排到栈顶，VMActivity 继续存活
-            onBackToLauncher = { backToLauncher(context) },
+            //回到启动器主界面（不停止游戏）：先把游戏菜单收起来（否则回来时菜单还挂着），
+            //再把 MainActivity 排到栈顶；VMActivity 继续存活，JVM 不退出
+            onBackToLauncher = {
+                viewModel.gameMenuState = MenuState.HIDE
+                backToLauncher(context)
+            },
             onSwitchLog = { onLogStateChange(logState.next()) },
             enableTerracotta = AllSettings.enableTerracotta.state,
             onOpenTerracottaMenu = { terracottaViewModel.openMenu() },

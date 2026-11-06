@@ -236,7 +236,7 @@ private fun NavigationUI(
                         settingsScreenKey = settingsScreenKey,
                         mainScreenKey = mainScreenKey,
                         eventViewModel = eventViewModel,
-                        toSettingsScreen = { target -> key.backStack.navigateTo(target) },
+                        toSettingsScreen = { target -> key.navigateTo(target) },
                     )
                 }
                 entry<NormalNavKey.Settings.Game> {
@@ -246,7 +246,7 @@ private fun NavigationUI(
                         mainScreenKey = mainScreenKey,
                         eventViewModel = eventViewModel,
                         toSettingsScreen = { target ->
-                            key.backStack.navigateTo(target)
+                            key.navigateTo(target)
                         },
                     )
                 }
@@ -307,7 +307,7 @@ private fun NavigationUI(
                         settingsScreenKey = settingsScreenKey,
                         mainScreenKey = mainScreenKey,
                         toSettingsScreen = { target ->
-                            key.backStack.navigateTo(target)
+                            key.navigateTo(target)
                         },
                         toFavorites = toFavorites,
                     )

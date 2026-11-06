@@ -313,12 +313,10 @@ fun FrpScreen(
                                 nodeName = nodes[tunnel.node.toString()]?.name,
                                 address = FrpManager.tunnelAddress(tunnel),
                                 running = (runState as? FrpRunState.Running)?.tunnelId == tunnel.id,
-                                onStart = {
-                                    if (FrpManager.tunnelAddress(tunnel) == null) {
-                                        toast(context.getString(R.string.frp_address_unknown))
-                                    }
-                                    FrpManager.start(context, tunnel)
-                                },
+                                //启动失败的原因由 FrpManager.start() 里的状态提示（端口没监听 /
+                                //密钥缺失 / frpc 不存在），这里不再多弹一句「地址未知」——
+                                //地址是启动成功后才有的，启动前说「未知」只会让人以为坏了
+                                onStart = { FrpManager.start(context, tunnel) },
                                 onStop = { FrpManager.stop() },
                                 onEdit = { editingTunnel = tunnel },
                                 onDelete = { deletingTunnel = tunnel },
@@ -1122,7 +1120,14 @@ private fun TunnelDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    val port = selectedPort ?: manualPort.toIntOrNull()
+                    //⚠️ 自动检测成功 → 用检测到的端口；检测失败 → 必须用**手填**的端口。
+                    //以前写的是 `selectedPort ?: manualPort`，检测失败时 selectedPort 还留着上一轮
+                    //的旧值，用户手填的端口被静默忽略（填了等于没填）。
+                    val port = if (detected.isNotEmpty()) {
+                        selectedPort ?: manualPort.toIntOrNull()
+                    } else {
+                        manualPort.toIntOrNull()
+                    }
                     errorText = when {
                         name.isBlank() -> context.getString(R.string.frp_error_name_required)
                         port == null || port !in 1..65535 -> context.getString(R.string.frp_error_port_invalid)
@@ -1161,11 +1166,31 @@ private fun formatBytes(bytes: Long): String {
 }
 
 
-/** 从 frpc 日志里抽出可复制的地址（`host:port`），抽不到就返回 null �� 由调用方复制整行 */
-private val ADDRESS_REGEX = Regex("([A-Za-z0-9._-]+\\.(?:natfrp\\.(?:io|com|net)|[A-Za-z0-9.-]+)):(\\d{2,5})")
+/**
+ * 从 frpc 输出里抽「朋友要用的那个地址」。
+ *
+ * 分两档，按优先级取：
+ * 1. 樱花节点域名（`*.natfrp.io / .com / .net`、`*.natfrp.cloud` 等）—— 这是真正能连的公网地址；
+ * 2. 其它 `host:port`，但**排除** `127.0.0.1` / `0.0.0.0` / `localhost` / `192.168.*` / `10.*`，
+ *    否则容易把日志里的「本地监听端口」当成隧道地址发给朋友。
+ *
+ * 抽不到就返回 null，由调用方决定要不要复制整行。
+ */
+private val NODE_ADDRESS_REGEX = Regex("([A-Za-z0-9._-]+\\.natfrp\\.[a-z]{2,4}):(\\d{2,5})", RegexOption.IGNORE_CASE)
+private val GENERIC_ADDRESS_REGEX = Regex("([A-Za-z0-9][A-Za-z0-9.-]*\\.[A-Za-z]{2,10}):(\\d{2,5})")
 
-private fun extractAddress(line: String): String? =
-    ADDRESS_REGEX.find(line)?.value
+private val LOCAL_HOST_HINTS = listOf("127.", "0.0.0.0", "localhost", "192.168.", "10.", "172.16.")
+
+private fun extractAddress(line: String): String? {
+    NODE_ADDRESS_REGEX.find(line)?.let { return it.value }
+    GENERIC_ADDRESS_REGEX.findAll(line).forEach { match ->
+        val host = match.groupValues[1]
+        if (LOCAL_HOST_HINTS.none { host.startsWith(it) || host == it }) {
+            return match.value
+        }
+    }
+    return null
+}
 
 private fun openUrl(context: Context, url: String) {
     runCatching {
