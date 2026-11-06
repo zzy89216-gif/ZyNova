@@ -353,6 +353,8 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //进入对局就记一笔：启动器靠它判断「返回游戏」这个入口要不要显示
+        if (intent.getBooleanExtra(INTENT_RUN_GAME, false)) markGameSession(this)
         //加载渲染器
         Renderers.init()
         //加载插件
@@ -603,6 +605,7 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
     }
 
     override fun onDestroy() {
+        clearGameSession(this)
         stopAllService()
         withHandler { onDestroy() }
         SdlBridge.reset()
@@ -910,20 +913,42 @@ fun runJar(
     context.startActivity(intent)
 }
 /**
- * 游戏进程（`:game`）是否仍然活着。
+ * 本次「对局」的标记文件。
  *
- * 用于启动器界面显示「返回游戏」入口：只要返回 `true`，说明游戏还在后台跑，
- * 点一下就能回到游戏画面，**不需要重新启动 game**。
- *
- * 说明：不带 QUERY_ALL_PACKAGES 权限时，`getRunningAppProcesses()` 只会返回
- * 调用方自己 uid 的进程，正好就是我们要查的 `:game`，属于公开可用行为。
+ * 只用 `:game` 进程是否存活判断是不够的：用户正常退出游戏后，Android 会把这个进程
+ * 留在 cached 状态一段时间，界面就会一直显示「返回游戏」，点进去却是一个空壳。
+ * 所以再加一个会话标记 —— 进入对局时写、[VMActivity.onDestroy] 时删，
+ * 两者同时成立才认为「游戏还在跑」。
  */
-fun isGameProcessAlive(context: Context): Boolean = runCatching {
-    val manager = context.getSystemService(Context.ACTIVITY_SERVICE)
-        as? android.app.ActivityManager ?: return@runCatching false
-    val gameProcess = context.packageName + ":game"
-    manager.runningAppProcesses?.any { it.processName == gameProcess } == true
-}.getOrDefault(false)
+private fun gameSessionFlag(context: Context): File = File(context.filesDir, "game_session.running")
+
+/** 进入对局时打标记（由 `:game` 进程写入，主进程读同一个目录）*/
+fun markGameSession(context: Context) {
+    runCatching { gameSessionFlag(context).writeText("running") }
+}
+
+/** 对局结束 / 界面销毁时清掉标记 */
+fun clearGameSession(context: Context) {
+    runCatching { gameSessionFlag(context).delete() }
+}
+
+/**
+ * 游戏是否还在后台跑（决定启动器要不要显示「返回游戏」）。
+ *
+ * 判据：**会话标记存在** 且 `:game` 进程仍存活。进程已经没了就顺手把标记删掉（自愈），
+ * 否则上一次异常退出留下的残标会让这个入口永远不消失。
+ */
+fun isGameProcessAlive(context: Context): Boolean {
+    if (!gameSessionFlag(context).isFile) return false
+    val alive = runCatching {
+        val manager = context.getSystemService(Context.ACTIVITY_SERVICE)
+            as? android.app.ActivityManager ?: return@runCatching false
+        val gameProcess = context.packageName + ":game"
+        manager.runningAppProcesses?.any { it.processName == gameProcess } == true
+    }.getOrDefault(false)
+    if (!alive) clearGameSession(context)
+    return alive
+}
 
 /**
  * 游戏内 → 启动器主界面，**不停止游戏**。
