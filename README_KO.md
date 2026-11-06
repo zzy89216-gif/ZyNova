@@ -17,14 +17,14 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 27.10.2
+## ✨ 27.10.2 업데이트
 
-- **Personalization page**: wallpaper, opacity, background blur, corner radius and glass strength in one place (palette button in the top capsule)
-- **New glass foundation**: a single background blur for the whole app, all looping highlight animations removed; cards use one flat gradient + 1px edge
-- **AI chat**: tool calls render as a single `Run command · summary` line, raw output collapsed by default; the model must write a one-line summary before running a tool
-- **Quilt parity with Fabric API**: Quilted / Legacy Fabric API are now unsearchable, uninstallable, undeletable and undisableable, just like Fabric API
-- **Fixes**: back button not returning / flicker, SakuraFrp failing right after entering the access key, dialogs stacking a second blur
-- This build is a **pre-release**
+- **개인화 화면**: 배경, 배경 불투명도, 흐림, 모서리 반경, 유리 강도를 한 페이지에서 조정 (상단 캡슐의 팔레트 버튼)
+- **유리 기반 재작업**: 앱 전체에서 배경 흐림은 한 층만, 상시 애니메이션 전부 제거. 카드는 단색 그라데이션 + 1px 테두리
+- **AI 채팅**: 도구 호출은 `명령 실행 · 요약` 한 줄로 표시하고 원본 출력은 기본 접힘. 도구 실행 전 모델이 한 줄 요약을 먼저 작성
+- **Quilt 보호**: Quilted / Legacy Fabric API도 Fabric API와 동일하게 "검색 불가·설치 불가·삭제 불가·비활성화 불가"
+- **수정**: 뒤로 가기 버튼이 동작하지 않거나 화면이 깜빡이던 문제, SakuraFrp 접속 키 입력 직후 오류, 다이얼로그 이중 흐림
+- 이 빌드는 **테스트판(pre-release)** 입니다
 
 ## 🛠️ 주요 기능
 

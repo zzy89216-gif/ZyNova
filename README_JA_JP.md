@@ -17,14 +17,14 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 27.10.2
+## ✨ 27.10.2 の更新内容
 
-- **Personalization page**: wallpaper, opacity, background blur, corner radius and glass strength in one place (palette button in the top capsule)
-- **New glass foundation**: a single background blur for the whole app, all looping highlight animations removed; cards use one flat gradient + 1px edge
-- **AI chat**: tool calls render as a single `Run command · summary` line, raw output collapsed by default; the model must write a one-line summary before running a tool
-- **Quilt parity with Fabric API**: Quilted / Legacy Fabric API are now unsearchable, uninstallable, undeletable and undisableable, just like Fabric API
-- **Fixes**: back button not returning / flicker, SakuraFrp failing right after entering the access key, dialogs stacking a second blur
-- This build is a **pre-release**
+- **パーソナライズ画面**：壁紙・背景の不透明度・ぼかし・角丸・ガラス強度を 1 ページで調整（上部カプセルのパレットから）
+- **ガラス基盤の作り直し**：アプリ全体で背景ぼかしは 1 層のみ、常時アニメーションを全廃。カードは単色グラデーション + 1px の縁
+- **AI チャット**：ツール呼び出しは `コマンド実行 · 要約` の 1 行表示、生の出力は既定で折りたたみ。ツール実行前にモデルが一言要約を書く仕様に
+- **Quilt 保護**：Quilted / Legacy Fabric API も Fabric API と同じく「検索不可・インストール不可・削除不可・無効化不可」
+- **修正**：戻るボタンが効かない／画面のちらつき、SakuraFrp のアクセスキー入力直後のエラー、ダイアログの二重ぼかし
+- 本ビルドは**テスト版（pre-release）**です
 
 ## 🛠️ 主な機能
 

@@ -17,14 +17,14 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 27.10.2
+## ✨ Что нового в 27.10.2
 
-- **Personalization page**: wallpaper, opacity, background blur, corner radius and glass strength in one place (palette button in the top capsule)
-- **New glass foundation**: a single background blur for the whole app, all looping highlight animations removed; cards use one flat gradient + 1px edge
-- **AI chat**: tool calls render as a single `Run command · summary` line, raw output collapsed by default; the model must write a one-line summary before running a tool
-- **Quilt parity with Fabric API**: Quilted / Legacy Fabric API are now unsearchable, uninstallable, undeletable and undisableable, just like Fabric API
-- **Fixes**: back button not returning / flicker, SakuraFrp failing right after entering the access key, dialogs stacking a second blur
-- This build is a **pre-release**
+- **Страница персонализации**: обои, прозрачность фона, размытие, радиус углов и сила «стекла» в одном месте (кнопка-палитра в верхней капсуле)
+- **Переработанная основа «стекла»**: во всём приложении только одно размытие фона, все постоянные анимации убраны; карточки — плоский градиент + рамка 1px
+- **AI-чат**: вызовы инструментов показываются одной строкой `Выполнение команды · описание`, исходный вывод свёрнут; перед запуском инструмента модель обязана написать краткое описание
+- **Защита Quilt**: Quilted / Legacy Fabric API теперь так же «не находятся, не ставятся, не удаляются и не отключаются», как Fabric API
+- **Исправления**: кнопка «назад» не работала / мерцание экрана, SakuraFrp падал сразу после ввода ключа доступа, диалоги накладывали второе размытие
+- Это **тестовая сборка (pre-release)**
 
 ## 🛠️ Возможности
 
