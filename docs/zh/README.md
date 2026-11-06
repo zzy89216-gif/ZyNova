@@ -82,6 +82,7 @@
 | 文档 | 内容 |
 |---|---|
 | [樱花内网穿透](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/frp.md) | `frp.md` |
+| [陶瓦联机](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/terracotta.md) | `terracotta.md` |
 
 ### 下载与网络
 

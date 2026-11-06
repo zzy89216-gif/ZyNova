@@ -82,6 +82,7 @@ Chinese versions live in [`docs/zh/`](https://github.com/zzy89216-gif/ZyNova/blo
 | Document | Content |
 |---|---|
 | [SakuraFrp tunnel](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/frp.md) | `frp.md` |
+| [Terracotta multiplayer](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) | `terracotta.md` |
 
 ### Downloads and network
 
