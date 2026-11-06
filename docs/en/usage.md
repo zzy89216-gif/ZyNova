@@ -26,3 +26,10 @@ Run logs live on the version overview page. Export supports Modrinth only.
 ## Favorites
 
 Tap ♥ on a resource card or project page. See `favorites.md`.
+
+## Back key and ESC in game
+
+- **The back key only toggles the launcher menu**: inside the game it opens the control menu (mouse / gamepad / gestures / gyroscope, logs, exit), and never jumps around inside the game;
+- **To reach Minecraft's own pause menu**: open the launcher menu → tap "Send ESC (game pause menu)";
+- The menu also has "Back to launcher", which **does not stop the game** — you return to the same session;
+- Changing controls, checking logs or switching input methods all happen in this menu — no need to quit the game.

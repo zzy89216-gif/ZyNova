@@ -689,6 +689,21 @@ fun GameScreen(
                 viewModel.gameMenuState = MenuState.HIDE
                 backToLauncher(context)
             },
+            //游戏内 ESC：以前绑在系统返回键上，现在挪到侧边栏按钮，
+            //点了就相当于键盘按一下 Esc（打开/关闭 Minecraft 自己的暂停菜单）
+            onSendEscape = {
+                viewModel.gameMenuState = MenuState.HIDE
+                val keyEvent = ClickEvent(
+                    type = ClickEvent.Type.Key,
+                    key = ControlEventKeycode.GLFW_KEY_ESCAPE
+                )
+                viewModel.onKeyEvent(keyEvent, true)
+                //轻微延迟再抬起，避免某些整合包把「瞬时按下」当成丢帧
+                viewModel.viewModelScope.launch {
+                    delay(10L.milliseconds)
+                    viewModel.onKeyEvent(keyEvent, false)
+                }
+            },
             onSwitchLog = { onLogStateChange(logState.next()) },
             enableTerracotta = AllSettings.enableTerracotta.state,
             onOpenTerracottaMenu = { terracottaViewModel.openMenu() },
@@ -792,17 +807,11 @@ fun GameScreen(
                                     viewModel.exitControlEditor()
                                 }
                             )
-                        } else if (!AllSettings.showMenuBall.getValue()) {
-                            viewModel.switchMenu()
                         } else {
-                            //按下返回键
-                            val event = ClickEvent(
-                                type = ClickEvent.Type.Key,
-                                key = ControlEventKeycode.GLFW_KEY_ESCAPE
-                            )
-                            viewModel.onKeyEvent(event, true)
-                            delay(10L.milliseconds)
-                            viewModel.onKeyEvent(event, false)
+                            //28.0.2：返回键**只负责开关启动器菜单**，不再直接给游戏发 ESC。
+                            //以前「返回 = ESC」会让人以为崩了/直接跳回游戏暂停菜单，
+                            //而且想调控制设置反而找不到入口；ESC 已移到侧边栏按钮。
+                            viewModel.switchMenu()
                         }
                     }
                     is EventViewModel.Event.Game.OnResume -> {

@@ -96,6 +96,7 @@ fun GameMenuSubscreen(
     closeScreen: () -> Unit,
     onForceClose: () -> Unit,
     onBackToLauncher: () -> Unit,
+    onSendEscape: () -> Unit,
     onSwitchLog: () -> Unit,
     enableTerracotta: Boolean,
     onOpenTerracottaMenu: () -> Unit,
@@ -182,6 +183,7 @@ fun GameMenuSubscreen(
                 modifier = Modifier.weight(1f),
                 onForceClose = onForceClose,
                 onBackToLauncher = onBackToLauncher,
+                onSendEscape = onSendEscape,
                 onSwitchLog = onSwitchLog,
                 enableTerracotta = enableTerracotta,
                 onOpenTerracottaMenu = onOpenTerracottaMenu,
@@ -196,6 +198,7 @@ fun GameMenuSubscreen(
 private fun GameActionContent(
     onForceClose: () -> Unit,
     onBackToLauncher: () -> Unit,
+    onSendEscape: () -> Unit,
     onSwitchLog: () -> Unit,
     enableTerracotta: Boolean,
     onOpenTerracottaMenu: () -> Unit,
@@ -224,6 +227,16 @@ private fun GameActionContent(
                     )
                     onBackToLauncher()
                 },
+                color = color,
+                contentColor = contentColor,
+            )
+        }
+        //发送 ESC（等于键盘按一下 Esc）
+        item {
+            MenuTextButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.game_menu_option_send_escape),
+                onClick = onSendEscape,
                 color = color,
                 contentColor = contentColor,
             )
