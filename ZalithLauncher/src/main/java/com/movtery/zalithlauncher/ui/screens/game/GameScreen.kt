@@ -87,6 +87,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
 import com.movtery.zalithlauncher.setting.enums.toAction
 import com.movtery.zalithlauncher.terracotta.Terracotta
+import com.movtery.zalithlauncher.ui.activities.backToLauncher
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.MenuState
 import com.movtery.zalithlauncher.ui.components.rememberBoxSize
@@ -682,6 +683,8 @@ fun GameScreen(
             gamepadViewModel = gamepadViewModel,
             closeScreen = { viewModel.gameMenuState = MenuState.HIDE },
             onForceClose = { viewModel.forceCloseState = ForceCloseOperation.Show },
+            //回到启动器主界面（不停止游戏）：只把 MainActivity 排到栈顶，VMActivity 继续存活
+            onBackToLauncher = { backToLauncher(context) },
             onSwitchLog = { onLogStateChange(logState.next()) },
             enableTerracotta = AllSettings.enableTerracotta.state,
             onOpenTerracottaMenu = { terracottaViewModel.openMenu() },

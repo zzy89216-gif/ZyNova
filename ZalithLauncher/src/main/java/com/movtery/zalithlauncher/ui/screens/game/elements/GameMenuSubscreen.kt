@@ -95,6 +95,7 @@ fun GameMenuSubscreen(
     gamepadViewModel: GamepadViewModel,
     closeScreen: () -> Unit,
     onForceClose: () -> Unit,
+    onBackToLauncher: () -> Unit,
     onSwitchLog: () -> Unit,
     enableTerracotta: Boolean,
     onOpenTerracottaMenu: () -> Unit,
@@ -180,6 +181,7 @@ fun GameMenuSubscreen(
             GameActionContent(
                 modifier = Modifier.weight(1f),
                 onForceClose = onForceClose,
+                onBackToLauncher = onBackToLauncher,
                 onSwitchLog = onSwitchLog,
                 enableTerracotta = enableTerracotta,
                 onOpenTerracottaMenu = onOpenTerracottaMenu,
@@ -193,6 +195,7 @@ fun GameMenuSubscreen(
 @Composable
 private fun GameActionContent(
     onForceClose: () -> Unit,
+    onBackToLauncher: () -> Unit,
     onSwitchLog: () -> Unit,
     enableTerracotta: Boolean,
     onOpenTerracottaMenu: () -> Unit,
@@ -209,6 +212,22 @@ private fun GameActionContent(
         contentPadding = PaddingValues(all = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        //回到启动器主界面（不停止游戏）
+        item {
+            MenuTextButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.game_menu_option_back_to_launcher),
+                onClick = {
+                    onShowToast(
+                        androidText(R.string.game_menu_option_back_to_launcher_hint),
+                        Toast.LENGTH_LONG
+                    )
+                    onBackToLauncher()
+                },
+                color = color,
+                contentColor = contentColor,
+            )
+        }
         //强制关闭
         item {
             MenuTextButton(

@@ -1951,4 +1951,9 @@
     <string name="frp_nodes_level_warning">No node available for your account tier; showing all nodes (creation may fail)</string>
     <string name="frp_default_tunnel_name">Minecraft LAN</string>
     <string name="frp_battery_ok">Battery optimization already disabled for ZyNova</string>
+    <string name="frp_log_address_title">Address from frpc log</string>
+    <string name="game_menu_option_back_to_launcher">Back to launcher</string>
+    <string name="game_menu_option_back_to_launcher_hint">The game keeps running in the background</string>
+    <string name="main_return_to_game">Back to game</string>
+    <string name="main_return_to_game_hint">Still running in background</string>
 </resources>

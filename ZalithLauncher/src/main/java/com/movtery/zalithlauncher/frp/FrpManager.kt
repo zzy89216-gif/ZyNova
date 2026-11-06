@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.frp
 
 import android.content.Context
+import android.os.Process
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.logging.Logger

@@ -1933,4 +1933,9 @@
     <string name="frp_nodes_level_warning">当前账号等级没有专属节点，已列出全部节点（创建可能失败）</string>
     <string name="frp_default_tunnel_name">Minecraft 联机</string>
     <string name="frp_battery_ok">已允许后台运行（不受电池优化限制）</string>
+    <string name="frp_log_address_title">frpc 输出里的连接地址</string>
+    <string name="game_menu_option_back_to_launcher">回到启动器主界面</string>
+    <string name="game_menu_option_back_to_launcher_hint">游戏会继续在后台运行，进度不会丢</string>
+    <string name="main_return_to_game">返回游戏</string>
+    <string name="main_return_to_game_hint">游戏仍在后台运行</string>
 </resources>

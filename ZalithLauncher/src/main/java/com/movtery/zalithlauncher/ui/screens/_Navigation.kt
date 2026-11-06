@@ -43,27 +43,51 @@ import com.movtery.zalithlauncher.utils.animation.getAnimateSpeed
 import kotlin.reflect.KClass
 
 /**
- * 兼容嵌套NavDisplay的返回事件处理
+ * 兼容嵌套 NavDisplay 的返回事件处理：**一次只退一层**。
+ *
+ * 规则（与用户直觉一致，也是这次修复的核心）：
+ * 1. 栈顶是嵌套屏幕、并且它自己的内部栈还有上一层 → 只弹内部栈；
+ * 2. 否则外层栈还有上一层 → 弹外层栈；
+ * 3. 什么都没有 → 不做事并返回 `false`，交给系统返回（退到桌面）。
+ *
+ * ⚠️ 绝对不能把栈弹空：`NavDisplay` 看到空栈会没有内容可画，
+ * 表现就是「点了返回没反应 / 白屏 / 直接被踢回主界面还得重启启动器」。
+ *
+ * @return 是否消费了这次返回
  */
-fun <E: TitledNavKey> onBack(owner: BackStackNavKey<E>) {
+fun <E: TitledNavKey> onBack(owner: BackStackNavKey<E>): Boolean {
     val stack = owner.backStack
-    when (val key = stack.lastOrNull()) {
-        //普通的屏幕：退出当前堆栈的上层
-        is BackStackNavKey<*> -> {
-            if (key.backStack.size <= 1) {
-                //嵌套屏幕已经到根了，退回外层
-                stack.removeLastOrNull()
-            } else {
-                //先退出子屏幕的栈顶
-                key.backStack.removeLastOrNull()
-                @Suppress("UNCHECKED_CAST")
-                (key as BackStackNavKey<TitledNavKey>).currentKey = key.backStack.lastOrNull()
-            }
+    val top = stack.lastOrNull() ?: return false
+
+    if (top is BackStackNavKey<*>) {
+        if (top.backStack.size > 1) {
+            //先退嵌套屏幕自己的栈顶，外层不动
+            top.backStack.removeLastOrNull()
+            @Suppress("UNCHECKED_CAST")
+            (top as BackStackNavKey<TitledNavKey>).currentKey = top.backStack.lastOrNull()
+            return true
         }
-        else -> stack.removeLastOrNull()
     }
+
+    if (stack.size <= 1) return false
+
+    stack.removeLastOrNull()
     //同步外层 currentKey：NavBackStack 是普通 ArrayList，弹栈不会自动触发重组
     owner.currentKey = stack.lastOrNull()
+    return true
+}
+
+/**
+ * 当前是否还有可以返回的一层。
+ *
+ * 用于注册系统返回键（[onBack] 的 `enabled`）：没有上一层时必须**让出**返回键，
+ * 否则用户按返回永远退不出启动器。
+ */
+fun <E: TitledNavKey> canGoBack(owner: BackStackNavKey<E>): Boolean {
+    val stack = owner.backStack
+    val top = stack.lastOrNull() ?: return false
+    if (top is BackStackNavKey<*> && top.backStack.size > 1) return true
+    return stack.size > 1
 }
 
 fun <E: TitledNavKey> NavBackStack<E>.navigateOnce(key: E) {

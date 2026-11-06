@@ -195,7 +195,7 @@ fun FrpScreen(
                         }
                     )
 
-                    if (user != null && !user.isRealName) {
+                    if (user?.isRealName == false) {
                         NoticeCard(
                             title = stringResource(R.string.frp_realname_title),
                             summary = stringResource(R.string.frp_realname_summary),
@@ -219,6 +219,45 @@ fun FrpScreen(
                         logs = logs,
                         onStop = { FrpManager.stop() }
                     )
+
+                    //frpc 输出里的节点地址：直接摆在最上面，旁边一键复制
+                    val logAddress = remember(logs) {
+                        logs.asReversed().firstNotNullOfOrNull { extractAddress(it) }
+                    }
+                    logAddress?.let { address ->
+                        BackgroundCard(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(R.string.frp_log_address_title),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = address,
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontFamily = FontFamily.Monospace
+                                        ),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                TextButton(
+                                    onClick = {
+                                        copyText(context, address)
+                                        toast(context.getString(R.string.frp_copied))
+                                    }
+                                ) {
+                                    Text(stringResource(R.string.frp_action_copy))
+                                }
+                            }
+                        }
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

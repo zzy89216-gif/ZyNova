@@ -18,7 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.main
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
@@ -57,6 +57,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +66,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,6 +84,10 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.launcherDisplayTitle
+import com.movtery.zalithlauncher.ui.theme.cardColor
+import com.movtery.zalithlauncher.ui.theme.onCardColor
+import com.movtery.zalithlauncher.ui.activities.isGameProcessAlive
+import com.movtery.zalithlauncher.ui.activities.resumeGame
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
@@ -90,6 +97,7 @@ import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
+import com.movtery.zalithlauncher.ui.screens.canGoBack
 import com.movtery.zalithlauncher.ai.ui.AIChatScreen
 import com.movtery.zalithlauncher.ui.screens.content.AccountManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.DownloadScreen
@@ -126,6 +134,7 @@ import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(
@@ -135,6 +144,16 @@ fun MainScreen(
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     val tasks by TaskSystem.tasksFlow.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    //游戏进程（`:game`）是否还活着：决定要不要显示「返回游戏」
+    var gameRunning by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            gameRunning = isGameProcessAlive(context)
+            delay(2000)
+        }
+    }
 
     //监控当前是否有任务正在进行
     LaunchedEffect(tasks) {
@@ -185,6 +204,14 @@ fun MainScreen(
     val mainScreenKey = screenBackStackModel.mainScreen.currentKey
     val inLauncherScreen = mainScreenKey == null || mainScreenKey is NormalNavKey.LauncherMain
 
+    //系统返回键 / 手势：只退一层。
+    //以前主界面没有注册任何 OnBackPressedCallback，顶栏返回按钮走
+    //`onBackPressedDispatcher.onBackPressed()` 时没有回调接住 → 直接 finish 掉
+    //整个 MainActivity，看起来就是「点一下返回直接回到主界面/桌面，还得重启启动器」。
+    BackHandler(enabled = canGoBack(screenBackStackModel.mainScreen)) {
+        onBack(screenBackStackModel.mainScreen)
+    }
+
     //议题 #38：视频背景要等真正出画后才算「可见」，
     //图片背景仍然是文件有效即可见（行为与升级前完全一致）
     val isBackgroundVisible = LocalBackgroundViewModel.current?.isBackgroundVisible == true
@@ -220,10 +247,9 @@ fun MainScreen(
                 //表现就是「点了没反应」，随后栈里既没有主界面也没有当前页，
                 //NavDisplay 反复重算 → 闪屏 / 卡死。
                 //只剩一个页面（主界面）时什么都不做，交给系统返回键退到桌面。
-                onScreenBack = {
-                    val stack = screenBackStackModel.mainScreen.backStack
-                    if (stack.size > 1) onBack(screenBackStackModel.mainScreen)
-                },
+                //顶栏返回：直接走导航返回（一次一层），绝不借道系统返回键 ——
+                //借道的后果是没有回调接住时直接结束 Activity
+                onScreenBack = { onBack(screenBackStackModel.mainScreen) },
                 toMainScreen = toMainScreen,
                 toSettingsScreen = { openTab(screenBackStackModel.settingsScreen) },
                 //个性化：独立的「个性化」页面（壁纸 / 不透明度 / 模糊 / 圆角 / 玻璃强度）
@@ -270,6 +296,15 @@ fun MainScreen(
                 ) {
                     changeTasksExpandedState()
                 }
+
+                //游戏还在后台跑时，主界面底部常驻一个「返回游戏」入口
+                if (inLauncherScreen && gameRunning) {
+                    ReturnToGamePill(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 18.dp)
+                    )
+                }
             }
         }
     }
@@ -305,8 +340,6 @@ private fun <E: TitledNavKey> TopBar(
         ConstraintLayout(modifier = modifier) {
             val (backCenter, title, endButtons) = createRefs()
 
-            val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
             Row(
                 modifier = Modifier
                     .constrainAs(backCenter) {
@@ -326,10 +359,8 @@ private fun <E: TitledNavKey> TopBar(
                             modifier = Modifier.fillMaxHeight(),
                             onClick = {
                                 if (!inLauncherScreen) {
-                                    //不在主屏幕时才允许返回
-                                    backDispatcher?.onBackPressed() ?: run {
-                                        onScreenBack()
-                                    }
+                                    //不在主屏幕时才允许返回：只退一层，退不动就不动
+                                    onScreenBack()
                                 }
                             }
                         ) {
@@ -941,6 +972,52 @@ private fun TaskItem(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+/**
+ * 启动器主界面底部的「返回游戏」胶囊。
+ *
+ * 游戏（`:game` 进程）只是退到后台，并没有退出：点这里直接把它拉回前台
+ * （`REORDER_TO_FRONT`），不会重新启动、不会丢进度。
+ */
+@Composable
+private fun ReturnToGamePill(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    Surface(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.extraLarge)
+            .clickable { resumeGame(context) },
+        shape = MaterialTheme.shapes.extraLarge,
+        color = cardColor(false),
+        contentColor = onCardColor(),
+        tonalElevation = 3.dp,
+        shadowElevation = 6.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(R.drawable.ic_sports_esports_filled),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Column {
+                Text(
+                    text = stringResource(R.string.main_return_to_game),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.main_return_to_game_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

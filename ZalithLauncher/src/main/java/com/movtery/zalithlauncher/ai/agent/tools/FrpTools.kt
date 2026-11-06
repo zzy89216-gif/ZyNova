@@ -47,7 +47,7 @@ internal fun frpTools(): List<AITool> = listOf(
     ) { _, _ ->
         buildString {
             append("已登录：").append(if (FrpManager.isLoggedIn) "是" else "否").append('\n')
-            FrpManager.user?.let { user ->
+            FrpManager.user.value?.let { user ->
                 append("账号：").append(user.name.ifBlank { "未知" })
                 if (user.groupName.isNotBlank()) append("（").append(user.groupName).append("）")
                 append('\n')

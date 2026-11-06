@@ -449,8 +449,9 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
                     vmViewModel.disableInputMode()
                     return
                 }
-                if (!vmViewModel.keyHandle) return
-
+                //⚠️ 以前这里 `if (!keyHandle) return`：编辑控制布局时 keyHandle 为 false，
+                //返回键被**静默吞掉**，用户卡在编辑界面里出不来。
+                //现在一律把返回事件交给 GameScreen 判断（它会先处理编辑模式再处理菜单）。
                 eventViewModel.sendEvent(EventViewModel.Event.Game.OnBack)
             }
         })
@@ -907,4 +908,48 @@ fun runJar(
         putExtra(INTENT_JAR_INFO, jvmLaunchInfo)
     }
     context.startActivity(intent)
+}
+/**
+ * 游戏进程（`:game`）是否仍然活着。
+ *
+ * 用于启动器界面显示「返回游戏」入口：只要返回 `true`，说明游戏还在后台跑，
+ * 点一下就能回到游戏画面，**不需要重新启动 game**。
+ *
+ * 说明：不带 QUERY_ALL_PACKAGES 权限时，`getRunningAppProcesses()` 只会返回
+ * 调用方自己 uid 的进程，正好就是我们要查的 `:game`，属于公开可用行为。
+ */
+fun isGameProcessAlive(context: Context): Boolean = runCatching {
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE)
+        as? android.app.ActivityManager ?: return@runCatching false
+    val gameProcess = context.packageName + ":game"
+    manager.runningAppProcesses?.any { it.processName == gameProcess } == true
+}.getOrDefault(false)
+
+/**
+ * 游戏内 → 启动器主界面，**不停止游戏**。
+ *
+ * 只把 [MainActivity] 重新排到任务栈最前面（`REORDER_TO_FRONT`），
+ * `VMActivity` 退到它后面继续存活：JVM 不退出、联机不断、日志不丢，
+ * 用户从「返回游戏」回来时还是原来那一局。
+ */
+fun backToLauncher(context: Context) {
+    val intent = Intent(context, MainActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        if (context !is android.app.Activity) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    runCatching { context.startActivity(intent) }
+}
+
+/**
+ * 启动器 → 正在运行的游戏，**不重新启动**。
+ *
+ * 与 [backToLauncher] 对称：只把已有的 [VMActivity] 实例排到最前面。
+ * 调用前请先用 [isGameProcessAlive] 确认游戏还在，否则会拉起一个空壳界面。
+ */
+fun resumeGame(context: Context) {
+    val intent = Intent(context, VMActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        if (context !is android.app.Activity) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    runCatching { context.startActivity(intent) }
 }
