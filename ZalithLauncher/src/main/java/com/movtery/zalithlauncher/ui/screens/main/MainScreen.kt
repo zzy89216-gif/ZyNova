@@ -148,7 +148,9 @@ fun MainScreen(
     val context = LocalContext.current
     //游戏进程（`:game`）是否还活着：决定要不要显示「返回游戏」
     var gameRunning by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(inLauncherScreen) {
+        //只在主界面轮询，其它页面根本不显示这个入口
+        if (!inLauncherScreen) return@LaunchedEffect
         while (true) {
             gameRunning = isGameProcessAlive(context)
             delay(2000)
@@ -298,11 +300,14 @@ fun MainScreen(
                 }
 
                 //游戏还在后台跑时，主界面底部常驻一个「返回游戏」入口
-                if (inLauncherScreen && gameRunning) {
+                AnimatedVisibility(
+                    visible = inLauncherScreen && gameRunning,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    enter = fadeIn() + slideInVertically { it / 2 },
+                    exit = fadeOut() + slideOutVertically { it / 2 }
+                ) {
                     ReturnToGamePill(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 18.dp)
+                        modifier = Modifier.padding(bottom = 18.dp)
                     )
                 }
             }

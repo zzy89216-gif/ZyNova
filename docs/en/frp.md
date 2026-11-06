@@ -1,75 +1,83 @@
-# SakuraFrp tunnel (multiplayer)
+# SakuraFrp (playing over the internet)
 
-ZyNova offers two ways to play together. They are independent — pick whichever fits:
+ZyNova offers two ways to play with friends. Pick one — they do not interfere with each other:
 
-| Mode | How it works | Requires | Good for |
+| Option | How it works | Requirements | Best for |
 |---|---|---|---|
-| [Terracotta](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) | P2P overlay network (EasyTier); both sides join the same virtual LAN | Both players use ZyNova | Friends who do not want to expose a port |
-| SakuraFrp tunnel | Maps a local port to a public node (frp) | A SakuraFrp account + access token | Friends on the desktop client, or anyone not using Terracotta |
+| [Terracotta](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) | P2P mesh (EasyTier); both sides join the same virtual LAN | Both players use ZyNova | Friends, no port forwarding |
+| SakuraFrp | Maps a local port to a public node (frp) | A SakuraFrp account + access key | The other side uses a PC client, or you don't want Terracotta |
 
-Entry: **Multiplayer → SakuraFrp tunnel**.
+Entry: **Multiplayer → SakuraFrp**.
 
-## Before you start
+## Prerequisites
 
-1. Register at [SakuraFrp](https://www.natfrp.com/);
-2. Copy the access token from the dashboard (Profile → View access token);
-3. Open your world to LAN in Minecraft and note the port shown in chat.
+1. Sign up at [SakuraFrp](https://www.natfrp.com/);
+2. Copy your access key from the panel (User info → View access key);
+3. Have the game in a world with "Open to LAN" already enabled (you no longer need to remember the port).
 
-> Free-tier quotas, real-name requirements and node restrictions follow the SakuraFrp
-> dashboard. ZyNova only acts as a client and never manages your account.
+> Quotas, real-name requirements and node restrictions follow your SakuraFrp account tier.
+> ZyNova is only a client and never manages your account.
 
 ## First run
 
-1. Open **SakuraFrp tunnel**, paste the access token and sign in;
-2. Tap **New tunnel**:
-   - type **TCP**;
-   - pick a node marked as available;
-   - set **local port** to the LAN port shown in game (not necessarily 25565);
-   - leave the remote port empty so SakuraFrp assigns one;
-3. Save, then tap **Start** on the tunnel;
-4. Tap **Copy address** and send `node:remote-port` to your friend — they join via
-   **Direct Connect** in Minecraft.
+1. Open **SakuraFrp**, paste the access key and sign in.
+   After signing in the header shows your **user group (Free / Silver / Gold …), tunnel quota and today's traffic**;
+2. In-game choose "Open to LAN", then tap **New tunnel** in the launcher:
+   - The type is **fixed to TCP** — nothing to choose;
+   - **The local port is auto-detected**: the launcher reads the ports your own app is listening on,
+     which is exactly the LAN port the game just opened;
+   - The node list only contains nodes **your tier can use** (a free account never sees Silver/Gold-only nodes);
+   - Leave the remote port empty and let SakuraFrp assign one;
+3. Save, then tap **Start** on that tunnel;
+4. Once it is running, a `node:remote-port` line appears **at the top of the page** with a **Copy** button —
+   send that to your friend, who can use "Direct connect" in Minecraft.
 
-## About ports
+## About the port (auto-detected since 28.0.1)
 
-- The LAN port may change every time you open a world to LAN; update the tunnel's local port
-  after switching worlds;
-- **Check** next to the port field tells you whether anything is listening;
-- Starting with a port nobody listens on is refused, so you do not end up with a tunnel
-  that connects but cannot be joined.
+- The launcher detects the game port by reading the LISTEN sockets of its own uid from
+  `/proc/net/tcp` and `/proc/net/tcp6`, so **changing worlds or ports no longer requires editing the tunnel** —
+  just tap **Detect again**;
+- If detection fails (game not started, or `/proc` reads restricted by the ROM),
+  fill in the port shown in the game chat manually;
+- Starting with no listener on that port fails early with a clear message, so you never end up with
+  "the tunnel is online but nobody can join".
 
-## Background and screen-off
+## Background & screen off
 
-- Starting a tunnel runs a **foreground service with a persistent notification**, the only
-  reliable way to survive backgrounding on Android;
-- Tap **Allow background** once to whitelist the launcher from battery optimization,
+- Starting a tunnel runs a **foreground service + notification**, which is how Android allows long-lived tunnels;
+- On first use, tap **Allow background running** to whitelist ZyNova from battery optimisation,
   otherwise the tunnel may be killed when the screen turns off;
-- Some OEM ROMs (vivo / iQOO / Xiaomi / OPPO …) also need "unrestricted" background
-  permission in system settings.
+- Some OEM ROMs (vivo / iQOO / Xiaomi / OPPO …) additionally require allowing "background high power usage / unrestricted".
+
+## Refreshed on every visit
+
+Tunnels on the SakuraFrp side change over time (quota, node availability, bans), so **the page re-fetches
+your account and tunnel list every time you open it**. Pull-to-refresh / the refresh button forces a reload,
+so what you see is never stale cache.
 
 ## Limits
 
-- Free accounts have tunnel-count, traffic and bandwidth limits — see the SakuraFrp dashboard;
-- **Public game servers may only use dedicated "multi-line" nodes**; private friend groups are fine;
-- One tunnel cannot be used by two clients at the same time (they will kick each other);
-- This is plain port mapping: the host must keep the game running.
+- Free accounts have tunnel-count, traffic and bandwidth limits — see the SakuraFrp panel;
+- **Public game servers must use the dedicated "multi-line" nodes**; private friend sessions are not affected;
+- A single tunnel **cannot be used by two clients at the same time** (they kick each other);
+- SakuraFrp only forwards a port; the host still has to keep the game running.
 
 ## Security
 
-- The access token is encrypted with **Android Keystore** and stored in the app-private
-  directory; other apps cannot read the plaintext;
-- The token is passed to the `frpc` child process through an environment variable only —
-  never in command-line arguments or logs;
-- ZyNova ships no account or shared key; every tunnel belongs to your own SakuraFrp account.
+- The access key is encrypted with **Android Keystore** and stored in the app's private directory;
+- The key is only used as the `frpc` launch argument in the official form `frpc -f <key>:<tunnelId>`;
+  it is never written to logs and never uploaded anywhere;
+- ZyNova bundles no accounts or shared keys — every tunnel belongs to your own account.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| "Port is not listening" | Open the world to LAN first, then use that port |
-| "frpc component not found" | Reinstall the APK (`libfrpc.so` is bundled) |
+| "No process is listening on this port" | Enable "Open to LAN" in-game, then tap **Detect again** or type the port |
+| "frpc component not found" | Reinstall the APK (`libfrpc.so` ships with it) |
 | Tunnel online but friends cannot join | Check the address/port and that the local port matches the game |
-| Disconnects when the screen turns off | Whitelist battery optimization and allow background running |
+| Refresh fails with a format error | Fixed in 28.0.1 (arrays / `{data}` / BOM are tolerated); if it still happens, send the `FrpApi` log lines |
+| Disconnects when the screen turns off | Whitelist battery optimisation and allow background running |
 
-> When creating a tunnel the first available node is selected automatically, and the dialog validates
-> name / local port / node with an inline error message (it used to do nothing at all).
+> Creating a tunnel validates the name / local port / node and highlights problems inline
+> (previously tapping Save did nothing at all).

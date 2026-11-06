@@ -19,7 +19,6 @@
 package com.movtery.zalithlauncher.frp
 
 import android.content.Context
-import android.os.Process
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.logging.Logger
@@ -365,7 +364,7 @@ object FrpManager {
      * 返回按端口号从大到小排序（MC 的临时端口通常落在高位区间）。
      */
     fun detectLanPorts(): List<Int> {
-        val uid = Process.myUid()
+        val uid = android.os.Process.myUid()
         val ports = linkedSetOf<Int>()
         listOf("/proc/net/tcp", "/proc/net/tcp6").forEach { path ->
             runCatching {

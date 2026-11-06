@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0)
+[![Release](https://img.shields.io/badge/Release-28.0.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.1)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,14 +17,13 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.0
+## ✨ What's new in 28.0.1
 
-- **Back navigation that makes sense**: the five capsule entries are tabs — back always returns to the main menu; inside a tab (settings sub-pages, download sub-pages, personalization → more settings) it steps back one level instead of jumping to an unrelated tab
-- **Home empty state**: a "Download an instance" button that jumps straight to Downloads → Game
-- **Palette entry**: real palette icon with a selected state, so tapping it gives feedback
-- **AI chat layout**: fixed the ragged spacing of the "Run command" rows (empty assistant messages no longer take a list slot)
-- **SakuraFrp**: new-tunnel dialog auto-selects a node, shows readable validation errors, reloads nodes when empty, and the battery card alignment is fixed
-- Everything from 27.10.x (glass foundation, personalization page, Quilt protection) is now in a stable build
+- **SakuraFrp actually connects now**: `frpc -f <accessKey>:<tunnelId>` (the official form; the previous env-var approach is ignored by Sakura's frpc). Refresh / create-tunnel no longer dies on `Unexpected JSON token`, and the connection address is extracted from the frpc log, pinned to the top with a one-tap copy
+- **Back button stops ejecting you**: the top-bar back no longer borrows the system back press (which had no callback and simply finished the screen — restart required). It now steps back exactly one level and never empties the stack
+- **Leave the game without killing it**: the in-game menu's first entry returns to the launcher while the game keeps running; a "Back to game" pill appears at the bottom of the launcher to jump straight back
+- **No port/type knowledge needed**: tunnel type is fixed to TCP, the local port is auto-detected from `/proc/net/tcp` (the LAN port Minecraft opens), and nodes are filtered by account tier
+- **AI can bring up multiplayer end-to-end**: `frp_status` / `frp_create_tunnel` / `frp_start_tunnel` / `frp_stop_tunnel` / `multiplayer_status`
 
 ## 🛠️ Features
 

@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.0**（`launcher_version_code=280000`，**正式版**）
+**当前版本：28.0.1**（`launcher_version_code=280001`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.0>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.1>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -55,6 +55,40 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.1 樱花连通 + 返回修复 + 游戏内回主界面（正式版）✅
+
+真机反馈驱动的修复版。四个「用户真的用不下去」的问题都在这一版解决：
+
+1. **樱花点启动没反应**：`frpc` 参数必须是官方形式的 `frpc -f <访问密钥>:<隧道ID>`。
+   28.0.0 用的是 `--disable_log_color` + 环境变量 `NATFRP_TOKEN/NATFRP_TARGET`，
+   樱花定制的 frpc **不读这两个环境变量**，进程起来立刻退出。改动位置：`frp/FrpManager.kt#start()`。
+2. **樱花瓣一刷新就报错**（`HTTP 200 … Unexpected JSON token at offset 1`）：
+   `FrpApi` 换成宽容解析（BOM / 顶层数组 / `{data}` / `{result}` / `tunnels|list|items` 都能吃），
+   失败时把状态码 + 响应片段写进 `FrpApi` 日志。改动位置：`frp/FrpApi.kt`。
+3. **返回键「一点就退出整个界面」**：顶栏返回以前是 `onBackPressedDispatcher.onBackPressed()`，
+   而主界面**没有注册任何 OnBackPressedCallback** → 系统走默认行为 **finish 掉 MainActivity**。
+   现在顶栏返回直接调导航 `onBack()`；`onBack()` 一次只退一层、**永不弹空栈**；
+   系统返回键用 `BackHandler(enabled = canGoBack(...))` 接管。
+   改动位置：`ui/screens/_Navigation.kt`、`ui/screens/main/MainScreen.kt`。
+4. **游戏内回不到启动器（只能强杀）**：新增两条对称通道 ——
+   游戏内菜单第一项「回到启动器主界面」（`backToLauncher()`，只把 MainActivity
+   `REORDER_TO_FRONT`，`VMActivity` 继续活着）；启动器底部「返回游戏」胶囊
+   （`resumeGame()`，靠 `isGameProcessAlive()` 轮询 `:game` 进程决定是否显示）。
+   改动位置：`ui/activities/VMActivity.kt`（三个新函数）、`main/MainScreen.kt`、`game/elements/GameMenuSubscreen.kt`。
+
+顺带做的（都是「不然还是要被投诉」的东西）：
+
+- 樱花界面重做：类型固定 TCP、端口自动识别（`/proc/net/tcp{,6}` + `LISTEN` + 本 uid）、
+  节点按 `FrpUser.groupLevel` 过滤、额度/实名提示卡、进页面自动刷新、
+  frpc 输出里的地址**置顶 + 一键复制**
+- AI 五个联机工具：`frp_status` / `frp_create_tunnel` / `frp_start_tunnel` /
+  `frp_stop_tunnel` / `multiplayer_status`（新建隧道自动端口 + 自动节点）
+- 编辑控制布局时返回键被 `if (!keyHandle) return` 静默吞掉 → 卡在编辑界面，现在交给 GameScreen 判断
+- `FrpTools` 里 `FrpManager.user` 是 `StateFlow`，少写 `.value` 导致编译失败（CI 抓到）
+
+**遗留**：`docs/zh/frp.md` / `docs/en/frp.md` 与联机篇需要按新流程（TCP 固定、端口自动识别、
+等级过滤）再校对一遍。
 
 ### 28.0.0 导航重做 + 首页空状态 + AI 排版 + 樱花修复（正式版）✅
 
