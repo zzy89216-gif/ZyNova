@@ -145,17 +145,6 @@ fun MainScreen(
 ) {
     val tasks by TaskSystem.tasksFlow.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-    //游戏进程（`:game`）是否还活着：决定要不要显示「返回游戏」
-    var gameRunning by remember { mutableStateOf(false) }
-    LaunchedEffect(inLauncherScreen) {
-        //只在主界面轮询，其它页面根本不显示这个入口
-        if (!inLauncherScreen) return@LaunchedEffect
-        while (true) {
-            gameRunning = isGameProcessAlive(context)
-            delay(2000)
-        }
-    }
 
     //监控当前是否有任务正在进行
     LaunchedEffect(tasks) {
@@ -205,6 +194,18 @@ fun MainScreen(
 
     val mainScreenKey = screenBackStackModel.mainScreen.currentKey
     val inLauncherScreen = mainScreenKey == null || mainScreenKey is NormalNavKey.LauncherMain
+
+    val context = LocalContext.current
+    //游戏进程（`:game`）是否还活着：决定要不要显示「返回游戏」
+    var gameRunning by remember { mutableStateOf(false) }
+    LaunchedEffect(inLauncherScreen) {
+        //只在主界面轮询，其它页面根本不显示这个入口
+        if (!inLauncherScreen) return@LaunchedEffect
+        while (true) {
+            gameRunning = isGameProcessAlive(context)
+            delay(2000)
+        }
+    }
 
     //系统返回键 / 手势：只退一层。
     //以前主界面没有注册任何 OnBackPressedCallback，顶栏返回按钮走
@@ -300,14 +301,11 @@ fun MainScreen(
                 }
 
                 //游戏还在后台跑时，主界面底部常驻一个「返回游戏」入口
-                AnimatedVisibility(
-                    visible = inLauncherScreen && gameRunning,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    enter = fadeIn() + slideInVertically { it / 2 },
-                    exit = fadeOut() + slideOutVertically { it / 2 }
-                ) {
+                if (inLauncherScreen && gameRunning) {
                     ReturnToGamePill(
-                        modifier = Modifier.padding(bottom = 18.dp)
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 18.dp)
                     )
                 }
             }
