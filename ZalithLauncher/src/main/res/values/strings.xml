@@ -1145,6 +1145,16 @@
     <string name="settings_launcher_background_video_volume_summary">When the background is a video, you can adjust the volume using this option.</string>
     <string name="settings_launcher_background_blur_summary">Adjust the background blur effect. This option consumes significant performance.</string>
     <string name="settings_launcher_liquid_glass_title">Liquid Glass Effect</string>
+    <string name="personalization_title">Personalization</string>
+    <string name="personalization_wallpaper_title">Wallpaper</string>
+    <string name="personalization_wallpaper_summary_set">Tap to change the current background image or video</string>
+    <string name="personalization_wallpaper_summary_empty">No wallpaper yet, tap to choose one</string>
+    <string name="personalization_more_settings">More settings</string>
+    <string name="personalization_more_settings_summary">Theme, language, full screen and other low-frequency options</string>
+    <string name="settings_launcher_glass_strength_title">Glass Strength</string>
+    <string name="settings_launcher_glass_strength_summary">How strong the single-color glass tint is. Lower values look closer to flat colors.</string>
+    <string name="settings_launcher_corner_radius_title">Corner Radius</string>
+    <string name="settings_launcher_corner_radius_summary">Rounding of launcher cards and panels.</string>
     <string name="settings_launcher_glass_level_off">Off</string>
     <string name="settings_launcher_glass_level_on">Enable Dynamic Glass</string>
     <string name="settings_launcher_liquid_glass_summary">Add a slowly flowing highlight and refraction sheen over the frosted glass for an iOS 26-style liquid glass look</string>
@@ -1603,6 +1613,7 @@
     <string name="ai_confirm_allow">Allow</string>
     <string name="ai_confirm_deny">Deny</string>
     <string name="ai_tool_calls">Called tools: %1$s</string>
+    <string name="ai_tool_run_command">Run command</string>
     <string name="ai_thinking">Thinking…</string>
     <string name="ai_welcome">It doesn\'t just chat — it really installs the game and modpacks, adds mods, edits settings and fixes crashes for you.</string>
     <string name="ai_welcome_hint">Just say it: \"Install 1.20.1 Fabric and add Sodium\"</string>

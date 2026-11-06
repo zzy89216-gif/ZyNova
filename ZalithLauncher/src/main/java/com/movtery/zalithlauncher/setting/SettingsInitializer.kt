@@ -19,16 +19,12 @@
 package com.movtery.zalithlauncher.setting
 
 import android.content.Context
-import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.utils.device.Architecture
 import com.movtery.zalithlauncher.utils.platform.bytesToMB
 import com.movtery.zalithlauncher.utils.platform.getTotalMemory
 import com.movtery.zalithlauncher.utils.string.splitPreservingQuotes
 
 private const val LWJGL_LIB_NAME_ARG = "-Dorg.lwjgl.opengl.libname="
-
-/** 玻璃效果档位在配置中的键名，需要与 [AllSettings.glassLevel] 保持一致 */
-private const val GLASS_LEVEL_KEY = "glassLevel"
 
 /**
  * 初始化处理所有设置项
@@ -40,17 +36,10 @@ fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     //AI Agent 的配置独立于启动器通用设置，但同样需要初始化
     if (reloadAll) com.movtery.zalithlauncher.ai.AISettings.reloadAll()
 
-    //旧配置兼容：把旧版「液态玻璃」布尔开关迁移为新的玻璃效果
-    if (AllSettings.liquidGlass.getValue()) {
-        AllSettings.glassLevel.save(GlassLevel.On)
-        AllSettings.liquidGlass.save(false)
-    }
-
-    //旧配置兼容：26.2.2 起玻璃效果只保留「关闭 / 启用动态玻璃」两档，
-    //升级前保存的 Standard / Enhanced / Extreme 统一迁移为「启用动态玻璃」。
-    //必须直接读取原始字符串：旧档位名称已经不在枚举里，
-    //经过 [AllSettings.glassLevel] 读取会直接回退成默认值，从而丢失用户原本的选择。
-    migrateLegacyGlassLevel()
+    //旧配置兼容：27.10.2 起「动态玻璃」整体移除，玻璃变成全局统一的基础材质，
+    //旧的档位键与模糊类型键直接清掉。留着孤儿值会带来隐患：
+    //以后若再出现同名、不同类型的设置，读取时会直接抛类型异常（启动崩溃）。
+    removeLegacyGlassKeys()
     migrateTaskMenuCollapsed()
 
     if (AllSettings.ramAllocation.getValue() == null) {
@@ -63,11 +52,6 @@ fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     }
 }
 
-/**
- * 把旧版玻璃效果档位迁移为当前的「关闭 / 启用动态玻璃」
- *
- * 幂等：当前档位名称（Off / On）会被解析为自身，重复执行不会改变配置。
- */
 /**
  * 把 27.8.0 之前「默认展开」的任务面板一次性改为收起。
  *
@@ -82,13 +66,22 @@ private fun migrateTaskMenuCollapsed() {
 
 private const val KEY_TASK_MENU_COLLAPSED_MIGRATED = "taskMenuCollapsedMigrated"
 
-private fun migrateLegacyGlassLevel() {
-    val raw = launcherMMKV().getString(GLASS_LEVEL_KEY, null) ?: return
-    val migrated = GlassLevel.fromLegacyName(raw) ?: return
-    if (migrated.name != raw) {
-        AllSettings.glassLevel.save(migrated)
-    }
+/**
+ * 清理已废弃的玻璃配置键
+ *
+ * - `glassLevel`：动态玻璃档位（Off / On）
+ * - `backgroundBlurType`：背景模糊策略（Background / Foreground）
+ *
+ * 幂等：键不存在时删除是空操作，可以每次启动都跑。
+ */
+private fun removeLegacyGlassKeys() {
+    val mmkv = launcherMMKV()
+    mmkv.removeValueForKey(KEY_LEGACY_GLASS_LEVEL)
+    mmkv.removeValueForKey(KEY_LEGACY_BACKGROUND_BLUR_TYPE)
 }
+
+private const val KEY_LEGACY_GLASS_LEVEL = "glassLevel"
+private const val KEY_LEGACY_BACKGROUND_BLUR_TYPE = "backgroundBlurType"
 
 /**
  * This functions aims at finding the best default RAM amount,

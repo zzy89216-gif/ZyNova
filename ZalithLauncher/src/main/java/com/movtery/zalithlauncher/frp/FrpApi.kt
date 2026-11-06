@@ -22,7 +22,6 @@ import com.movtery.zalithlauncher.path.GLOBAL_JSON
 import com.movtery.zalithlauncher.path.TIME_OUT
 import com.movtery.zalithlauncher.path.createOkHttpClientBuilder
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -34,6 +33,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.decodeFromString
 
 /**
  * 樱花内网穿透 OpenAPI v4 客户端。
@@ -172,12 +172,22 @@ object FrpApi {
 
     /**
      * 读取 JSON 响应；非 2xx 时把 `{ code, msg }` 转成可读异常。
+     *
+     * 解析失败也要转成 [FrpApiException]：否则界面上会出现
+     * `Field 'realname' ...` 这种用户完全看不懂的原始异常文本。
      */
     private suspend inline fun <reified T> HttpResponse.requireJson(): T {
         if (status.value !in 200..299) {
             throw toApiException()
         }
-        return body()
+        val text = bodyAsText()
+        return runCatching { GLOBAL_JSON.decodeFromString<T>(text) }
+            .getOrElse { e ->
+                throw FrpApiException(
+                    "接口返回格式与预期不符（HTTP ${status.value}）：" +
+                            (e.message ?: e::class.simpleName.orEmpty()).take(160)
+                )
+            }
     }
 
     private suspend fun HttpResponse.toApiException(): FrpApiException {

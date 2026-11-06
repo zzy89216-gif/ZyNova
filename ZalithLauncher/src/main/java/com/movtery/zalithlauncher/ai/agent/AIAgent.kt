@@ -18,6 +18,9 @@
 
 package com.movtery.zalithlauncher.ai.agent
 
+import com.movtery.zalithlauncher.ai.agent.AIToolSchema.intentSummary
+import com.movtery.zalithlauncher.ai.agent.AIToolSchema.withIntentSummary
+import com.movtery.zalithlauncher.ai.agent.AIToolSchema.stripIntentSummary
 import com.movtery.zalithlauncher.ai.aiString
 import com.movtery.zalithlauncher.ai.audit.AIAuditLog
 import com.movtery.zalithlauncher.ai.audit.AIAuditStatus
@@ -104,7 +107,8 @@ object AIAgent {
         val provider = AIProviders.get(providerType)
         val tools = AIToolRegistry.all()
             .filter { toolNames == null || it.spec.name in toolNames }
-            .map { it.spec }
+            //所有工具统一注入必填的 summary 参数：模型必须先写「这一步在做什么」
+            .map { it.spec.withIntentSummary() }
 
         val history = conversation.toMutableList()
         /** 本次运行中「工具名 + 参数」的出现次数，用于识别死循环 */
@@ -171,7 +175,7 @@ object AIAgent {
 
             for (call in calls) {
                 //重复调用保护：同一个工具 + 完全相同的参数反复出现 → 模型卡死了
-                val signature = "${call.name}\u0000${call.arguments}"
+                val signature = "${call.name}\u0000${call.argumentsWithoutSummary()}"
                 val times = (callSignatures[signature] ?: 0) + 1
                 callSignatures[signature] = times
                 if (times > MAX_IDENTICAL_CALLS) {
@@ -217,7 +221,7 @@ object AIAgent {
                 isError = true,
             )
 
-        val args: JsonObject = runCatching {
+        val rawArgs: JsonObject = runCatching {
             if (call.arguments.isBlank()) JsonObject(emptyMap())
             else AI_JSON.parseToJsonElement(call.arguments).jsonObject
         }.getOrElse { e ->
@@ -226,8 +230,13 @@ object AIAgent {
                 name = call.name,
                 content = aiString(R.string.ai_error_bad_arguments, call.arguments.take(300), e.message.orEmpty()),
                 isError = true,
+                summary = call.summary,
             )
         }
+
+        //summary 只给界面看，执行前剥掉，工具实现拿不到这个多余参数
+        val summary = call.summary.ifBlank { rawArgs.intentSummary() }
+        val args = rawArgs.stripIntentSummary()
 
         // 权限裁决
         if (permissionMode == AIPermissionMode.CONFIRM && tool.risk != AIToolRisk.READ) {
@@ -249,6 +258,7 @@ object AIAgent {
                     content = aiString(R.string.ai_error_denied),
                     isError = true,
                     writeOperation = true,
+                    summary = summary,
                 )
             }
         }
@@ -273,6 +283,7 @@ object AIAgent {
                 name = call.name,
                 content = content,
                 writeOperation = audited,
+                summary = summary,
             )
         } catch (e: CancellationException) {
             throw e
@@ -293,6 +304,7 @@ object AIAgent {
                 content = content,
                 isError = true,
                 writeOperation = audited,
+                summary = summary,
             )
         }
     }
@@ -302,6 +314,14 @@ object AIAgent {
         append("参数：").append(args.toString().take(500))
     }
 }
+
+/**
+ * 去掉 summary 后的参数文本，用于「同一工具 + 同一参数」的死循环识别：
+ * 模型每次换一句概括、但干的是同一件事时，也必须被识别成重复调用。
+ */
+private fun AIToolCall.argumentsWithoutSummary(): String = runCatching {
+    AI_JSON.parseToJsonElement(arguments).jsonObject.stripIntentSummary().toString()
+}.getOrDefault(arguments)
 
 /**
  * 把 Provider 分片吐出来的工具调用拼成完整的 [AIToolCall]。
@@ -320,10 +340,16 @@ private class ToolCallAccumulator {
 
     fun build(): AIToolCall? {
         if (name.isBlank()) return null
+        val raw = args.toString().ifBlank { "{}" }
+        //参数此时已经是完整 JSON，顺手把「动作概括」解出来给界面用
+        val summary = runCatching {
+            AI_JSON.parseToJsonElement(raw).jsonObject.intentSummary()
+        }.getOrDefault("")
         return AIToolCall(
             id = id ?: "call_${UUID.randomUUID()}",   // 个别中转不返回 id，兜底生成一个
             name = name,
-            arguments = args.toString().ifBlank { "{}" },
+            arguments = raw,
+            summary = summary,
         )
     }
 }

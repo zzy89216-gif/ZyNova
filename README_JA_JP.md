@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.10.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.1)
+[![Release](https://img.shields.io/badge/Release-27.10.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **日本語** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,13 +17,14 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.10.1 の更新内容
+## ✨ What's new in 27.10.2
 
-- **SakuraFrp トンネル**：マルチプレイ画面でアクセストークンを貼るだけで利用可能。トンネルの作成・編集・削除・開始/停止・アドレスコピーに対応。トークンは Android Keystore で暗号化し、フォアグラウンドサービスで維持します。
-- **新しいトップバー**：中央に液体ガラスのカプセル（ホーム / AI / マルチ / ダウンロード / ファイル / カスタマイズ / 設定）。タイトルは左側に残ります。
-- **AI チャットが Markdown 表示に対応**：見出し・リスト・表・コードブロック・リンク。アシスタントは全幅、ユーザーは最大 82% の可変幅。
-- **Terracotta は変更なし**。
-- **プレリリース版**：上記機能の検証用ビルドです。
+- **Personalization page**: wallpaper, opacity, background blur, corner radius and glass strength in one place (palette button in the top capsule)
+- **New glass foundation**: a single background blur for the whole app, all looping highlight animations removed; cards use one flat gradient + 1px edge
+- **AI chat**: tool calls render as a single `Run command · summary` line, raw output collapsed by default; the model must write a one-line summary before running a tool
+- **Quilt parity with Fabric API**: Quilted / Legacy Fabric API are now unsearchable, uninstallable, undeletable and undisableable, just like Fabric API
+- **Fixes**: back button not returning / flicker, SakuraFrp failing right after entering the access key, dialogs stacking a second blur
+- This build is a **pre-release**
 
 ## 🛠️ 主な機能
 

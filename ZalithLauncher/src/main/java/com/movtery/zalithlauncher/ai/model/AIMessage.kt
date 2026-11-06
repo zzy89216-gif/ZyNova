@@ -47,6 +47,13 @@ data class AIToolCall(
     val name: String,
     /** 模型给出的参数（原始 JSON 字符串，可能不完整/非法，执行前必须校验）*/
     val arguments: String = "",
+    /**
+     * 模型对「这一次调用在做什么」的一句话概括
+     *
+     * 27.10.2 起每个工具都强制要求这个字段；界面只显示这句话，
+     * 不再把工具名 + 整段参数摊开给用户看。
+     */
+    val summary: String = "",
 )
 
 /**
@@ -61,6 +68,8 @@ data class AIToolResult(
     val isError: Boolean = false,
     /** 该工具是否属于写操作（用于 UI 标记与审计）*/
     val writeOperation: Boolean = false,
+    /** 模型给出的动作概括（界面上的「运行命令 · …」）*/
+    val summary: String = "",
     /**
      * 是否仍在执行中。
      *

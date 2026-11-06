@@ -20,38 +20,36 @@ package com.movtery.zalithlauncher.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import com.movtery.zalithlauncher.setting.AllSettings
 
 /**
- * ZyNova 新版形状体系（界面世代 = 新版）
+ * 按「卡片圆角」设置生成新版形状体系
  *
- * 目标是「极简苹果风」：**更大的圆角 + 更少的层级**。
- * Material 默认圆角偏小（4 / 8 / 12 / 16 / 28），在卡片化布局里会显得「方、硬、密」；
- * 这里整体上移一档，让界面更松弛：
+ * 27.10.2 起圆角不再是写死的常量，而是个性化页暴露给用户的参数
+ * （[AllSettings.launcherCornerRadius]，12~36dp，默认 28dp）。
+ * 其余槽位按固定比例跟随主圆角，保证「卡片圆了、对话框还是方的」不会出现：
  *
- * | 槽位 | Material 默认 | ZyNova 新版 | 主要用在哪 |
- * |---|---|---|---|
- * | extraSmall | 4dp | 8dp | 徽章、小块标签 |
- * | small | 8dp | 12dp | 输入框、小按钮 |
- * | medium | 12dp | 16dp | 中等容器 |
- * | large | 16dp | **22dp** | **卡片 / 列表项（全局 113 处引用，影响最大）** |
- * | extraLarge | 28dp | 30dp | 对话框 / 大面板（全局 61 处引用） |
- *
- * ⚠️ 这是一次**全局**改动：`MaterialTheme.shapes.large` 在项目里有 113 处引用、
- * `extraLarge` 有 61 处，改这里等于同时改了绝大部分卡片与对话框的圆角。
- * 之所以敢这么做，是因为项目对圆角的使用高度集中（硬编码 `RoundedCornerShape(...)`
- * 只剩 43 处），而不是散落各处 —— 改这里不会出现「一半圆了一半没圆」的割裂感。
- *
- * 如果某个组件必须保持小圆角，请在使用处显式传 `RoundedCornerShape(...)`，
- * **不要**为了个别组件把这里的槽位调回去。
+ * | 槽位 | 与主圆角的关系 |
+ * |---|---|
+ * | extraSmall | ×0.36 |
+ * | small | ×0.54 |
+ * | medium | ×0.73 |
+ * | large（卡片）| ×1.00 |
+ * | extraLarge（面板/对话框）| ×1.36 |
  */
-val ModernShapes = Shapes(
-    extraSmall = RoundedCornerShape(8.dp),
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(22.dp),
-    extraLarge = RoundedCornerShape(30.dp)
-)
+@Composable
+fun modernShapes(radius: Int = AllSettings.launcherCornerRadius.state): Shapes {
+    val card = radius.dp
+    return Shapes(
+        extraSmall = RoundedCornerShape(card * 0.36f),
+        small = RoundedCornerShape(card * 0.54f),
+        medium = RoundedCornerShape(card * 0.73f),
+        large = RoundedCornerShape(card),
+        extraLarge = RoundedCornerShape(card * 1.36f)
+    )
+}
 
 /**
  * ZyNova 经典形状体系（界面世代 = 旧版）

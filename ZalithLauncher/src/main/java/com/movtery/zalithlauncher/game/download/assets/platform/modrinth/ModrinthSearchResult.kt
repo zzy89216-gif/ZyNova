@@ -253,7 +253,7 @@ class ModrinthSearchResult(
     override fun getAssetsPage(classes: PlatformClasses): AssetsPage {
         val mcmodData = hits.mapNotNull {
             //Fabric API 进入下载黑名单：只能由 Fabric 安装流程自动加入
-            if (ModIdentity.isFabricApiProject(Platform.MODRINTH, it.projectId)) {
+            if (ModIdentity.isProtectedApiProject(Platform.MODRINTH, it.projectId)) {
                 return@mapNotNull null
             }
             it to classes.getTranslations().getModBySlugId(it.slug)

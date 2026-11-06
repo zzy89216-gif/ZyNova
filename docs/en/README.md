@@ -113,7 +113,8 @@ Chinese versions live in [`docs/zh/`](https://github.com/zzy89216-gif/ZyNova/blo
 | [Keyboard](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/controls-keyboard.md) | `controls-keyboard.md` |
 | [Gamepad](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/controls-gamepad.md) | `controls-gamepad.md` |
 | [Theme](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/theme.md) | `theme.md` |
-| [Dynamic glass](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/glass.md) | `glass.md` |
+| [Glass material](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/glass.md) | `glass.md` |
+| [Personalization and glass](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/personalization.md) | `personalization.md` |
 | [Language](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/language.md) | `language.md` |
 | [Task panel](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/task-panel.md) | `task-panel.md` |
 

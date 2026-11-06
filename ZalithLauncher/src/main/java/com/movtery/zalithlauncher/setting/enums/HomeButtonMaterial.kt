@@ -26,13 +26,13 @@ import com.movtery.zalithlauncher.R
  *
  * - [Default]：传统实心材质，性能最好
  * - [Transparent]：半透明底色 + 轻微描边，**默认值**
- * - [LiquidGlass]：毛玻璃 + 边缘折射高光 + 动态流光
+ * - [LiquidGlass]：单色玻璃渐变 + 1px 亮边（无动态流光，27.10.2 起）
  *
  * ⚠️ 液态玻璃必须满足以下约束：
  * - 只能使用 `Haze` / `drawBehind` + `clip`，**禁止 `renderEffect`**，
  *   否则会把文字一起模糊（issue #2 的旧坑）
  * - 文字统一加极淡阴影，保证任何壁纸下清晰
- * - 用户开启「减少动态效果」或关闭全局 [GlassLevel] 时，强制降级为 [Transparent]
+ * - 用户开启「减少动态效果」时，强制降级为 [Transparent]（不再有常驻流光动画）
  *   （降级逻辑见 `ui/components/HomeButtons.kt` 的 `rememberHomeButtonMaterial`）
  */
 enum class HomeButtonMaterial(
@@ -45,6 +45,6 @@ enum class HomeButtonMaterial(
     /** 透明：无模糊的半透明底色 + 轻微描边（默认选项） */
     Transparent(R.string.settings_launcher_home_button_material_transparent),
 
-    /** 液态玻璃：毛玻璃 + 边缘折射高光 + 动态流光 */
+    /** 液态玻璃：单色玻璃渐变 + 1px 亮边 */
     LiquidGlass(R.string.settings_launcher_home_button_material_liquid_glass)
 }

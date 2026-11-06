@@ -116,7 +116,7 @@ object ResourceManager {
         instance: Version
     ): ResourceVersion {
         //手动下载 Fabric API 一律拒绝（由 Fabric 安装流程自动加入）
-        if (ModIdentity.isFabricApiProject(platform, projectId)) {
+        if (ModIdentity.isProtectedApiProject(platform, projectId)) {
             throw ResourceMatchException.Blacklisted()
         }
         return ResourceInstallManager.resolveCompatibleVersion(
@@ -143,7 +143,7 @@ object ResourceManager {
         onProgress: (ResourceDownloadProgress) -> Unit = {}
     ): ResourceInstallResult {
         //兜底：即使调用方绕过 matchVersion，也不允许手动安装 Fabric API
-        if (ModIdentity.isFabricApiProject(version.provider, version.projectId)) {
+        if (ModIdentity.isProtectedApiProject(version.provider, version.projectId)) {
             throw ResourceMatchException.Blacklisted()
         }
         val plan = ResourceInstallManager.buildInstallPlan(

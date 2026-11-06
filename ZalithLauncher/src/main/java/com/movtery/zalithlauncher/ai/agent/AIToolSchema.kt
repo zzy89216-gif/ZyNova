@@ -18,10 +18,12 @@
 
 package com.movtery.zalithlauncher.ai.agent
 
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 
@@ -91,4 +93,68 @@ object AIToolSchema {
         putJsonObject("properties") { }
         put("required", buildJsonArray { })
     }
+
+    /**
+     * 「这一步要做什么」的概括字段
+     *
+     * 27.10.2 起**每个工具都必须带**：模型在调用工具前先用一句人话概括自己的动作，
+     * 界面把它渲染成 `运行命令 · 概括` 的单行提示，而不是把整段工具参数和返回值铺出来。
+     * 这个字段只在本地消费，执行前会被 [stripIntentSummary] 剥掉，不会传给工具实现。
+     */
+    fun intentSummaryField(): JsonObject = string(
+        "一句话概括你**这一次**调用要做什么，用用户能看懂的中文写动作本身" +
+                "（例如「读取设备信息」「在手机里搜索 Fabric API」「把整合包装到 1.20.1」）。" +
+                "不要写工具名、不要复述参数、不要写成问题。"
+    )
+
+    /** 把 [intentSummaryField] 注入任意工具的 parameters Schema（幂等）*/
+    fun JsonObject.withIntentSummaryField(): JsonObject {
+        val properties = this["properties"] as? JsonObject ?: JsonObject(emptyMap())
+        if (properties.containsKey(SUMMARY_KEY)) return this
+
+        val required = (this["required"] as? JsonArray)
+            ?.mapNotNull { (it as? JsonPrimitive)?.contentOrNull }
+            .orEmpty()
+
+        return buildJsonObject {
+            this@withIntentSummaryField.forEach { (key, value) ->
+                if (key != "properties" && key != "required") put(key, value)
+            }
+            putJsonObject("properties") {
+                properties.forEach { (name, schema) -> put(name, schema) }
+                put(SUMMARY_KEY, intentSummaryField())
+            }
+            put("required", buildJsonArray {
+                required.forEach { add(JsonPrimitive(it)) }
+                add(JsonPrimitive(SUMMARY_KEY))
+            })
+        }
+    }
+
+    /**
+     * 从模型给的参数里取出概括
+     *
+     * 老模型 / 中转可能会漏掉这个字段，此时返回空串，界面退化成「工具中文名」。
+     */
+    fun JsonObject.intentSummary(): String =
+        ((this[SUMMARY_KEY] as? JsonPrimitive)?.contentOrNull ?: "").trim()
+
+    /** 剥掉概括字段，得到真正要交给工具实现的参数 */
+    fun JsonObject.stripIntentSummary(): JsonObject =
+        JsonObject(filterKeys { it != SUMMARY_KEY })
+
+    /** 概括字段的参数名 */
+    const val SUMMARY_KEY = "summary"
+
+    /**
+     * 给工具定义补上「必须先写概括」的说明与参数
+     *
+     * 统一在提供给模型的那一层加，工具实现本身不用关心这件事。
+     */
+    fun AIToolSpec.withIntentSummary(): AIToolSpec = copy(
+        description = description +
+                "\n\n调用本工具前必须先想清楚这一步在做什么，" +
+                "并用一句中文写进必填参数 summary；这句话会直接显示给用户当进度提示。",
+        parameters = parameters.withIntentSummaryField()
+    )
 }

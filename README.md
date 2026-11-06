@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-27.10.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.1)
+[![Release](https://img.shields.io/badge/Release-27.10.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2)
 
 **简体中文** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -37,13 +37,14 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 27.10.1 更新要点
+## ✨ 27.10.2 更新要点
 
-- **樱花内网穿透**：多人联机页填入访问密钥就能用——隧道新建 / 编辑 / 删除 / 启停、地址复制一条龙；密钥用 Android Keystore 加密，前台服务负责保活。
-- **新界面**：顶部改成居中的液态玻璃胶囊（主菜单 / AI / 多人 / 下载 / 文件 / 个性化 / 设置），标题留在左侧。
-- **AI 会排版了**：自研 Markdown（标题、列表、表格、代码块、链接），助手消息通栏、用户消息自适应宽度。
-- **陶瓦联机原样保留**，这次没有动它。
-- **测试版**：这是 pre-release，用来验证上面这些新东西。
+- **个性化页**：壁纸、不透明度、背景模糊、卡片圆角、玻璃强度一页调完（顶部胶囊调色盘直达）
+- **玻璃地基重做**：全应用只保留一层背景模糊，删除全部常驻流光动画；卡片统一为单色渐变 + 1px 亮边
+- **AI 对话界面**：工具调用改为单行 `运行命令 · 概括`，原始输出默认收起；模型必须先写一句动作概括
+- **Quilt 保护对齐 Fabric API**：Quilted / Legacy Fabric API 与 Fabric API 一样「搜不到、装不上、删不掉、禁不掉」
+- **修复**：返回键无法返回上一页 / 闪屏、樱花内网穿透输入密钥直接报错、弹窗叠第二层模糊
+- 本版本为**测试版（pre-release）**
 
 ## 🛠️ 它到底会什么（不是 PPT，是真能干）
 

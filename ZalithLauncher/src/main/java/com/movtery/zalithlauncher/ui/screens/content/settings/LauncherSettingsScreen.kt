@@ -21,7 +21,6 @@ package com.movtery.zalithlauncher.ui.screens.content.settings
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -82,9 +81,7 @@ import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
-import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
-import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
@@ -298,78 +295,44 @@ fun LauncherSettingsScreen(
                             valueRange = AllSettings.backgroundBlur.floatRange,
                             suffix = "Dp",
                             enabled = backgroundViewModel.isValid,
-                            fineTuningControl = true,
-                            appendContent = {
-                                val unit = AllSettings.backgroundBlurType
-                                val state = unit.state
-                                IconButton(
-                                    modifier = Modifier
-                                        .padding(start = 12.dp)
-                                        .size(32.dp),
-                                    colors = IconButtonDefaults.iconButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = DisabledAlpha),
-                                        disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = DisabledAlpha),
-                                    ),
-                                    onClick = {
-                                        unit.save(state.switch())
-                                    },
-                                    enabled = backgroundViewModel.isValid,
-                                ) {
-                                    Crossfade(
-                                        targetState = state
-                                    ) { target ->
-                                        val painter = when (target) {
-                                            BackgroundBlur.Background -> painterResource(R.drawable.ic_blur_circular_outlined)
-                                            BackgroundBlur.Foreground -> painterResource(R.drawable.ic_blur_circular_filled)
-                                        }
-                                        Icon(
-                                            painter = painter,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            }
+                            fineTuningControl = true
                         )
 
-                        //玻璃效果：关闭 / 启用动态玻璃
-                        //27.3.0 起移除了「强效动态玻璃」档与配套的光敏性警告
+                        //玻璃强度：27.10.2 起玻璃不再是一个开关，而是全局统一的单色材质
+                        IntSliderSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Middle,
+                            unit = AllSettings.codexGlassStrength,
+                            title = stringResource(R.string.settings_launcher_glass_strength_title),
+                            summary = stringResource(R.string.settings_launcher_glass_strength_summary),
+                            valueRange = AllSettings.codexGlassStrength.floatRange,
+                            suffix = "%",
+                            fineTuningControl = true
+                        )
+
+                        IntSliderSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Middle,
+                            unit = AllSettings.launcherCornerRadius,
+                            title = stringResource(R.string.settings_launcher_corner_radius_title),
+                            summary = stringResource(R.string.settings_launcher_corner_radius_summary),
+                            valueRange = AllSettings.launcherCornerRadius.floatRange,
+                            suffix = "Dp",
+                            fineTuningControl = true
+                        )
+
+                        //议题 #33：首页按钮材质（默认 / 透明 / 液态玻璃）
                         EnumSettingsCard(
                             modifier = Modifier.fillMaxWidth(),
-                            //开启动态玻璃时下面还有「首页按钮材质」，这时它是中间卡；
-                            //关闭时它就是这一组的最后一张，自己收底
-                            position = if (AllSettings.glassLevel.state == GlassLevel.On) {
-                                CardPosition.Middle
-                            } else {
-                                CardPosition.Bottom
-                            },
-                            value = AllSettings.glassLevel.state,
-                            entries = GlassLevel.entries,
-                            title = stringResource(R.string.settings_launcher_liquid_glass_title),
-                            summary = stringResource(R.string.settings_launcher_liquid_glass_summary),
+                            position = CardPosition.Bottom,
+                            unit = AllSettings.homeButtonMaterial,
+                            entries = HomeButtonMaterial.entries,
+                            title = stringResource(R.string.settings_launcher_home_button_material_title),
+                            summary = stringResource(R.string.settings_launcher_home_button_material_summary),
                             getRadioText = { stringResource(it.textRes) },
-                            getRadioEnable = { backgroundViewModel.isValid },
-                            onRadioClick = { level ->
-                                AllSettings.glassLevel.save(level)
-                            }
+                            getRadioEnable = { true },
+                            maxItemsInEachRow = 3
                         )
-
-                        //议题 #33 / 反馈：首页按钮材质只在开启「动态玻璃」后有意义的，
-                        //关掉玻璃时这一项完全不出现，避免用户以为「材质没生效」。
-                        if (AllSettings.glassLevel.state == GlassLevel.On) {
-                            EnumSettingsCard(
-                                modifier = Modifier.fillMaxWidth(),
-                                position = CardPosition.Bottom,
-                                unit = AllSettings.homeButtonMaterial,
-                                entries = HomeButtonMaterial.entries,
-                                title = stringResource(R.string.settings_launcher_home_button_material_title),
-                                summary = stringResource(R.string.settings_launcher_home_button_material_summary),
-                                getRadioText = { stringResource(it.textRes) },
-                                getRadioEnable = { true },
-                                maxItemsInEachRow = 3
-                            )
-                        }
 
 
                     }

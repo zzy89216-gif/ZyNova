@@ -64,6 +64,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,6 +87,7 @@ import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.conversation.AIConversationMeta
 import com.movtery.zalithlauncher.ai.model.AIMessage
+import com.movtery.zalithlauncher.ai.model.AIToolResult
 import com.movtery.zalithlauncher.ai.model.AIRole
 import com.movtery.zalithlauncher.ai.provider.AIProviderType
 import com.movtery.zalithlauncher.game.version.installed.Version
@@ -662,17 +664,6 @@ private fun MessageBubble(message: AIMessage) {
             if (message.text.isNotBlank()) {
                 ZyMarkdown(content = message.text)
             }
-            if (message.toolCalls.isNotEmpty()) {
-                Text(
-                    modifier = Modifier.padding(top = if (message.text.isBlank()) 0.dp else 6.dp),
-                    text = stringResource(
-                        R.string.ai_tool_calls,
-                        message.toolCalls.joinToString(", ") { it.name }
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
             message.error?.let {
                 Text(
                     modifier = Modifier.padding(top = 6.dp),
@@ -695,49 +686,91 @@ private fun MessageBubble(message: AIMessage) {
         }
 
         AIRole.TOOL -> message.toolResults.forEach { result ->
-            Bubble(
-                color = when {
-                    result.running -> MaterialTheme.colorScheme.surfaceVariant
-                    result.isError -> MaterialTheme.colorScheme.errorContainer
-                    else -> MaterialTheme.colorScheme.secondaryContainer
-                },
-                alignEnd = false
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (result.running) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(12.dp),
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(Modifier.width(6.dp))
-                    }
-                    Text(
-                        text = "🔧 ${result.name}" +
-                                if (result.writeOperation) " · " + stringResource(R.string.ai_tool_write) else "",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                if (result.running) {
-                    Text(
-                        modifier = Modifier.padding(top = 2.dp),
-                        text = stringResource(R.string.ai_tool_running),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                } else {
-                    Text(
-                        modifier = Modifier.padding(top = 2.dp),
-                        text = result.content.take(1500),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+            //27.10.2：不再把工具名 + 整段参数 + 返回值铺成一张大卡片。
+            //只留一行「运行命令 · 模型写的概括」，点一下才展开原始输出，
+            //这样一眼扫过去是「AI 做了什么」，而不是一屏日志。
+            ToolCommandRow(result)
         }
 
         AIRole.SYSTEM -> Unit
     }
 }
+
+/**
+ * 工具调用行（27.10.2 的 AI 界面基线）
+ *
+ * 视觉上刻意**没有卡片、没有渐变、没有边框**：一行灰字前缀 + 一行正文，
+ * 与 Codex 的「运行命令 · xxx」保持一致，信息密度低、扫读成本低。
+ *
+ * - 运行中：前缀 + 小转圈
+ * - 失败：整行用 error 色，一眼能看出来哪一步炸了
+ * - 默认收起原始输出，点一下才展开（长输出不会把对话顶飞）
+ */
+@Composable
+private fun ToolCommandRow(result: AIToolResult) {
+    var expanded by rememberSaveable(result.toolCallId) { mutableStateOf(false) }
+    val color = when {
+        result.isError -> MaterialTheme.colorScheme.error
+        else -> MaterialTheme.colorScheme.onSurface
+    }
+    val prefixColor = if (result.isError) color.copy(alpha = 0.85f)
+    else MaterialTheme.colorScheme.onSurfaceVariant
+    val canExpand = !result.running && result.content.isNotBlank()
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(enabled = canExpand) { expanded = !expanded }
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.ai_tool_run_command),
+                style = MaterialTheme.typography.labelMedium,
+                color = prefixColor
+            )
+            Text(
+                text = " · ",
+                style = MaterialTheme.typography.labelMedium,
+                color = prefixColor
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = result.summary.ifBlank { humanizeToolName(result.name) },
+                style = MaterialTheme.typography.bodyMedium,
+                color = color,
+                maxLines = if (expanded) Int.MAX_VALUE else 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (result.running) {
+                Spacer(Modifier.width(8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(12.dp),
+                    strokeWidth = 1.5.dp
+                )
+            }
+        }
+
+        if (expanded && canExpand) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 2.dp, top = 2.dp, bottom = 6.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                text = result.content.take(4000),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+/** 工具名兜底展示：`get_device_info` → `get device info` */
+private fun humanizeToolName(name: String): String = name.replace('_', ' ')
 
 @Composable
 private fun ThinkingRow() {
@@ -749,27 +782,6 @@ private fun ThinkingRow() {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-    }
-}
-
-@Composable
-private fun Bubble(
-    color: Color,
-    alignEnd: Boolean,
-    content: @Composable () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (alignEnd) Arrangement.End else Arrangement.Start
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(0.86f),
-            color = color,
-            shape = MaterialTheme.shapes.large,
-            tonalElevation = 2.dp
-        ) {
-            Column(modifier = Modifier.padding(10.dp)) { content() }
-        }
     }
 }
 

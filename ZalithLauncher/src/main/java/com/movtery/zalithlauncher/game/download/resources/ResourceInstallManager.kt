@@ -322,7 +322,7 @@ object ResourceInstallManager {
     ): ResourceInstallPlan {
         // Fabric API 只能作为 Fabric 安装流程的自动前置加入；
         // 手动安装会和自动加入的那一份形成两个副本（议题反馈）
-        if (ModIdentity.isFabricApiProject(version.provider, version.projectId)) {
+        if (ModIdentity.isProtectedApiProject(version.provider, version.projectId)) {
             throw ResourceMatchException.Blacklisted()
         }
 
@@ -359,7 +359,7 @@ object ResourceInstallManager {
                 installedModsLoaded = true
                 installedFabricApi = runCatching {
                     AllModReader(targetFolder).readAllLocals()
-                        .firstOrNull { ModIdentity.isFabricApi(it) }
+                        .firstOrNull { ModIdentity.isProtectedApi(it) }
                 }.onFailure { e ->
                     Logger.warning(TAG, "Failed to scan installed mods for Fabric API", e)
                 }.getOrNull()
@@ -407,7 +407,7 @@ object ResourceInstallManager {
 
             //③ 受保护依赖 Fabric API：按元数据 ID 找到已安装的副本，
             //   并确认它与当前实例兼容后才跳过 —— 不能把所有 Fabric API 版本都当成兼容
-            if (ModIdentity.isFabricApiProject(current.provider, current.projectId)) {
+            if (ModIdentity.isProtectedApiProject(current.provider, current.projectId)) {
                 val installed = findInstalledFabricApi()
                 if (installed != null) {
                     //防呆：实例里只允许一份 Fabric API。

@@ -59,16 +59,36 @@ private data class TerracottaNode(
 @Volatile
 private var nodeList: List<URI>? = null
 
+/** 缓存写入时间（毫秒）；0 表示没有缓存 */
+@Volatile
+private var nodeListFetchedAt: Long = 0L
+
+/**
+ * 节点列表缓存有效期
+ *
+ * 27.10.2（议题 #42）：原来 `fetchNodes()` 一旦成功就**永久**缓存，
+ * 后果是「官方节点列表更新了 / 某节点下线了，用户必须杀进程才能拿到新列表」。
+ * 现在改成 10 分钟后允许重新拉取，单次联机里依然只请求一次，不会增加开销。
+ */
+private const val NODE_CACHE_TTL_MS = 10 * 60 * 1000L
+
 private val fetchMutex = Mutex()
+
+/** 判断当前缓存是否仍然有效 */
+private fun isCacheValid(): Boolean {
+    val cached = nodeList ?: return false
+    if (cached.isEmpty()) return false
+    return System.currentTimeMillis() - nodeListFetchedAt < NODE_CACHE_TTL_MS
+}
 
 /**
  * [Reference HMCL](https://github.com/HMCL-dev/HMCL/blob/a70b8d7/HMCL/src/main/java/org/jackhuang/hmcl/terracotta/TerracottaNodeList.java)
  */
 suspend fun fetchNodes(): List<URI> {
-    nodeList?.let { return it }
+    if (isCacheValid()) return nodeList!!
 
     return fetchMutex.withLock {
-        nodeList?.let { return it }
+        if (isCacheValid()) return nodeList!!
 
         if (AllSettings.enableTerracottaNodes.getValue()) {
             // 使用自定义的 EasyTier 服务器节点
@@ -76,6 +96,7 @@ suspend fun fetchNodes(): List<URI> {
             if (url.isNotEmptyOrBlank()) {
                 val tempList = listOf(URI(url))
                 nodeList = tempList
+                nodeListFetchedAt = System.currentTimeMillis()
                 return tempList
             }
             // 为空则继续使用默认的节点逻辑
@@ -85,6 +106,7 @@ suspend fun fetchNodes(): List<URI> {
             fetchNodesFromRemote()
         }.also { result ->
             nodeList = result
+            nodeListFetchedAt = System.currentTimeMillis()
         }
     }
 }

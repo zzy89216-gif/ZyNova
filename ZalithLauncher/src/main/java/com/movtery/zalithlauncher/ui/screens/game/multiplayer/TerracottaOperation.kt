@@ -126,6 +126,9 @@ fun TerracottaOperation(
                         }.onFailure { e ->
                             Logger.warning(TAG, "Error occurred at \"Terracotta.setScanning(null, userName)\", message = ${e.message}")
                             viewModel.isWaitingInteractive = true
+                            //失败引导：陶瓦建房失败最常见的原因就是「游戏里还没对局域网开放」，
+                            //只弹一句原始异常用户根本不知道该干什么
+                            onShowToast(androidText(R.string.terracotta_error_host_hint), Toast.LENGTH_LONG)
                         }
                     }
                 },
@@ -152,6 +155,7 @@ fun TerracottaOperation(
                         }.onFailure { e ->
                             Logger.warning(TAG, "Error occurred at \"Terracotta.setGuesting(roomCode, userName)\", message = ${e.message}")
                             viewModel.isWaitingInteractive = true
+                            onShowToast(androidText(R.string.terracotta_error_guest_hint), Toast.LENGTH_LONG)
                         }
                     }
                 },

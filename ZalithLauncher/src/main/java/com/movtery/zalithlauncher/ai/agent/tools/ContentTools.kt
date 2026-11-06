@@ -98,7 +98,7 @@ internal fun contentTools(): List<AITool> = listOf(
         //Fabric API 是受保护的前置依赖，不允许通过 AI 禁用
         val targetMod = AllModReader(modsDir).readAllLocals()
             .firstOrNull { it.file.absolutePath == target.absolutePath }
-        if (!enabled && targetMod != null && ModIdentity.isFabricApi(targetMod)) {
+        if (!enabled && targetMod != null && ModIdentity.isProtectedApi(targetMod)) {
             throw IllegalStateException(
                 "Fabric API 是受保护的前置依赖，不能禁用。它必须保持启用，缺失或停用都会让大量模组无法工作。"
             )

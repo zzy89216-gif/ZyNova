@@ -48,6 +48,15 @@ sealed interface NormalNavKey : TitledNavKey {
     @Serializable data object AIChat : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.ai_title)
     }
+    /**
+     * 个性化屏幕（议题 #42 · 任务 2）
+     *
+     * 把最高频的观感调整（壁纸 / 不透明度 / 模糊 / 圆角 / 玻璃强度）从设置里提出来，
+     * 顶部胶囊的调色盘入口直接落到这个页面。
+     */
+    @Serializable data object Personalization : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.personalization_title)
+    }
     /** 收藏与本地归档屏幕（议题 #39） */
     @Serializable data object Favorites : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.favorites_title)

@@ -1145,6 +1145,16 @@
     <string name="settings_launcher_background_video_volume_summary">背景内容是视频时，可以通过这个选项调整音量</string>
     <string name="settings_launcher_background_blur_summary">调整背景的模糊效果，此选项较为消耗性能</string>
     <string name="settings_launcher_liquid_glass_title">液态玻璃效果</string>
+    <string name="personalization_title">个性化</string>
+    <string name="personalization_wallpaper_title">壁纸</string>
+    <string name="personalization_wallpaper_summary_set">点一下更换当前的背景图片或视频</string>
+    <string name="personalization_wallpaper_summary_empty">还没有设置壁纸，点一下选择</string>
+    <string name="personalization_more_settings">更多设置</string>
+    <string name="personalization_more_settings_summary">主题、语言、全屏等低频选项都在这里</string>
+    <string name="settings_launcher_glass_strength_title">玻璃强度</string>
+    <string name="settings_launcher_glass_strength_summary">调整单色玻璃渐变的强度，调低更接近纯色，调高玻璃感更强</string>
+    <string name="settings_launcher_corner_radius_title">卡片圆角</string>
+    <string name="settings_launcher_corner_radius_summary">调整启动器卡片与面板的圆角大小</string>
     <string name="settings_launcher_glass_level_off">关闭</string>
     <string name="settings_launcher_glass_level_on">启用动态玻璃</string>
     <string name="settings_launcher_liquid_glass_summary">在毛玻璃之上叠加缓慢流动的高光与折射光晕，呈现 iOS 26 风格液态玻璃质感</string>
@@ -1585,6 +1595,7 @@
     <string name="ai_confirm_allow">允许</string>
     <string name="ai_confirm_deny">拒绝</string>
     <string name="ai_tool_calls">调用了工具：%1$s</string>
+    <string name="ai_tool_run_command">运行命令</string>
     <string name="ai_thinking">正在思考…</string>
     <string name="ai_welcome">它不是只会聊天——装游戏本体、装整合包、装模组、改设置、修崩溃，全都直接替你动手做。</string>
     <string name="ai_welcome_hint">直接下命令：「装个 1.20.1 Fabric，再装个 Sodium」</string>

@@ -33,6 +33,9 @@
     <string name="terracotta_status_waiting_guest_desc">输入房主提供的邀请码加入游戏世界</string>
     <string name="terracotta_status_waiting_guest_prompt_title">请输入房主提供的邀请码</string>
     <string name="terracotta_status_waiting_guest_prompt_invalid">错误的邀请码</string>
+    <string name="terracotta_room_code_normalized">已自动整理为 %1$s</string>
+    <string name="terracotta_error_host_hint">创建房间失败：请确认游戏内已「对局域网开放」，然后重试</string>
+    <string name="terracotta_error_guest_hint">加入房间失败：请确认房间码未过期、网络可用，然后重试</string>
     <string name="terracotta_status_waiting_guest_prompt_terracotta_legacy">旧版本的陶瓦联机邀请码</string>
     <string name="terracotta_status_waiting_guest_prompt_pcl2ce">旧版本的 PCL CE 邀请码</string>
     <string name="terracotta_status_waiting_guest_prompt_scaffolding">Scaffolding 邀请码</string>

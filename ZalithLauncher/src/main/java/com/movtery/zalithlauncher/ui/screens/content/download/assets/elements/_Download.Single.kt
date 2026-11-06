@@ -214,13 +214,13 @@ private fun DownloadDialog(
         val dependencies = remember(dependencyProjects) {
             dependencyProjects.filter {
                 it.first.type == PlatformDependencyType.REQUIRED &&
-                        !ModIdentity.isFabricApiProject(it.first.platform, it.first.projectId)
+                        !ModIdentity.isProtectedApiProject(it.first.platform, it.first.projectId)
             }
         }
         val optionals = remember(dependencyProjects) {
             dependencyProjects.filter {
                 it.first.type == PlatformDependencyType.OPTIONAL &&
-                        !ModIdentity.isFabricApiProject(it.first.platform, it.first.projectId)
+                        !ModIdentity.isProtectedApiProject(it.first.platform, it.first.projectId)
             }
         }
         val hasDeps = dependencies.isNotEmpty() || optionals.isNotEmpty()

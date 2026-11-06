@@ -40,8 +40,8 @@ import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
  * - 深色主题用白色低透明度叠加，浅色主题用黑色低透明度叠加，保证单色观感；
  * - 圆角默认 28dp（面板级），按钮/胶囊可传更小的 [shape]。
  *
- * 注意：这里刻意不读取 `GlassLevel` —— 「动态玻璃」概念已废弃，
- * 玻璃质感是全局统一的基础材质，不再是一个可开关的特效。
+ * 注意：27.10.2 起「动态玻璃」概念完全移除，玻璃质感是全局统一的基础材质，
+ * 不再是可开关的特效，也不再有任何常驻动画。强度由「玻璃强度」设置项驱动。
  */
 @Composable
 fun Modifier.codexGlass(

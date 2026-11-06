@@ -39,7 +39,7 @@ import com.movtery.zalithlauncher.R
  * 实现位置：字阶与形状分别见
  * [com.movtery.zalithlauncher.ui.theme.ModernTypography] /
  * [com.movtery.zalithlauncher.ui.theme.ClassicTypography] 与
- * [com.movtery.zalithlauncher.ui.theme.ModernShapes] /
+ * [com.movtery.zalithlauncher.ui.theme.modernShapes] /
  * [com.movtery.zalithlauncher.ui.theme.ClassicShapes]。
  */
 enum class UiGeneration(

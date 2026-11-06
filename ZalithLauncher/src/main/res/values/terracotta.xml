@@ -33,6 +33,9 @@
     <string name="terracotta_status_waiting_guest_desc">Enter the invite code from the host player to join the game world</string>
     <string name="terracotta_status_waiting_guest_prompt_title">Please enter the invite code from the host</string>
     <string name="terracotta_status_waiting_guest_prompt_invalid">Invalid invite code</string>
+    <string name="terracotta_room_code_normalized">Room code normalized to %1$s</string>
+    <string name="terracotta_error_host_hint">Could not create the room. Make sure you have opened the world to LAN in game, then try again.</string>
+    <string name="terracotta_error_guest_hint">Could not join the room. Check the room code and your network, then try again.</string>
     <string name="terracotta_status_waiting_guest_prompt_terracotta_legacy">Legacy Terracotta Invite Code</string>
     <string name="terracotta_status_waiting_guest_prompt_pcl2ce">Legacy PCL CE Invite Code</string>
     <string name="terracotta_status_waiting_guest_prompt_scaffolding">Scaffolding Invite Code</string>

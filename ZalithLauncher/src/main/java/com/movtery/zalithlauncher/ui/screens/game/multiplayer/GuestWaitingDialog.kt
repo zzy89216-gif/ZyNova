@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.terracotta.RoomCode
 import com.movtery.zalithlauncher.terracotta.Terracotta
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
@@ -72,25 +73,51 @@ private fun InviteCodeInputDialog(
 ) {
     var code by remember { mutableStateOf("") }
 
+    /** 输入归一化结果：全角/空格/连字符/前缀都会被整理成标准房间码 */
+    val normalized = remember(code) { RoomCode.normalizeInput(code) }
+
+    /** 自动整理后的提示文案（stringResource 必须在 composable 作用域里取，不能塞进 remember）*/
+    val normalizedHint = stringResource(R.string.terracotta_room_code_normalized, normalized)
+
+    /**
+     * 原生解析（协议的权威判定）
+     *
+     * 先用用户原始输入，失败再用归一化后的结果 —— 这样「u/abcd efgh-...」这类
+     * 粘贴过来的脏数据也能直接加入，而不是逼用户自己删空格。
+     */
+    val roomType = remember(code) {
+        Terracotta.parseRoomCode(code) ?: Terracotta.parseRoomCode(normalized)
+    }
+
     /** 验证不通过时 */
-    var isError by remember { mutableStateOf(false) }
-    val supportingText: AndroidStringText? = remember(code) {
+    val isError = code.isNotEmpty() && roomType == null
+
+    val supportingText: AndroidStringText? = remember(code, roomType, normalized, normalizedHint) {
         if (code.isEmpty()) {
-            //还未填写内容
-            isError = false
             return@remember null
         }
 
-        val type = Terracotta.parseRoomCode(code)
-        when (type) {
+        if (roomType == null) {
+            return@remember androidText(R.string.terracotta_status_waiting_guest_prompt_invalid)
+        }
+
+        val typeText: AndroidStringText? = when (roomType) {
             TerracottaAndroidAPI.RoomType.TERRACOTTA_LEGACY -> androidText(R.string.terracotta_status_waiting_guest_prompt_terracotta_legacy)
             TerracottaAndroidAPI.RoomType.PCL2CE -> androidText(R.string.terracotta_status_waiting_guest_prompt_pcl2ce)
             TerracottaAndroidAPI.RoomType.SCAFFOLDING -> androidText(R.string.terracotta_status_waiting_guest_prompt_scaffolding)
             else -> null
-        }.also { text ->
-            //根据是否检测出对应格式判断
-            isError = text == null
-        } ?: androidText(R.string.terracotta_status_waiting_guest_prompt_invalid)
+        }
+
+        //输入被自动整理过时，把整理结果告诉用户，避免「我明明粘的是对的」这种疑惑
+        if (normalized != code.trim() && RoomCode.digitsOf(normalized) != null) {
+            if (typeText != null) {
+                androidText(typeText, androidText("\n"), androidText(normalizedHint))
+            } else {
+                androidText(normalizedHint)
+            }
+        } else {
+            typeText
+        }
     }
 
     SimpleEditDialog(
@@ -99,7 +126,7 @@ private fun InviteCodeInputDialog(
         onValueChange = { value ->
             code = value
         },
-        label = (@Composable { Text(text = "U/XXXX-XXXX-XXXX-XXXX") }).takeIf { code.isEmpty() },
+        label = (@Composable { Text(text = RoomCode.PLACEHOLDER) }).takeIf { code.isEmpty() },
         supportingText = supportingText?.let { text ->
             {
                 AndroidStringText(text = text)
@@ -108,10 +135,11 @@ private fun InviteCodeInputDialog(
         singleLine = true,
         isError = isError,
         onConfirm = {
-            if (isError || code.isEmptyOrBlank() || Terracotta.parseRoomCode(code) == null) {
+            val candidate = normalized.ifBlank { code.trim() }
+            if (code.isEmptyOrBlank() || roomType == null) {
                 onShowToast(androidText(R.string.terracotta_status_waiting_guest_prompt_invalid))
             } else {
-                onPositive(code)
+                onPositive(candidate)
                 onDismiss()
             }
         },

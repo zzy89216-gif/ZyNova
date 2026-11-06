@@ -113,7 +113,8 @@
 | [键盘](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/controls-keyboard.md) | `controls-keyboard.md` |
 | [手柄](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/controls-gamepad.md) | `controls-gamepad.md` |
 | [主题与外观](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/theme.md) | `theme.md` |
-| [动态玻璃](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/glass.md) | `glass.md` |
+| [玻璃材质](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/glass.md) | `glass.md` |
+| [个性化与玻璃氛围](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/personalization.md) | `personalization.md` |
 | [语言](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/language.md) | `language.md` |
 | [任务面板](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/task-panel.md) | `task-panel.md` |
 

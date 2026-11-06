@@ -49,7 +49,7 @@ class CurseForgeSearchResult(
         val mcmodData = data.mapNotNull { data0 ->
             if (!data0.isApproved()) return@mapNotNull null
             //Fabric API 进入下载黑名单：只能由 Fabric 安装流程自动加入
-            if (ModIdentity.isFabricApiProject(Platform.CURSEFORGE, data0.platformId())) {
+            if (ModIdentity.isProtectedApiProject(Platform.CURSEFORGE, data0.platformId())) {
                 return@mapNotNull null
             }
             data0 to classes.getTranslations().getModBySlugId(data0.slug)

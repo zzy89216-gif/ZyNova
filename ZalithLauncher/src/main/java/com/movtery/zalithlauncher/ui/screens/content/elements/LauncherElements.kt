@@ -21,12 +21,6 @@ package com.movtery.zalithlauncher.ui.screens.content.elements
 import android.app.Activity
 import android.net.Uri
 import android.os.Parcelable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -55,15 +49,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
@@ -89,9 +81,8 @@ import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.hasVulkanBackend
 import com.movtery.zalithlauncher.game.version.installed.utils.isBiggerVer
 import com.movtery.zalithlauncher.game.version.installed.utils.isLowerVer
-import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.AllSettings
-import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
+import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.MarqueeText
@@ -114,16 +105,12 @@ import com.movtery.zalithlauncher.viewmodel.LaunchGameViewModel
 import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.sendToast
 import dev.chrisbanes.haze.HazeInput
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
-import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.io.File
-import kotlin.math.sqrt
 
 @Parcelize
 sealed interface QuickPlay : Parcelable {
@@ -561,10 +548,7 @@ fun Background(
             //议题 #38：恒定的一层底色。视频首帧出来之前、以及首页半透明背景下，
             //这一层始终与 Compose 的背景色一致，不会再透出窗口的白底/黑底。
             .background(backgroundColor())
-            .backgroundBlur(
-                blur = AllSettings.backgroundBlur.state,
-                hazeState = viewModel.hazeState,
-            )
+            .backgroundBlur(AllSettings.backgroundBlur.state)
     ) {
         if (viewModel.isValid) {
             when {
@@ -588,181 +572,71 @@ fun Background(
     }
 }
 
+/**
+ * 背景层模糊 —— 全应用**唯一**的一层模糊
+ *
+ * 27.10.2 起「动态玻璃」与「逐元素背景模糊」两套机制都已移除：
+ * 背景只在这里模糊一次，卡片/按钮统一用 [backgroundGlass]（Codex 单色玻璃）表达质感。
+ * 因此滚动、拖动、翻页时都不会触发背景重建，也没有任何常驻动画。
+ *
+ * 背景不透明度拉满（100%）时整层完全不透明，模糊根本看不见 → 直接跳过，省一次全屏模糊。
+ */
 @Composable
-private fun Modifier.backgroundBlur(
-    blur: Int,
-    hazeState: HazeState,
-): Modifier {
-    return when (AllSettings.backgroundBlurType.state) {
-        BackgroundBlur.Background -> this.glass(blur, null, null)
-        BackgroundBlur.Foreground -> this.hazeSource(hazeState)
-    }
+private fun Modifier.backgroundBlur(blur: Int): Modifier {
+    if (blur <= 0 || AllSettings.launcherBackgroundOpacity.state >= 100) return this
+    val radius = remember(blur) { effectiveBlurRadius(blur) }
+    return this.hazeBlur(
+        input = HazeInput.Content,
+        style = HazeBlurStyle {
+            blurEnabled(true)
+            blurRadius(radius.dp)
+        }
+    )
 }
 
 /**
- * 背景模糊效果
- * @param enabled 是否应用模糊效果
+ * 背景模糊半径上限：默认 24dp，低端设备（核心数 ≤ 4）自动降到 12dp
+ */
+private fun effectiveBlurRadius(requested: Int): Int {
+    val cap = if (Runtime.getRuntime().availableProcessors() <= 4) 12 else 24
+    return requested.coerceAtMost(cap)
+}
+
+/**
+ * 卡片 / 面板的玻璃材质（沿用旧函数名，内部已换成 Codex 单色玻璃）
+ *
+ * 不再做逐元素模糊：调用点都已经在 `Surface` / `Card`（或显式 `clip(shape)`）内部，
+ * 所以这里只叠加「竖直低透明度渐变 + 1px 亮边」，滚动时零额外开销。
+ * 深色主题用白色系、浅色主题用黑色系，保证任何壁纸下都是单色、低信息密度。
+ *
+ * @param blur 已废弃：卡片不再独立模糊，参数仅为兼容旧调用点保留
+ * @param color 已废弃：底色由调用方的 `Surface` / `Card` 提供
+ * @param enabled 是否启用玻璃材质（跟随「受背景影响」开关）
  */
 @Composable
+@Suppress("UNUSED_PARAMETER")
 fun Modifier.backgroundGlass(
     blur: Int,
     color: Color,
     enabled: Boolean = true,
 ): Modifier {
-    if (AllSettings.backgroundBlurType.state == BackgroundBlur.Background) return this
     if (!enabled) return this
-    val background = LocalBackgroundViewModel.current?.takeIf { it.isValid } ?: return this
-    return this.glass(blur, color, background.hazeState)
-}
 
-/**
- * 背景模糊效果
- */
-@Composable
-private fun Modifier.glass(
-    blur: Int,
-    color: Color?,
-    hazeState: HazeState?,
-): Modifier {
-    if (blur <= 0 || AllSettings.launcherBackgroundOpacity.state >= 100) return this
+    val strength = AllSettings.codexGlassStrength.state / 100f
+    if (strength <= 0.0001f) return this
 
-    val t = remember(blur) {
-        (blur / 80f).coerceIn(0f, 1f)
-    }
+    val dark = isLauncherInDarkTheme()
+    val base = if (dark) Color.White else Color.Black
+    val edge = base.copy(alpha = if (dark) 0.10f else 0.08f)
 
-    val noiseFactor = remember(t) {
-        lerp(
-            start = 0.3f,
-            stop = 0.25f,
-            fraction = sqrt(t)
+    return this.drawBehind {
+        drawRect(
+            brush = Brush.verticalGradient(
+                listOf(base.copy(alpha = strength), base.copy(alpha = strength * 0.45f))
+            )
         )
+        drawRect(color = edge, style = Stroke(width = 1.dp.toPx()))
     }
-    val colorEffects = remember(t, color) {
-        val whiteAlpha = lerp(
-            start = 0f,
-            stop = 0.25f,
-            fraction = sqrt(t)
-        )
-        buildList {
-            if (color != null) {
-                add(HazeColorEffect.tint(color, BlendMode.SrcOver))
-            }
-            add(HazeColorEffect.tint(Color.White.copy(alpha = whiteAlpha), BlendMode.Softlight))
-        }
-    }
-
-    // null 表示没有外部模糊源（背景模式），直接模糊自身内容
-    val input = if (hazeState != null) HazeInput.Sources(hazeState) else HazeInput.Content
-
-    val glassLevel = AllSettings.glassLevel.state
-
-    val blurred = this.hazeBlur(
-        input = input,
-        style = HazeBlurStyle {
-            blurEnabled(true)
-            blurRadius(blur.dp)
-            noiseFactor(noiseFactor)
-            colorEffects(colorEffects)
-        }
-    )
-
-    //玻璃效果：默认关闭；开启后叠加流动的动态高光（27.3.0 起只保留「关闭 / 启用」两档）
-    //开启「减少动态效果」时一律退化为静态毛玻璃：这是全应用唯一常驻的无限动画，
-    //对动效敏感的用户不应该为了关掉它而被迫放弃整个玻璃质感
-    val reduceMotion = AllSettings.launcherReduceMotion.state
-    return when (glassLevel) {
-        GlassLevel.Off -> blurred
-        GlassLevel.On -> if (reduceMotion) blurred else blurred.liquidGlassHighlights()
-    }
-}
-
-/**
- * 液态玻璃动态高光效果
- *
- * 在毛玻璃模糊的基础上，叠加流动的高光与折射光晕，
- * 模拟 iOS 26 风格的液态玻璃质感。
- *
- * 只有「启用动态玻璃」档位才会叠加这一层；「关闭」档位完全不叠加，
- * 从而避免持续的高 GPU 负载。
- *
- * ⚠️ 27.3.0 起**不再有「强效」档**。这里刻意只保留两束**缓慢**流动的对角高光
- * （9000ms / 13000ms），既没有快速闪烁，也没有整体明暗脉动，
- * 因此不需要配套光敏性警告。修改本函数时请保持这一性质：
- * 一旦引入持续明暗变化，就必须同时补回光敏性警告与「减少动态效果」的强制降级。
- *
- * 注意：这里只用 `drawBehind` 画渐变高光，**不碰 renderEffect**，
- * 所以不会重现旧「极致」档把文字一起模糊的问题（issue #2）。
- */
-@Composable
-private fun Modifier.liquidGlassHighlights(): Modifier {
-    val transition = rememberInfiniteTransition(label = "liquidGlassHighlights")
-
-    // 主高光条沿对角线流动
-    val highlightShift by transition.animateFloat(
-        initialValue = -1f,
-        targetValue = 2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 9000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "liquidGlassHighlightShift"
-    )
-
-    // 次级高光反向流动，营造折射层次
-    val secondaryShift by transition.animateFloat(
-        initialValue = 2f,
-        targetValue = -1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 13000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "liquidGlassSecondaryShift"
-    )
-
-    return this.drawGlassHighlights(highlightShift, secondaryShift)
-}
-
-/**
- * 绘制玻璃高光带（「启用动态玻璃」档位使用）
- */
-private fun Modifier.drawGlassHighlights(
-    primaryShift: Float,
-    secondaryShift: Float
-): Modifier = this.drawBehind {
-    val w = size.width
-    val h = size.height
-    val diagonal = w + h
-
-    // 主高光带
-    val primaryStart = Offset(primaryShift * diagonal - w, -h)
-    val primaryEnd = Offset(primaryShift * diagonal + w, h)
-    drawRect(
-        brush = Brush.linearGradient(
-            colors = listOf(
-                Color.Transparent,
-                Color.White.copy(alpha = 0.35f),
-                Color.White.copy(alpha = 0.10f),
-                Color.Transparent
-            ),
-            start = primaryStart,
-            end = primaryEnd
-        )
-    )
-
-    // 次级折射高光带
-    val secondaryStart = Offset(secondaryShift * diagonal - w, -h)
-    val secondaryEnd = Offset(secondaryShift * diagonal + w, h)
-    drawRect(
-        brush = Brush.linearGradient(
-            colors = listOf(
-                Color.Transparent,
-                Color.White.copy(alpha = 0.16f),
-                Color.Transparent
-            ),
-            start = secondaryStart,
-            end = secondaryEnd
-        )
-    )
 }
 
 @Composable

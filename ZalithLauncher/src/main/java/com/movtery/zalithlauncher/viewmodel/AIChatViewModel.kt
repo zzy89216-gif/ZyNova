@@ -247,6 +247,7 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
                                             name = event.call.name,
                                             content = "",
                                             running = true,
+                                            summary = event.call.summary,
                                         )
                                     ),
                                 )

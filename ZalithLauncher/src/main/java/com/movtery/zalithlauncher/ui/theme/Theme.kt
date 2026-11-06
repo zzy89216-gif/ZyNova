@@ -698,7 +698,7 @@ fun ZalithLauncherTheme(
             colorScheme = currentDisplayScheme,
             motionScheme = motionScheme,
             //字阶与形状都随界面世代切换，见 ui/theme/Type.kt 与 ui/theme/Shapes.kt
-            shapes = if (isClassic) ClassicShapes else ModernShapes,
+            shapes = if (isClassic) ClassicShapes else modernShapes(),
             typography = if (isClassic) ClassicTypography else ModernTypography,
             content = content
         )

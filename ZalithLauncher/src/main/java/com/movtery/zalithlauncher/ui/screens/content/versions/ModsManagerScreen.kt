@@ -762,18 +762,23 @@ fun ModsManagerScreen(
                                 }
                             },
                             onDisable = { mod ->
-                                viewModel.doInScope {
-                                    withContext(Dispatchers.IO) {
-                                        mod.localMod.disable()
-                                    }
-                                    withContext(Dispatchers.Main) {
-                                        viewModel.refreshCounter()
+                                //受保护的前置 API（Fabric / Quilted / Legacy Fabric API）
+                                //禁用与删除的后果一样：依赖它的模组会在启动时连锁崩溃。
+                                //界面上已经不给入口，这里是第二道保险。
+                                if (!ModIdentity.isDisableProtected(mod.localMod)) {
+                                    viewModel.doInScope {
+                                        withContext(Dispatchers.IO) {
+                                            mod.localMod.disable()
+                                        }
+                                        withContext(Dispatchers.Main) {
+                                            viewModel.refreshCounter()
+                                        }
                                     }
                                 }
                             },
                             onSwapMoreInfo = onSwapMoreInfo,
                             onDelete = { mod ->
-                                //Fabric API 是受保护的必需前置，不允许在模组管理界面直接删除
+                                //前置 API 是受保护的必需依赖，不允许在模组管理界面直接删除
                                 if (!ModIdentity.isDeleteProtected(mod.localMod)) {
                                     modsOperation = ModsOperation.Delete(mod.localMod)
                                 }
@@ -1154,7 +1159,7 @@ private fun ModItemLayout(
     val context = LocalContext.current
 
     val projectInfo = mod.projectInfo
-    //Fabric API 等受保护依赖不展示删除入口
+    //受保护的前置 API（Fabric / Quilted / Legacy Fabric API）不展示删除与禁用入口
     val deleteProtected = ModIdentity.isDeleteProtected(mod.localMod)
 
     LaunchedEffect(mod) {
@@ -1296,7 +1301,7 @@ private fun ModItemLayout(
                     }
                 }
 
-                //Fabric API 是受保护的前置依赖：不展示禁用开关（删除入口也已在下方隐藏）
+                //前置 API 被禁用与被删除的后果相同：不展示禁用开关（删除入口同样隐藏）
                 if (!deleteProtected) {
                     Checkbox(
                         checked = mod.localMod.file.isEnabled(),

@@ -101,6 +101,7 @@ import com.movtery.zalithlauncher.ui.screens.content.LauncherScreen
 import com.movtery.zalithlauncher.ui.screens.content.LicenseScreen
 import com.movtery.zalithlauncher.ui.screens.content.LogViewScreen
 import com.movtery.zalithlauncher.ui.screens.content.MultiplayerScreen
+import com.movtery.zalithlauncher.ui.screens.content.PersonalizationScreen
 import com.movtery.zalithlauncher.ui.screens.content.SettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.VersionExportScreen
 import com.movtery.zalithlauncher.ui.screens.content.VersionSettingsScreen
@@ -193,8 +194,15 @@ fun MainScreen(
                 taskRunning = tasks.isEmpty(),
                 isTasksExpanded = isTaskMenuExpanded,
                 contentColor = onBackgroundColor(),
+                //返回：必须弹**栈顶**（Navigation3 里 last 才是当前页），
+                //并且与系统返回键走同一个 `onBack()`，
+                //否则嵌套屏幕（设置 / 下载 / 版本设置）删的是根节点，
+                //表现就是「点了没反应」，随后栈里既没有主界面也没有当前页，
+                //NavDisplay 反复重算 → 闪屏 / 卡死。
+                //只剩一个页面（主界面）时什么都不做，交给系统返回键退到桌面。
                 onScreenBack = {
-                    screenBackStackModel.mainScreen.backStack.removeFirstOrNull()
+                    val stack = screenBackStackModel.mainScreen.backStack
+                    if (stack.size > 1) onBack(stack)
                 },
                 toMainScreen = toMainScreen,
                 toSettingsScreen = {
@@ -203,11 +211,11 @@ fun MainScreen(
                         screenKey = screenBackStackModel.settingsScreen
                     )
                 },
-                // TODO: 独立的「个性化」页面（背景 / 模糊 / 圆角 / 玻璃强度），当前先落到设置
+                //个性化：独立的「个性化」页面（壁纸 / 不透明度 / 模糊 / 圆角 / 玻璃强度）
                 toPersonalization = {
                     screenBackStackModel.mainScreen.removeAndNavigateTo(
                         removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = screenBackStackModel.settingsScreen
+                        screenKey = NormalNavKey.Personalization
                     )
                 },
                 toDownloadScreen = {
@@ -690,6 +698,11 @@ private fun NavigationUI(
                     FrpScreen(
                         backScreenViewModel = screenBackStackModel,
                         eventViewModel = eventViewModel
+                    )
+                }
+                entry<NormalNavKey.Personalization> {
+                    PersonalizationScreen(
+                        backScreenViewModel = screenBackStackModel,
                     )
                 }
                 entry<NormalNavKey.Favorites> { key ->

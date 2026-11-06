@@ -21,6 +21,9 @@ package com.movtery.zalithlauncher.frp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 
 /**
  * 樱花内网穿透（SakuraFrp）相关的数据模型。
@@ -32,18 +35,57 @@ import kotlinx.serialization.json.JsonElement
 /**
  * 用户信息（`GET /v4/user/info`）。
  *
- * 只取界面真正需要的字段；`traffic` 的结构在不同账号组之间不完全一致，
- * 因此保留为 [JsonElement]，由上层按需解析，避免强类型导致整体解析失败。
+ * ⚠️ **这里必须宽松解析**：官方文档里 `realname` 是整数（实名状态）、
+ * `group` 是对象、`sign` 是对象，而早期版本 / 不同账号组返回的类型并不一致
+ * （曾出现过布尔、字符串、对象三种形态）。27.10.1 把它们写成了
+ * `Boolean` / `String`，于是访问密钥一贴上来就在 `user/info` 这一步反序列化失败，
+ * 用户看到的就是「输入密钥后直接报错」。
+ *
+ * 现在只把界面真正要用的字段做成强类型，其余一律保留为 [JsonElement]，
+ * 由下面几个访问器按需取值 —— 服务端怎么改都不会再让登录整体崩掉。
  */
 @Serializable
 data class FrpUser(
     val id: Int = 0,
     val name: String = "",
-    val realname: Boolean = false,
-    val group: String = "",
-    val sign: Boolean = false,
+    val avatar: String = "",
+    /** 限速信息字符串，例如 `10 Mbps` */
+    val speed: String = "",
+    /** 可创建的隧道数上限 */
+    val tunnels: Int = 0,
+    /** 实名认证状态：整数 / 布尔都有可能 */
+    val realname: JsonElement? = null,
+    /** 用户组：`{ name, level, expires }` */
+    val group: JsonElement? = null,
+    /** 签到状态：`{ config, signed, last, days, traffic }` */
+    val sign: JsonElement? = null,
+    /** 流量信息：`[本日消耗流量, 总剩余流量]`，不同账号组结构可能不同 */
     val traffic: JsonElement? = null
-)
+) {
+    /** 是否已实名（整数非 0 或布尔 true 都算已实名）*/
+    val isRealName: Boolean
+        get() = when (val value = realname) {
+            is JsonPrimitive -> when {
+                value.isString -> value.content.toIntOrNull()?.let { it != 0 } ?: false
+                else -> value.booleanOrNull ?: ((value.content.toIntOrNull() ?: 0) != 0)
+            }
+            else -> false
+        }
+
+    /** 用户组名称，取不到时返回空串 */
+    val groupName: String
+        get() = (group as? JsonObject)
+            ?.get("name")
+            ?.let { (it as? JsonPrimitive)?.content }
+            .orEmpty()
+
+    /** 今日是否已签到 */
+    val signedToday: Boolean
+        get() = (sign as? JsonObject)
+            ?.get("signed")
+            ?.let { (it as? JsonPrimitive)?.booleanOrNull }
+            ?: false
+}
 
 /**
  * 隧道信息（`GET /v4/tunnels`）。

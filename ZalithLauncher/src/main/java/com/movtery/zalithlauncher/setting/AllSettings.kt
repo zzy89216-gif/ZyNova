@@ -30,11 +30,9 @@ import com.movtery.zalithlauncher.game.path.GamePathManager
 import com.movtery.zalithlauncher.game.version.installed.GraphicsApi
 import com.movtery.zalithlauncher.setting.enums.ActionMenuSide
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
-import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.enums.GestureActionType
 import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
-import com.movtery.zalithlauncher.setting.enums.GlassLevel
 import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
@@ -576,7 +574,7 @@ object AllSettings : SettingsRegistry() {
      *
      * ⚠️ **自 27.3.0 起已废弃，不再被任何代码读取或写入。**
      *
-     * 27.2.0 曾引入「强效动态玻璃」档（`GlassLevel.Intense`），它会产生持续的明暗脉动，
+     * 27.2.0 曾引入「强效动态玻璃」档（已随 27.10.2 整体移除），它会产生持续的明暗脉动，
      * 因此配套了这个启动警告。27.3.0 已把该档位连同警告一起移除，
      * 应用内不再存在任何持续明暗变化，警告自然也不再需要。
      *
@@ -602,23 +600,29 @@ object AllSettings : SettingsRegistry() {
     val backgroundBlur = intSetting("backgroundBlur", 0, 0..40)
 
     /**
-     * 启动器背景模糊效果类型
+     * 玻璃材质强度（百分比）
+     *
+     * 27.10.2 起玻璃不再是「开关」，而是全局统一的单色材质：
+     * 这里控制叠在卡片/面板上的低透明度渐变的强度（8 = 8%）。
+     * 调低更接近纯色，调高玻璃感更强；读取方是 `Modifier.backgroundGlass()`。
      */
-    val backgroundBlurType = enumSetting("backgroundBlurType", BackgroundBlur.Background)
+    val codexGlassStrength = intSetting("codexGlassStrength", 8, 2..16)
+
+    /**
+     * 启动器卡片圆角（dp）
+     *
+     * 统一驱动 `MaterialTheme.shapes`，个性化页与设置页读写同一个值。
+     */
+    val launcherCornerRadius = intSetting("launcherCornerRadius", 28, 12..36)
 
     /**
      * 首页按钮材质（议题 #33）
      *
      * 「默认 / 透明 / 液态玻璃」三档，默认**透明**。
-     * 只有 [GlassLevel.On] 且未开启「减少动态效果」时才允许真正的液态玻璃；
-     * 否则在 `rememberHomeButtonMaterial` 中强制降级为透明。
+     * 27.10.2 起玻璃材质是全应用统一的基础材质（不再是全局开关），
+     * 只有开启「减少动态效果」时液态玻璃才会在 `rememberHomeButtonMaterial` 里降级为透明。
      */
     val homeButtonMaterial = enumSetting("homeButtonMaterial", HomeButtonMaterial.Transparent)
-
-    /**
-     * 启动器液态玻璃效果
-     */
-    val glassLevel = enumSetting("glassLevel", GlassLevel.Off)
 
     /**
      * 界面世代（新版 / 旧版）
@@ -638,8 +642,8 @@ object AllSettings : SettingsRegistry() {
     /**
      * 旧的液态玻璃开关（布尔值）
      *
-     * 旧配置兼容项：保留定义以便旧用户升级后仍能正常读取原有配置，
-     * 实际效果已完全由 [glassLevel] 接管，不再写入。
+     * 旧配置兼容项：保留定义以便旧用户升级后仍能正常读取原有配置。
+     * 27.10.2 起「动态玻璃」整体移除，这个值只用于升级迁移时清理，不再参与渲染。
      */
     val liquidGlass = boolSetting("liquidGlass", false)
 

@@ -43,7 +43,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：27.10.1**（`launcher_version_code=271001`，**测试版 pre-release**，等待真机反馈）
+**当前版本：27.10.2**（`launcher_version_code=271002`，**测试版 pre-release**，等待真机反馈）
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -53,6 +53,68 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 27.10.2 玻璃地基 + 个性化页 + Quilt 保护 + AI 界面重做（测试版）🧪
+
+> 状态：**测试版（pre-release）**。对应议题 #42 的第 1~4、6 项，外加两个真机反馈的 bug。
+
+**1. 玻璃地基（删掉「动态玻璃」这个概念）**
+
+- 删除 `setting/enums/GlassLevel.kt`、`setting/enums/BackgroundBlur.kt`、
+  `AllSettings.glassLevel` / `backgroundBlurType`、`SettingsInitializer` 的档位迁移、
+  设置页对应的两张卡；旧键在启动时由 `removeLegacyGlassKeys()` 直接清掉（避免孤儿值）。
+- `LauncherElements.kt`：删除 `liquidGlassHighlights()` / `drawGlassHighlights()` 与
+  所有 `rememberInfiniteTransition`；`Background()` 只做**一次**模糊，
+  半径上限 24dp、核心数 ≤ 4 的设备自动降到 12dp。
+- `Modifier.backgroundGlass()` 保留旧签名（`blur` / `color` 已废弃），内部改为
+  「竖直低透明度渐变 + 1px 亮边」；调用点都已处在 `Surface` / `clip(shape)` 内，
+  因此不需要额外裁剪，滚动零开销。
+- 卡片材质统一：深色用白色系、浅色用黑色系，强度由新设置 `codexGlassStrength`（2~16%）驱动。
+
+**2. 个性化页**
+
+- `NormalNavKey.Personalization` + `ui/screens/content/PersonalizationScreen.kt`；
+  顶部胶囊调色盘直达，底部「更多设置」进 `设置 → 通用`。
+- 新设置项：`codexGlassStrength`（int，%）、`launcherCornerRadius`（int，12~36dp）。
+- 圆角由 `ui/theme/Shapes.kt` 的 `modernShapes()` 统一驱动（extraSmall×0.36 / small×0.54 /
+  medium×0.73 / large×1.00 / extraLarge×1.36），设置页与个性化页读写同一套 `AllSettings`。
+
+**3. 按钮层级**：`homeButtonGhostColor()` 因子改为深色 ×1.05 / 浅色 ×0.96，
+`Modifier.homeButtonMaterial` 三档都补 1px 描边，去掉 `homeButtonSheen()` 常驻流光。
+
+**4. Quilt 保护**：`ModIdentity` 扩成 `ProtectedApi` 枚举（Fabric / Quilted / Legacy Fabric API），
+新增 `isProtectedApiProject` / `isProtectedApi` / `isDisableProtected` / `protectedApiName`，
+`canonicalProjectKey` 归一到各自 `modId`；搜索、安装、模组管理（删除 + 禁用）、
+AI `ContentTools` 全部走同一套判定。CurseForge 侧 Quilted / Legacy 的项目 ID 未核实，
+因此只锁 Modrinth（代码里已注明，不按名称猜）。
+
+**5. AI 对话界面**
+
+- 工具 schema 由 `AIToolSchema.withIntentSummaryField()` 统一注入**必填** `summary`，
+  `AIAgent` 执行前 `stripIntentSummary()` 剥掉，执行结果通过 `AIToolResult.summary` 回传 UI。
+- `AIChatScreen.ToolCommandRow()`：单行 `运行命令 · 概括`，原始输出默认收起、点击展开，
+  无卡片 / 无渐变 / 无边框；失败整行 error 色。
+- 助手消息不再打印「调用了工具：xxx」。
+
+**6. 陶瓦联机（安全子集）**
+
+- 新增 `terracotta/RoomCode.kt`：34 进制 16 位房间码的归一化（全角 / 空格 / 连字符 /
+  `U/` 前缀 / `I`→`1` / `O`→`0`）与 `mod 7` 双端序校验；房客对话框先用原生解析、
+  失败再用归一化结果解析，并把整理结果回显给用户。
+- `fetchNodes()` 缓存改为 **10 分钟 TTL**（原来永久缓存，官方节点更新后必须杀进程）。
+- 建房 / 加房失败补引导文案（`terracotta_error_host_hint` / `_guest_hint`）。
+- ⚠️ **未做**：PCL-FE 的「手动填游戏端口 + Socket 探测」——Android 端陶瓦由原生扫描
+  局域网端口，额外的手填端口没有落点，硬加会误导用户（详见议题 #42 的备注）。
+
+**7. 真机反馈的两个 bug**
+
+- **返回键**：`MainScreen` 的 `onScreenBack` 原先是 `backStack.removeFirstOrNull()`，
+  删的是**根节点**（Navigation3 里 `last` 才是当前页），表现就是「点了没反应」，
+  随后栈状态错乱导致闪屏 / 卡死；改为与系统返回键同一个 `onBack(stack)`，只剩一级时不处理。
+- **樱花内网穿透输入密钥直接报错**：`FrpUser` 把 `/v4/user/info` 的 `realname`（整数）、
+  `group`（对象）、`sign`（对象）写成了 `Boolean` / `String`，反序列化必然失败；
+  改为 `JsonElement` + 访问器（`isRealName` / `groupName` / `signedToday`），
+  同时 `requireJson()` 把解析异常也转成可读的 `FrpApiException`。
 
 ### 27.10.1 樱花内网穿透 + 顶部胶囊 + AI Markdown（测试版）🧪
 
@@ -1921,21 +1983,13 @@ HTTP 403
 
 ### 后续待办 ⬜
 
-#### 27.10.2 计划（统一跟踪：Issue #42）
+#### 27.10.2 计划（统一跟踪：Issue #42）✅ 已随 27.10.2 测试版完成
 
 > 议题：<https://github.com/zzy89216-gif/ZyNova/issues/42>
-> **完整实施手册（文件路径 / 具体做法 / 已知坑 / 发版命令）就写在该议题正文里**，
-> 新会话直接说「查看议题 #42 并修复」即可，不需要再问背景。
-> 27.10.1 测试版之后的剩余工作，按顺序执行，做完一批再发版。
-> **PCL-FE 的参考实现已归档到 `docs/reference/pcl-fe/`**（陶瓦流程 / 液态玻璃 / 原始源码），
-> 原仓库删除后仍可用。
-
-1. **玻璃地基**：删除动态玻璃的流动高光，改为「单层背景模糊 + 白色线性渐变 + 1px 亮边」；
-2. **个性化页**：独立入口（壁纸 / 模糊 / 不透明度 / 圆角），完整选项同时进入 设置 → 通用；
-3. **按钮层级**：相邻按钮主操作底色深 2~3% + 描边；
-4. **Quilt 保护**：对齐 Fabric API 的黑名单 / 删除禁用 / AI 工具拦截 / 去重；
-5. **陶瓦流程移植**（A 方案）：建房前检查、端口探测、房间码、节点选择、失败引导；
-6. **性能与玻璃 bug**：跟手度、文字发虚、边缘发黑、低端机降级。
+> 1~4、6 已全部落地（详见 27.10.2 小节）；第 5 项「陶瓦流程移植」只做了安全子集：
+> 房间码归一化、节点缓存 TTL、失败引导已完成，**手动端口 + Socket 探测未做**——
+> Android 端由原生扫描局域网端口，没有手填端口的落点。
+> **PCL-FE 的参考实现已归档到 `docs/reference/pcl-fe/`**，后续要补时直接读那份文档。
 
 #### 其他历史待办
 
