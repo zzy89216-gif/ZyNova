@@ -45,6 +45,9 @@
 
 **当前版本：27.10.2**（`launcher_version_code=271002`，**测试版 pre-release**，等待真机反馈）
 
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2>
+> tag 指向 `57bf828`（即 `build_apk.yml` 编译通过的那个提交）；之后只追加了文档提交。
+
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
 > 发布之后如果还要修文档，就直接追加提交并推到 main，**不回改已发布的 tag**：
@@ -56,7 +59,8 @@
 
 ### 27.10.2 玻璃地基 + 个性化页 + Quilt 保护 + AI 界面重做（测试版）🧪
 
-> 状态：**测试版（pre-release）**。对应议题 #42 的第 1~4、6 项，外加两个真机反馈的 bug。
+> 状态：**测试版（pre-release）**，已发布：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.10.2>
+> 对应议题 #42 的第 1~4、6 项，外加两个真机反馈的 bug；议题 #42 已关闭，遗留项见第二节「27.10.2 遗留」。
 
 **1. 玻璃地基（删掉「动态玻璃」这个概念）**
 
