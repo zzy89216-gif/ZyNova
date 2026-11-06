@@ -6,8 +6,15 @@
 **每个组件都以其上游仓库中的实际 LICENSE 为准。本项目不把它们合并成同一个许可证，
 也不改变任何上游声明。**
 
-一句话结论：**本项目自身是 GPL-3.0**；内置渲染器分别属于
-**MobileGlues = LGPL-2.1**、**GL4ES = MIT**、**LTW-Turbo = LGPL-3.0**。
+一句话结论：
+
+- **本项目自身：GPL-3.0**（见仓库根目录 `LICENSE`）
+- **内置渲染器**：MobileGlues = **LGPL-2.1**、GL4ES = **MIT**、LTW-Turbo = **LGPL-3.0**
+- **内网穿透客户端**：frp / frpc（樱花定制构建）= **Apache-2.0**
+- **陶瓦联机 Terracotta（含 `libterracotta.so`）= AGPL-3.0** ⚠️
+  AGPL-3.0 比 GPL-3.0 更严格：**重新分发时（含修改版）需要按 AGPL-3.0 §13 提供完整对应源码**，
+  即使只通过网络提供服务也一样。完整文本见 `Terracotta/src/main/res/raw/terracotta_license.txt`，
+  也可在应用内「设置 → 关于 → 开源许可 → Terracotta」里查看。
 
 ---
 
@@ -77,16 +84,65 @@ artDev、SerpentSpirale、CADIndie；LTW-Turbo 由 MathCode 等维护。
 
 ---
 
-## 3. 本项目其余第三方依赖
+## 3. 客户端组件
+
+### 3.1 frp（樱花内网穿透的 frpc 客户端）
+
+| | |
+|---|---|
+| 上游 | https://github.com/fatedier/frp |
+| 分发者 | SakuraFrp（https://www.natfrp.com/），使用其定制构建 |
+| 版本 | `0.51.0-sakura-15.1`（构建于 2026-10-24，commit `cbfb558`） |
+| 许可证 | **Apache License 2.0** — 完整文本见 `ZalithLauncher/src/main/res/raw/apache_license_2.txt` |
+| 随附形式 | 未经修改的预编译可执行文件 `libfrpc.so`（arm64-v8a / armeabi-v7a / x86 / x86_64），由启动器在本地启动 |
+| 二进制来源 | SakuraFrp 官方客户端清单 `https://api.natfrp.com/v4/system/clients` 的 `frpc.archs` 对应架构下载地址 |
+
+`frpc` 仅作为「把本机端口映射到公网」的客户端使用：不修改其二进制，不改动其协议，
+不内置任何账号或密钥——访问密钥由用户自行填写，并以 Android Keystore 加密保存在本机。
+
+**对应源码**：SakuraFrp 分发的 frpc 基于 frp 定制构建（加入其节点协议与 DKC 加密等），
+二进制本身未做修改；frp 上游源码见上述仓库，SakuraFrp 的客户端下载与说明见
+<https://doc.natfrp.com/frpc/usage.html>。
+
+---
+
+---
+
+## 4. 陶瓦联机 Terracotta（AGPL-3.0）
+
+| | |
+|---|---|
+| 上游 | https://github.com/burningtnt/Terracotta |
+| 版权 | Copyright © 2025 Burning_TNT |
+| 许可证 | **GNU AGPL-3.0** — 完整文本见 `Terracotta/src/main/res/raw/terracotta_license.txt` |
+| 随附形式 | 独立的 Gradle 模块 `Terracotta`：预编译动态库 `libterracotta.so`（arm64-v8a / armeabi-v7a / x86 / x86_64）+ 该库自带的 VPN 前台服务与 JNI 绑定代码 |
+| 二进制是否修改 | **未修改**（直接使用上游构件） |
+
+**为什么单独列出来**：AGPL-3.0 是本项目内义务最重的许可证。它要求：
+
+1. 分发时必须附带许可证全文与版权声明 —— 已内置在上述路径并在应用内「开源许可」中可读；
+2. **修改后再分发**（或通过网络向他人提供服务）时，必须提供**对应源码**；
+3. 不允许附加额外限制。
+
+本项目的做法是：`libterracotta.so` 原样分发、不做任何二进制修改，
+`Terracotta` 模块中只有上游自带的接口代码；因此「对应源码」就是上述上游仓库。
+如果你要修改它，请同时修改上游仓库并公开你的修改。
+
+> 该原生库内部若还包含上游自己在发布时声明的组网等第三方代码，
+> 其署名与许可以 Terracotta 上游发布内容为准；本项目未删除、未替换任何上游声明。
+
+---
+
+## 5. 本项目其余第三方依赖
 
 其余依赖（ANGLE、LWJGL、SDL3、MMKV、sora-editor、Terracotta、tm4e、XZ for Java …）
 的许可证与版权信息可在应用内
 **设置 → 关于 → 开源许可** 中逐项查看，各自文本均直接取自对应上游项目。
-它们与第 2 节的渲染器组件是相互独立的部分，适用各自的许可证。
+它们与第 2、3、4 节的组件是相互独立的部分，适用各自的许可证。
 
 ---
 
-## 4. 修改说明
+## 6. 修改说明
 
 本仓库相对上游所做的、与第三方组件相关的改动：
 
@@ -103,7 +159,7 @@ artDev、SerpentSpirale、CADIndie；LTW-Turbo 由 MathCode 等维护。
 
 ---
 
-## 5. 商标
+## 7. 商标
 
 Minecraft 是 Mojang Synergies AB 的商标。本项目与 Mojang、Microsoft、Mesa 项目、
 Fold Craft Launcher 团队、ZalithLauncher 团队、MobileGlues 团队、LTW-Turbo 团队

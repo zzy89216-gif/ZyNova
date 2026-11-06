@@ -45,7 +45,7 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 
 ## 📚 文档
 
-- 用户文档中心（75 篇）：[docs/zh/README.md](docs/zh/README.md)
+- 用户文档中心（76 篇）：[docs/zh/README.md](docs/zh/README.md)
 - 更新日志：[CHANGELOG.md](CHANGELOG.md)
 - 交接 / 架构 / 开发流程：[HANDOFF.md](HANDOFF.md)
 - 第三方许可：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · 许可证：[LICENSE](LICENSE)
@@ -57,7 +57,11 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 
 ## ⚖️ 许可证
 
-GPL-3.0，保持开源。第三方组件见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+GPL-3.0，保持开源。第三方组件、各组件许可证与「你能怎么用」见
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 与 [docs/zh/licenses.md](docs/zh/licenses.md)。
+
+> ⚠️ 其中**陶瓦联机 Terracotta 是 AGPL-3.0**（比其他组件更严格）：本项目原样分发、未修改其二进制；
+> 若你要修改后再分发，需按 AGPL-3.0 §13 公开对应源码。
 
 ---
 

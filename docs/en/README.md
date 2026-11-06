@@ -154,6 +154,7 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [FAQ](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/faq.md) |
 | [Known issues](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/known-issues.md) |
 | [Glossary](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/glossary.md) |
+| [Licenses & third-party notices](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/licenses.md) |
 
 ## Maintenance
 

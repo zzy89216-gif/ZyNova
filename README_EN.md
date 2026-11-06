@@ -66,7 +66,11 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 ## ⚖️ License
 
-GPL-3.0, must stay open source. Third-party notices: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+GPL-3.0, must stay open source. Third-party components and the licence of each are listed in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [docs/en/licenses.md](docs/en/licenses.md).
+
+> ⚠️ **Terracotta is AGPL-3.0** (stricter than the rest): it is shipped unmodified. If you modify it and
+> redistribute, AGPL-3.0 §13 requires you to publish the corresponding source.
 
 ---
 

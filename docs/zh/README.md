@@ -154,6 +154,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [常见问题速查](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/faq.md) |
 | [已知问题 / 限制](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/known-issues.md) |
 | [名词表](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/glossary.md) |
+| [开源许可与第三方声明](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/licenses.md) |
 
 ## 维护约定（给下一个接手的人 / AI）
 
