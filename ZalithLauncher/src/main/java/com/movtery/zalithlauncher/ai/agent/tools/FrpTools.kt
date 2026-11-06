@@ -95,7 +95,7 @@ internal fun frpTools(): List<AITool> = listOf(
         """,
         parameters = AIToolSchema.objectSchema(
             properties = mapOf(
-                "name" to AIToolSchema.string("隧道名称，例如 Minecraft 联机"),
+                "name" to AIToolSchema.string("隧道名称；只能用字母/数字/-/_（不能有空格和中文），不填默认 Minecraft-LAN"),
                 "local_port" to AIToolSchema.integer("本机端口：游戏聊天栏里「对局域网开放」后的端口；不填自动检测"),
                 "node" to AIToolSchema.integer("节点 ID；不填自动选择当前账号可用的第一个节点"),
             ),
@@ -103,7 +103,7 @@ internal fun frpTools(): List<AITool> = listOf(
         risk = AIToolRisk.WRITE,
     ) { args, _ ->
         if (!FrpManager.isLoggedIn) return@aiTool "还没有登录樱花内网穿透，请先在界面里填入访问密钥"
-        val name = args.strOr("name", "Minecraft 联机")
+        val name = FrpManager.sanitizeTunnelName(args.strOr("name", "Minecraft-LAN"))
         val port = args.int("local_port")
             ?: FrpManager.detectLanPorts().firstOrNull()
             ?: return@aiTool "没有检测到本机端口：请先在游戏里「对局域网开放」"

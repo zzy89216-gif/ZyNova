@@ -375,6 +375,26 @@ object FrpManager {
      *
      * 返回按端口号从大到小排序（MC 的临时端口通常落在高位区间）。
      */
+    /**
+     * 隧道名称清洗。
+     *
+     * ⚠️ 樱花对隧道名有字符限制：**不能带空格 / 中文**（真实行为：提交 `Minecraft 联机`
+     * 会直接被服务端拒绝，创建失败）。这里统一把非法字符换成 `-`，
+     * 并把结果限制在 32 个字符内，保证「用户随便输入也能建成功」。
+     */
+    fun sanitizeTunnelName(raw: String): String {
+        val cleaned = raw
+            .replace(WHITESPACE, "-")
+            .map { ch ->
+                if (ch.isLetterOrDigit() && ch.code < 128 || ch == '-' || ch == '_') ch else '-'
+            }
+            .joinToString("")
+            .replace(Regex("-{2,}"), "-")
+            .trim('-', '_')
+            .take(32)
+        return cleaned.ifBlank { "Minecraft-LAN" }
+    }
+
     fun detectLanPorts(): List<Int> {
         val ports = readListeningPortsFromProc()
         if (ports.isEmpty()) {

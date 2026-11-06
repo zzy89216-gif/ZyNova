@@ -1030,11 +1030,17 @@ private fun TunnelDialog(
                         modifier = Modifier.fillMaxWidth(),
                         value = name,
                         onValueChange = {
-                            name = it
+                            //樱花不允许空格与中文：边输入边过滤，用户不会白填
+                            name = it.replace(Regex("[^A-Za-z0-9_-]"), "-").take(32)
                             errorText = null
                         },
                         label = { Text(stringResource(R.string.frp_field_name)) },
                         singleLine = true
+                    )
+                    Text(
+                        text = stringResource(R.string.frp_name_rule),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
                     //官方 /tunnel/edit 不接收 name：改名提交上去会被静默忽略，
@@ -1175,7 +1181,7 @@ private fun TunnelDialog(
                         else -> null
                     }
                     if (errorText == null) {
-                        onConfirm(name.trim(), nodeId, port!!, note.trim())
+                        onConfirm(FrpManager.sanitizeTunnelName(name), nodeId, port!!, note.trim())
                     }
                 }
             ) {

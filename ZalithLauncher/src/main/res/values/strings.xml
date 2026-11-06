@@ -1949,14 +1949,14 @@
     <string name="frp_port_none">No port detected yet — open the world to LAN, then tap "Detect again"</string>
     <string name="frp_port_retry">Detect again</string>
     <string name="frp_nodes_level_warning">No node available for your account tier; showing all nodes (creation may fail)</string>
-    <string name="frp_default_tunnel_name">Minecraft LAN</string>
+    <string name="frp_default_tunnel_name">Minecraft-LAN</string>
     <string name="frp_battery_ok">Battery optimization already disabled for ZyNova</string>
     <string name="frp_log_address_title">Address from frpc log</string>
     <string name="game_menu_option_back_to_launcher">Back to launcher</string>
     <string name="game_menu_option_back_to_launcher_hint">The game keeps running in the background</string>
     <string name="main_return_to_game">Back to game</string>
     <string name="main_return_to_game_hint">Still running in background</string>
-    <string name="about_compliance_title">Open source & compliance</string>
+    <string name="about_compliance_title">Open source &amp; compliance</string>
     <string name="about_compliance_summary">This app is open source under GPL-3.0. Bundled third-party components keep their own licences — every one of them is listed below.</string>
     <string name="about_compliance_version">Version %1$s (%2$d) · package %3$s</string>
     <string name="about_compliance_source">Source code</string>
@@ -1967,4 +1967,5 @@
     <string name="frp_edit_name_locked">The official API can't rename a tunnel — delete and recreate it to change the name</string>
     <string name="frp_field_note">Note (optional)</string>
     <string name="frp_warning_title">SakuraFrp notice</string>
+    <string name="frp_name_rule">Letters, digits, - and _ only (SakuraFrp rejects spaces and non-ASCII)</string>
 </resources>
