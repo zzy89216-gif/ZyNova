@@ -66,7 +66,7 @@
 
 ## 📚 文档（这里是正经人待的地方）
 
-> 📚 **完整文档中心（74 篇，中文）**：[docs/zh/README.md](docs/zh/README.md)
+> 📚 **完整文档中心（75 篇，中文）**：[docs/zh/README.md](docs/zh/README.md)
 
 
 

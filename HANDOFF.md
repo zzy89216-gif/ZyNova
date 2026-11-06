@@ -28,7 +28,7 @@
 | 文件 | 内容 |
 |---|---|
 | `docs/README.md` | **中英双语文档入口**（跳转到 `docs/zh/` 或 `docs/en/`） |
-| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 74 篇，文件名一一对应 |
+| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 75 篇，文件名一一对应 |
 | `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、两个 APK 怎么选 |
 | `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
 | `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
@@ -3062,7 +3062,7 @@ LTW 实验性（仅 arm64）；收藏按钮补到资源页与详情页；导出�
 崩溃页新增「崩溃分析 · 怎么处理」；AI 设置页与输入框重做；微软登录轮询修复；
 构建拆成 universal + arm64 两个 APK。发布地址：
 <https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0>。
-用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 74 篇，入口 `docs/README.md`。）
+用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 75 篇，入口 `docs/README.md`。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
