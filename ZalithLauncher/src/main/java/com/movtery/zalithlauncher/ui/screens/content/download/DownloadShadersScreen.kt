@@ -104,7 +104,7 @@ fun DownloadShadersScreen(
             backStack = backStack,
             modifier = Modifier.fillMaxSize(),
             onBack = {
-                onBack(backStack)
+                onBack(key)
             },
             entryDecorators = listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),

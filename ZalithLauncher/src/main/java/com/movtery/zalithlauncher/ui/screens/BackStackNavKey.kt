@@ -45,19 +45,31 @@ abstract class BackStackNavKey<E: TitledNavKey>(
         backStack.navigateOnce(key)
     }
 
+    /**
+     * 导航到子屏幕。
+     *
+     * ⚠️ 这里必须**同步**更新 [currentKey]：`NavBackStack` 是普通 ArrayList，
+     * 改它本身不会触发重组；如果只依赖 `LaunchedEffect(stackTopKey)` 去同步，
+     * 有些路径（尤其是返回时）会因为「没有任何 state 变化」而拿不到新值，
+     * 表现就是「返回到处跳 / 回到主界面后进不去下载」。
+     */
     fun navigateTo(screenKey: E, useClassEquality: Boolean = false) {
         backStack.navigateTo(screenKey, useClassEquality)
+        currentKey = backStack.lastOrNull()
     }
 
     fun removeAndNavigateTo(remove: KClass<*>, screenKey: E, useClassEquality: Boolean = false) {
         backStack.removeAndNavigateTo(remove, screenKey, useClassEquality)
+        currentKey = backStack.lastOrNull()
     }
 
     fun removeAndNavigateTo(removes: List<KClass<*>>, screenKey: E, useClassEquality: Boolean = false) {
         backStack.removeAndNavigateTo(removes, screenKey, useClassEquality)
+        currentKey = backStack.lastOrNull()
     }
 
     fun clearWith(navKey: E) {
         backStack.clearWith(navKey)
+        currentKey = backStack.lastOrNull()
     }
 }

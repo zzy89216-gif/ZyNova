@@ -222,7 +222,7 @@ fun MainScreen(
                 //只剩一个页面（主界面）时什么都不做，交给系统返回键退到桌面。
                 onScreenBack = {
                     val stack = screenBackStackModel.mainScreen.backStack
-                    if (stack.size > 1) onBack(stack)
+                    if (stack.size > 1) onBack(screenBackStackModel.mainScreen)
                 },
                 toMainScreen = toMainScreen,
                 toSettingsScreen = { openTab(screenBackStackModel.settingsScreen) },
@@ -565,7 +565,7 @@ private fun NavigationUI(
             backStack = backStack,
             modifier = modifier,
             onBack = {
-                onBack(backStack)
+                onBack(screenBackStackModel.mainScreen)
             },
             transitionSpec = rememberTransitionSpec(),
             popTransitionSpec = rememberTransitionSpec(),

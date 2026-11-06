@@ -1933,4 +1933,22 @@
     <string name="frp_public_game_warning">Public game servers may only use dedicated “multi-line” nodes.</string>
     <string name="frp_need_login">Sign in first</string>
     <string name="frp_address_unknown">Address unknown (check the tunnel in the dashboard)</string>
+    <string name="frp_account_group">Group: %1$s</string>
+    <string name="frp_account_quota">Tunnels %1$d / %2$d</string>
+    <string name="frp_account_tunnels">Tunnels %1$d</string>
+    <string name="frp_quota_full">Tunnel limit reached (%1$d)</string>
+    <string name="frp_quota_full_summary">Delete an unused tunnel or upgrade your plan on the SakuraFrp panel.</string>
+    <string name="frp_realname_title">Real-name verification required</string>
+    <string name="frp_realname_summary">SakuraFrp requires real-name verification before you can create tunnels.</string>
+    <string name="frp_realname_action">Open panel</string>
+    <string name="frp_tunnels_empty_hint">Tap the button below to create one; the type is fixed to TCP.</string>
+    <string name="frp_tunnel_running_chip">Running</string>
+    <string name="frp_status_running_tunnel">%1$s is running</string>
+    <string name="frp_status_stopped_hint">frpc exited — expand the log below for details</string>
+    <string name="frp_port_auto">Game port detected automatically: %1$d</string>
+    <string name="frp_port_none">No game port detected — open your world to LAN in game first</string>
+    <string name="frp_port_retry">Detect again</string>
+    <string name="frp_nodes_level_warning">No node available for your account tier; showing all nodes (creation may fail)</string>
+    <string name="frp_default_tunnel_name">Minecraft LAN</string>
+    <string name="frp_battery_ok">Battery optimization already disabled for ZyNova</string>
 </resources>

@@ -33,7 +33,13 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.serialization.json.decodeFromJsonElement
 
 /**
  * 樱花内网穿透 OpenAPI v4 客户端。
@@ -49,6 +55,9 @@ import kotlinx.serialization.decodeFromString
  */
 object FrpApi {
     private const val BASE_URL = "https://api.natfrp.com/v4"
+
+    /** 日志标签：解析失败时把响应片段写进应用日志，方便下次排查 */
+    private const val TAG = "FrpApi"
 
     /** 隧道列表接口的错误提示兜底 */
     private const val UNKNOWN_ERROR = "未知错误"
@@ -73,27 +82,50 @@ object FrpApi {
      * 获取账号信息，同时用作访问密钥校验。
      */
     suspend fun userInfo(token: String): FrpUser {
-        return client.get("$BASE_URL/user/info") {
+        val element = client.get("$BASE_URL/user/info") {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.requireJson()
+        }.requireElement("user/info")
+        val payload = when (val unwrapped = element.unwrap()) {
+            is JsonArray -> unwrapped.firstOrNull() ?: JsonNull
+            else -> unwrapped
+        }
+        return decode("user/info", payload)
     }
 
     /**
      * 获取全部隧道。
      */
     suspend fun tunnels(token: String): List<FrpTunnel> {
-        return client.get("$BASE_URL/tunnels") {
+        val element = client.get("$BASE_URL/tunnels") {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.requireJson()
+        }.requireElement("tunnels")
+        val array = when (val unwrapped = element.unwrap()) {
+            is JsonArray -> unwrapped
+            is JsonObject -> (unwrapped["tunnels"] ?: unwrapped["list"] ?: unwrapped["items"]) as? JsonArray
+            else -> null
+        } ?: JsonArray(emptyList())
+        return decode("tunnels", array)
     }
 
     /**
      * 获取全部节点（键为节点 ID）。
      */
     suspend fun nodes(token: String): Map<String, FrpNode> {
-        return client.get("$BASE_URL/nodes") {
+        val element = client.get("$BASE_URL/nodes") {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.requireJson()
+        }.requireElement("nodes")
+        return when (val unwrapped = element.unwrap()) {
+            is JsonObject -> decode("nodes", unwrapped)
+            //个别情况下接口会直接给数组，这里按 id 字段重新拼成 map
+            is JsonArray -> unwrapped.mapNotNull { item ->
+                val obj = item as? JsonObject ?: return@mapNotNull null
+                val id = (obj["id"] as? JsonPrimitive)?.content
+                    ?: (obj["node"] as? JsonPrimitive)?.content
+                    ?: return@mapNotNull null
+                id to decode<FrpNode>("nodes", obj)
+            }.toMap()
+            else -> emptyMap()
+        }
     }
 
     /**
@@ -124,7 +156,8 @@ object FrpApi {
             }
         ) {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.requireJson()
+        }.requireElement("tunnels/create")
+            .let { decode("tunnels/create", it.unwrap()) }
     }
 
     /**
@@ -149,7 +182,8 @@ object FrpApi {
             }
         ) {
             header(HttpHeaders.Authorization, "Bearer $token")
-        }.requireJson()
+        }.requireElement("tunnel/edit")
+            .let { decode("tunnel/edit", it.unwrap()) }
     }
 
     /**
@@ -171,23 +205,48 @@ object FrpApi {
     }
 
     /**
-     * 读取 JSON 响应；非 2xx 时把 `{ code, msg }` 转成可读异常。
+     * 读取响应并解析成 [JsonElement]。
      *
-     * 解析失败也要转成 [FrpApiException]：否则界面上会出现
-     * `Field 'realname' ...` 这种用户完全看不懂的原始异常文本。
+     * 樱花的接口在不同账号 / 不同接口上返回的**外壳并不统一**：
+     * 有时是裸数组（`[]`）、有时是对象、还可能是 `{ code, data }` 包装，
+     * 28.0.0 直接按固定类型反序列化，于是出现「HTTP 200 但 Unexpected JSON token at offset 1」。
+     * 这里统一先解析成 JsonElement，再按各接口的实际形状取数据。
      */
-    private suspend inline fun <reified T> HttpResponse.requireJson(): T {
+    private suspend fun HttpResponse.requireElement(endpoint: String): JsonElement {
         if (status.value !in 200..299) {
             throw toApiException()
         }
-        val text = bodyAsText()
-        return runCatching { GLOBAL_JSON.decodeFromString<T>(text) }
+        val raw = bodyAsText()
+        //去掉 BOM 与首尾空白：它们会让 JSON 解析在 offset 0/1 直接失败
+        val text = raw.trim().removePrefix("\uFEFF").trim()
+        if (text.isEmpty()) {
+            throw FrpApiException("接口返回空内容（$endpoint）")
+        }
+        return runCatching { GLOBAL_JSON.parseToJsonElement(text) }
             .getOrElse { e ->
+                Logger.warning(TAG, "Unexpected body from $endpoint: ${text.take(200)}")
                 throw FrpApiException(
-                    "接口返回格式与预期不符（HTTP ${status.value}）：" +
+                    "接口返回格式与预期不符（$endpoint）：" +
                             (e.message ?: e::class.simpleName.orEmpty()).take(160)
                 )
             }
+    }
+
+    /** 把 JsonElement 解码成目标类型，失败时给出可读异常 */
+    private inline fun <reified T> decode(endpoint: String, element: JsonElement): T =
+        runCatching { GLOBAL_JSON.decodeFromJsonElement<T>(element) }
+            .getOrElse { e ->
+                Logger.warning(TAG, "Unable to decode $endpoint", e)
+                throw FrpApiException(
+                    "接口数据解析失败（$endpoint）：" +
+                            (e.message ?: e::class.simpleName.orEmpty()).take(160)
+                )
+            }
+
+    /** 兼容 `{ code, data }` 形式的外壳 */
+    private fun JsonElement.unwrap(): JsonElement {
+        val obj = this as? JsonObject ?: return this
+        return obj["data"] ?: obj["result"] ?: this
     }
 
     private suspend fun HttpResponse.toApiException(): FrpApiException {

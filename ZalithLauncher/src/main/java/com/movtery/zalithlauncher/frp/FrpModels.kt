@@ -72,12 +72,27 @@ data class FrpUser(
             else -> false
         }
 
-    /** 用户组名称，取不到时返回空串 */
+    /** 用户组名称（免费 / 白银 / 黄金 …），取不到时返回空串 */
     val groupName: String
         get() = (group as? JsonObject)
             ?.get("name")
             ?.let { (it as? JsonPrimitive)?.content }
             .orEmpty()
+
+    /**
+     * 用户组等级：0 = 免费，数值越大等级越高。
+     *
+     * 节点上的 [FrpNode.vip] 就是「需要多少级才能用」，
+     * 两者配合才能过滤出当前账号真正可用的节点（免费账号看不到白银节点）。
+     */
+    val groupLevel: Int
+        get() = (group as? JsonObject)
+            ?.get("level")
+            ?.let { (it as? JsonPrimitive)?.content?.toIntOrNull() }
+            ?: 0
+
+    /** 可创建的隧道数上限；0 表示接口没给这个字段 */
+    val tunnelQuota: Int get() = tunnels
 
     /** 今日是否已签到 */
     val signedToday: Boolean
@@ -138,6 +153,9 @@ data class FrpNode(
     /** 节点是否离线 */
     val offline: Boolean
         get() = (flag and (1 shl 9)) != 0
+
+    /** 使用该节点所需的用户组等级（对应 [FrpUser.groupLevel]）*/
+    val requiredLevel: Int get() = vip
 }
 
 /**

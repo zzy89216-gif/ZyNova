@@ -1915,4 +1915,22 @@
     <string name="frp_public_game_warning">公开游戏服务器只能使用专用的「多线」节点。</string>
     <string name="frp_need_login">请先登录</string>
     <string name="frp_address_unknown">地址未知（请到面板查看该隧道）</string>
+    <string name="frp_account_group">用户组：%1$s</string>
+    <string name="frp_account_quota">隧道 %1$d / %2$d</string>
+    <string name="frp_account_tunnels">隧道 %1$d</string>
+    <string name="frp_quota_full">隧道数量已达上限（%1$d 条）</string>
+    <string name="frp_quota_full_summary">删掉不用的隧道，或到樱花面板升级套餐</string>
+    <string name="frp_realname_title">需要先实名认证</string>
+    <string name="frp_realname_summary">樱花要求实名认证后才能创建隧道</string>
+    <string name="frp_realname_action">去面板</string>
+    <string name="frp_tunnels_empty_hint">点下面的按钮新建一条；类型固定为 TCP</string>
+    <string name="frp_tunnel_running_chip">运行中</string>
+    <string name="frp_status_running_tunnel">%1$s 运行中</string>
+    <string name="frp_status_stopped_hint">frpc 已退出，展开下方日志查看原因</string>
+    <string name="frp_port_auto">已自动识别游戏端口：%1$d</string>
+    <string name="frp_port_none">没有检测到游戏端口，请先在游戏里「对局域网开放」</string>
+    <string name="frp_port_retry">重新识别</string>
+    <string name="frp_nodes_level_warning">当前账号等级没有专属节点，已列出全部节点（创建可能失败）</string>
+    <string name="frp_default_tunnel_name">Minecraft 联机</string>
+    <string name="frp_battery_ok">已允许后台运行（不受电池优化限制）</string>
 </resources>

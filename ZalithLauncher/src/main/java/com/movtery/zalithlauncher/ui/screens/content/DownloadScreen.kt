@@ -221,7 +221,7 @@ private fun NavigationUI(
             backStack = backStack,
             modifier = modifier,
             onBack = {
-                onBack(backStack)
+                onBack(key)
             },
             transitionSpec = rememberTransitionSpec(),
             popTransitionSpec = rememberTransitionSpec(),

@@ -45,21 +45,25 @@ import kotlin.reflect.KClass
 /**
  * 兼容嵌套NavDisplay的返回事件处理
  */
-fun <E: TitledNavKey> onBack(currentBackStack: NavBackStack<E>) {
-    when (val key = currentBackStack.lastOrNull()) {
-        //普通的屏幕，直接退出当前堆栈的上层
-        is NormalNavKey -> currentBackStack.removeLastOrNull()
+fun <E: TitledNavKey> onBack(owner: BackStackNavKey<E>) {
+    val stack = owner.backStack
+    when (val key = stack.lastOrNull()) {
+        //普通的屏幕：退出当前堆栈的上层
         is BackStackNavKey<*> -> {
             if (key.backStack.size <= 1) {
-                //嵌套屏幕的堆栈处于最后一个屏幕的状态
-                //可以退出当前堆栈的上层了
-                currentBackStack.removeLastOrNull()
+                //嵌套屏幕已经到根了，退回外层
+                stack.removeLastOrNull()
             } else {
-                //退出子堆栈的上层屏幕
+                //先退出子屏幕的栈顶
                 key.backStack.removeLastOrNull()
+                @Suppress("UNCHECKED_CAST")
+                (key as BackStackNavKey<TitledNavKey>).currentKey = key.backStack.lastOrNull()
             }
         }
+        else -> stack.removeLastOrNull()
     }
+    //同步外层 currentKey：NavBackStack 是普通 ArrayList，弹栈不会自动触发重组
+    owner.currentKey = stack.lastOrNull()
 }
 
 fun <E: TitledNavKey> NavBackStack<E>.navigateOnce(key: E) {

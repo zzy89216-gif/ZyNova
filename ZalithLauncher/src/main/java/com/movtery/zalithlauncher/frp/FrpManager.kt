@@ -59,6 +59,9 @@ object FrpManager {
 
     private const val MAX_LOG_LINES = 200
 
+    /** `/proc/net/tcp*` 的字段分隔符（可能有多个连续空格）*/
+    private val WHITESPACE = Regex("\\s+")
+
     private val _tunnels = MutableStateFlow<List<FrpTunnel>>(emptyList())
     val tunnels: StateFlow<List<FrpTunnel>> = _tunnels.asStateFlow()
 
@@ -231,18 +234,25 @@ object FrpManager {
         _runState.value = FrpRunState.Starting
         appendLog("正在启动 frpc，隧道 ID：${tunnel.id}")
 
+        //⚠️ 这里必须按樱花官方文档的形式传参：`frpc -f <访问密钥>:<隧道ID>`
+        //（<https://doc.natfrp.com/frpc/usage.html>「启动参数的格式」）。
+        //27.10.1 / 28.0.0 用的是 `--disable_log_color` + 环境变量 NATFRP_TOKEN/NATFRP_TARGET，
+        //而樱花定制的 frpc 根本不读这两个环境变量 —— 结果就是 frpc 启动后立刻退出，
+        //界面显示「未运行」，看起来像「点了启动没反应」。
         val started = runCatching {
-            val builder = ProcessBuilder(binary.absolutePath, "--disable_log_color")
+            val builder = ProcessBuilder(
+                binary.absolutePath,
+                "-f",
+                "$accessToken:${tunnel.id}"
+            )
             builder.redirectErrorStream(true)
-            // 密钥只通过环境变量传递，避免出现在 ps 的命令行里
-            builder.environment()["NATFRP_TOKEN"] = accessToken
-            builder.environment()["NATFRP_TARGET"] = tunnel.id.toString()
             builder.start()
         }.getOrElse { e ->
             Logger.warning(TAG, "Unable to start frpc", e)
             _runState.value = FrpRunState.Failed(e.message ?: "frpc 启动失败")
             return
         }
+        Logger.info(TAG, "frpc started, tunnel=${tunnel.id}, localPort=${tunnel.localPort}")
 
         process = started
         currentTunnelId = tunnel.id
@@ -256,6 +266,7 @@ object FrpManager {
                 process = null
                 _runState.value = FrpRunState.Stopped(exitCode)
                 appendLog("frpc 已退出，退出码：$exitCode")
+                Logger.warning(TAG, "frpc exited, code=$exitCode")
                 appContext?.let { FrpService.stop(it) }
             }
         }
@@ -340,6 +351,38 @@ object FrpManager {
             }
             false
         }.getOrDefault(true)
+    }
+
+    /**
+     * 自动检测 Minecraft「对局域网开放」后监听的端口。
+     *
+     * 原理：MC 服务端和启动器是**同一个进程 / 同一个 uid**，
+     * 它监听的 socket 会出现在 `/proc/net/tcp` 与 `/proc/net/tcp6` 里（world-readable，不需要 root）。
+     * 按 `st == 0A`（LISTEN）筛出监听项，再只保留 uid 属于本应用的端口，
+     * 就得到「游戏正在监听的端口」——也就是玩家在游戏里点「对局域网开放」时聊天栏显示的那个端口。
+     *
+     * 返回按端口号从大到小排序（MC 的临时端口通常落在高位区间）。
+     */
+    fun detectLanPorts(): List<Int> {
+        val uid = Process.myUid()
+        val ports = linkedSetOf<Int>()
+        listOf("/proc/net/tcp", "/proc/net/tcp6").forEach { path ->
+            runCatching {
+                File(path).forEachLine { line ->
+                    if (line.isBlank() || line.startsWith("sl")) return@forEachLine
+                    val parts = line.trim().split(WHITESPACE)
+                    if (parts.size < 8) return@forEachLine
+                    // st: 0A = LISTEN
+                    if (!parts[3].equals("0A", ignoreCase = true)) return@forEachLine
+                    val port = parts[1].substringAfterLast(':').toIntOrNull(16) ?: return@forEachLine
+                    val owner = parts[7].toIntOrNull() ?: return@forEachLine
+                    if (owner == uid && port in 1..65535) ports += port
+                }
+            }.onFailure {
+                Logger.warning(TAG, "Unable to read $path for LAN port detection", it)
+            }
+        }
+        return ports.sortedDescending()
     }
 
     /**
