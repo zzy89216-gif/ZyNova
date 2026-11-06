@@ -66,6 +66,9 @@ import com.movtery.zalithlauncher.path.URL_DISCORD
 import com.movtery.zalithlauncher.path.URL_MCMOD
 import com.movtery.zalithlauncher.path.URL_PROJECT
 import com.movtery.zalithlauncher.path.URL_SUPPORT
+import com.movtery.zalithlauncher.path.URL_TERRACOTTA_SOURCE
+import com.movtery.zalithlauncher.path.URL_ZY_NOVA_LICENSE
+import com.movtery.zalithlauncher.path.URL_ZY_NOVA_NOTICES
 import com.movtery.zalithlauncher.path.URL_ZY_NOVA_SUPPORT
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedLazyColumn
@@ -253,6 +256,71 @@ fun AboutInfoScreen(
                             openLink = { openLink(URL_DISCORD) },
                             useImage = false
                         )
+                    }
+                }
+            }
+
+            //开源与合规板块
+            //⚠️ 这一块是「公开发布」的硬要求，不要删：
+            //本项目按 GPL-3.0 分发，内置组件还包含 AGPL-3.0 / LGPL / Apache-2.0 等，
+            //这些许可证都要求分发时让用户能拿到源码与完整声明。
+            animatedItem(scope) { yOffset ->
+                ChunkLayout(
+                    modifier = Modifier.offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
+                    title = stringResource(R.string.about_compliance_title)
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            text = stringResource(R.string.about_compliance_summary),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(horizontal = 14.dp)
+                        )
+
+                        //版本号 + 包名：出问题时用户能直接报清楚是哪个包
+                        Text(
+                            text = stringResource(
+                                R.string.about_compliance_version,
+                                BuildConfig.VERSION_NAME,
+                                BuildConfig.VERSION_CODE,
+                                LocalContext.current.packageName
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = 14.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Button(onClick = { openLink(URL_ZY_NOVA_LICENSE) }) {
+                                Text(text = stringResource(R.string.about_compliance_license_text))
+                            }
+                            Button(onClick = { openLink(URL_ZY_NOVA_NOTICES) }) {
+                                Text(text = stringResource(R.string.about_compliance_notices))
+                            }
+                            Button(onClick = { openLink(URL_PROJECT) }) {
+                                Text(text = stringResource(R.string.about_compliance_source))
+                            }
+                        }
+
+                        //AGPL 义务提示：比 GPL 更严格，必须让用户看得到
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = stringResource(R.string.about_compliance_agpl),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                            Button(onClick = { openLink(URL_TERRACOTTA_SOURCE) }) {
+                                Text(text = stringResource(R.string.about_compliance_agpl_source))
+                            }
+                        }
                     }
                 }
             }

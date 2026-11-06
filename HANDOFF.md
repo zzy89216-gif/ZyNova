@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.1**（`launcher_version_code=280001`，**正式版**）
+**当前版本：28.0.2**（`launcher_version_code=280002`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.1>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -55,6 +55,23 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.2 樱花按官方 OpenAPI 逐条核对 + 关于页合规补全（正式版）✅
+
+依据真机日志 + 官方 `https://api.natfrp.com/docs/openapi.yaml` 逐条比对的修复版：
+
+1. **隧道解析失败**：官方 schema 说 `export` 是字符串，真实接口给的是布尔 `false`；
+   `remote` 也会在字符串与数字之间摇摆。两者都改成 `JsonElement` 宽松解析（`FrpModels.kt`）。
+2. **端口识别在真机上必然失败**：Android 10+ 对普通应用屏蔽 `/proc/net/tcp`（EACCES）。
+   新增游戏日志兜底：读各游戏目录 `versions/*/logs/latest.log` 尾部 128KB，
+   匹配原版必写的 `Local game hosted on port <port>`（`FrpManager.detectPortFromGameLog`）。
+3. **编辑隧道改名无效**：`/tunnel/edit` 只接受 `id/note/local_ip/local_port/extra`，
+   没有 `name`/`remote`。编辑弹窗改为「名称只读 + 端口 + 备注」。
+4. **删除/创建的服务端反馈被丢弃**：`{deleted, failed}` 里的 `failed`、
+   创建返回的 `important_warning_for_ai` 现在都会显示（后者会弹窗）。
+5. **关于页新增「开源与合规」**：GPL-3.0 全文 / 第三方声明 / 源码入口 + 版本号与包名 +
+   Terracotta AGPL-3.0 提示。**已对外公开发布（抖音等），这块是硬要求**。
+6. 节点下拉标注「多线」（`flag & 2048`）——公开游戏服务器必须用这类节点，否则封号不退款。
 
 ### 28.0.1 樱花连通 + 返回修复 + 游戏内回主界面（正式版）✅
 

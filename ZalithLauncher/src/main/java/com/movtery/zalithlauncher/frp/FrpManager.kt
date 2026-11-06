@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.frp
 
 import android.content.Context
+import com.movtery.zalithlauncher.game.path.GamePathManager
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.logging.Logger
@@ -31,10 +32,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.RandomAccessFile
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 
 private const val TAG = "FrpManager"
+
+/** 原版「对局域网开放」时写进日志的端口行 */
+private val LAN_PORT_REGEX = Regex("Local game hosted on port (\\d{2,5})")
 
 /**
  * 樱花内网穿透的运行核心。
@@ -75,6 +80,9 @@ object FrpManager {
     val runState: StateFlow<FrpRunState> = _runState.asStateFlow()
 
     private val _logs = MutableStateFlow<List<String>>(emptyList())
+
+    /** /proc 读取被系统拒绝时只提示一次，避免日志刷屏 */
+    private var procReadDenied = false
     val logs: StateFlow<List<String>> = _logs.asStateFlow()
 
     @Volatile
@@ -164,20 +172,24 @@ object FrpManager {
         return result
     }
 
+    /**
+     * 修改隧道：只支持本机端口与备注。
+     *
+     * ⚠️ 官方 `/tunnel/edit` 不接受 `name` 与 `remote`，改名必须删了重建，
+     * 所以界面上也不再给「改名」入口（给了也只会静默失败）。
+     */
     suspend fun editTunnel(
         id: Int,
-        name: String? = null,
+        note: String? = null,
         localIp: String? = null,
-        localPort: Int? = null,
-        remote: String? = null
+        localPort: Int? = null
     ) {
         FrpApi.editTunnel(
             token = token,
             id = id,
-            name = name,
+            note = note,
             localIp = localIp,
-            localPort = localPort,
-            remote = remote
+            localPort = localPort
         )
         refresh()
     }
@@ -364,8 +376,21 @@ object FrpManager {
      * 返回按端口号从大到小排序（MC 的临时端口通常落在高位区间）。
      */
     fun detectLanPorts(): List<Int> {
+        val ports = readListeningPortsFromProc()
+        if (ports.isEmpty()) {
+            //Android 10 起 /proc/net/tcp 对普通应用不开放（EACCES），
+            //这里用「游戏日志」兜底：原版服务端「对局域网开放」时一定会写一行
+            //`[Server thread/INFO]: Local game hosted on port 5xxxx`
+            detectPortFromGameLog()?.let { ports += it }
+        }
+        return ports.sortedDescending()
+    }
+
+    /** 读 `/proc/net/tcp{,6}` 里属于本应用 uid 的 LISTEN 端口（部分 ROM 允许）*/
+    private fun readListeningPortsFromProc(): MutableSet<Int> {
         val uid = android.os.Process.myUid()
         val ports = linkedSetOf<Int>()
+        var failed = false
         listOf("/proc/net/tcp", "/proc/net/tcp6").forEach { path ->
             runCatching {
                 File(path).forEachLine { line ->
@@ -378,11 +403,64 @@ object FrpManager {
                     val owner = parts[7].toIntOrNull() ?: return@forEachLine
                     if (owner == uid && port in 1..65535) ports += port
                 }
-            }.onFailure {
-                Logger.warning(TAG, "Unable to read $path for LAN port detection", it)
+            }.onFailure { failed = true }
+        }
+        if (failed && !procReadDenied) {
+            procReadDenied = true
+            //只提示一次：真机上这条会刷屏（每个对话框打开都读一次）
+            Logger.info(
+                TAG,
+                "Unable to read /proc/net/tcp (blocked on Android 10+); falling back to game log detection"
+            )
+        }
+        return ports
+    }
+
+    /**
+     * 从游戏日志里找「对局域网开放」的端口。
+     *
+     * 原版/大部分加载器在成功开放局域网时会输出：
+     * `[Server thread/INFO]: Local game hosted on port 51234`
+     * 这是最可靠、且不需要任何系统权限的来源。
+     *
+     * 只看最近修改的 3 个 `latest.log` 的**尾部 128KB**，避免读取整份大日志。
+     */
+    private fun detectPortFromGameLog(): Int? {
+        val roots = runCatching {
+            GamePathManager.gamePathData.value.map { File(it.path) }
+        }.getOrDefault(emptyList()).ifEmpty {
+            listOf(File(PathManager.DIR_FILES_EXTERNAL, ".minecraft"))
+        }
+
+        val logs = roots
+            .mapNotNull { root -> File(root, "versions").listFiles()?.map { File(it, "logs/latest.log") } }
+            .flatten()
+            .filter { it.isFile && it.length() > 0L }
+            .sortedByDescending { it.lastModified() }
+
+        for (log in logs.take(3)) {
+            val port = runCatching {
+                readTail(log, 128 * 1024)
+                    .let { text -> LAN_PORT_REGEX.findAll(text).lastOrNull()?.groupValues?.get(1)?.toIntOrNull() }
+            }.getOrNull()
+            if (port != null && port in 1..65535) {
+                Logger.info(TAG, "Detected LAN port $port from ${log.absolutePath}")
+                return port
             }
         }
-        return ports.sortedDescending()
+        return null
+    }
+
+    /** 读文件尾部（日志可能很大，只取最后 [maxBytes] 字节）*/
+    private fun readTail(file: File, maxBytes: Int): String {
+        RandomAccessFile(file, "r").use { raf ->
+            val length = raf.length()
+            val start = (length - maxBytes).coerceAtLeast(0L)
+            raf.seek(start)
+            val bytes = ByteArray((length - start).toInt())
+            raf.readFully(bytes)
+            return String(bytes, Charsets.UTF_8)
+        }
     }
 
     /**

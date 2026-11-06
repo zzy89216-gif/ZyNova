@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.1)
+[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
 
 [简体中文](README.md) | [English](README_EN.md) | **繁體中文** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,14 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.1 更新重點
+## ✨ 28.0.2 更新重點
 
-- **樱花內網穿透真的能連了**：`frpc` 改用官方參數 `frpc -f <存取金鑰>:<隧道ID>`（舊版用環境變數，樱花版 frpc 不認，一啟動就退出）
-- **重新整理不再報錯**：相容 BOM / 陣列 / `{data}` 包裝的回應；連線位址會從 frpc 日誌抽出來，**置頂顯示並可一鍵複製**
-- **返回鍵不會再一次退出整個介面**：頂部返回不再借系統返回鍵（原本沒有回呼接住，會直接結束介面），一次只退一層，也不會把堆疊彈空
-- **遊戲內可以回啟動器了**：遊戲內選單第一項「回到啟動器主介面」**不會停止遊戲**；啟動器底部會出現「返回遊戲」膠囊，點一下回到同一局
-- **建隧道不用懂連接埠與類型**：類型固定 TCP，連接埠自動從 `/proc/net/tcp` 認出來，節點依帳號等級過濾
-- **AI 可以全自動開聯機**：`frp_status` / `frp_create_tunnel` / `frp_start_tunnel` / `frp_stop_tunnel` / `multiplayer_status`
+- **櫻花穿透依官方 OpenAPI 逐條核對**：`export` / `remote` 型別不穩定造成解析失敗，已改為寬鬆解析；連接埠偵測改用遊戲日誌（Android 10+ 讀不到 `/proc/net/tcp`）；編輯隧道只改連接埠與備註（官方不支援改名）；關於頁新增「開源與合規」區塊（GPL 全文 / 第三方聲明 / 原始碼 / AGPL 提示）
 
 ## 🛠️ 主要功能
 

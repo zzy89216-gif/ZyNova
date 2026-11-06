@@ -124,6 +124,8 @@ fun FrpScreen(
     var showCreateDialog by remember { mutableStateOf(false) }
     var editingTunnel by remember { mutableStateOf<FrpTunnel?>(null) }
     var deletingTunnel by remember { mutableStateOf<FrpTunnel?>(null) }
+    /** 创建隧道后服务端返回的提示（如「公开游戏必须用多线节点」）*/
+    var createWarning by remember { mutableStateOf<String?>(null) }
 
     fun toast(text: String) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -374,7 +376,7 @@ fun FrpScreen(
             nodes = nodes,
             groupLevel = groupLevel,
             onDismiss = { showCreateDialog = false },
-            onConfirm = { name, node, localPort ->
+            onConfirm = { name, node, localPort, _ ->
                 showCreateDialog = false
                 scope.launch {
                     loading = true
@@ -388,6 +390,10 @@ fun FrpScreen(
                             localPort = localPort,
                             remote = null
                         )
+                    }.onSuccess { created ->
+                        //服务端可能返回 important_warning_for_ai（例如「公开游戏必须用多线节点」），
+                        //这种提示必须给用户看到，否则容易被封号还莫名其妙。
+                        created.warning?.takeIf { it.isNotBlank() }?.let { createWarning = it }
                     }.onFailure {
                         toast(context.getString(R.string.frp_error, it.message ?: ""))
                     }
@@ -403,14 +409,15 @@ fun FrpScreen(
             nodes = nodes,
             groupLevel = groupLevel,
             onDismiss = { editingTunnel = null },
-            onConfirm = { name, _, localPort ->
+            onConfirm = { _, _, localPort, note ->
                 editingTunnel = null
                 scope.launch {
                     loading = true
                     runCatching {
+                        //只提交官方支持的字段：本机端口 + 备注
                         FrpManager.editTunnel(
                             id = tunnel.id,
-                            name = name,
+                            note = note,
                             localPort = localPort
                         )
                     }.onFailure {
@@ -419,6 +426,16 @@ fun FrpScreen(
                     loading = false
                 }
             }
+        )
+    }
+
+    createWarning?.let { message ->
+        SimpleAlertDialog(
+            title = stringResource(R.string.frp_warning_title),
+            text = message,
+            confirmText = stringResource(R.string.generic_confirm),
+            onConfirm = { createWarning = null },
+            onDismiss = { createWarning = null }
         )
     }
 
@@ -952,10 +969,11 @@ private fun TunnelDialog(
     nodes: Map<String, FrpNode>,
     groupLevel: Int,
     onDismiss: () -> Unit,
-    onConfirm: (name: String, node: Int, localPort: Int) -> Unit
+    onConfirm: (name: String, node: Int, localPort: Int, note: String) -> Unit
 ) {
     val defaultTunnelName = stringResource(R.string.frp_default_tunnel_name)
     var name by remember { mutableStateOf(tunnel?.name ?: defaultTunnelName) }
+    var note by remember { mutableStateOf(tunnel?.note.orEmpty()) }
     var nodeId by remember { mutableStateOf(tunnel?.node ?: 0) }
     var nodeMenuExpanded by remember { mutableStateOf(false) }
     var errorText by remember { mutableStateOf<String?>(null) }
@@ -1007,16 +1025,37 @@ private fun TunnelDialog(
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                OwnOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = name,
-                    onValueChange = {
-                        name = it
-                        errorText = null
-                    },
-                    label = { Text(stringResource(R.string.frp_field_name)) },
-                    singleLine = true
-                )
+                if (tunnel == null) {
+                    OwnOutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = name,
+                        onValueChange = {
+                            name = it
+                            errorText = null
+                        },
+                        label = { Text(stringResource(R.string.frp_field_name)) },
+                        singleLine = true
+                    )
+                } else {
+                    //官方 /tunnel/edit 不接收 name：改名提交上去会被静默忽略，
+                    //所以这里直接不给改，避免用户以为「改成功了」。
+                    Text(
+                        text = stringResource(R.string.frp_field_name) + "：" + tunnel.name,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.frp_edit_name_locked),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    OwnOutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = note,
+                        onValueChange = { note = it },
+                        label = { Text(stringResource(R.string.frp_field_note)) },
+                        singleLine = true
+                    )
+                }
 
                 if (tunnel == null) {
                     if (availableNodes.isEmpty()) {
@@ -1048,10 +1087,11 @@ private fun TunnelDialog(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            if (node.requiredLevel > 0) {
-                                                "${node.name} · ${node.requiredLevel} 级"
-                                            } else {
-                                                node.name
+                                            buildString {
+                                                append(node.name)
+                                                if (node.requiredLevel > 0) append(" · ").append(node.requiredLevel).append(" 级")
+                                                //公开游戏服务器必须用「多线」节点（flag & 2048），标出来免得用户被误封
+                                                if (node.allowPublicGame) append(" · 多线")
                                             }
                                         )
                                     },
@@ -1135,7 +1175,7 @@ private fun TunnelDialog(
                         else -> null
                     }
                     if (errorText == null) {
-                        onConfirm(name.trim(), nodeId, port!!)
+                        onConfirm(name.trim(), nodeId, port!!, note.trim())
                     }
                 }
             ) {

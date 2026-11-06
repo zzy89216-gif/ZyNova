@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.1)
+[![Release](https://img.shields.io/badge/Release-28.0.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.2)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **日本語** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,14 +17,9 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.1 の新機能
+## ✨ 28.0.2 の新機能
 
-- **SakuraFrp が実際につながるようになりました**：`frpc` は公式形式 `frpc -f <アクセスキー>:<トンネルID>` で起動します（以前の環境変数方式は Sakura 版 frpc に無視され、すぐ終了していました）
-- **更新してもエラーにならない**：BOM / 配列 / `{data}` ラップの応答に対応。接続アドレスは frpc ログから抽出し、**最上部に表示 + ワンタップコピー**
-- **戻るキーで画面全体が終了しない**：上部の戻るはシステムの戻るキーを経由しなくなり（コールバックが無く画面が終了していました）、1 階層だけ戻り、スタックを空にしません
-- **ゲームを止めずにランチャーへ戻れます**：ゲーム内メニューの最初の項目「ランチャーに戻る」は**ゲームを停止しません**。ランチャー下部に「ゲームに戻る」ピルが出ます
-- **ポートや種類を理解する必要はありません**：種類は TCP 固定、ローカルポートは `/proc/net/tcp` から自動検出、ノードはアカウント階層で絞り込み
-- **AI がマルチプレイを全自動で開始**：`frp_status` / `frp_create_tunnel` / `frp_start_tunnel` / `frp_stop_tunnel` / `multiplayer_status`
+- **SakuraFrp を公式 OpenAPI と突き合わせて修正**：`export` / `remote` の型ゆれによる解析失敗を解消、ポート検出はゲームログ（`Local game hosted on port`）へフォールバック、トンネル編集はポートとメモのみ（公式 API に改名は無し）、「このアプリについて」に「オープンソースとコンプライアンス」欄を追加
 
 ## 🛠️ 主な機能
 

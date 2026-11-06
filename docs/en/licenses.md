@@ -70,3 +70,21 @@ the upstream interface code only. So "the corresponding source" is simply the up
 If you believe a component here is handled incorrectly (missing credit, licence mismatch, unclear binary
 provenance), please open an issue: <https://github.com/zzy89216-gif/ZyNova/issues>.
 Such reports take priority over feature requests.
+
+## 7. Checklist before any public release (Douyin / Bilibili / group shares)
+
+Because the app is now promoted publicly, shipping it counts as **real distribution**. Everything below is mandatory:
+
+| # | Requirement | Status |
+|---|---|---|
+| 1 | Ship the **full GPL-3.0 text** and copyright notices | ✅ `LICENSE` in the repo, readable in-app |
+| 2 | Provide the **complete corresponding source** (GPL/AGPL) | ✅ public repo <https://github.com/zzy89216-gif/ZyNova> |
+| 3 | Ship **third-party notices** (components + licences + copyright) | ✅ `THIRD_PARTY_NOTICES.md`, also bundled in `assets/licenses/` |
+| 4 | Every third-party licence **full text** reachable | ✅ in-app: Settings → About → Open-source licences |
+| 5 | **AGPL-3.0** (Terracotta) called out, binary unmodified | ✅ notices §4 + prominent note on the About page |
+| 6 | LGPL components stay **replaceable** (separate `.so`, no static linking) | ✅ MobileGlues / LTW-Turbo / sora-editor are separate libraries |
+| 7 | Never remove or replace upstream **credits and copyright headers** | ✅ kept in source headers and `LICENSE` |
+| 8 | No implied **endorsement** by upstream projects' names/trademarks | ✅ README and the in-app unofficial notice say so |
+
+> Pre-release self-check: `grep -rIl "ghp_\|BEGIN .*PRIVATE KEY" .` to make sure no secrets ship in the package.
+> A public release should include at least the APK, this checklist and `THIRD_PARTY_NOTICES.md`.

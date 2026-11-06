@@ -161,47 +161,54 @@ object FrpApi {
     }
 
     /**
-     * 修改隧道（只提交需要变更的字段）。
+     * 修改隧道。
+     *
+     * ⚠️ **官方 OpenAPI 里 `/tunnel/edit` 只接受** `id`、`note`、`local_ip`、`local_port`、`extra`，
+     * **没有 `name`，也没有 `remote`**（见 <https://api.natfrp.com/docs/openapi.yaml>）。
+     * 28.0.x 之前把 `name` 一起提交，服务端直接忽略 —— 用户改完名字保存后列表里还是旧名字，
+     * 看起来就是「改名没反应」。所以编辑界面不再提供改名，只改本机端口与备注。
      */
     suspend fun editTunnel(
         token: String,
         id: Int,
-        name: String? = null,
+        note: String? = null,
         localIp: String? = null,
-        localPort: Int? = null,
-        remote: String? = null
-    ): FrpCreateResult {
+        localPort: Int? = null
+    ): JsonElement {
         return client.submitForm(
             url = "$BASE_URL/tunnel/edit",
             formParameters = Parameters.build {
                 append("id", id.toString())
-                name?.let { append("name", it) }
+                note?.let { append("note", it) }
                 localIp?.let { append("local_ip", it) }
                 localPort?.let { append("local_port", it.toString()) }
-                remote?.let { append("remote", it) }
             }
         ) {
             header(HttpHeaders.Authorization, "Bearer $token")
         }.requireElement("tunnel/edit")
-            .let { decode("tunnel/edit", it.unwrap()) }
     }
 
     /**
      * 删除隧道。
+     *
+     * 官方返回 `{ deleted: [...], failed: [...] }`：`failed` 表示**已删除但没成功踢下线**的隧道。
+     * 以前直接忽略响应体，用户会以为「删掉了但还连着」；现在把它翻译成可读错误。
      */
-    suspend fun deleteTunnel(token: String, id: Int): Boolean {
-        val response = client.submitForm(
+    suspend fun deleteTunnel(token: String, id: Int) {
+        val element = client.submitForm(
             url = "$BASE_URL/tunnel/delete",
             formParameters = Parameters.build {
                 append("ids", id.toString())
             }
         ) {
             header(HttpHeaders.Authorization, "Bearer $token")
+        }.requireElement("tunnel/delete")
+
+        val failed = ((element.unwrap() as? JsonObject)?.get("failed") as? JsonArray).orEmpty()
+            .mapNotNull { (it as? JsonPrimitive)?.content?.toIntOrNull() }
+        if (id in failed) {
+            throw FrpApiException("隧道已从账号中删除，但服务端未能踢下线，请到樱花面板确认")
         }
-        if (response.status.value !in 200..299) {
-            throw response.toApiException()
-        }
-        return true
     }
 
     /**

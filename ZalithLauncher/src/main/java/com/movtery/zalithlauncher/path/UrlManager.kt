@@ -70,6 +70,16 @@ const val URL_DISCORD: String = "https://discord.gg/QwPpZQHrTa"
 /**
  * ZyNova 自己的更新体系：版本信息与安装包全部来自本项目的 GitHub Releases
  */
+/**
+ * 开源合规入口（关于页使用）
+ *
+ * 本项目按 GPL-3.0 分发，随包内置 LGPL / Apache-2.0 / MIT / AGPL-3.0 等第三方组件，
+ * 依据各自许可证，**分发时必须让用户能拿到源码与完整声明**，
+ * 所以「关于」页要把这两个地址直接摆出来，不能只写进仓库文档。
+ */
+const val URL_ZY_NOVA_LICENSE: String = "$URL_PROJECT/blob/main/LICENSE"
+const val URL_ZY_NOVA_NOTICES: String = "$URL_PROJECT/blob/main/THIRD_PARTY_NOTICES.md"
+const val URL_TERRACOTTA_SOURCE: String = "https://github.com/burningtnt/Terracotta"
 const val URL_ZY_NOVA_RELEASES: String = "$URL_PROJECT/releases"
 const val URL_ZY_NOVA_RELEASE_LATEST: String = "https://api.github.com/repos/zzy89216-gif/ZyNova/releases/latest"
 

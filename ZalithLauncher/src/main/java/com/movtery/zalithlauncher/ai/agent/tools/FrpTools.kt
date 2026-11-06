@@ -130,6 +130,9 @@ internal fun frpTools(): List<AITool> = listOf(
         description = """
             启动指定隧道（同一时间只允许一条）。tunnel_id 不填时用隧道列表里的第一条。
             启动前会检查本机端口是否有程序监听；端口没监听会直接失败并说明原因。
+            ⚠️ 樱花的规则：如果这个服务器会发到公开平台（抖音 / B站 / 论坛 / QQ 大群等）宣传，
+            必须使用「多线」节点（节点 flag & 2048，名称含「多线」），否则账号会被封且不退款。
+            遇到这种情况先向用户确认用途，再决定节点。
         """,
         parameters = AIToolSchema.objectSchema(
             properties = mapOf(

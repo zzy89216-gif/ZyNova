@@ -121,11 +121,32 @@ data class FrpTunnel(
     val extra: String? = null,
     @SerialName("local_ip") val localIp: String = "127.0.0.1",
     @SerialName("local_port") val localPort: Int = 0,
-    /** 远程端口或绑定域名 */
-    val remote: String? = null,
-    /** 端口导出状态：`类型|IP 地址|端口` */
-    val export: String? = null
+    /**
+     * 远程端口或绑定域名。
+     *
+     * ⚠️ 接口在不同隧道类型下会给 **字符串**（`"12559"`）或 **数字**（`12559`），
+     * 早期版本把它写成 `String?`，一旦服务端返回数字就整条隧道解析失败
+     * （真机日志：`String literal for value of key 'remote' should be quoted`）。
+     * 这里先收成 [JsonElement]，再由 [remote] 统一转成字符串。
+     */
+    @SerialName("remote") private val remoteRaw: JsonElement? = null,
+    /**
+     * 端口导出状态。
+     *
+     * ⚠️ 同样是**类型不稳定**字段：接口真实返回的是布尔 `false`，
+     * 而 27.10.2 / 28.0.0 把它声明成 `String?`，于是每条隧道都解析失败，
+     * 表现就是「樱花点刷新报错 / 隧道列表永远是空的」。
+     * 真机日志原文：`String literal for value of key 'export' should be quoted at path: $.export`。
+     */
+    val export: JsonElement? = null
 ) {
+    /** 远程端口 / 域名，统一成字符串给界面与地址拼接使用 */
+    val remote: String?
+        get() = when (val element = remoteRaw) {
+            is JsonPrimitive -> element.content
+            else -> null
+        }
+
     val isBanned: Boolean get() = status == 2
 
     val isTcp: Boolean get() = type.equals("tcp", ignoreCase = true)

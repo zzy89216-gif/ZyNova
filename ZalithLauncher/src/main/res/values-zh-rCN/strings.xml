@@ -1927,8 +1927,8 @@
     <string name="frp_tunnel_running_chip">运行中</string>
     <string name="frp_status_running_tunnel">%1$s 运行中</string>
     <string name="frp_status_stopped_hint">frpc 已退出，展开下方日志查看原因</string>
-    <string name="frp_port_auto">已自动识别游戏端口：%1$d</string>
-    <string name="frp_port_none">没有检测到游戏端口，请先在游戏里「对局域网开放」</string>
+    <string name="frp_port_auto">已自动识别游戏端口：%1$d（来自游戏日志）</string>
+    <string name="frp_port_none">暂时没识别到端口：先在游戏里点「对局域网开放」，再点「重新识别」</string>
     <string name="frp_port_retry">重新识别</string>
     <string name="frp_nodes_level_warning">当前账号等级没有专属节点，已列出全部节点（创建可能失败）</string>
     <string name="frp_default_tunnel_name">Minecraft 联机</string>
@@ -1938,4 +1938,15 @@
     <string name="game_menu_option_back_to_launcher_hint">游戏会继续在后台运行，进度不会丢</string>
     <string name="main_return_to_game">返回游戏</string>
     <string name="main_return_to_game_hint">游戏仍在后台运行</string>
+    <string name="about_compliance_title">开源与合规</string>
+    <string name="about_compliance_summary">本应用是开源软件，按 GPL-3.0 分发；随包内置的第三方组件各自适用其许可证，下面逐项可查。</string>
+    <string name="about_compliance_version">版本 %1$s（%2$d） · 包名 %3$s</string>
+    <string name="about_compliance_source">查看源码</string>
+    <string name="about_compliance_notices">第三方声明</string>
+    <string name="about_compliance_license_text">GPL-3.0 全文</string>
+    <string name="about_compliance_agpl">⚠️ 内置的陶瓦联机（Terracotta）按 AGPL-3.0 分发，二进制未做修改。AGPL 比 GPL 更严格：如果你修改它并再分发，需要公开对应源码。</string>
+    <string name="about_compliance_agpl_source">Terracotta 源码</string>
+    <string name="frp_edit_name_locked">官方接口不支持改名，需要改名请删除后重建</string>
+    <string name="frp_field_note">备注（可选）</string>
+    <string name="frp_warning_title">樱花提示</string>
 </resources>

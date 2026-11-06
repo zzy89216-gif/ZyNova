@@ -1945,8 +1945,8 @@
     <string name="frp_tunnel_running_chip">Running</string>
     <string name="frp_status_running_tunnel">%1$s is running</string>
     <string name="frp_status_stopped_hint">frpc exited — expand the log below for details</string>
-    <string name="frp_port_auto">Game port detected automatically: %1$d</string>
-    <string name="frp_port_none">No game port detected — open your world to LAN in game first</string>
+    <string name="frp_port_auto">Detected LAN port: %1$d (from the game log)</string>
+    <string name="frp_port_none">No port detected yet — open the world to LAN, then tap "Detect again"</string>
     <string name="frp_port_retry">Detect again</string>
     <string name="frp_nodes_level_warning">No node available for your account tier; showing all nodes (creation may fail)</string>
     <string name="frp_default_tunnel_name">Minecraft LAN</string>
@@ -1956,4 +1956,15 @@
     <string name="game_menu_option_back_to_launcher_hint">The game keeps running in the background</string>
     <string name="main_return_to_game">Back to game</string>
     <string name="main_return_to_game_hint">Still running in background</string>
+    <string name="about_compliance_title">Open source & compliance</string>
+    <string name="about_compliance_summary">This app is open source under GPL-3.0. Bundled third-party components keep their own licences — every one of them is listed below.</string>
+    <string name="about_compliance_version">Version %1$s (%2$d) · package %3$s</string>
+    <string name="about_compliance_source">Source code</string>
+    <string name="about_compliance_notices">Third-party notices</string>
+    <string name="about_compliance_license_text">GPL-3.0 text</string>
+    <string name="about_compliance_agpl">⚠️ The bundled Terracotta is licensed under AGPL-3.0 and shipped unmodified. AGPL is stricter than GPL: if you modify it and redistribute, you must publish the corresponding source.</string>
+    <string name="about_compliance_agpl_source">Terracotta source</string>
+    <string name="frp_edit_name_locked">The official API can't rename a tunnel — delete and recreate it to change the name</string>
+    <string name="frp_field_note">Note (optional)</string>
+    <string name="frp_warning_title">SakuraFrp notice</string>
 </resources>

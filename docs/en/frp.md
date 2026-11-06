@@ -32,15 +32,34 @@ Entry: **Multiplayer → SakuraFrp**.
 4. Once it is running, a `node:remote-port` line appears **at the top of the page** with a **Copy** button —
    send that to your friend, who can use "Direct connect" in Minecraft.
 
-## About the port (auto-detected since 28.0.1)
+## About the port (detected from the game log since 28.0.2)
 
-- The launcher detects the game port by reading the LISTEN sockets of its own uid from
-  `/proc/net/tcp` and `/proc/net/tcp6`, so **changing worlds or ports no longer requires editing the tunnel** —
-  just tap **Detect again**;
-- If detection fails (game not started, or `/proc` reads restricted by the ROM),
-  fill in the port shown in the game chat manually;
+- Android 10+ blocks `/proc/net/tcp` for normal apps (`EACCES: Permission denied` in real-device logs),
+  so detection now reads the **game log** instead: vanilla always writes
+  `[Server thread/INFO]: Local game hosted on port 5xxxx` when you open a world to LAN,
+  and the launcher takes that line from the tail of `logs/latest.log` under each game directory;
+- So **changing worlds or ports no longer requires editing the tunnel** — just tap **Detect again**;
+- You only need to type the port manually when the world was never opened to LAN, or the log was wiped;
 - Starting with no listener on that port fails early with a clear message, so you never end up with
   "the tunnel is online but nobody can join".
+
+## What you can edit (since 28.0.2)
+
+- Editable: **local port** and **note**;
+- **Renaming is not possible**: the official `/tunnel/edit` endpoint accepts no `name` (and no `remote`), so
+  previous builds silently dropped it and looked like "the rename did nothing". To rename, delete and recreate;
+- If deletion succeeds but the server could not kick the tunnel offline, the UI now tells you to check the panel
+  instead of pretending it worked.
+
+## ⚠️ Public servers must use a "multi-line" node
+
+SakuraFrp's hard rule (spelled out in its official OpenAPI):
+
+- If the server is advertised anywhere public — **Douyin / Bilibili / Xiaohongshu / forums / large QQ groups** —
+  it counts as a *public game server* and **must** use a "multi-line" node (node `flag & 2048`, name contains "多线");
+- Using a regular node gets the **account banned with no refund**;
+- In this launcher, such nodes are marked **"多线"** in the dropdown, and any warning returned by the API on
+  creation is shown in a dialog.
 
 ## Background & screen off
 
