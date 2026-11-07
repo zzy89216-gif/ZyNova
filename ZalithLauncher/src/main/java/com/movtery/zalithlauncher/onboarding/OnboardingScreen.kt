@@ -78,7 +78,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (step < 4) {
-                    Text(body = bodies[step], style = MaterialTheme.typography.bodySmall)
+                    Text(text = bodies[step], style = MaterialTheme.typography.bodySmall)
                 } else {
                     Text(
                         stringResource(R.string.onboarding_age_hint),

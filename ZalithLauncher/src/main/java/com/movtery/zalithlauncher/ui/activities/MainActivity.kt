@@ -324,11 +324,13 @@ class MainActivity : BaseAppCompatActivity() {
                 festivals = festivals
             ) {
                 //首次启动：先看四份文档 + 选年龄，完成后才进主界面
-                var onboardingDone by androidx.compose.runtime.remember {
+                val onboardingDone = androidx.compose.runtime.remember {
                     androidx.compose.runtime.mutableStateOf(!OnboardingState.needsOnboarding())
                 }
-                if (!onboardingDone) {
-                    com.movtery.zalithlauncher.onboarding.OnboardingScreen(onDone = { onboardingDone = true })
+                if (!onboardingDone.value) {
+                    com.movtery.zalithlauncher.onboarding.OnboardingScreen(
+                        onDone = { onboardingDone.value = true }
+                    )
                     return@ZalithLauncherTheme
                 }
                 ObserveFullScreenSetting(AllSettings.launcherFullScreen.state)
@@ -813,10 +815,11 @@ class MainActivity : BaseAppCompatActivity() {
         if (!OnboardingState.needsTimeLimit()) return true
         if (MinorTimeGate.isAllowedNow()) return true
         val reason = MinorTimeGate.blockReason()
-        eventViewModel.sendToast(
-            com.movtery.zalithlauncher.ui.androidText(R.string.onboarding_minor_blocked, reason),
+        android.widget.Toast.makeText(
+            this,
+            getString(R.string.onboarding_minor_blocked, reason),
             android.widget.Toast.LENGTH_LONG
-        )
+        ).show()
         return false
     }
 
