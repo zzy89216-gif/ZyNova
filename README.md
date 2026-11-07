@@ -4,6 +4,9 @@
 
 # ZyNova
 
+> ⭐ **ZyNova v28.1.0 全球化商业合规版正式发布，本项目仅提供长期支持（LTS）版本。**
+
+
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
