@@ -16,8 +16,12 @@ import com.movtery.zalithlauncher.setting.AllSettings
  */
 object OnboardingState {
 
-    /** 条款版本：四份文档实质变更时必须改这个值 */
-    const val CURRENT_LEGAL_VERSION = "28.1.0-2026"
+    /**
+     * 条款版本：**跟随应用版本号**，不写死。
+     * 只要版本号变化（每次发版都会变），用户就必须重新同意一次条款，
+     * 避免「改了法律文本但忘了改版本常量」导致老用户绕过。
+     */
+    val CURRENT_LEGAL_VERSION: String get() = com.movtery.zalithlauncher.BuildConfig.VERSION_NAME
 
     fun needsOnboarding(): Boolean {
         if (!AllSettings.onboardingAccepted.getValue()) return true

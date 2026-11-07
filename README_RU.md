@@ -4,7 +4,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova v28.1.0 (global compliance) is the only public release — this project ships LTS builds only.**
+> ⭐ **Выпущен ZyNova 28.1.0 LTS (версия с глобальным соответствием).**
 
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
