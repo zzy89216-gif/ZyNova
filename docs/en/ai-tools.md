@@ -6,7 +6,7 @@
 - List or remove favourites
 - Read logs and launch the game (subject to the tool permissions)
 
-Since 28.0.1 it can also **bring up multiplayer end to end**:
+It can also **bring up multiplayer end to end**:
 
 - `multiplayer_status` — Terracotta toggle, custom nodes, SakuraFrp login state
 - `frp_status` — SakuraFrp account (group / quota / traffic), tunnel list, frpc state
@@ -20,7 +20,7 @@ It can also browse the web: `web_search`, `fetch_webpage`, `search_mcmod` (toggl
 It never gains permissions that were not granted.
 
 
-## File capabilities (28.0.5)
+## File capabilities
 
 | Tool | Purpose |
 |---|---|
@@ -32,7 +32,7 @@ It never gains permissions that were not granted.
 Limits: only under `/storage/emulated/0/`; `Android/data` and `Android/obb` are blocked.
 
 
-## Document generation (28.0.6)
+## Document generation
 
 | Tool | Purpose |
 |---|---|
@@ -43,7 +43,7 @@ Both are **hand-written OOXML + zip** (no Apache POI, so the APK does not grow) 
 "All files access"; without it the tool tells you which switch to enable.
 Just ask "make me a slide deck about X" and it will do the outline first, then generate the file.
 
-## Real option keys (28.0.6)
+## Real option keys
 
 These are not plain strings in `options.txt`; the tools map them for you:
 
@@ -54,7 +54,7 @@ These are not plain strings in `options.txt`; the tools map them for you:
 | FOV | `fov` | Normalised float, 1.0 = default 70° |
 
 
-## Web access (28.0.7)
+## Web access
 
 - One switch only: Settings → AI settings → Web access
 - Always **DuckDuckGo** (no key) — no engine or API key to configure

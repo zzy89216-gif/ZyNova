@@ -32,7 +32,7 @@ Entry: **Multiplayer → SakuraFrp**.
 4. Once it is running, a `node:remote-port` line appears **at the top of the page** with a **Copy** button —
    send that to your friend, who can use "Direct connect" in Minecraft.
 
-## About the port (since 28.0.3)
+## About the port
 
 The **local port is always an editable field, defaulting to 25565**:
 
@@ -55,7 +55,7 @@ The launcher tries English → Chinese → a generic "digits after `port` / `端
 > Changing worlds or ports needs no tunnel edit — just tap *Detect again*.
 > Starting with no listener on the port fails early with a clear message.
 
-## What you can edit (since 28.0.2)
+## What you can edit
 
 - Editable: **local port** and **note**;
 - **Renaming is not possible**: the official `/tunnel/edit` endpoint accepts no `name` (and no `remote`), so
@@ -107,7 +107,7 @@ so what you see is never stale cache.
 | "No process is listening on this port" | Enable "Open to LAN" in-game, then tap **Detect again** or type the port |
 | "frpc component not found" | Reinstall the APK (`libfrpc.so` ships with it) |
 | Tunnel online but friends cannot join | Check the address/port and that the local port matches the game |
-| Refresh fails with a format error | Fixed in 28.0.1 (arrays / `{data}` / BOM are tolerated); if it still happens, send the `FrpApi` log lines |
+| Refresh fails with a format error | Arrays / `{data}` / BOM are tolerated; if it still happens, send the `FrpApi` log lines |
 | Disconnects when the screen turns off | Whitelist battery optimisation and allow background running |
 
 > Creating a tunnel validates the name / local port / node and highlights problems inline

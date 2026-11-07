@@ -41,13 +41,13 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [分辨率与全屏](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/resolution.md) |
 | [备份实例](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/backup.md) |
 | [导出整合包](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/export-modpack.md) |
-| [日常使用总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/usage.md) |
+| [日常使用](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/usage.md) |
 
 ### 渲染器
 
 | 文档 |
 |---|
-| [渲染器总览（旧）](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/renderers.md) |
+| [渲染器](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/renderers.md) |
 | [渲染器总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/renderers-overview.md) |
 | [自动渲染器](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/renderer-auto.md) |
 | [MobileGlues](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/mobileglues.md) |
@@ -60,7 +60,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [登录总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/login.md) |
+| [登录与账号](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/login.md) |
 | [微软正版登录](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/login-microsoft.md) |
 | [离线账号](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/login-offline.md) |
 | [第三方认证](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/login-thirdparty.md) |
@@ -70,7 +70,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [收藏总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites.md) |
+| [收藏与本地归档](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites.md) |
 | [在线收藏](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites-online.md) |
 | [本地归档](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites-archive.md) |
 | [从收藏安装](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites-install.md) |
@@ -79,7 +79,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [AI Agent 总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-agent.md) |
+| [AI Agent](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-agent.md) |
 | [AI 配置](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-setup.md) |
 | [AI 权限模式](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-permissions.md) |
 | [AI 能做什么](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-tools.md) |
@@ -89,8 +89,8 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [樱花内网穿透](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/frp.md) |
-| [陶瓦联机](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/terracotta.md) |
+| [樱花内网穿透（联机）](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/frp.md) |
+| [陶瓦联机（P2P）](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/terracotta.md) |
 
 ### 下载与网络
 
@@ -104,7 +104,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [故障排查总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/troubleshooting.md) |
+| [故障排查](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/troubleshooting.md) |
 | [崩溃日志在哪](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/crash-log.md) |
 | [崩溃分析](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/crash-analyzer.md) |
 | [模组导致崩溃](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/crash-mod.md) |
@@ -131,7 +131,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [数据与隐私总览](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/data-and-privacy.md) |
+| [数据与隐私](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/data-and-privacy.md) |
 | [数据位置](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/data-locations.md) |
 | [卸载的影响](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/uninstall.md) |
 | [日志上传](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/logs-upload.md) |
@@ -141,7 +141,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | 文档 |
 |---|
-| [构建与发布入口](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/build.md) |
+| [构建与发布](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/build.md) |
 | [本地构建](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/build-local.md) |
 | [CI 构建](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/build-ci.md) |
 | [发布 Release](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/release.md) |
@@ -165,4 +165,4 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 5. 六语言 `README*.md` 是另一套东西：中文可玩梗，其他语言必须严肃、逐段对齐；详细历史以 `HANDOFF.md` / `CHANGELOG.md` 为准。
 6. **每篇文档必须同时存在中文（`docs/zh/`）与英文（`docs/en/`）版本，文件名一致；改动一篇就同步另一篇。**
 
-> 本目录 27.9.0 起建立；旧版只散落在 HANDOFF / README / CHANGELOG。
+> 用户文档集中在 `docs/`；更早的记录散落在 HANDOFF / README / CHANGELOG。

@@ -1,6 +1,28 @@
 # Favorites and local archive
 
-- Online favorites store project IDs and cached metadata.
-- Local archive copies files into private storage with SHA-256 dedupe.
-- Deleting one does not delete the other.
-- Uninstalling the app removes the local archive.
+## Two different things
+
+| | Online favorites | Local archive |
+|---|---|---|
+| Stores | Project ID + cached metadata | File copies (SHA-256 dedupe) |
+| Location | MMKV | Private storage `files/favorites/` |
+| Offline | Cache only, cannot install | Usable |
+| Deleting | Removes the favorite record only | Removes the copy only, online favorite stays |
+
+## How to favorite
+
+- The ♥ on the right of a search result card;
+- The ♥ in the top-right corner of a project page;
+- Tap again to unfavorite.
+
+## Local archive
+
+- Entry: Favorites page → "Local archive" → import.
+- Pick files through the system picker; they are copied into private storage and the originals stay untouched.
+- Recognized types: worlds, modpacks, resource packs, datapacks, shaders, mods.
+- Deleting an archive item removes the copy only; uninstalling the app clears the whole private directory.
+
+## Installing
+
+- Online favorites: project page → install to instance; dependencies are resolved automatically.
+- Local archive: install to instance; files that cannot be identified online are copied as-is, so add dependencies manually.

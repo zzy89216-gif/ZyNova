@@ -19,28 +19,28 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | Document |
 |---|
-| [Which APK](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/choose-apk.md) |
-| [Install and first launch](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install.md) |
+| [Which APK to download](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/choose-apk.md) |
+| [Installation and first launch](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install.md) |
 | [First launch](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/first-launch.md) |
-| [Updating](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/update.md) |
+| [Updating the launcher](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/update.md) |
 
 ### Game and instances
 
 | Document |
 |---|
-| [Install the game](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-game.md) |
-| [Install mods](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-mod.md) |
-| [Install modpacks](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-modpack.md) |
-| [Install resource packs](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-resourcepack.md) |
-| [Install shaders](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-shader.md) |
-| [Install or import worlds](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-world.md) |
+| [Installing the game](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-game.md) |
+| [Installing mods](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-mod.md) |
+| [Installing modpacks](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-modpack.md) |
+| [Installing resource packs](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-resourcepack.md) |
+| [Installing shaders](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-shader.md) |
+| [Installing or importing worlds](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-world.md) |
 | [Instance settings](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/instance-settings.md) |
 | [Java version](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/java.md) |
 | [Memory](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/memory.md) |
 | [JVM arguments](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/jvm-args.md) |
 | [Resolution and fullscreen](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/resolution.md) |
-| [Backups](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/backup.md) |
-| [Export a modpack](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/export-modpack.md) |
+| [Backing up an instance](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/backup.md) |
+| [Exporting a modpack](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/export-modpack.md) |
 | [Daily usage](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/usage.md) |
 
 ### Renderers
@@ -60,26 +60,26 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | Document |
 |---|
-| [Login overview](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login.md) |
+| [Accounts and login](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login.md) |
 | [Microsoft login](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login-microsoft.md) |
 | [Offline accounts](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login-offline.md) |
-| [Third-party auth](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login-thirdparty.md) |
-| [Login errors](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login-errors.md) |
+| [Third-party authentication](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login-thirdparty.md) |
+| [Login error quick reference](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/login-errors.md) |
 
 ### Favorites
 
 | Document |
 |---|
-| [Favorites overview](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites.md) |
+| [Favorites and local archive](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites.md) |
 | [Online favorites](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites-online.md) |
 | [Local archive](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites-archive.md) |
-| [Install from favorites](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites-install.md) |
+| [Installing from favorites](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites-install.md) |
 
 ### AI Agent
 
 | Document |
 |---|
-| [AI Agent overview](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-agent.md) |
+| [AI Agent](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-agent.md) |
 | [AI setup](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-setup.md) |
 | [AI permission modes](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-permissions.md) |
 | [What the AI can do](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-tools.md) |
@@ -89,8 +89,8 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | Document |
 |---|
-| [SakuraFrp tunnel](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/frp.md) |
-| [Terracotta multiplayer](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) |
+| [SakuraFrp (playing over the internet)](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/frp.md) |
+| [Terracotta multiplayer (P2P)](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) |
 
 ### Downloads and network
 
@@ -105,7 +105,7 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | Document |
 |---|
 | [Troubleshooting](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/troubleshooting.md) |
-| [Where the log is](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/crash-log.md) |
+| [Where the crash log is](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/crash-log.md) |
 | [Crash analysis](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/crash-analyzer.md) |
 | [Mod-caused crashes](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/crash-mod.md) |
 | [Java-caused crashes](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/crash-java.md) |
@@ -121,9 +121,9 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [Mouse](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/controls-mouse.md) |
 | [Keyboard](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/controls-keyboard.md) |
 | [Gamepad](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/controls-gamepad.md) |
-| [Theme](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/theme.md) |
+| [Theme and appearance](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/theme.md) |
 | [Glass material](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/glass.md) |
-| [Personalization and glass](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/personalization.md) |
+| [Personalization and the glass look](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/personalization.md) |
 | [Language](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/language.md) |
 | [Task panel](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/task-panel.md) |
 
@@ -152,7 +152,7 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | Document |
 |---|
 | [FAQ](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/faq.md) |
-| [Known issues](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/known-issues.md) |
+| [Known issues and limits](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/known-issues.md) |
 | [Glossary](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/glossary.md) |
 | [Licenses & third-party notices](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/licenses.md) |
 

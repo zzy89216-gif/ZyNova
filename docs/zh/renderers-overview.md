@@ -7,4 +7,4 @@
 | GL4ES | 兜底 | 老版本 / 异常设备 |
 | LTW | 实验性 | 愿意承担风险 |
 
-Ironized Zink 已在 27.9.0 移除；需要 Zink 用渲染器插件。
+Ironized Zink 已移除；需要 Zink 用渲染器插件。

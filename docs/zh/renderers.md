@@ -9,7 +9,7 @@
 | GL4ES | 兼容兜底 | 老版本 / MobileGlues 跑不起来的设备 |
 | LTW（实验性） | **不推荐** | 愿意承担崩溃风险、想试经典版本兼容层 |
 
-> Ironized Zink 已在 27.9.0 移除；需要 Zink 请使用渲染器插件，不再内置 Mesa/Kopper。
+> Ironized Zink 已移除；需要 Zink 请使用渲染器插件，不再内置 Mesa/Kopper。
 
 ## 怎么选
 

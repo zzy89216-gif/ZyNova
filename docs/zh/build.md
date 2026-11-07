@@ -11,7 +11,7 @@
 ./gradlew ZalithLauncher:assembleRelease
 ```
 
-27.9.0 起有两个 flavor：
+现在有两个 flavor：
 
 - `universal`：4 个 ABI；
 - `arm64`：仅 arm64-v8a。
