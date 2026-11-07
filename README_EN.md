@@ -22,7 +22,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 ## ✨ What's new in 28.1.0
 
-- **First-launch compliance flow**: read and accept the EULA, Privacy Policy, third-party open-source notice and tutorial one by one, then pick your age group (existing users see it once after updating too)
+- **First-launch compliance flow**: 3 merged documents — ① EULA + Privacy Policy, ② third-party open-source notice + disclaimers and risks, ③ tutorial + supported regions and legal jurisdiction. Each one **must be scrolled to the bottom and ticked separately** before you can continue, then pick your age group (existing users see it once after updating too)
 - **Under-18 time limit**: minors may only launch the game on Friday, Saturday, Sunday and statutory holidays, **20:00–21:00**; the 2026 holidays follow the State Council schedule (国办发明电〔2025〕7号), and make-up working days are treated as workdays
 - **Disclaimers are explicit**: save loss, device heat, third-party bans, service shutdown and similar risks are all stated
 - Also includes: card home no longer hangs on loading, AI web search works, imports go to the instance directory, crash auto-fix removed
