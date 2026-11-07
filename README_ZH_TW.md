@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
+[![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 [简体中文](README.md) | [English](README_EN.md) | **繁體中文** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.7 更新重點
+## ✨ 28.1.0 更新重點
 
-- **移除「崩潰自動修復」**；**聯網固定 DuckDuckGo（免 Key）**，不再需要任何設定；`web_search` / `search_mcmod` 修復；`import_from_public` 改按實例目錄；預設主頁改為卡片
+- **首次啟動合規流程**：EULA / 隱私政策 / 第三方開源合規聲明 / 使用教學四份文件逐一同意並選擇年齡（舊用戶升級也會走一次）；**未滿 18 歲僅能在週五、週六、週日與法定節假日 20:00–21:00 啟動遊戲**
 
 ## 🛠️ 主要功能
 

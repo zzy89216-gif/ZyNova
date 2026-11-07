@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.7**（`launcher_version_code=280007`，**正式版**）
+**当前版本：28.1.0**（`launcher_version_code=281000`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**

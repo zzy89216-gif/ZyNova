@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
+[![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **Русский**
 
@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ Что нового в 28.0.7
+## ✨ Что нового в 28.1.0
 
-- **Удалено «автоисправление крашей»**. **Поиск теперь всегда DuckDuckGo (без ключа)** — настраивать ничего не нужно. Исправлены `web_search` / `search_mcmod`, `import_from_public` работает от каталога инстанса, домашняя страница по умолчанию — карточки
+- **Процедура при первом запуске**: EULA, политика конфиденциальности, уведомление об открытом коде и руководство — принять по порядку и выбрать возраст (существующие пользователи тоже увидят после обновления). **До 18 лет игра доступна только по пятницам, субботам, воскресеньям и в официальные праздники с 20:00 до 21:00**
 
 ## 🛠️ Возможности
 

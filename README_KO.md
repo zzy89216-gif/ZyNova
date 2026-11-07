@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
+[![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.7 업데이트
+## ✨ 28.1.0 업데이트
 
-- **「크래시 자동 수정」 제거**. **웹 검색은 DuckDuckGo 고정(키 불필요)**으로 설정이 필요 없습니다. `web_search` / `search_mcmod` 수정, `import_from_public`은 인스턴스 디렉터리 기준, 홈은 카드형이 기본
+- **첫 실행 규정 준수 절차**: EULA / 개인정보 처리방침 / 제3자 오픈소스 고지 / 사용 안내를 차례로 동의하고 연령을 선택합니다(기존 사용자도 업데이트 후 한 번 표시). **만 18세 미만은 금·토·일 및 법정 공휴일 20:00–21:00에만 게임 실행 가능**
 
 ## 🛠️ 주요 기능
 
