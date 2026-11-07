@@ -1970,4 +1970,6 @@
     <string name="frp_name_rule">Letters, digits, - and _ only (SakuraFrp rejects spaces and non-ASCII)</string>
     <string name="game_menu_option_send_escape">Send ESC (game pause menu)</string>
     <string name="frp_port_default_hint">Defaults to 25565 and is editable; tap &quot;Detect again&quot; to read it from the game log</string>
+    <string name="ai_permission_confirm_desc">Every action that touches files or settings asks you first (recommended)</string>
+    <string name="ai_permission_full_control_desc">No confirmation — the AI may change settings, install mods or delete files on its own</string>
 </resources>

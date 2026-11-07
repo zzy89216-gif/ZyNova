@@ -18,7 +18,9 @@
 
 package com.movtery.zalithlauncher.ai.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -302,10 +304,10 @@ fun AIConfigContent(
             // ── 5. Agent 权限模式 ────────────────────────────────
             ConfigCard {
                 SectionTitle(stringResource(R.string.ai_config_permission))
-                AiChoiceFlow {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     AIPermissionMode.entries.forEach { mode ->
-                        AiChoicePill(
-                            text = mode.displayName.toAndroidString(context),
+                        PermissionOption(
+                            mode = mode,
                             selected = permissionMode == mode,
                             onClick = { AISettings.permissionMode.save(mode) }
                         )
@@ -504,6 +506,75 @@ private fun AiChoicePill(
                 text = text,
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1
+            )
+        }
+    }
+}
+
+/**
+ * 权限模式选项卡（议题：设置 UI 美化）。
+ *
+ * 以前是两个小药丸并排，**看不出「完全放开」到底有多危险**，也没有当前状态的强调。
+ * 现在改成整行可选卡片：左图标 + 标题 + 一句人话解释 + 右侧单选圆点，
+ * 「完全放开」统一用错误色，避免用户随手点过去。
+ */
+@Composable
+private fun PermissionOption(
+    mode: AIPermissionMode,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+    val dangerous = mode == AIPermissionMode.FULL_CONTROL
+    val accent = if (dangerous) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val description = stringResource(
+        if (dangerous) R.string.ai_permission_full_control_desc else R.string.ai_permission_confirm_desc
+    )
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        color = if (selected) accent.copy(alpha = 0.10f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.35f),
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (selected) accent.copy(alpha = 0.55f)
+            else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Icon(
+                modifier = Modifier.size(18.dp),
+                painter = painterResource(
+                    if (dangerous) R.drawable.ic_warning_outlined else R.drawable.ic_check
+                ),
+                contentDescription = null,
+                tint = if (selected) accent else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = mode.displayName.toAndroidString(context),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                    color = if (selected) accent else MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = MaterialTheme.typography.labelSmall.fontSize * 1.35f
+                )
+            }
+            RadioButton(
+                selected = selected,
+                onClick = onClick,
+                colors = RadioButtonDefaults.colors(selectedColor = accent)
             )
         }
     }

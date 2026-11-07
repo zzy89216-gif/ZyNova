@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.3**（`launcher_version_code=280003`，**正式版**）
+**当前版本：28.0.4**（`launcher_version_code=280004`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.4>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -55,6 +55,16 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.4 自适应遮罩 + AI 权限 UI（正式版）✅
+
+1. **自适应遮罩**（`viewmodel/BackgroundViewModel.kt` + `ui/screens/main/MainScreen.kt`）
+   壁纸解码成缩略图算平均亮度（BT.601），`MainScreen` 按亮度压 `3%~28%` 的 scrim；
+   浅色文字压黑、深色文字压白；视频壁纸用 12% 兜底；换壁纸实时生效。
+2. **AI 设置权限模式重做**（`ai/ui/AIConfigScreen.kt#PermissionOption`）
+   药丸 → 可选卡片（图标 + 解释 + 单选），「完全放开」用错误色 + 警告图标。
+
+**未完成（下一版）**：议题 #44 崩溃自愈、#45 网络搜索/全局文件、#46 的「去边框 + 弹簧动效」部分。
 
 ### 28.0.3 下载页返回 + 樱花端口（正式版）✅
 

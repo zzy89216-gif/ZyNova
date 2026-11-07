@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
+[![Release](https://img.shields.io/badge/Release-28.0.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.4)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,11 +17,11 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.3
+## ✨ What's new in 28.0.4
 
-- **Fixed the severe download-screen back bug**: in games / mods / modpacks / resource packs / shaders / worlds, back now steps exactly one level (version detail → version list → category → Downloads → home) instead of jumping straight back to the launcher home
-- **SakuraFrp port is now an editable field defaulting to 25565**: clear it and type your own; manual edits are never overwritten by auto-detection
-- **Port detection now works with localized clients**: it only matched the English line `Local game hosted on port`, while Chinese clients log `本地游戏已在端口[25565]上开启` — both are handled now, plus shared-gameDir log paths
+- **Text stays readable on bright wallpapers**: the app measures the wallpaper's average luminance and applies a 3%–28% scrim (dark scrim for light text, light scrim for dark text), updating live when you change the wallpaper
+- **Redesigned the AI "Agent permission" section**: two selectable cards with icon, plain-language description and a radio dot; "Full control" uses the error colour plus a warning icon so the risk is obvious
+- Issues #44 (crash self-heal) and #45 (web search / global files) are scheduled next
 
 ## 🛠️ Features
 

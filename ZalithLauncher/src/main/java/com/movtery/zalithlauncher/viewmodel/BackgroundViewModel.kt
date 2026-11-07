@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.viewmodel
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
@@ -69,6 +70,15 @@ class BackgroundViewModel: ViewModel() {
         private set
 
     /**
+     * 当前壁纸的平均亮度（0 = 全黑，1 = 全白）；视频或算不出来时为 null。
+     *
+     * 用途：自适应遮罩（议题 #46）。亮壁纸 + 浅色文字 = 根本看不清写的是什么，
+     * 有了这个值就能决定要不要在文字底下压一层深的 scrim、以及压多重。
+     */
+    var backgroundLuminance by mutableStateOf<Float?>(null)
+        private set
+
+    /**
      * 背景是否「已经可以看」。
      *
      * 图片：文件有效即可见；
@@ -81,6 +91,36 @@ class BackgroundViewModel: ViewModel() {
     val isBackgroundVisible: Boolean
         get() = isValid && (isImage || (isVideo && BackgroundVideoController.firstFrameRendered))
 
+    /**
+     * 取壁纸平均亮度：把图片解码成极小缩略图再平均，成本可以忽略（一次性）。
+     */
+    private fun computeLuminance(): Float? = runCatching {
+        val options = BitmapFactory.Options().apply { inSampleSize = 16 }
+        val bitmap = BitmapFactory.decodeFile(backgroundFile.absolutePath, options) ?: return null
+        var sum = 0.0
+        var count = 0
+        // 最多采样 24x24 个点，避免大图遍历
+        val stepX = (bitmap.width / 24).coerceAtLeast(1)
+        val stepY = (bitmap.height / 24).coerceAtLeast(1)
+        var x = 0
+        while (x < bitmap.width) {
+            var y = 0
+            while (y < bitmap.height) {
+                val pixel = bitmap.getPixel(x, y)
+                val r = (pixel shr 16 and 0xFF) / 255.0
+                val g = (pixel shr 8 and 0xFF) / 255.0
+                val b = (pixel and 0xFF) / 255.0
+                // 感知亮度（ITU-R BT.601）
+                sum += 0.299 * r + 0.587 * g + 0.114 * b
+                count++
+                y += stepY
+            }
+            x += stepX
+        }
+        bitmap.recycle()
+        if (count == 0) null else (sum / count).toFloat()
+    }.getOrNull()
+
     private suspend fun updateState() {
         val (isImage0, isVideo0) = withContext(Dispatchers.IO) {
             val isImage = backgroundFile.isImageFile()
@@ -88,8 +128,13 @@ class BackgroundViewModel: ViewModel() {
             val isVideo = if (!isImage) backgroundFile.isVideoFile() else false
             isImage to isVideo
         }
+        //图片壁纸：顺便算一次亮度（视频不参与，返回 null 走默认策略）
+        val luminance = withContext(Dispatchers.IO) {
+            if (isImage0 && backgroundFile.exists()) computeLuminance() else null
+        }
         //更新状态
         withContext(Dispatchers.Main) {
+            backgroundLuminance = luminance
             isImage = isImage0
             isVideo = isVideo0
             isValid = backgroundFile.exists() && (isImage0 || isVideo0)

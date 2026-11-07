@@ -27,6 +27,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.animation.core.animateFloatAsState
@@ -63,8 +64,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -226,11 +229,41 @@ fun MainScreen(
     )
     val backgroundColor = backgroundColor().copy(alpha = backgroundAlpha)
 
+    // ── 自适应遮罩（议题 #46）────────────────────────────────────
+    //壁纸太亮时，浅色文字会「糊在背景上」完全看不清。
+    //这里按壁纸**平均亮度**自动压一层 scrim：亮就压深一点，暗就几乎不压，
+    //并且 backgroundLuminance 是 Compose 状态，换壁纸会实时跟着变。
+    val wallpaperLuminance = LocalBackgroundViewModel.current?.backgroundLuminance
+    val contentIsLight = onBackgroundColor().luminance() > 0.5f
+    val scrimColor = if (contentIsLight) Color.Black else Color.White
+    val scrimAlpha = when {
+        !isBackgroundVisible -> 0f          //没有壁纸时不需要
+        wallpaperLuminance == null -> 0.12f  //视频壁纸：取一个保守值
+        contentIsLight -> (0.03f + 0.22f * wallpaperLuminance).coerceIn(0f, 0.28f)
+        else -> (0.03f + 0.22f * (1f - wallpaperLuminance)).coerceIn(0f, 0.28f)
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = backgroundColor,
         contentColor = onBackgroundColor()
     ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (scrimAlpha > 0f) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    scrimColor.copy(alpha = scrimAlpha),
+                                    scrimColor.copy(alpha = scrimAlpha * 0.85f)
+                                )
+                            )
+                        )
+                )
+            }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -307,6 +340,7 @@ fun MainScreen(
                     )
                 }
             }
+        }
         }
     }
 }

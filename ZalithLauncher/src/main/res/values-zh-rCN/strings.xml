@@ -1952,4 +1952,6 @@
     <string name="frp_name_rule">只能用字母、数字、- 和 _（樱花不支持空格和中文）</string>
     <string name="game_menu_option_send_escape">发送 ESC（游戏暂停菜单）</string>
     <string name="frp_port_default_hint">默认 25565，可以直接改；点「重新识别」从游戏日志里读</string>
+    <string name="ai_permission_confirm_desc">每个会改动文件或设置的操作都先问你，同意后才执行（推荐）</string>
+    <string name="ai_permission_full_control_desc">不再询问，AI 可以自己改配置、装模组、删文件（会消耗额度，误操作无法撤销）</string>
 </resources>

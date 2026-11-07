@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.3)
+[![Release](https://img.shields.io/badge/Release-28.0.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.4)
 
 **简体中文** | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -18,13 +18,11 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.3 更新要点
+## ✨ 28.0.4 更新要点
 
-- **修掉下载页的严重返回 bug**：游戏 / 模组 / 整合包 / 资源包 / 光影 / 存档，点返回只会退一层
-  （版本详情 → 版本列表 → 资源类型 → 下载 → 主界面），不会再一下子跳回启动器主界面
-- **樱花端口改成默认 25565 的可编辑输入框**：可以直接删掉手填，改过之后不会被自动识别覆盖
-- **樱花端口识别支持中文客户端**：之前只认英文日志行 `Local game hosted on port`，
-  而中文客户端写的是 `本地游戏已在端口[25565]上开启` —— 现在两种都认，还兼容共享 gameDir 的日志路径
+- **亮壁纸不再看不清字**：自动读取壁纸平均亮度，按亮度压 3%~28% 的遮罩，浅字压黑、深字压白，换壁纸实时生效
+- **AI 设置「权限模式」重做**：两个可选卡片（图标 + 说明 + 单选），「完全放开」用错误色 + 警告图标，一眼看出风险
+- 议题 #44（崩溃自愈）、#45（网络搜索 / 全局文件）在排期中
 
 ## 🛠️ 能做什么
 
