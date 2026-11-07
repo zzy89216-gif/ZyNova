@@ -20,16 +20,35 @@ object RegionGate {
     private val ALLOWED_COUNTRIES = setOf("CN", "US", "KR", "JP", "RU")
 
     /**
-     * 放行的时区前缀。俄罗斯跨 11 个时区，按常见城市 ID 与 Europe/Moscow 兼容处理。
+     * 放行的时区（**逐个列出**，不要用 `America/` 这种大前缀）。
+     *
+     * ⚠️ 之前的写法用了 `America/`，结果加拿大、墨西哥、巴西、阿根廷的用户全都被放行，
+     * 与「只开中美韩日俄」的要求不符。现在只保留美国本土 + 夏威夷 + 阿拉斯加，
+     * 以及中/韩/日/俄的具体时区。
      */
-    private val ALLOWED_TIMEZONE_PREFIXES = listOf(
+    private val ALLOWED_TIMEZONES = setOf(
+        // 中国
         "Asia/Shanghai", "Asia/Chongqing", "Asia/Harbin", "Asia/Urumqi", "PRC",
+        // 日本
         "Asia/Tokyo", "Japan",
+        // 韩国
         "Asia/Seoul", "ROK",
-        "America/", "US/", "Pacific/Honolulu", "Pacific/Guam",
+        // 美国（本土 + 阿拉斯加 + 夏威夷 + 关岛）
+        "America/New_York", "America/Detroit", "America/Chicago",
+        "America/Denver", "America/Phoenix", "America/Los_Angeles",
+        "America/Anchorage", "America/Indiana/Indianapolis",
+        "America/Kentucky/Louisville", "America/Boise",
+        "America/Juneau", "America/Sitka", "America/Nome", "America/Adak",
+        "US/Eastern", "US/Central", "US/Mountain", "US/Pacific",
+        "US/Alaska", "US/Hawaii", "Pacific/Honolulu", "Pacific/Guam",
+        // 俄罗斯
         "Europe/Moscow", "Europe/Kaliningrad", "Europe/Samara", "Europe/Volgograd",
-        "Asia/Yekaterinburg", "Asia/Novosibirsk", "Asia/Krasnoyarsk", "Asia/Irkutsk",
-        "Asia/Yakutsk", "Asia/Vladivostok", "Asia/Magadan", "Asia/Kamchatka"
+        "Europe/Kirov", "Europe/Astrakhan", "Europe/Saratov", "Europe/Ulyanovsk",
+        "Asia/Yekaterinburg", "Asia/Omsk", "Asia/Novosibirsk", "Asia/Barnaul",
+        "Asia/Tomsk", "Asia/Novokuznetsk", "Asia/Krasnoyarsk", "Asia/Irkutsk",
+        "Asia/Chita", "Asia/Yakutsk", "Asia/Khandyga", "Asia/Vladivostok",
+        "Asia/Ust-Nera", "Asia/Magadan", "Asia/Sakhalin", "Asia/Srednekolymsk",
+        "Asia/Kamchatka", "Asia/Anadyr"
     )
 
     private fun country(): String = Locale.getDefault().country.uppercase(Locale.US)
@@ -39,7 +58,9 @@ object RegionGate {
     fun isAllowed(): Boolean {
         if (country() in ALLOWED_COUNTRIES) return true
         val tz = timeZoneId()
-        return ALLOWED_TIMEZONE_PREFIXES.any { tz.startsWith(it) }
+        //先精确匹配；再容忍少数系统给出的 `Area/City/…` 变体（前缀 + 斜杠边界）
+        if (tz in ALLOWED_TIMEZONES) return true
+        return ALLOWED_TIMEZONES.any { allowed -> tz.startsWith("$allowed/") }
     }
 
     /** 给用户看的地区描述（用于阻断页与日志） */
