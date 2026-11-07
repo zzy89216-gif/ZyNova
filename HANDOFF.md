@@ -28,7 +28,7 @@
 | 文件 | 内容 |
 |---|---|
 | `docs/README.md` | **中英双语文档入口**（跳转到 `docs/zh/` 或 `docs/en/`） |
-| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 76 篇，文件名一一对应 |
+| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 77 篇，文件名一一对应 |
 | `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、两个 APK 怎么选 |
 | `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
 | `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
@@ -43,13 +43,14 @@
 
 ## 版本基线说明（重要）
 
-- **对外公开发布的版本从 `28.1.0 LTS` 开始**，之前的 26.x / 27.x / 28.0.x 均为内部迭代，未对用户发布；
-- 历史上清理过一次旧 Release/tag；后续版本正常迭代、正常发版；
-- 需要追溯历史改动请看 Git 提交记录；对外文档一律以 28.1.0 为准。
+- 当前版本 **28.1.0 LTS**（`launcher_version_code=281001`）；
+- 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
+- 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
+- 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.1.0**（`launcher_version_code=281001`，**LTS 长期支持版，首个公开发布版本**）
+**当前版本：28.1.0 LTS**（`launcher_version_code=281001`）
 
 > 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0>
 
@@ -3216,7 +3217,7 @@ LTW 实验性（仅 arm64）；收藏按钮补到资源页与详情页；导出�
 崩溃页新增「崩溃分析 · 怎么处理」；AI 设置页与输入框重做；微软登录轮询修复；
 构建拆成 universal + arm64 两个 APK。发布地址：
 <https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0>。
-用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 76 篇，入口 `docs/README.md`。）
+用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 77 篇，入口 `docs/README.md`。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
