@@ -44,10 +44,10 @@ import com.movtery.zalithlauncher.R
 fun OnboardingScreen(onDone: () -> Unit) {
     //第三方声明：优先读取 APK 内 assets/licenses/THIRD_PARTY_NOTICES.md，
     //与仓库里的同名文件保持**一字不差**（同一份内容被打进包里）
-    val noticesAsset = remember {
+    val context = LocalContext.current
+    val noticesAsset = remember(context) {
         runCatching {
-            val ctx = LocalContext.current
-            ctx.assets.open("licenses/THIRD_PARTY_NOTICES.md").bufferedReader().use { it.readText() }
+            context.assets.open("licenses/THIRD_PARTY_NOTICES.md").bufferedReader().use { it.readText() }
         }.getOrNull()
     }
 
