@@ -2127,6 +2127,17 @@ HTTP 403
 
 ### 后续待办 ⬜
 
+#### 下次发版顺手做（不要单独为它发版）
+
+1. **`THIRD_PARTY_NOTICES.md` 第 5 节补明示许可证**：现在只写了「在应用内逐项查看」，
+   没把常见组件的许可证写死在文中。建议补一张表：
+   `sora-editor` = LGPL-2.1、`tm4e` = EPL-2.0、`XZ for Java` = 0BSD、
+   `ANGLE` / `LWJGL` / `MMKV` = BSD-3-Clause、`SDL3` = Zlib。
+   ⚠️ 改这个文件时必须**同时复制到** `ZalithLauncher/src/main/assets/licenses/THIRD_PARTY_NOTICES.md`
+   （APK 内冻结副本，应用内「第三方声明」页直接渲染它），
+   并且**跟着一次真实构建走**——只改仓库不改包，会出现「应用内文本 ≠ 仓库文本」。
+2. 每版发完核对三个资产名：`ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`。
+
 #### 27.10.2 计划（统一跟踪：Issue #42）✅ 已随 27.10.2 测试版完成
 
 > 议题：<https://github.com/zzy89216-gif/ZyNova/issues/42>
