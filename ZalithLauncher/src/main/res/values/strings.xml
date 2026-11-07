@@ -1997,4 +1997,6 @@
     <string name="ai_public_access_grant">Grant</string>
     <string name="ai_crash_auto_title">Auto-fix after a crash</string>
     <string name="ai_crash_auto_desc">After an abnormal exit the AI reads the logs and fixes it without asking (uses your API quota)</string>
+    <string name="imported_to_private">Imported into the app directory: %1$s</string>
+    <string name="import_failed">Import failed: %1$s</string>
 </resources>

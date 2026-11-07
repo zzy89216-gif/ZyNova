@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.4)
+[![Release](https://img.shields.io/badge/Release-28.0.5-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.5)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,14 +17,12 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.4
+## ✨ What's new in 28.0.5
 
-- **Text stays readable on bright wallpapers**: the app measures the wallpaper's average luminance and applies a 3%–28% scrim (dark scrim for light text, light scrim for dark text), updating live when you change the wallpaper
-- **Redesigned the AI "Agent permission" section**: two selectable cards with icon, plain-language description and a radio dot; "Full control" uses the error colour plus a warning icon so the risk is obvious
-- Issues #44 (crash self-heal) and #45 (web search / global files) are scheduled next
-
-- **AI can browse the web now**: search errors, query MC百科, read page text (internal addresses blocked); toggle it in AI settings
-- **One-tap crash fix**: after an abnormal game exit the launcher offers "Auto-fix", which hands the problem to the AI
+- **Pick your search engine**: DuckDuckGo / Baidu Qianfan / Bing / custom endpoint — engines that need a key get a "Create API" shortcut next to the field, and failures fall back to DuckDuckGo
+- **The AI can work in public storage**: list, read, create folders, write files and import into the game directory; deletions always go to a recycle bin, and `Android/data` / `obb` are off limits
+- **Any file auto-import**: share a file to ZyNova (or open it with ZyNova) and it is copied into the app's `imported/` folder with a toast showing the path
+- **Silent crash auto-fix**: when enabled, an abnormal exit goes straight to the AI for analysis and repair instead of showing a dialog (off by default, uses your quota)
 
 ## 🛠️ Features
 

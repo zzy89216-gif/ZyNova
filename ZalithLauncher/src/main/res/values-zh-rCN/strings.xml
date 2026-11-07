@@ -1979,4 +1979,6 @@
     <string name="ai_public_access_grant">去授权</string>
     <string name="ai_crash_auto_title">崩溃后自动修复</string>
     <string name="ai_crash_auto_desc">游戏异常退出后，直接让 AI 读日志并动手修，不再弹框（会消耗额度）</string>
+    <string name="imported_to_private">已导入到 App 私有目录：%1$s</string>
+    <string name="import_failed">导入失败：%1$s</string>
 </resources>

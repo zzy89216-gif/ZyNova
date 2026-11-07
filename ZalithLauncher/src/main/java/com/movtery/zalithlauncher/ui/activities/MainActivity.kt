@@ -85,6 +85,7 @@ import com.movtery.zalithlauncher.utils.copyText
 import com.movtery.zalithlauncher.utils.festival.getTodayFestivals
 import com.movtery.zalithlauncher.utils.file.shareFile
 import com.movtery.zalithlauncher.utils.isChinese
+import com.movtery.zalithlauncher.context.copyLocalFile
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.openLink
 import com.movtery.zalithlauncher.utils.network.openLinkInternal
@@ -801,7 +802,8 @@ class MainActivity : BaseAppCompatActivity() {
         val importing = when (type) {
             IMPORT_TYPE_MODPACK -> handleModpackImport(intent)
             IMPORT_TYPE_CONTROLS -> handleControlsImport(intent)
-            else -> false
+            //其它类型的文件（分享/打开方式进来的）统一「自动导入」到 App 私有目录
+            else -> handleGenericImport(intent)
         }
 
         intent.removeExtra(EXTRA_IMPORT_TYPE)
@@ -836,6 +838,40 @@ class MainActivity : BaseAppCompatActivity() {
         }
         return uri != null
     }
+
+    /**
+     * 任意文件的「自动导入」：分享 / 用 ZyNova 打开某个文件时，
+     * 直接把它复制进 App 私有目录 `imported/`，用户之后可以从文件管理里找到。
+     */
+    private fun handleGenericImport(intent: Intent): Boolean {
+        val uri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(EXTRA_IMPORT_URI, Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(EXTRA_IMPORT_URI)
+        } ?: return false
+
+        val name = queryDisplayName(uri) ?: ("imported_" + System.currentTimeMillis())
+        val dir = java.io.File(PathManager.DIR_FILES_EXTERNAL, "imported").apply { mkdirs() }
+        val target = java.io.File(dir, name)
+        return runCatching {
+            copyLocalFile(uri, target)
+            Toast.makeText(this, getString(R.string.imported_to_private, target.absolutePath), Toast.LENGTH_LONG).show()
+            Logger.info(TAG, "Imported external file to ${target.absolutePath}")
+            true
+        }.getOrElse { e ->
+            Logger.warning(TAG, "Unable to import $uri", e)
+            Toast.makeText(this, getString(R.string.import_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
+            false
+        }
+    }
+
+    private fun queryDisplayName(uri: Uri): String? = runCatching {
+        contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+            val idx = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+            if (idx >= 0 && cursor.moveToFirst()) cursor.getString(idx) else null
+        }
+    }.getOrNull()
 
     /**
      * @return 是否已经触发了控制布局导入程序

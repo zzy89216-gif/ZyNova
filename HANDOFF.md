@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.4**（`launcher_version_code=280004`，**正式版**）
+**当前版本：28.0.5**（`launcher_version_code=280005`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.4>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.5>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -55,6 +55,18 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.5 AI 联网引擎 / 公有目录 / 自动导入 / 静默修复（正式版）✅
+
+1. **搜索引擎可选**（`ai/AISettings.kt` + `ai/agent/tools/WebTools.kt` + AI 设置页）
+   四选一，需要 Key 的引擎带「创建 API」直链，失败回退 DuckDuckGo。
+2. **公有目录文件工具**（`ai/agent/tools/PublicFileTools.kt`）
+   `public_list/read/write/mkdir/move_to_recycle_bin/import_from_public`，
+   需要 `MANAGE_EXTERNAL_STORAGE`；删除统一进 `.recycle_bin`；禁止 `Android/data`、`obb`。
+3. **任意文件自动导入**（`MainActivity#handleGenericImport`）
+   分享 / 打开方式进来的非整合包文件 → 复制到 `imported/` 并 toast 路径。
+4. **崩溃静默自动修复**（`AISettings.crashAutoRepair` + `MainScreen`）
+   开启后不弹框，直接把崩溃信息交给 AI 并跳转对话页。
 
 ### 28.0.4 自适应遮罩 + AI 权限 UI（正式版）✅
 
