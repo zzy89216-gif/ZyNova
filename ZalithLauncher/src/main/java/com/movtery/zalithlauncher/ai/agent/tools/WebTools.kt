@@ -22,6 +22,7 @@ import com.movtery.zalithlauncher.ai.agent.AIToolSchema
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.net.URL
@@ -135,8 +136,34 @@ internal fun webTools(): List<AITool> = listOf(
     },
 )
 
-/** DuckDuckGo 网页版搜索并抽取前 [limit] 条 */
+/**
+ * 按用户选择的引擎搜索。
+ *
+ * - `duckduckgo`：免 Key，抓网页版结果；
+ * - `baidu`：百度千帆 AI 搜索（需要 API Key，控制台地址见设置页的「创建 API」）；
+ * - `bing`：Azure Bing Web Search（需要订阅 Key）；
+ * - `custom`：自建兼容接口，返回 JSON 里带标题/链接/摘要即可。
+ *
+ * 任何一家失败都会**回退到 DuckDuckGo**，保证「搜得到」比「用得对」更重要。
+ */
 private fun searchWeb(query: String, limit: Int): String {
+    val engine = AISettings.searchEngine.state
+    val key = AISettings.searchApiKey.state.trim()
+    val baseUrl = AISettings.searchBaseUrl.state.trim()
+
+    val result = when (engine) {
+        "baidu" -> runCatching { searchBaidu(query, limit, key) }.getOrNull()
+        "bing" -> runCatching { searchBing(query, limit, key) }.getOrNull()
+        "custom" -> runCatching { searchCustom(query, limit, baseUrl, key) }.getOrNull()
+        else -> null
+    }
+    if (!result.isNullOrBlank()) return result
+
+    //兜底：免 Key 的 DuckDuckGo
+    return searchDuckDuckGo(query, limit)
+}
+
+private fun searchDuckDuckGo(query: String, limit: Int): String {
     val url = "https://html.duckduckgo.com/html/?q=" + java.net.URLEncoder.encode(query, "UTF-8")
     val html = get(url)
     val items = Regex(
@@ -144,8 +171,7 @@ private fun searchWeb(query: String, limit: Int): String {
         setOf(RegexOption.DOT_MATCHES_ALL, RegexOption.IGNORE_CASE)
     ).findAll(html).map { m ->
         val link = m.groupValues[1].replace("&amp;", "&")
-        val title = cleanText(m.groupValues[2])
-        title to link
+        cleanText(m.groupValues[2]) to link
     }.filter { it.first.isNotBlank() && it.second.startsWith("http") }
         .distinctBy { it.second }
         .take(limit)
@@ -153,20 +179,81 @@ private fun searchWeb(query: String, limit: Int): String {
 
     if (items.isEmpty()) return "没有搜到结果（可能被搜索源限流）：$query"
     return buildString {
-        append("搜索：").append(query).append('\n')
-        items.forEach { (title, link) ->
-            append("- ").append(title).append('\n')
+        append("搜索（DuckDuckGo）：").append(query).append('\n')
+        items.forEach { (title, link) -> append("- ").append(title).append('\n').append("  ").append(link).append('\n') }
+    }
+}
+
+/** 百度千帆 AI 搜索 */
+private fun searchBaidu(query: String, limit: Int, apiKey: String): String? {
+    if (apiKey.isBlank()) return null
+    val body = """{"messages":[{"content":"$query","role":"user"}],"search_source":"baidu_search_v2","resource_type_filter":[{"type":"web","top_k":$limit}]}"""
+    val json = postJson(
+        url = "https://qianfan.baidubce.com/v2/ai_search/web_search",
+        body = body,
+        headers = mapOf("Authorization" to "Bearer $apiKey")
+    )
+    return formatJsonResults("百度千帆", query, json)?.takeIf { it.isNotBlank() }
+}
+
+/** Azure Bing Web Search */
+private fun searchBing(query: String, limit: Int, apiKey: String): String? {
+    if (apiKey.isBlank()) return null
+    val url = "https://api.bing.microsoft.com/v7.0/search?count=$limit&q=" +
+            java.net.URLEncoder.encode(query, "UTF-8")
+    val json = get(url, mapOf("Ocp-Apim-Subscription-Key" to apiKey))
+    return formatJsonResults("Bing", query, json)
+}
+
+/** 自建兼容接口：GET {base}?q=xxx，返回 JSON（含 title/url/snippet 即可）*/
+private fun searchCustom(query: String, limit: Int, baseUrl: String, apiKey: String): String? {
+    if (baseUrl.isBlank()) return null
+    val sep = if (baseUrl.contains('?')) '&' else '?'
+    val url = baseUrl + sep + "q=" + java.net.URLEncoder.encode(query, "UTF-8") + "&limit=$limit"
+    val json = get(url, if (apiKey.isBlank()) emptyMap() else mapOf("Authorization" to "Bearer $apiKey"))
+    return formatJsonResults("自定义", query, json)
+}
+
+/**
+ * 把各家搜索结果统一成「标题 + 链接」列表。
+ *
+ * 三家返回字段名不一样（title/name、url/link、snippet/description），
+ * 这里直接从 JSON 文本里按字段名抓，避免为每家建一套数据类。
+ */
+private fun formatJsonResults(label: String, query: String, json: String): String? {
+    val titles = Regex("\"(?:title|name)\"\\s*:\\s*\"([^\"]{2,120})\"").findAll(json).map { it.groupValues[1] }.toList()
+    val links = Regex("\"(?:url|link)\"\\s*:\\s*\"(https?://[^\"]+)\"").findAll(json).map { it.groupValues[1] }.toList()
+    val snippets = Regex("\"(?:snippet|description|content)\"\\s*:\\s*\"([^\"]{2,200})\"").findAll(json).map { it.groupValues[1] }.toList()
+    if (titles.isEmpty() && links.isEmpty()) return null
+    return buildString {
+        append("搜索（").append(label).append("）：").append(query).append('\n')
+        links.forEachIndexed { index, link ->
+            append("- ").append(titles.getOrElse(index) { link }).append('\n')
+            snippets.getOrNull(index)?.let { append("  ").append(it).append('\n') }
             append("  ").append(link).append('\n')
         }
     }
 }
 
-private fun get(url: String): String {
-    val request = Request.Builder()
+private fun postJson(url: String, body: String, headers: Map<String, String>): String {
+    val builder = Request.Builder()
+        .url(url)
+        .post(okhttp3.RequestBody.create("application/json".toMediaTypeOrNull(), body))
+        .header("User-Agent", USER_AGENT)
+    headers.forEach { (k, v) -> builder.header(k, v) }
+    httpClient.newCall(builder.build()).execute().use { response ->
+        if (!response.isSuccessful) error("HTTP ${response.code}")
+        return response.body?.string().orEmpty()
+    }
+}
+
+private fun get(url: String, headers: Map<String, String> = emptyMap()): String {
+    val builder = Request.Builder()
         .url(url)
         .header("User-Agent", USER_AGENT)
         .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
-        .build()
+    headers.forEach { (k, v) -> builder.header(k, v) }
+    val request = builder.build()
     httpClient.newCall(request).execute().use { response ->
         if (!response.isSuccessful) error("HTTP ${response.code}")
         return response.body?.string().orEmpty()

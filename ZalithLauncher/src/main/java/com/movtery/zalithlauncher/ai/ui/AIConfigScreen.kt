@@ -18,6 +18,8 @@
 
 package com.movtery.zalithlauncher.ai.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -353,6 +355,59 @@ fun AIConfigContent(
                     )
                 }
                 HintText(stringResource(R.string.ai_web_search_note))
+
+                //搜索引擎选择 + 「创建 API」直链
+                val engine = AISettings.searchEngine.state
+                SectionTitle(stringResource(R.string.ai_web_engine_title))
+                AiChoiceFlow {
+                    listOf(
+                        "duckduckgo" to R.string.ai_web_engine_ddg,
+                        "baidu" to R.string.ai_web_engine_baidu,
+                        "bing" to R.string.ai_web_engine_bing,
+                        "custom" to R.string.ai_web_engine_custom
+                    ).forEach { entry ->
+                        AiChoicePill(
+                            text = stringResource(entry.second),
+                            selected = engine == entry.first,
+                            onClick = { AISettings.searchEngine.save(entry.first) }
+                        )
+                    }
+                }
+
+                if (engine != "duckduckgo") {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        value = AISettings.searchApiKey.state,
+                        onValueChange = { AISettings.searchApiKey.save(it) },
+                        label = { Text(stringResource(R.string.ai_web_api_key)) },
+                        placeholder = { Text(stringResource(R.string.ai_web_api_key_hint)) },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        trailingIcon = {
+                            TextButton(onClick = {
+                                val url = when (engine) {
+                                    "baidu" -> "https://console.bce.baidu.com/qianfan/ais/console/apiKey"
+                                    "bing" -> "https://portal.azure.com/#create/Microsoft.CognitiveServicesBingSearch-v7"
+                                    else -> "https://github.com/"
+                                }
+                                runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+                            }) {
+                                Text(stringResource(R.string.ai_web_create_api))
+                            }
+                        }
+                    )
+                    if (engine == "custom") {
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            value = AISettings.searchBaseUrl.state,
+                            onValueChange = { AISettings.searchBaseUrl.save(it) },
+                            label = { Text(stringResource(R.string.ai_web_base_url)) },
+                            placeholder = { Text("https://your-search-api.example.com/search") },
+                            singleLine = true
+                        )
+                    }
+                    HintText(stringResource(R.string.ai_web_key_note))
+                }
             }
 
             Spacer(Modifier.height(8.dp))

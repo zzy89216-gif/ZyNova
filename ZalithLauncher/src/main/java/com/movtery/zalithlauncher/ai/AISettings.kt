@@ -82,6 +82,15 @@ object AISettings : SettingsRegistry() {
      */
     val webSearch = boolSetting("aiWebSearch", true)
 
+    /** 搜索引擎：duckduckgo（免 Key）/ baidu（千帆）/ bing（Azure）/ custom（自建兼容接口）*/
+    val searchEngine = stringSetting("aiSearchEngine", "duckduckgo")
+
+    /** 搜索服务的 API Key（百度千帆 / Azure Bing / 自建）*/
+    val searchApiKey = stringSetting("aiSearchApiKey", "")
+
+    /** 自建搜索接口地址（custom 时使用）*/
+    val searchBaseUrl = stringSetting("aiSearchBaseUrl", "")
+
     /**
      * 是否已经向用户展示过「数据会发往你配置的 AI 服务商」这段说明。
      *

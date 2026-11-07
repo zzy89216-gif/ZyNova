@@ -1981,4 +1981,14 @@
     <string name="crash_guard_view_log">View log</string>
     <string name="crash_guard_dismiss">Got it</string>
     <string name="crash_guard_auto_fix">Auto-fix</string>
+    <string name="ai_web_engine_title">Search engine</string>
+    <string name="ai_web_engine_ddg">DuckDuckGo (no key)</string>
+    <string name="ai_web_engine_baidu">Baidu Qianfan</string>
+    <string name="ai_web_engine_bing">Bing (Azure)</string>
+    <string name="ai_web_engine_custom">Custom endpoint</string>
+    <string name="ai_web_api_key">Search API key</string>
+    <string name="ai_web_api_key_hint">Paste your key</string>
+    <string name="ai_web_create_api">Create API</string>
+    <string name="ai_web_base_url">Endpoint URL</string>
+    <string name="ai_web_key_note">Tap Create API to jump straight to the provider key page. If it is empty or the call fails, the AI falls back to keyless DuckDuckGo.</string>
 </resources>

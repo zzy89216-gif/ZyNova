@@ -1963,4 +1963,14 @@
     <string name="crash_guard_view_log">看日志</string>
     <string name="crash_guard_dismiss">知道了</string>
     <string name="crash_guard_auto_fix">自动修复</string>
+    <string name="ai_web_engine_title">搜索引擎</string>
+    <string name="ai_web_engine_ddg">DuckDuckGo（免 Key）</string>
+    <string name="ai_web_engine_baidu">百度千帆</string>
+    <string name="ai_web_engine_bing">Bing（Azure）</string>
+    <string name="ai_web_engine_custom">自建接口</string>
+    <string name="ai_web_api_key">搜索 API Key</string>
+    <string name="ai_web_api_key_hint">粘贴你的 Key</string>
+    <string name="ai_web_create_api">创建 API</string>
+    <string name="ai_web_base_url">接口地址</string>
+    <string name="ai_web_key_note">点右边的「创建 API」会直接跳到官方的创建页面；填好 Key 后 AI 就会用这个引擎搜索，没填或调用失败会自动回退到免 Key 的 DuckDuckGo。</string>
 </resources>
