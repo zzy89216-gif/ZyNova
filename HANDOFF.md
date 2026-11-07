@@ -3058,6 +3058,12 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 
 APK 编译与产物上传全部由 GitHub Actions 自动完成，**不需要手工下载 artifact 再上传**。
 
+> 📦 **产物命名约定**：APK 文件名里的版本号只取**数字部分**（`launcherVersionFileTag` =
+> `launcher_version_name.substringBefore(' ')`），所以 `28.1.0 LTS` 产出的是
+> `ZyNova-28.1.0.apk` / `ZyNova-28.1.0-arm64-v8a.apk`，不会带 `.LTS` 后缀：
+> 空格会被 GitHub 转成点，带后缀就会变成 `ZyNova-28.1.0.LTS.apk`。
+> 发布后请核对三个资产名：`ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`。
+
 ⚠️ **`<TOKEN>` 由用户临时提供、`<VERSION>` 替换为实际版本号，二者都不要写入任何文件**。
 Token 只放在环境变量或临时凭据助手里，用完即弃（见第八节红线 2）。
 

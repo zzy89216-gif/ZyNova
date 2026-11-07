@@ -21,6 +21,10 @@ val launcherUrl = project.findProperty("url_home") as? String ?: error("The \"ur
 val launcherVersionCode = (project.findProperty("launcher_version_code") as? String)?.toIntOrNull() ?: error("The \"launcher_version_code\" property is not set as an integer in gradle.properties.")
 val launcherVersionName = project.findProperty("launcher_version_name") as? String ?: error("The \"launcher_version_name\" property is not set in gradle.properties.")
 
+//APK 文件名只取版本号数字部分：versionName 带「28.1.0 LTS」这类后缀时，
+//空格会被 GitHub 转成点，产出 ZyNova-28.1.0.LTS.apk 这种不想要的名字。
+val launcherVersionFileTag = launcherVersionName.substringBefore(' ').trim()
+
 val defaultOAuthClientID = project.findProperty("oauth_client_id") as? String
 val defaultStorePassword = project.findProperty("default_store_password") as? String ?: error("The \"default_store_password\" property is not set in gradle.properties.")
 val defaultKeyPassword = project.findProperty("default_key_password") as? String ?: error("The \"default_key_password\" property is not set in gradle.properties.")
@@ -152,7 +156,7 @@ androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             if (output is VariantOutputImpl) {
-                val baseName = "$launcherName-${if (variant.buildType == "release") launcherVersionName else "Debug-$launcherVersionName"}"
+                val baseName = "$launcherName-${if (variant.buildType == "release") launcherVersionFileTag else "Debug-$launcherVersionFileTag"}"
                 //通用版不带后缀，arm64 版带 -arm64-v8a，避免两个 APK 同名覆盖
                 val flavor = variant.productFlavors.firstOrNull()?.second.orEmpty()
                 val abiSuffix = if (flavor == "arm64") "-arm64-v8a" else ""
