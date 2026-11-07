@@ -1,5 +1,5 @@
 /*
- * ZyNova Launcher — 首次启动引导（EULA / 隐私政策 / 第三方声明 / 教程 / 年龄确认）
+ * ZyNova Launcher — 首次启动引导（条款 → 年龄）
  * GPL-3.0-or-later
  */
 package com.movtery.zalithlauncher.onboarding
@@ -13,61 +13,77 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
-import com.movtery.zalithlauncher.setting.AllSettings
 
 /**
- * 首次启动的全屏引导。
+ * 首次启动引导。
  *
- * 顺序：EULA → 隐私政策 → 第三方开源合规声明 → 使用教程 → 同意 →
- * 选择年龄（未满 18 / 已满 18）→ 进入主界面。
+ * 严格流程：每份文档**必须滑到底部**并勾选「我已阅读并同意」，才能点下一步；
+ * 全部读完后选择年龄段，才进入主界面。
  *
- * ⚠️ 两个开关都是 28.1.0 新增的键，**老用户升级后同样会走一次**，读完并选完年龄段才进主界面。
+ * ⚠️ 老用户升级后同样会走一遍（见 [OnboardingState.needsOnboarding]）。
  */
 @Composable
 fun OnboardingScreen(onDone: () -> Unit) {
-    // 0..4 = 五份文档，5 = 选年龄
-    var step by remember { mutableStateOf(0) }
+    //第三方声明：优先读取 APK 内 assets/licenses/THIRD_PARTY_NOTICES.md，
+    //与仓库里的同名文件保持**一字不差**（同一份内容被打进包里）
+    val noticesAsset = remember {
+        runCatching {
+            val ctx = LocalContext.current
+            ctx.assets.open("licenses/THIRD_PARTY_NOTICES.md").bufferedReader().use { it.readText() }
+        }.getOrNull()
+    }
+
+    val docs = remember(noticesAsset) {
+        listOf(
+            "《最终用户许可协议》" to LegalTexts.eula,
+            "《隐私政策》" to LegalTexts.privacy,
+            "《第三方开源合规声明》" to (noticesAsset ?: LegalTexts.thirdParty),
+            "《ZyNova 使用教程》" to LegalTexts.tutorial,
+            "《适用地区与法律管辖》" to LegalTexts.regions,
+            "《补充免责与风险告知》" to LegalTexts.risks
+        )
+    }
+
+    var step by remember { mutableStateOf(0) }        // 0..5 文档，6 选年龄
+    var agreed by remember { mutableStateOf(false) }  // 每页都要重新勾选
     var minor by remember { mutableStateOf(true) }
 
-    val titles = listOf(
-        "《最终用户许可协议》",
-        "《隐私政策》",
-        "《第三方开源合规声明》",
-        "《使用教程》",
-        "《适用地区与法律管辖》"
-    )
-    val bodies = listOf(
-        LegalTexts.eula,
-        LegalTexts.privacy,
-        LegalTexts.thirdParty,
-        LegalTexts.tutorial,
-        LegalTexts.regions
-    )
+    val scrollState = rememberScrollState()
+    // 滑到底部（留 8px 容差）才允许勾选
+    val atBottom by remember {
+        derivedStateOf {
+            scrollState.maxValue == 0 || scrollState.value >= scrollState.maxValue - 8
+        }
+    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = if (step < 5) "${step + 1} / 5  ${titles[step]}" else stringResource(R.string.onboarding_age_title),
+                text = if (step < docs.size) "${step + 1} / ${docs.size}  ${docs[step].first}"
+                else stringResource(R.string.onboarding_age_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -76,11 +92,17 @@ fun OnboardingScreen(onDone: () -> Unit) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                if (step < 5) {
-                    Text(text = bodies[step], style = MaterialTheme.typography.bodySmall)
+                if (step < docs.size) {
+                    Text(text = docs[step].second, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = if (atBottom) "—— 已到末尾 ——" else "请继续向下滑动阅读至末尾",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (atBottom) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 } else {
                     Text(
                         stringResource(R.string.onboarding_age_hint),
@@ -100,23 +122,39 @@ fun OnboardingScreen(onDone: () -> Unit) {
                     }
                     Text(
                         "选择「未满 18 周岁」后，只能在本软件内于周五、周六、周日和法定节假日的 20:00–21:00 启动游戏；" +
-                            "选择「已满 18 周岁」不设时间限制。你可以随时卸载重装重新选择，请如实填写。",
+                            "选择「已满 18 周岁」不设时间限制。请如实填写。",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            if (step < 5) {
+            if (step < docs.size) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = agreed,
+                        // 没滑到底不允许勾选
+                        enabled = atBottom,
+                        onCheckedChange = { agreed = it }
+                    )
+                    Text(
+                        text = "我已阅读并同意本份文档的全部内容",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (step > 0) {
-                        OutlinedButton(onClick = { step-- }, modifier = Modifier.weight(1f)) { Text("上一份") }
+                        OutlinedButton(
+                            onClick = { step--; agreed = false },
+                            modifier = Modifier.weight(1f)
+                        ) { Text("上一份") }
                     }
                     Button(
                         modifier = Modifier.weight(2f),
-                        onClick = { step++ }
+                        enabled = agreed && atBottom,
+                        onClick = { step++; agreed = false }
                     ) {
-                        Text(if (step == 4) stringResource(R.string.onboarding_accept_all) else "我已阅读，继续")
+                        Text(if (step == docs.size - 1) "已读完全部，去选择年龄" else "下一步")
                     }
                 }
             } else {
