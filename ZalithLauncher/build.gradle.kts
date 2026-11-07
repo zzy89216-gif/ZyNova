@@ -21,8 +21,8 @@ val launcherUrl = project.findProperty("url_home") as? String ?: error("The \"ur
 val launcherVersionCode = (project.findProperty("launcher_version_code") as? String)?.toIntOrNull() ?: error("The \"launcher_version_code\" property is not set as an integer in gradle.properties.")
 val launcherVersionName = project.findProperty("launcher_version_name") as? String ?: error("The \"launcher_version_name\" property is not set in gradle.properties.")
 
-//APK 文件名只取版本号数字部分：versionName 带「28.1.0 LTS」这类后缀时，
-//空格会被 GitHub 转成点，产出 ZyNova-28.1.0.LTS.apk 这种不想要的名字。
+//APK 文件名只取版本号数字部分：将来 versionName 若带后缀（例如「28.1.1 beta」），
+//空格会被 GitHub 转成点，产出带后缀的名字；这里固定只取数字部分。
 val launcherVersionFileTag = launcherVersionName.substringBefore(' ').trim()
 
 val defaultOAuthClientID = project.findProperty("oauth_client_id") as? String

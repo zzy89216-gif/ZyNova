@@ -43,14 +43,14 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.1.0 LTS**（`launcher_version_code=281001`）；
+- 当前版本 **28.1.0**（`launcher_version_code=281001`）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.1.0 LTS**（`launcher_version_code=281001`）
+**当前版本：28.1.0**（`launcher_version_code=281001`）
 
 > 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0>
 
@@ -3059,9 +3059,9 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 APK 编译与产物上传全部由 GitHub Actions 自动完成，**不需要手工下载 artifact 再上传**。
 
 > 📦 **产物命名约定**：APK 文件名里的版本号只取**数字部分**（`launcherVersionFileTag` =
-> `launcher_version_name.substringBefore(' ')`），所以 `28.1.0 LTS` 产出的是
-> `ZyNova-28.1.0.apk` / `ZyNova-28.1.0-arm64-v8a.apk`，不会带 `.LTS` 后缀：
-> 空格会被 GitHub 转成点，带后缀就会变成 `ZyNova-28.1.0.LTS.apk`。
+> `launcher_version_name.substringBefore(' ')`），所以当前 `28.1.0` 产出的是
+> `ZyNova-28.1.0.apk` / `ZyNova-28.1.0-arm64-v8a.apk`。这条规则是为将来版本名带后缀
+> （例如临时标 `28.1.1 beta`）准备的：空格会被 GitHub 转成点，文件名会变成带后缀的样子。
 > 发布后请核对三个资产名：`ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`。
 
 ⚠️ **`<TOKEN>` 由用户临时提供、`<VERSION>` 替换为实际版本号，二者都不要写入任何文件**。

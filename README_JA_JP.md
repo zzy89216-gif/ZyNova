@@ -4,7 +4,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 LTS リリース（グローバルコンプライアンス版）。**
+> ⭐ **ZyNova 28.1.0 リリース（グローバルコンプライアンス版）。**
 
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
