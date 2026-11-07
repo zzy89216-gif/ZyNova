@@ -118,11 +118,23 @@ fun OnboardingScreen(onDone: () -> Unit) {
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Button(onClick = { minor = true }, enabled = minor, modifier = Modifier.weight(1f)) {
-                            Text(if (minor) "✓ 未满 18 周岁" else "未满 18 周岁")
-                        }
-                        OutlinedButton(onClick = { minor = false }, enabled = !minor, modifier = Modifier.weight(1f)) {
-                            Text(if (!minor) "✓ 已满 18 周岁" else "已满 18 周岁")
+                        //⚠️ 两个按钮都必须可点：
+                        //之前写成了 enabled = minor / enabled = !minor，默认 minor=true 时
+                        //「已满 18 周岁」永远处于禁用状态，用户根本选不了。
+                        if (minor) {
+                            Button(onClick = { minor = true }, modifier = Modifier.weight(1f)) {
+                                Text("✓ 未满 18 周岁")
+                            }
+                            OutlinedButton(onClick = { minor = false }, modifier = Modifier.weight(1f)) {
+                                Text("已满 18 周岁")
+                            }
+                        } else {
+                            OutlinedButton(onClick = { minor = true }, modifier = Modifier.weight(1f)) {
+                                Text("未满 18 周岁")
+                            }
+                            Button(onClick = { minor = false }, modifier = Modifier.weight(1f)) {
+                                Text("✓ 已满 18 周岁")
+                            }
                         }
                     }
                     Text(
