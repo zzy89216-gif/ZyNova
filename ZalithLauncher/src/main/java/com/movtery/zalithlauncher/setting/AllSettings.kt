@@ -655,6 +655,14 @@ object AllSettings : SettingsRegistry() {
     /**
      * 启动器主页类型
      */
+    // ── 首次启动引导 / 年龄确认（28.0.8）────────────────────────────
+    val onboardingAccepted = boolSetting("onboardingAccepted", false)
+
+    val onboardingAgeConfirmed = boolSetting("onboardingAgeConfirmed", false)
+
+    /** 是否未满 18 周岁（默认按「未满」处理，保守）*/
+    val onboardingIsMinor = boolSetting("onboardingIsMinor", true)
+
     val homePageType = enumSetting("homePageType", HomePageType.Cards)
 
     /**

@@ -53,6 +53,8 @@ import com.movtery.zalithlauncher.game.renderer.Renderers
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.notification.NotificationManager
+import com.movtery.zalithlauncher.onboarding.MinorTimeGate
+import com.movtery.zalithlauncher.onboarding.OnboardingState
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.path.URL_SUPPORT
 import com.movtery.zalithlauncher.setting.AllSettings
@@ -252,13 +254,13 @@ class MainActivity : BaseAppCompatActivity() {
                         showDownloadPlugins(event.link)
                     }
                     is EventViewModel.Event.Launch.Game -> {
-                        launchGameViewModel.tryLaunch(event.version)
+                        if (allowLaunchUnderAgeRule()) launchGameViewModel.tryLaunch(event.version)
                     }
                     is EventViewModel.Event.Launch.PlayServer -> {
-                        launchGameViewModel.quickPlayServer(event.version, event.address)
+                        if (allowLaunchUnderAgeRule()) launchGameViewModel.quickPlayServer(event.version, event.address)
                     }
                     is EventViewModel.Event.Launch.PlaySave -> {
-                        launchGameViewModel.quickPlaySave(event.version, event.saveName)
+                        if (allowLaunchUnderAgeRule()) launchGameViewModel.quickPlaySave(event.version, event.saveName)
                     }
                     is EventViewModel.Event.LogShare.ShareGameLog -> {
                         val file = event.logFile
@@ -321,6 +323,14 @@ class MainActivity : BaseAppCompatActivity() {
                 backgroundViewModel = backgroundViewModel,
                 festivals = festivals
             ) {
+                //首次启动：先看四份文档 + 选年龄，完成后才进主界面
+                var onboardingDone by androidx.compose.runtime.remember {
+                    androidx.compose.runtime.mutableStateOf(!OnboardingState.needsOnboarding())
+                }
+                if (!onboardingDone) {
+                    com.movtery.zalithlauncher.onboarding.OnboardingScreen(onDone = { onboardingDone = true })
+                    return@ZalithLauncherTheme
+                }
                 ObserveFullScreenSetting(AllSettings.launcherFullScreen.state)
                 Box {
                     Background(
@@ -794,6 +804,22 @@ class MainActivity : BaseAppCompatActivity() {
      * 处理外部导入
      * @return 是否有导入任务正在进行中
      */
+    /**
+     * 未成年人游玩时段校验：未满 18 周岁时，只允许周五/周六/周日 20:00–21:00 启动游戏。
+     *
+     * @return true 允许启动
+     */
+    private fun allowLaunchUnderAgeRule(): Boolean {
+        if (!OnboardingState.needsTimeLimit()) return true
+        if (MinorTimeGate.isAllowedNow()) return true
+        val reason = MinorTimeGate.blockReason()
+        eventViewModel.sendToast(
+            com.movtery.zalithlauncher.ui.androidText(R.string.onboarding_minor_blocked, reason),
+            android.widget.Toast.LENGTH_LONG
+        )
+        return false
+    }
+
     private fun handleImportIfNeeded(intent: Intent?): Boolean {
         if (intent == null) return false
 

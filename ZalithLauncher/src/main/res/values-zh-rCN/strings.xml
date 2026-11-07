@@ -1965,4 +1965,10 @@
     <string name="imported_to_private">已导入到 App 私有目录：%1$s</string>
     <string name="import_failed">导入失败：%1$s</string>
     <string name="ai_web_ddg_note">固定使用 DuckDuckGo（不需要填写任何 Key）；抓取失败时 AI 会自动改用 fetch_webpage 读结果页。</string>
+    <string name="onboarding_minor_blocked">暂时不能启动游戏：%1$s</string>
+    <string name="onboarding_accept_all">我已阅读并同意以上全部内容</string>
+    <string name="onboarding_age_title">请选择你的年龄段</string>
+    <string name="onboarding_age_hint">根据未成年人保护要求：未满 18 周岁仅可在周五、周六、周日及法定节假日的 20:00–21:00 游玩。</string>
+    <string name="onboarding_enter_minor">以「未满 18 周岁」进入</string>
+    <string name="onboarding_enter_adult">以「已满 18 周岁」进入</string>
 </resources>
