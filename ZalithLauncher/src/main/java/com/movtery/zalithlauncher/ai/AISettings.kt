@@ -73,6 +73,15 @@ object AISettings : SettingsRegistry() {
     /** 是否在聊天流里显示工具调用过程 */
     val showToolCalls = boolSetting("aiShowToolCalls", true)
 
+    // ── 网络能力（议题 #45）────────────────────────────────────────
+    /**
+     * 是否允许 AI 联网（搜索 / 抓取网页）。
+     *
+     * 默认开启：AI 排障时「查一下这个报错」是刚需；关闭后网络工具会直接拒绝执行。
+     * 抓取只允许公网 http/https，禁止内网地址（防 SSRF）。
+     */
+    val webSearch = boolSetting("aiWebSearch", true)
+
     /**
      * 是否已经向用户展示过「数据会发往你配置的 AI 服务商」这段说明。
      *

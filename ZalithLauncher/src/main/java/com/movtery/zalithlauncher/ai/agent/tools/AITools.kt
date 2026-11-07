@@ -50,6 +50,7 @@ internal fun builtinTools(): List<AITool> = buildList {
     addAll(favoriteTools())
     addAll(gameInstallTools())
     addAll(modPackTools())
+    addAll(webTools())
     addAll(instanceConfigTools())
     addAll(frpTools())
 }

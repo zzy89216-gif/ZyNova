@@ -15,4 +15,6 @@ Since 28.0.1 it can also **bring up multiplayer end to end**:
 
 So a request like "get multiplayer working for me" can be completed without you ever telling it a port number.
 
+It can also browse the web: `web_search`, `fetch_webpage`, `search_mcmod` (toggle in AI settings; internal addresses blocked)
+
 It never gains permissions that were not granted.

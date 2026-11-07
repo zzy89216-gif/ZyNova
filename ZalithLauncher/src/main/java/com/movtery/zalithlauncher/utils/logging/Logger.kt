@@ -61,6 +61,9 @@ object Logger : CoroutineScope {
         get() = AllSettings.launcherLogRetentionDays.getValue()
 
     private var currentLogFile: File? = null
+
+    /** 当前这次启动写的日志文件（崩溃提示里「看日志」要用）*/
+    fun getCurrentLogFile(): File? = currentLogFile
     private var logWriter: PrintWriter? = null
     private var inMemoryLogs: ByteArrayOutputStream? = null
 

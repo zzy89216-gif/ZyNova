@@ -192,6 +192,14 @@ class VMViewModel : ViewModel() {
                     activity = activity,
                     config = config,
                     onExit = { code, isSignal ->
+                        //非 0 退出 = 崩溃或被杀：记下来，回启动器时提示用户（议题 #44）
+                        if (code != 0) {
+                            CrashGuard.markCrash(
+                                versionName = config.version.getVersionName(),
+                                exitCode = code,
+                                isSignal = isSignal
+                            )
+                        }
                         if (code == 0) {
                             val finishedCount = AllSettings.finishedGame.getValue()
                             if (finishedCount < Int.MAX_VALUE)  {

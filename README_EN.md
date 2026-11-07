@@ -23,6 +23,9 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - **Redesigned the AI "Agent permission" section**: two selectable cards with icon, plain-language description and a radio dot; "Full control" uses the error colour plus a warning icon so the risk is obvious
 - Issues #44 (crash self-heal) and #45 (web search / global files) are scheduled next
 
+- **AI can browse the web now**: search errors, query MC百科, read page text (internal addresses blocked); toggle it in AI settings
+- **One-tap crash fix**: after an abnormal game exit the launcher offers "Auto-fix", which hands the problem to the AI
+
 ## 🛠️ Features
 
 - **AI Agent**: DeepSeek by default — installs the game, modpacks and mods, edits configs, reads logs, launches the game

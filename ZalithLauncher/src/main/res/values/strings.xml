@@ -1972,4 +1972,13 @@
     <string name="frp_port_default_hint">Defaults to 25565 and is editable; tap &quot;Detect again&quot; to read it from the game log</string>
     <string name="ai_permission_confirm_desc">Every action that touches files or settings asks you first (recommended)</string>
     <string name="ai_permission_full_control_desc">No confirmation — the AI may change settings, install mods or delete files on its own</string>
+    <string name="ai_web_title">Web access</string>
+    <string name="ai_web_search_title">Allow AI to go online</string>
+    <string name="ai_web_search_desc">Search errors, look up mod info, read web pages</string>
+    <string name="ai_web_search_note">Public http/https only — internal addresses are blocked; responses are truncated</string>
+    <string name="crash_guard_title">Last game session ended abnormally</string>
+    <string name="crash_guard_message">%1$s did not exit normally (exit code %2$d). Open the log to see why, or ask the AI to analyse it.</string>
+    <string name="crash_guard_view_log">View log</string>
+    <string name="crash_guard_dismiss">Got it</string>
+    <string name="crash_guard_auto_fix">Auto-fix</string>
 </resources>

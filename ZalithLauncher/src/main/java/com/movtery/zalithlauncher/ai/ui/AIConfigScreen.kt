@@ -50,6 +50,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -321,6 +322,35 @@ fun AIConfigContent(
                             R.string.ai_config_permission_confirm_note
                     )
                 )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // ── 网络搜索（议题 #45）──────────────────────────────
+            ConfigCard {
+                SectionTitle(stringResource(R.string.ai_web_title))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.ai_web_search_title),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = stringResource(R.string.ai_web_search_desc),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = MaterialTheme.typography.labelSmall.fontSize * 1.35f
+                        )
+                    }
+                    Switch(
+                        checked = AISettings.webSearch.state,
+                        onCheckedChange = { AISettings.webSearch.save(it) }
+                    )
+                }
+                HintText(stringResource(R.string.ai_web_search_note))
             }
 
             Spacer(Modifier.height(8.dp))

@@ -63,6 +63,10 @@
    浅色文字压黑、深色文字压白；视频壁纸用 12% 兜底；换壁纸实时生效。
 2. **AI 设置权限模式重做**（`ai/ui/AIConfigScreen.kt#PermissionOption`）
    药丸 → 可选卡片（图标 + 解释 + 单选），「完全放开」用错误色 + 警告图标。
+3. **AI 联网工具**（`ai/agent/tools/WebTools.kt`）：`web_search` / `fetch_webpage` / `search_mcmod`，
+   只读、可在设置关闭、`fetch_webpage` 防 SSRF（禁 localhost/内网）。
+4. **崩溃提示 + 自动修复**（`utils/CrashGuard.kt`、`MainScreen`、`AIPendingPrompt`）：
+   非 0 退出码记一条记录 → 回主界面弹提示 →「自动修复」把「帮我修复一下崩溃」交给 AI 并自动发送。
 
 **未完成（下一版）**：议题 #44 崩溃自愈、#45 网络搜索/全局文件、#46 的「去边框 + 弹簧动效」部分。
 

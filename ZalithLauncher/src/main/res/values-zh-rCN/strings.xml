@@ -1954,4 +1954,13 @@
     <string name="frp_port_default_hint">默认 25565，可以直接改；点「重新识别」从游戏日志里读</string>
     <string name="ai_permission_confirm_desc">每个会改动文件或设置的操作都先问你，同意后才执行（推荐）</string>
     <string name="ai_permission_full_control_desc">不再询问，AI 可以自己改配置、装模组、删文件（会消耗额度，误操作无法撤销）</string>
+    <string name="ai_web_title">网络搜索</string>
+    <string name="ai_web_search_title">允许 AI 联网</string>
+    <string name="ai_web_search_desc">搜索报错、查模组资料、读取网页正文</string>
+    <string name="ai_web_search_note">只允许访问公网 http/https，禁止内网地址；返回内容会截断，避免刷爆上下文</string>
+    <string name="crash_guard_title">上次游戏异常退出</string>
+    <string name="crash_guard_message">%1$s 上次没有正常退出（退出码 %2$d）。可以打开日志看看原因，或者让 AI 帮你分析。</string>
+    <string name="crash_guard_view_log">看日志</string>
+    <string name="crash_guard_dismiss">知道了</string>
+    <string name="crash_guard_auto_fix">自动修复</string>
 </resources>
