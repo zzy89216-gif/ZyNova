@@ -51,14 +51,15 @@ fun OnboardingScreen(onDone: () -> Unit) {
         }.getOrNull()
     }
 
+    //三份合并后的核心文档：条款(许可协议+隐私) / 开源与风险 / 使用须知(教程+地区管辖)
     val docs = remember(noticesAsset) {
         listOf(
-            "《最终用户许可协议》" to LegalTexts.eula,
-            "《隐私政策》" to LegalTexts.privacy,
-            "《第三方开源合规声明》" to (noticesAsset ?: LegalTexts.thirdParty),
-            "《ZyNova 使用教程》" to LegalTexts.tutorial,
-            "《适用地区与法律管辖》" to LegalTexts.regions,
-            "《补充免责与风险告知》" to LegalTexts.risks
+            "《最终用户许可协议 + 隐私政策》" to
+                (LegalTexts.eula + "\n\n" + LegalTexts.privacy),
+            "《第三方开源合规声明 + 补充免责与风险告知》" to
+                ((noticesAsset ?: LegalTexts.thirdParty) + "\n\n" + LegalTexts.risks),
+            "《使用教程 + 适用地区与法律管辖》" to
+                (LegalTexts.tutorial + "\n\n" + LegalTexts.regions)
         )
     }
 
