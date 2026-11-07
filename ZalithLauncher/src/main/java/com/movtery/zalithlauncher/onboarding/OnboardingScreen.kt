@@ -200,7 +200,7 @@ private fun highlightLegal(text: String): androidx.compose.ui.text.AnnotatedStri
         )
         builder.pushStyle(base)
         builder.append(line)
-        builder.popStyle()
+        builder.pop()
         if (index != text.lines().lastIndex) builder.append("\n")
     }
     //再整体把关键词染红
