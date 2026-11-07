@@ -6,6 +6,6 @@ Follow `HANDOFF.md` section 12:
 2. sync docs;
 3. wait for green CI;
 4. create the Release (triggers build/upload);
-5. verify two APKs + mapping.
+5. verify all assets are `uploaded`: `ZyNova-<version>.apk` (universal) + `ZyNova-<version>-arm64-v8a.apk` + `mapping.universal.zip`.
 
 Never overwrite a published tag.
