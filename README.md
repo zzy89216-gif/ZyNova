@@ -18,12 +18,13 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.5 更新要点
+## ✨ 28.0.6 更新要点
 
-- **AI 能选搜索引擎**：DuckDuckGo / 百度千帆 / Bing / 自建，需要 Key 的引擎旁边直接有「创建 API」直达按钮，失败自动回退
-- **AI 能读写公有目录**：列目录、读文件、建文件夹、写文件、自动导入到游戏目录；删除一律进回收站（可恢复），禁止碰 Android/data 与 obb
-- **任意文件自动导入**：分享或用 ZyNova 打开文件，会复制到 App 的 `imported/` 并提示路径
-- **崩溃静默自动修复**：开启后游戏异常退出不弹框，AI 直接读日志动手修（默认关闭，会消耗额度）
+- **修掉 P0 崩溃**：`web_search` 不再在主线程发网络请求（`NetworkOnMainThreadException`），三个联网工具全部走 IO 线程
+- **AI 能直接做 Word / PPT**：`create_docx` / `create_pptx`，手写 OOXML，不引 Apache POI（包体不涨），默认存 `Download`
+- **联网失败有兜底**：搜索失败会自动改用 `fetch_webpage` 抓结果页，不再中断
+- **路径与配置修正**：能列出实例的父目录（`Minecraft`、`versions`）；图形模式/粒子/FOV 显示游戏真实取值
+- **杂项**：Photo Picker 不再刷授权报错、不再产生空壳日志、「JVM 上限」改为启动器进程堆上限
 
 ## 🛠️ 能做什么
 

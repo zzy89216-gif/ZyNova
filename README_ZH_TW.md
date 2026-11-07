@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.3 更新重點
+## ✨ 28.0.6 更新重點
 
-- **修掉下載頁的嚴重返回 bug**：版本詳情 → 版本列表 → 資源類型 → 下載 → 主介面，一層一層退，不再直接跳回主介面；櫻花連接埠改為預設 25565 的可編輯輸入框，並支援中文客戶端的日誌行
+- **修掉 P0 崩潰**：`web_search` 不再於主執行緒發網路請求；**AI 能直接做 Word / PPT**（`create_docx` / `create_pptx`，手寫 OOXML、不加包體，預設存 `Download`）；路徑與圖形設定顯示修正
 
 ## 🛠️ 主要功能
 

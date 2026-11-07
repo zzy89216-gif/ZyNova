@@ -17,9 +17,9 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.3 업데이트
+## ✨ 28.0.6 업데이트
 
-- **다운로드 화면의 심각한 뒤로 가기 버그 수정**: 버전 상세 → 목록 → 카테고리 → 다운로드 → 홈 순서로 한 단계씩 돌아갑니다. SakuraFrp 포트는 기본 25565의 편집 가능한 입력란으로 바뀌었고 중국어 클라이언트 로그도 지원
+- **P0 크래시 수정**: `web_search`가 더 이상 메인 스레드에서 네트워크를 호출하지 않습니다. **AI가 Word / PPT를 직접 생성**합니다(`create_docx` / `create_pptx`, OOXML 직접 작성으로 APK 크기 증가 없음, 기본 저장 위치 `Download`). 경로와 그래픽 설정 표시도 수정
 
 ## 🛠️ 주요 기능
 

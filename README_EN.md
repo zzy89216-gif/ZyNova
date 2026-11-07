@@ -17,12 +17,13 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.5
+## ✨ What's new in 28.0.6
 
-- **Pick your search engine**: DuckDuckGo / Baidu Qianfan / Bing / custom endpoint — engines that need a key get a "Create API" shortcut next to the field, and failures fall back to DuckDuckGo
-- **The AI can work in public storage**: list, read, create folders, write files and import into the game directory; deletions always go to a recycle bin, and `Android/data` / `obb` are off limits
-- **Any file auto-import**: share a file to ZyNova (or open it with ZyNova) and it is copied into the app's `imported/` folder with a toast showing the path
-- **Silent crash auto-fix**: when enabled, an abnormal exit goes straight to the AI for analysis and repair instead of showing a dialog (off by default, uses your quota)
+- **P0 crash fixed**: `web_search` no longer issues network calls on the main thread (`NetworkOnMainThreadException`); all three web tools now run on IO
+- **The AI can create Word / PPT files**: `create_docx` / `create_pptx` with hand-written OOXML (no Apache POI, so the APK does not grow), saved to `Download` by default
+- **Search has a fallback**: when `web_search` fails it switches to `fetch_webpage` instead of aborting
+- **Paths and options corrected**: instance parent folders (`Minecraft`, `versions`) are listable; graphics mode / particles / FOV now report the real game values
+- **Misc**: Photo Picker no longer spams permission errors, no more empty log shells, and "JVM limit" now reads as the launcher process heap
 
 ## 🛠️ Features
 

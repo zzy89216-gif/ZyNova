@@ -17,9 +17,9 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.3 の新機能
+## ✨ 28.0.6 の新機能
 
-- **ダウンロード画面の重大な戻るバグを修正**：バージョン詳細 → 一覧 → カテゴリ → ダウンロード → ホーム と 1 段ずつ戻ります。SakuraFrp のポートは既定 25565 の編集可能な入力欄になり、中国語クライアントのログ行にも対応
+- **P0 クラッシュを修正**：`web_search` がメインスレッドで通信しなくなりました。**AI が Word / PPT を直接生成**できます（`create_docx` / `create_pptx`、OOXML 手書きで APK は増えず、既定で `Download` に保存）。パスとグラフィック設定の表示も修正
 
 ## 🛠️ 主な機能
 

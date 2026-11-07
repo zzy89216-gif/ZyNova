@@ -56,3 +56,13 @@ Limits: only under `/storage/emulated/0/`; `Android/data` and `Android/obb` are 
 Both are **hand-written OOXML + zip** (no Apache POI, so the APK does not grow) and require
 "All files access"; without it the tool tells you which switch to enable.
 Just ask "make me a slide deck about X" and it will do the outline first, then generate the file.
+
+## Real option keys (28.0.6)
+
+These are not plain strings in `options.txt`; the tools map them for you:
+
+| Human wording | Real key | Real values |
+|---|---|---|
+| Graphics mode | `graphicsMode` | 0=fancy, 1=fast, 2=fabulous |
+| Particles | `particles` | 0=all, 1=decreased, 2=minimal |
+| FOV | `fov` | Normalised float, 1.0 = default 70° |
