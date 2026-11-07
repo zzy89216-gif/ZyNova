@@ -52,6 +52,7 @@ internal fun builtinTools(): List<AITool> = buildList {
     addAll(modPackTools())
     addAll(webTools())
     addAll(publicFileTools())
+    addAll(aiConfigTools())
     addAll(instanceConfigTools())
     addAll(frpTools())
 }

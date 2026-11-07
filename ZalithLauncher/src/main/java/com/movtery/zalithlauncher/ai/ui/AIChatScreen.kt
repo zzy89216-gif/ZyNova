@@ -680,7 +680,8 @@ private fun MessageBubble(message: AIMessage) {
                         .padding(horizontal = 14.dp, vertical = 10.dp)
                 ) {
                     Text(
-                        text = message.text,
+                        //密钥类内容「阅后即焚」：AI 已经收到了，界面只留打码后的版本
+                        text = maskSecrets(message.text),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -843,3 +844,15 @@ private fun EmptyHint(
         }
     }
 }
+
+/** 把疑似密钥的片段打码，避免在对话里明文长期停留 */
+private val SECRET_REGEX = Regex(
+    "(sk-[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|[A-Fa-f0-9]{32,})"
+)
+
+private fun maskSecrets(text: String): String =
+    if (!SECRET_REGEX.containsMatchIn(text)) text
+    else SECRET_REGEX.replace(text) { m ->
+        val v = m.value
+        v.take(3) + "••••" + v.takeLast(2) + "（🔒 已隐藏）"
+    }
