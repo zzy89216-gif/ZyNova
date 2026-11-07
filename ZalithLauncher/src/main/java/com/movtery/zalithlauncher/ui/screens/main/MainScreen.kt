@@ -129,6 +129,7 @@ import com.movtery.zalithlauncher.ui.screens.navigateTo
 import com.movtery.zalithlauncher.ui.screens.onBack
 import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
 import com.movtery.zalithlauncher.utils.CrashGuard
+import com.movtery.zalithlauncher.utils.CrashRecord
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.ui.theme.backgroundColor
 import com.movtery.zalithlauncher.ui.theme.feativals.FestivalTitleText
