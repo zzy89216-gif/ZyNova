@@ -53,6 +53,7 @@
 | 建置 | [docs/en/build.md](docs/en/build.md) |
 | 更新日誌 | [CHANGELOG.md](CHANGELOG.md) |
 | 交接 / 架構 / 開發流程 | [HANDOFF.md](HANDOFF.md) |
+| 接手入口（狀態 / 發版流程 / 坑 / 文件規則） | [AGENTS.md](AGENTS.md) |
 | 第三方授權 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | 授權 | [LICENSE](LICENSE) |
 

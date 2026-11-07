@@ -55,6 +55,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 | Building | [docs/en/build.md](docs/en/build.md) |
 | Changelog | [CHANGELOG.md](CHANGELOG.md) |
 | Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
+| Onboarding entry (state / release flow / traps / doc rules) | [AGENTS.md](AGENTS.md) |
 | Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | License | [LICENSE](LICENSE) |
 

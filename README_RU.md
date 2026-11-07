@@ -52,6 +52,7 @@
 | Сборка | [docs/en/build.md](docs/en/build.md) |
 | История изменений | [CHANGELOG.md](CHANGELOG.md) |
 | Передача / архитектура / процесс | [HANDOFF.md](HANDOFF.md) |
+| Вход для нового сопровождающего (состояние / релиз / подводные камни / правила документации) | [AGENTS.md](AGENTS.md) |
 | Сторонние лицензии | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | Лицензия | [LICENSE](LICENSE) |
 

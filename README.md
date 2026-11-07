@@ -45,6 +45,7 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 
 - 用户文档中心（77 篇）：[docs/zh/README.md](docs/zh/README.md)
 - 更新日志：[CHANGELOG.md](CHANGELOG.md)
+- 接手入口（状态 / 发版流程 / 坑 / 文档规则）：[AGENTS.md](AGENTS.md)
 - 交接 / 架构 / 开发流程：[HANDOFF.md](HANDOFF.md)
 - 第三方许可：[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) · 许可证：[LICENSE](LICENSE)
 

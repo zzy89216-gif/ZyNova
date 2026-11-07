@@ -52,6 +52,7 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 | 빌드 | [docs/en/build.md](docs/en/build.md) |
 | 변경 기록 | [CHANGELOG.md](CHANGELOG.md) |
 | 인수인계 / 구조 / 개발 흐름 | [HANDOFF.md](HANDOFF.md) |
+| 인수인계 입구(현황 / 릴리스 절차 / 주의점 / 문서 규칙) | [AGENTS.md](AGENTS.md) |
 | 서드파티 라이선스 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | 라이선스 | [LICENSE](LICENSE) |
 

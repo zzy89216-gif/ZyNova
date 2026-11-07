@@ -52,6 +52,7 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 | ビルド | [docs/en/build.md](docs/en/build.md) |
 | 更新履歴 | [CHANGELOG.md](CHANGELOG.md) |
 | 引き継ぎ / 構成 / 開発手順 | [HANDOFF.md](HANDOFF.md) |
+| 引き継ぎ入口（現状 / リリース手順 / 注意点 / ドキュメント規約） | [AGENTS.md](AGENTS.md) |
 | 第三者ライセンス | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | ライセンス | [LICENSE](LICENSE) |
 
