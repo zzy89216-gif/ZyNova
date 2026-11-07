@@ -96,7 +96,11 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (step < docs.size) {
-                    Text(text = docs[step].second, style = MaterialTheme.typography.bodySmall)
+                    //把 AGPL / LGPL / 免责 等关键词标红，避免用户一扫而过
+                    Text(
+                        text = highlightLegal(docs[step].second),
+                        style = MaterialTheme.typography.bodySmall
+                    )
                     Text(
                         text = if (atBottom) "—— 已到末尾 ——" else "请继续向下滑动阅读至末尾",
                         style = MaterialTheme.typography.labelSmall,
@@ -172,6 +176,45 @@ fun OnboardingScreen(onDone: () -> Unit) {
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * 法律文本关键词高亮：
+ * - `AGPL` / `LGPL` → 错误色（许可证义务最重的部分）
+ * - `不承担` / `免责` / `风险` / `无法使用` → 错误色
+ * - 一级标题（以《 开头的一行）→ 加粗 + 主题色
+ */
+private fun highlightLegal(text: String): androidx.compose.ui.text.AnnotatedString {
+    val danger = androidx.compose.ui.graphics.Color(0xFFE53935)
+    val builder = androidx.compose.ui.text.AnnotatedString.Builder()
+    text.lines().forEachIndexed { index, line ->
+        val isTitle = line.trimStart().startsWith("《")
+        val base = androidx.compose.ui.text.SpanStyle(
+            fontWeight = if (isTitle) androidx.compose.ui.text.font.FontWeight.SemiBold
+            else androidx.compose.ui.text.font.FontWeight.Normal,
+            color = if (isTitle) androidx.compose.ui.graphics.Color(0xFF3B6FF6)
+            else androidx.compose.ui.graphics.Color.Unspecified
+        )
+        builder.pushStyle(base)
+        builder.append(line)
+        builder.popStyle()
+        if (index != text.lines().lastIndex) builder.append("\n")
+    }
+    //再整体把关键词染红
+    val raw = builder.toAnnotatedString()
+    return androidx.compose.ui.text.buildAnnotatedString {
+        append(raw)
+        val regex = Regex("AGPL|LGPL|不承担任何|免责|风险|无法使用|不允许|必须")
+        regex.findAll(raw.text).forEach { m ->
+            addStyle(
+                androidx.compose.ui.text.SpanStyle(
+                    color = danger,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                ),
+                m.range.first, m.range.last + 1
+            )
         }
     }
 }
