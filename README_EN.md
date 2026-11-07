@@ -24,7 +24,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - **Search fixed**: `web_search` (three-layer DuckDuckGo parsing) and `search_mcmod` (link formats + rate-limit detection) return results again
 - **Import fixed**: `import_from_public` now resolves against the current instance's game directory, so files are actually visible in game
 - **Modpacks**: the installed game version is echoed, with a clear warning when it differs from the current instance
-- **Default home page is now the card layout**
+- **Default home page is now the card layout**, and cards no longer fail to load (IO-thread loading + refresh on resume)
 
 ## 🛠️ Features
 
