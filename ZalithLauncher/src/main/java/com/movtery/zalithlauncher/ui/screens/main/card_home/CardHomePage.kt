@@ -120,9 +120,29 @@ fun cardHomePage(
     //调小可以让更多实例卡片同屏显示，调大则更易点击
     val cardScale = AllSettings.homeCardSize.state.toFloat() / 100f
 
+    //「有时候加载不出来」的根因：HomeDataProvider 要读很多磁盘（实例目录、options.txt、
+    //servers.dat、存档列表），以前直接在**主线程**跑；慢的时候界面一直停在 Loading，
+    //读失败还会卡死在 Loading（loaded 永远 false）。现在：
+    //1) 放到 IO 线程；2) 失败也要把 loaded 置 true 并给出重试按钮。
+    var loadFailed by remember { mutableStateOf(false) }
+
+    //从后台回来 / 装完新实例回到主界面时自动刷新一次
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) reloadToken++
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     LaunchedEffect(reloadToken) {
-        //按用户上次拖动后的顺序恢复；没有记录过就保持默认顺序
-        instances = HomeLayoutStore.sort(
+        loaded = false
+        loadFailed = false
+        instances = runCatching<List<HomeInstance>> {
+            //按用户上次拖动后的顺序恢复；没有记录过就保持默认顺序
+            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        HomeLayoutStore.sort(
             items = HomeDataProvider.instances(),
             order = HomeLayoutStore.load(HomeLayoutStore.KEY_CARDS),
             keyOf = { it.orderKey() }
@@ -140,6 +160,11 @@ fun cardHomePage(
                     keyOf = { it.orderKey() }
                 )
             )
+        }
+            }
+        }.getOrElse {
+            loadFailed = true
+            emptyList()
         }
         loaded = true
     }
