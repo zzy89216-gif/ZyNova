@@ -59,3 +59,20 @@ These are not plain strings in `options.txt`; the tools map them for you:
 - One switch only: Settings → AI settings → Web access
 - Always **DuckDuckGo** (no key) — no engine or API key to configure
 - If parsing fails the AI falls back to `fetch_webpage`
+
+
+## All 51 tools
+
+| Category | Tools |
+|---|---|
+| Install and launch | `list_downloadable_versions` `install_game` `install_status` `launch_game` `get_device_info` |
+| Resources and modpacks | `search_resources` `install_resource` `install_modpack` `list_mods` `set_mod_enabled` `delete_mod` `delete_resource` `list_folder` |
+| Instances | `list_instances` `get_instance_detail` `get_instance_config` `set_instance_config` `set_game_option` |
+| Files | `list_files` `read_file` `search_in_file` `write_file` `delete_file` `copy_file` |
+| Public storage | `public_list` `public_read` `public_write` `public_mkdir` `public_move_to_recycle_bin` `import_from_public` |
+| Documents | `create_docx` `create_pptx` |
+| Logs and crashes | `list_logs` `read_log` `summarize_log` `read_crash_report` `read_crash_report_legacy` |
+| Web | `web_search` `fetch_webpage` `search_mcmod` |
+| Multiplayer | `multiplayer_status` `frp_status` `frp_create_tunnel` `frp_start_tunnel` `frp_stop_tunnel` |
+| Favorites | `list_favorites` `remove_favorite` |
+| Settings | `list_settings` `get_setting` `set_setting` `update_ai_setting` |

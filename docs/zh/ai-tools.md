@@ -56,3 +56,20 @@
 - 只有一个开关：设置 → AI 设置 → 网络搜索 → 允许 AI 联网
 - 固定使用 **DuckDuckGo**（免 Key），不再需要配置任何引擎或 API Key
 - 搜索解析失败时，AI 会自动改用 `fetch_webpage` 抓结果页
+
+
+## 全部工具（51 个）
+
+| 分类 | 工具 |
+|---|---|
+| 安装与启动 | `list_downloadable_versions` `install_game` `install_status` `launch_game` `get_device_info` |
+| 资源与整合包 | `search_resources` `install_resource` `install_modpack` `list_mods` `set_mod_enabled` `delete_mod` `delete_resource` `list_folder` |
+| 实例 | `list_instances` `get_instance_detail` `get_instance_config` `set_instance_config` `set_game_option` |
+| 文件 | `list_files` `read_file` `search_in_file` `write_file` `delete_file` `copy_file` |
+| 公有存储 | `public_list` `public_read` `public_write` `public_mkdir` `public_move_to_recycle_bin` `import_from_public` |
+| 文档生成 | `create_docx` `create_pptx` |
+| 日志与崩溃 | `list_logs` `read_log` `summarize_log` `read_crash_report` `read_crash_report_legacy` |
+| 联网 | `web_search` `fetch_webpage` `search_mcmod` |
+| 联机 | `multiplayer_status` `frp_status` `frp_create_tunnel` `frp_start_tunnel` `frp_stop_tunnel` |
+| 收藏 | `list_favorites` `remove_favorite` |
+| 设置 | `list_settings` `get_setting` `set_setting` `update_ai_setting` |
