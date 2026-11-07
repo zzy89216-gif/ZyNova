@@ -40,7 +40,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
  */
 @Composable
 fun OnboardingScreen(onDone: () -> Unit) {
-    // 0..3 = 四份文档，4 = 选年龄
+    // 0..4 = 五份文档，5 = 选年龄
     var step by remember { mutableStateOf(0) }
     var minor by remember { mutableStateOf(true) }
 
@@ -48,13 +48,15 @@ fun OnboardingScreen(onDone: () -> Unit) {
         "《最终用户许可协议》",
         "《隐私政策》",
         "《第三方开源合规声明》",
-        "《使用教程》"
+        "《使用教程》",
+        "《适用地区与法律管辖》"
     )
     val bodies = listOf(
         LegalTexts.eula,
         LegalTexts.privacy,
         LegalTexts.thirdParty,
-        LegalTexts.tutorial
+        LegalTexts.tutorial,
+        LegalTexts.regions
     )
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -65,7 +67,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = if (step < 4) "${step + 1} / 4  ${titles[step]}" else stringResource(R.string.onboarding_age_title),
+                text = if (step < 5) "${step + 1} / 5  ${titles[step]}" else stringResource(R.string.onboarding_age_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -77,7 +79,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                if (step < 4) {
+                if (step < 5) {
                     Text(text = bodies[step], style = MaterialTheme.typography.bodySmall)
                 } else {
                     Text(
@@ -105,7 +107,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 }
             }
 
-            if (step < 4) {
+            if (step < 5) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (step > 0) {
                         OutlinedButton(onClick = { step-- }, modifier = Modifier.weight(1f)) { Text("上一份") }
@@ -114,16 +116,14 @@ fun OnboardingScreen(onDone: () -> Unit) {
                         modifier = Modifier.weight(2f),
                         onClick = { step++ }
                     ) {
-                        Text(if (step == 3) stringResource(R.string.onboarding_accept_all) else "我已阅读，继续")
+                        Text(if (step == 4) stringResource(R.string.onboarding_accept_all) else "我已阅读，继续")
                     }
                 }
             } else {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        AllSettings.onboardingAccepted.save(true)
-                        AllSettings.onboardingIsMinor.save(minor)
-                        AllSettings.onboardingAgeConfirmed.save(true)
+                        OnboardingState.recordAcceptance(minor)
                         onDone()
                     }
                 ) {

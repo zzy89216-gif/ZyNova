@@ -663,6 +663,13 @@ object AllSettings : SettingsRegistry() {
     /** 是否未满 18 周岁（默认按「未满」处理，保守）*/
     val onboardingIsMinor = boolSetting("onboardingIsMinor", true)
 
+    /** 已同意的条款版本（变化后要求重新同意）*/
+    val onboardingLegalVersion = stringSetting("onboardingLegalVersion", "")
+
+    /** 同意时的「系统语言|时区」签名（变化后要求重新同意）*/
+    val onboardingLocaleSignature = stringSetting("onboardingLocaleSignature", "")
+
+
     val homePageType = enumSetting("homePageType", HomePageType.Cards)
 
     /**

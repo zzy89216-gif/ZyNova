@@ -323,6 +323,18 @@ class MainActivity : BaseAppCompatActivity() {
                 backgroundViewModel = backgroundViewModel,
                 festivals = festivals
             ) {
+                //地区检查：只放行中国/美国/韩国/日本/俄罗斯
+                if (!com.movtery.zalithlauncher.onboarding.RegionGate.isAllowed()) {
+                    com.movtery.zalithlauncher.onboarding.RegionBlockedScreen(
+                        onExit = {
+                            //安全退出：不伪造崩溃，先结束任务栈再结束进程
+                            finishAffinity()
+                            android.os.Process.killProcess(android.os.Process.myPid())
+                        }
+                    )
+                    return@ZalithLauncherTheme
+                }
+
                 //首次启动：先看四份文档 + 选年龄，完成后才进主界面
                 val onboardingDone = androidx.compose.runtime.remember {
                     androidx.compose.runtime.mutableStateOf(!OnboardingState.needsOnboarding())
