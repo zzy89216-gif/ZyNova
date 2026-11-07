@@ -95,11 +95,15 @@ fun Context.copyLocalFile(
     uri: Uri,
     outputFile: File
 ) {
-    val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-    try {
-        contentResolver.takePersistableUriPermission(uri, flags)
-    } catch (e: SecurityException) {
-        Logger.warning(TAG, "Failed to take persistable permission for URI: $uri", e)
+    //🔒 Android Photo Picker 返回的 `content://media/picker_get_content/...`
+    //**本身就不支持持久化授权**，对它调用 takePersistableUriPermission 只会抛
+    //SecurityException 并在日志里刷一屏堆栈（真机日志已证实）。
+    //反正我们这里会立刻把内容复制进 App 私有目录，不需要持久授权。
+    val isPhotoPicker = uri.toString().contains("picker_get_content")
+    if (!isPhotoPicker) {
+        val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        runCatching { contentResolver.takePersistableUriPermission(uri, flags) }
+            .onFailure { Logger.info(TAG, "URI is not persistable, copying content instead: $uri") }
     }
 
     if (outputFile.parentFile?.exists() != true && outputFile.parentFile?.mkdirs() != true) {

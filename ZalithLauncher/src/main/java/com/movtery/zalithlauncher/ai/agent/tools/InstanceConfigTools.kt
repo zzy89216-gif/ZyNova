@@ -223,6 +223,7 @@ private fun setGameOptionTool() = aiTool(
         - 按键冲突自动解决 autoJump（true / false）
         - 粒子效果 particles（"all" / "decreased" / "minimal"）
         - 图形模式 graphics（"fancy" / "fast" / "fabulous"）
+          —— 内部会写成游戏真实键 `graphicsMode`（fancy=0 / fast=1 / fabulous=2）
 
         不想改值、只是想删掉某一项（恢复到游戏默认）时，把 value 传空字符串。
         修改前会自动备份为 options.txt.bak，改完会回读校验。
@@ -322,9 +323,11 @@ private fun describeOptionsFile(file: File): String {
     val lines = runCatching { file.readLines() }.getOrElse {
         return "  （读取 options.txt 失败：${it.message}）\n"
     }
+    //⚠️ 这里必须用 **游戏真实键名**：图形模式是 `graphicsMode`（0=fancy/1=fast/2=fabulous），
+    //`particles` 与 `fov` 也都是数字/归一化浮点，不是人话字符串。
     val want = listOf(
         "lang", "renderDistance", "guiScale", "fov", "maxFps", "fullscreen",
-        "graphics", "particles", "overrideWidth", "overrideHeight", "autoJump",
+        "graphicsMode", "particles", "overrideWidth", "overrideHeight", "autoJump",
     )
     val map = lines.mapNotNull { line ->
         val idx = line.indexOf(':')
@@ -333,7 +336,25 @@ private fun describeOptionsFile(file: File): String {
 
     return buildString {
         for (key in want) {
-            append("  ").append(key).append(" = ").append(map[key] ?: "（默认）").append('\n')
+            val raw = map[key]
+            val pretty = when {
+                raw == null -> "（默认）"
+                key == "graphicsMode" -> when (raw.trim()) {
+                    "0" -> "0（fancy 精美）"
+                    "1" -> "1（fast 流畅）"
+                    "2" -> "2（fabulous 极致）"
+                    else -> raw
+                }
+                key == "particles" -> when (raw.trim()) {
+                    "0" -> "0（all 全部）"
+                    "1" -> "1（decreased 减少）"
+                    "2" -> "2（minimal 最少）"
+                    else -> raw
+                }
+                key == "fov" -> raw + "（归一化，1.0 = 默认 70°）"
+                else -> raw
+            }
+            append("  ").append(key).append(" = ").append(pretty).append('\n')
         }
         append("  （共 ").append(lines.size).append(" 行，文件：").append(file.absolutePath).append("）")
     }

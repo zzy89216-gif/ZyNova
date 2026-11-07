@@ -45,3 +45,14 @@ Limits: only under `/storage/emulated/0/`; `Android/data` and `Android/obb` are 
 - A non-zero game exit records version / exit code / time;
 - The launcher then offers "Auto-fix / View log / Got it";
 - Settings has "Auto-fix after a crash" (no dialog, straight to the AI) — **off by default** because it spends quota.
+
+## Document generation (28.0.6)
+
+| Tool | Purpose |
+|---|---|
+| `create_docx` | Creates a Word document (title + body/bullets), saved to `Download/` by default |
+| `create_pptx` | Creates a PPT; `slides` takes a JSON array `[{"title":"…","points":["…"]}]`, saved to `Download/` |
+
+Both are **hand-written OOXML + zip** (no Apache POI, so the APK does not grow) and require
+"All files access"; without it the tool tells you which switch to enable.
+Just ask "make me a slide deck about X" and it will do the outline first, then generate the file.
