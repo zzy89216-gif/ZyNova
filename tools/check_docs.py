@@ -52,6 +52,14 @@ BANNED_PHRASES = [
     "不会再发布新版本",
 ]
 
+# 与实现不符的事实性说法：首次启动是 3 份合并文档（不是 4 份）
+WRONG_FACTS = [
+    "四份文档",
+    "四份文件",
+    "four documents",
+    "4 documents",
+]
+
 CHANGELOG_HEADING_RE = re.compile(r"^##\s*\[([^\]]+)\]", re.M)
 
 
@@ -243,7 +251,10 @@ def check_banned_phrases(rep: Report) -> None:
         for phrase in BANNED_PHRASES:
             if phrase in text:
                 rep.error(f"一次性表述「{phrase}」出现在 {rel(path)}")
-    rep.ok("一次性表述检查完成")
+        for phrase in WRONG_FACTS:
+            if phrase in text:
+                rep.error(f"事实错误「{phrase}」出现在 {rel(path)}（首次启动是 3 份合并文档）")
+    rep.ok("一次性表述 / 事实性表述检查完成")
 
 
 def main() -> int:
