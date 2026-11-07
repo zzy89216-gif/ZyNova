@@ -49,7 +49,7 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.1.0**（`launcher_version_code=281000`，**LTS 长期支持版，首个公开发布版本**）
+**当前版本：28.1.0**（`launcher_version_code=281001`，**LTS 长期支持版，首个公开发布版本**）
 
 > 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0>
 

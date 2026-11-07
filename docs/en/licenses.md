@@ -88,3 +88,24 @@ Because the app is now promoted publicly, shipping it counts as **real distribut
 
 > Pre-release self-check: `grep -rIl "ghp_\|BEGIN .*PRIVATE KEY" .` to make sure no secrets ship in the package.
 > A public release should include at least the APK, this checklist and `THIRD_PARTY_NOTICES.md`.
+
+## 9. First-launch terms and region limits (28.1.0 LTS)
+
+On first launch (including the first launch after updating) **three merged documents** are shown; each must be
+**scrolled to the bottom and ticked individually** before continuing:
+
+| # | Document | Key points |
+|---|---|---|
+| 1 | EULA + Privacy Policy | GPL-3.0, no Mojang affiliation, bring your own account, no warranty/disclaimers, local-only data, **no ID collection**, permission usage |
+| 2 | Third-party open-source notice + risk disclosure | **Renders the bundled `THIRD_PARTY_NOTICES.md` verbatim** (same file as the repo) plus risk disclosure; AGPL/LGPL highlighted |
+| 3 | Tutorial + regions & governing law | Five quick-start steps, key points for the five countries (PIPL / CCPA·COPPA / PIPA / APPI / 152-FZ), full consequences outside covered regions |
+
+Then choose an age group:
+
+- **Under 18**: may only launch on **Friday, Saturday, Sunday and statutory holidays, 20:00–21:00**;
+- **18 or older**: no limit.
+
+**Available regions**: China, the United States, South Korea, Japan and Russia only (timezone or system country match is enough).
+Anywhere else shows "This product is not available in your region" with a single **Exit** button (safe exit, never a fake crash).
+
+**Re-consent**: `legalVersion = 28.1.0-2026` — a change of app version, system language or timezone forces re-acceptance.
