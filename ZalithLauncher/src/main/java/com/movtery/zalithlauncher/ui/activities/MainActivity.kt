@@ -335,7 +335,7 @@ class MainActivity : BaseAppCompatActivity() {
                     return@ZalithLauncherTheme
                 }
 
-                //首次启动：先看四份文档 + 选年龄，完成后才进主界面
+                //首次启动：先看 3 份合并文档（每份滑到底并勾选）+ 选年龄，完成后才进主界面
                 val onboardingDone = androidx.compose.runtime.remember {
                     androidx.compose.runtime.mutableStateOf(!OnboardingState.needsOnboarding())
                 }

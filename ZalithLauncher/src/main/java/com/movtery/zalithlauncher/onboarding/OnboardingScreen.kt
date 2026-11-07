@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,11 +64,15 @@ fun OnboardingScreen(onDone: () -> Unit) {
         )
     }
 
-    var step by remember { mutableStateOf(0) }        // 0..5 文档，6 选年龄
+    var step by remember { mutableStateOf(0) }        // 0..2 文档（3 份），3 选年龄
     var agreed by remember { mutableStateOf(false) }  // 每页都要重新勾选
     var minor by remember { mutableStateOf(true) }
 
     val scrollState = rememberScrollState()
+    //切换文档时把阅读位置重置回顶部。
+    //否则上一份滑到底后，下一份会沿用同一个滚动偏移（内容变短时直接被夹到 maxValue），
+    //一开始就判定「已到末尾」，用户不读也能勾选——等于绕过「每份必须滑到底」。
+    LaunchedEffect(step) { scrollState.scrollTo(0) }
     // 滑到底部（留 8px 容差）才允许勾选
     val atBottom by remember {
         derivedStateOf {
