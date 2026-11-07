@@ -1991,4 +1991,10 @@
     <string name="ai_web_create_api">Create API</string>
     <string name="ai_web_base_url">Endpoint URL</string>
     <string name="ai_web_key_note">Tap Create API to jump straight to the provider key page. If it is empty or the call fails, the AI falls back to keyless DuckDuckGo.</string>
+    <string name="ai_public_access_title">Public storage access</string>
+    <string name="ai_public_access_desc">Needed so the AI can create folders, edit files and import from Download</string>
+    <string name="ai_public_access_granted">Granted — the AI may read/write Download etc. (deletions go to the recycle bin)</string>
+    <string name="ai_public_access_grant">Grant</string>
+    <string name="ai_crash_auto_title">Auto-fix after a crash</string>
+    <string name="ai_crash_auto_desc">After an abnormal exit the AI reads the logs and fixes it without asking (uses your API quota)</string>
 </resources>

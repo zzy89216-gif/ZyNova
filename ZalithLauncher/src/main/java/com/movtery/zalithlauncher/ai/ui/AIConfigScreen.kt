@@ -374,6 +374,67 @@ fun AIConfigContent(
                     }
                 }
 
+                //崩溃后静默自动修复
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.ai_crash_auto_title),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = stringResource(R.string.ai_crash_auto_desc),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = MaterialTheme.typography.labelSmall.fontSize * 1.35f
+                        )
+                    }
+                    Switch(
+                        checked = AISettings.crashAutoRepair.state,
+                        onCheckedChange = { AISettings.crashAutoRepair.save(it) }
+                    )
+                }
+
+                //公有目录权限：AI 要读写 Download 之类的目录时必须先开这个
+                val hasAllFiles = android.os.Environment.isExternalStorageManager()
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(R.string.ai_public_access_title),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = if (hasAllFiles) {
+                                stringResource(R.string.ai_public_access_granted)
+                            } else {
+                                stringResource(R.string.ai_public_access_desc)
+                            },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (hasAllFiles) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = MaterialTheme.typography.labelSmall.fontSize * 1.35f
+                        )
+                    }
+                    if (!hasAllFiles) {
+                        TextButton(onClick = {
+                            runCatching {
+                                val intent = android.content.Intent(
+                                    android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                    android.net.Uri.parse("package:${context.packageName}")
+                                )
+                                context.startActivity(intent)
+                            }
+                        }) {
+                            Text(stringResource(R.string.ai_public_access_grant))
+                        }
+                    }
+                }
+
                 if (engine != "duckduckgo") {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),

@@ -1973,4 +1973,10 @@
     <string name="ai_web_create_api">创建 API</string>
     <string name="ai_web_base_url">接口地址</string>
     <string name="ai_web_key_note">点右边的「创建 API」会直接跳到官方的创建页面；填好 Key 后 AI 就会用这个引擎搜索，没填或调用失败会自动回退到免 Key 的 DuckDuckGo。</string>
+    <string name="ai_public_access_title">公有目录读写</string>
+    <string name="ai_public_access_desc">AI 需要它才能在 Download 里建文件夹、改文件、自动导入</string>
+    <string name="ai_public_access_granted">已授权：AI 可以读写 Download 等目录（删除统一进回收站）</string>
+    <string name="ai_public_access_grant">去授权</string>
+    <string name="ai_crash_auto_title">崩溃后自动修复</string>
+    <string name="ai_crash_auto_desc">游戏异常退出后，直接让 AI 读日志并动手修，不再弹框（会消耗额度）</string>
 </resources>
