@@ -2,6 +2,29 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [28.0.6] - 2026-11-07
+
+### 🐛 修复
+
+- **【P0】`web_search` 在主线程发网络请求，100% 失败**（`NetworkOnMainThreadException`）
+  - 现在 `web_search` / `fetch_webpage` / `search_mcmod` 的网络请求**全部跑在 `Dispatchers.IO`**；
+  - System Prompt 增加兜底指令：`web_search` 因网络问题失败时，立刻改用 `fetch_webpage`
+    抓搜索引擎结果页，**不要中断服务**
+- **AI 无法列出实例的父目录**（`/storage/emulated/0/Minecraft`、`.../versions` 报「不在允许范围」）
+  - 允许目录加入「实例目录的祖先链（2 层）」与配置过的游戏路径根
+- **`get_device_info` 的「JVM 上限 256 MB」误导**
+  - 改成「启动器进程堆上限」并注明「不代表游戏可用内存」
+- **每次启动多出一个 200 字节空壳日志**
+  - 同一秒内重复初始化时复用已有文件，不再重复创建
+
+### ✨ 新增（本地文档生成）
+
+- **`create_docx`**：生成 Word 文档（标题 + 正文/要点），默认存 `Download/`
+- **`create_pptx`**：生成 PPT（`slides` 传 JSON 数组：`[{"title":"…","points":["…"]}]`），默认存 `Download/`
+  - 手写最小 OOXML + zip，**不引入 Apache POI**（避免包体涨十几 MB）
+  - 生成前会检查「所有文件访问权限」，没有则返回可读错误
+- System Prompt 增加：「要做 PPT/文档时，先提炼大纲，再调用 `create_docx` / `create_pptx` 生成并保存」
+
 ## [28.0.5] - 2026-11-07
 
 > **稳定版**：把议题 #44 / #45 的主干一次做完 —— AI 联网可选引擎、能读写公有目录、

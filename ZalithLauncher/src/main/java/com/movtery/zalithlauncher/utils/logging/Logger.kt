@@ -131,6 +131,17 @@ object Logger : CoroutineScope {
         var file: File
         var counter = 0
 
+        //复用：同一秒内重复初始化时，如果上一个文件还是空的（只有文件头），直接用回它，
+        //避免每次启动都多出一个 200 字节的空壳日志
+        runCatching {
+            val recent = File(PathManager.DIR_LAUNCHER_LOGS, "log_")
+            val candidate = File(PathManager.DIR_LAUNCHER_LOGS, "log_${dateFormat.format(Date())}_$PROCESS_TAG.log")
+            if (candidate.isFile && candidate.length() in 1..400 &&
+                System.currentTimeMillis() - candidate.lastModified() < 5_000) {
+                return candidate
+            }
+        }
+
         do {
             val suffix = if (counter == 0) "" else ".$counter"
             file = File(PathManager.DIR_LAUNCHER_LOGS, "log_${dateFormat.format(Date())}_$PROCESS_TAG$suffix.log")

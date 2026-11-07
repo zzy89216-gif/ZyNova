@@ -41,7 +41,20 @@ internal object AIToolSupport {
         add(PathManager.DIR_FILES_EXTERNAL)
         add(PathManager.DIR_GAME)
         add(PathManager.DIR_LAUNCHER_LOGS)
-        VersionsManager.versions.value.forEach { add(it.getGameDir()) }
+        //每个实例的目录 + 它所在的游戏路径根（父目录），
+        //否则 `/storage/emulated/0/Minecraft` 这种「实例的祖先」会被误判为越界
+        VersionsManager.versions.value.forEach { version ->
+            val dir = version.getGameDir()
+            add(dir)
+            generateSequence(dir.parentFile) { it.parentFile }
+                .take(2)
+                .forEach { add(it) }
+        }
+        //配置过的游戏路径根（例如 /storage/emulated/0/Minecraft）也算允许范围
+        runCatching {
+            com.movtery.zalithlauncher.game.path.GamePathManager.gamePathData.value
+                .forEach { add(java.io.File(it.path)) }
+        }
     }.distinctBy { it.absolutePath }
 
     /**

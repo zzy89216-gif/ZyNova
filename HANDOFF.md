@@ -43,9 +43,9 @@
 
 ## 二、当前版本与进度
 
-**当前版本：28.0.5**（`launcher_version_code=280005`，**正式版**）
+**当前版本：28.0.6**（`launcher_version_code=280006`，**正式版**）
 
-> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.5>
+> 发布地址：<https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.6>
 
 > 📌 **关于 tag 与 main 的关系（约定）**
 > **Release 的 tag 指向「打包该版本 APK 所用的那个提交」，main 可以比它更靠前。**
@@ -55,6 +55,16 @@
 
 27.x 系列的核心目标是：**在自有的资源管理与 UI 基础之上，把 ZyNova 的能力开放给 AI Agent——
 让 AI 不只是「告诉你怎么操作」，而是能直接动手完成。**
+
+### 28.0.6 联网线程修复 + 本地文档生成（正式版）✅
+
+1. **【P0】`web_search` 主线程网络请求**：三个联网工具的网络调用全部 `withContext(Dispatchers.IO)`；
+   System Prompt 增加「`web_search` 失败 → 用 `fetch_webpage` 抓搜索页」的兜底指令。
+2. **允许目录过严**：`AIToolSupport.allowedRoots()` 增加实例目录的祖先链与游戏路径根。
+3. **`get_device_info` 的 JVM 上限误导**：改为「启动器进程堆上限」并注明不代表游戏内存。
+4. **空壳日志**：`Logger.createLogFile()` 同秒复用以避免每次启动多一个 200B 文件。
+5. **本地文档生成**（`ai/agent/tools/DocumentTools.kt`）：`create_docx` / `create_pptx` 手写 OOXML，
+   不引入 POI；需「所有文件访问权限」，默认写 `Download/`。
 
 ### 28.0.5 AI 联网引擎 / 公有目录 / 自动导入 / 静默修复（正式版）✅
 

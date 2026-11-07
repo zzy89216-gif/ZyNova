@@ -70,11 +70,15 @@ internal fun webTools(): List<AITool> = listOf(
         val query = args.strOr("query", "").trim()
         if (query.isEmpty()) return@aiTool "query 不能为空"
         val limit = (args.int("limit") ?: 5).coerceIn(1, 10)
-        runCatching { searchWeb(query, limit) }
-            .getOrElse { e ->
-                Logger.warning(TAG, "web_search failed", e)
-                "搜索失败：${e.message ?: e::class.simpleName}"
-            }
+        //⚠️ 必须在 IO 线程：OkHttp 的 socket 连接不能跑在主线程，
+        //否则抛 NetworkOnMainThreadException（28.0.5 真机 100% 复现）。
+        withContext(Dispatchers.IO) {
+            runCatching { searchWeb(query, limit) }
+                .getOrElse { e ->
+                    Logger.warning(TAG, "web_search failed", e)
+                    "搜索失败：${e.message ?: e::class.simpleName}"
+                }
+        }
     },
 
     aiTool(
@@ -95,11 +99,13 @@ internal fun webTools(): List<AITool> = listOf(
         if (raw.isEmpty()) return@aiTool "url 不能为空"
         val blocked = ssrfReason(raw)
         if (blocked != null) return@aiTool blocked
-        runCatching { fetchAsText(raw) }
-            .getOrElse { e ->
-                Logger.warning(TAG, "fetch_webpage failed", e)
-                "抓取失败：${e.message ?: e::class.simpleName}"
-            }
+        withContext(Dispatchers.IO) {
+            runCatching { fetchAsText(raw) }
+                .getOrElse { e ->
+                    Logger.warning(TAG, "fetch_webpage failed", e)
+                    "抓取失败：${e.message ?: e::class.simpleName}"
+                }
+        }
     },
 
     aiTool(
@@ -115,6 +121,7 @@ internal fun webTools(): List<AITool> = listOf(
         val query = args.strOr("query", "").trim()
         if (query.isEmpty()) return@aiTool "query 不能为空"
         val url = "https://search.mcmod.cn/s?key=" + java.net.URLEncoder.encode(query, "UTF-8")
+        withContext(Dispatchers.IO) {
         runCatching {
             val html = get(url)
             val items = Regex("<a[^>]+href=\"(//www\\.mcmod\\.cn/class/[^\"]+)\"[^>]*>(.*?)</a>", RegexOption.DOT_MATCHES_ALL)
@@ -132,6 +139,7 @@ internal fun webTools(): List<AITool> = listOf(
         }.getOrElse { e ->
             Logger.warning(TAG, "search_mcmod failed", e)
             "MC 百科搜索失败：${e.message ?: e::class.simpleName}"
+        }
         }
     },
 )
