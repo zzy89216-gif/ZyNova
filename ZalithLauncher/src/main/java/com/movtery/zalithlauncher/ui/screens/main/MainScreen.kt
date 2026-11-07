@@ -104,7 +104,6 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.canGoBack
-import com.movtery.zalithlauncher.ai.AIPendingPrompt
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.ui.AIChatScreen
 import com.movtery.zalithlauncher.ui.screens.content.AccountManageScreen
@@ -129,8 +128,6 @@ import com.movtery.zalithlauncher.ui.screens.content.navigateToDownload
 import com.movtery.zalithlauncher.ui.screens.navigateTo
 import com.movtery.zalithlauncher.ui.screens.onBack
 import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
-import com.movtery.zalithlauncher.utils.CrashGuard
-import com.movtery.zalithlauncher.utils.CrashRecord
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.ui.theme.backgroundColor
 import com.movtery.zalithlauncher.ui.theme.feativals.FestivalTitleText
@@ -207,25 +204,6 @@ fun MainScreen(
 
     val context = LocalContext.current
 
-    //上次游戏异常退出：回到主界面时提示一次（议题 #44）
-    var crashRecord by remember { mutableStateOf<CrashRecord?>(null) }
-    LaunchedEffect(Unit) {
-        val record = CrashGuard.peek() ?: return@LaunchedEffect
-        if (AISettings.crashAutoRepair.state) {
-            //「静默修复」：不弹框，直接把崩溃信息交给 AI 并跳到对话页
-            CrashGuard.clear()
-            AIPendingPrompt.put(
-                "我刚刚玩游戏崩溃了（版本 ${record.versionName}，退出码 ${record.exitCode}）。" +
-                        "请先读最新的游戏日志和启动器日志，定位崩溃原因，" +
-                        "然后按你的判断直接修复（禁用冲突模组、补装缺失前置、清理损坏文件等），" +
-                        "每一步做完了简单说一下你改了什么。"
-            )
-            openTab(NormalNavKey.AIChat)
-        } else {
-            crashRecord = record
-        }
-    }
-
     //游戏进程（`:game`）是否还活着：决定要不要显示「返回游戏」
     var gameRunning by remember { mutableStateOf(false) }
     LaunchedEffect(inLauncherScreen) {
@@ -270,60 +248,6 @@ fun MainScreen(
         wallpaperLuminance == null -> 0.12f  //视频壁纸：取一个保守值
         contentIsLight -> (0.03f + 0.22f * wallpaperLuminance).coerceIn(0f, 0.28f)
         else -> (0.03f + 0.22f * (1f - wallpaperLuminance)).coerceIn(0f, 0.28f)
-    }
-
-    //崩溃提示：可以「自动修复」（交给 AI）、看日志，或者直接忽略
-    crashRecord?.let { record ->
-        fun dismiss() {
-            CrashGuard.clear()
-            crashRecord = null
-        }
-        AlertDialog(
-            onDismissRequest = { dismiss() },
-            title = { Text(stringResource(R.string.crash_guard_title)) },
-            text = {
-                Text(
-                    stringResource(
-                        R.string.crash_guard_message,
-                        record.versionName.ifBlank { "?" },
-                        record.exitCode
-                    )
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    //把「帮我修复一下崩溃」交给 AI 对话页，进去就自动开始分析
-                    AIPendingPrompt.put(
-                        "我刚刚玩游戏崩溃了（版本 ${record.versionName}，退出码 ${record.exitCode}）。" +
-                                "请先读最新的游戏日志和启动器日志，定位崩溃原因，" +
-                                "然后按你的判断直接修复（禁用冲突模组、补装缺失前置、清理损坏文件等），" +
-                                "每一步做完了简单说一下你改了什么。"
-                    )
-                    dismiss()
-                    openTab(NormalNavKey.AIChat)
-                }) {
-                    Text(stringResource(R.string.crash_guard_auto_fix))
-                }
-            },
-            dismissButton = {
-                Row {
-                    TextButton(onClick = {
-                        runCatching {
-                            Logger.getCurrentLogFile()?.let { logFile ->
-                                screenBackStackModel.mainScreen.backStack.navigateToLogView(logFile.absolutePath)
-                                screenBackStackModel.mainScreen.currentKey = NormalNavKey.LogView(logFile.absolutePath)
-                            }
-                        }
-                        dismiss()
-                    }) {
-                        Text(stringResource(R.string.crash_guard_view_log))
-                    }
-                    TextButton(onClick = { dismiss() }) {
-                        Text(stringResource(R.string.crash_guard_dismiss))
-                    }
-                }
-            }
-        )
     }
 
     Surface(

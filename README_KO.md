@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.6)
+[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.6 업데이트
+## ✨ 28.0.7 업데이트
 
-- **P0 크래시 수정**: `web_search`가 더 이상 메인 스레드에서 네트워크를 호출하지 않습니다. **AI가 Word / PPT를 직접 생성**합니다(`create_docx` / `create_pptx`, OOXML 직접 작성으로 APK 크기 증가 없음, 기본 저장 위치 `Download`). 경로와 그래픽 설정 표시도 수정
+- **「크래시 자동 수정」 제거**. **웹 검색은 DuckDuckGo 고정(키 불필요)**으로 설정이 필요 없습니다. `web_search` / `search_mcmod` 수정, `import_from_public`은 인스턴스 디렉터리 기준, 홈은 카드형이 기본
 
 ## 🛠️ 주요 기능
 

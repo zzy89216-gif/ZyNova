@@ -19,15 +19,6 @@ It can also browse the web: `web_search`, `fetch_webpage`, `search_mcmod` (toggl
 
 It never gains permissions that were not granted.
 
-## Web access and engines (28.0.5)
-
-- Toggle: Settings → AI settings → Web access
-- Four engines: `DuckDuckGo` (no key) / `Baidu Qianfan` / `Bing (Azure)` / `Custom endpoint`
-- Engines that need a key show a **Create API** button next to the field, jumping straight to the provider's page;
-  the custom option also asks for the endpoint URL
-- Any failure **falls back to DuckDuckGo**, so you never end up unable to search
-- You can also just paste the key in chat ("my search key is xxx, set it up") — the AI calls `update_ai_setting`
-  and the key is shown masked in the conversation
 
 ## File capabilities (28.0.5)
 
@@ -40,11 +31,6 @@ It never gains permissions that were not granted.
 
 Limits: only under `/storage/emulated/0/`; `Android/data` and `Android/obb` are blocked.
 
-## Crash self-healing (28.0.5)
-
-- A non-zero game exit records version / exit code / time;
-- The launcher then offers "Auto-fix / View log / Got it";
-- Settings has "Auto-fix after a crash" (no dialog, straight to the AI) — **off by default** because it spends quota.
 
 ## Document generation (28.0.6)
 
@@ -66,3 +52,10 @@ These are not plain strings in `options.txt`; the tools map them for you:
 | Graphics mode | `graphicsMode` | 0=fancy, 1=fast, 2=fabulous |
 | Particles | `particles` | 0=all, 1=decreased, 2=minimal |
 | FOV | `fov` | Normalised float, 1.0 = default 70° |
+
+
+## Web access (28.0.7)
+
+- One switch only: Settings → AI settings → Web access
+- Always **DuckDuckGo** (no key) — no engine or API key to configure
+- If parsing fails the AI falls back to `fetch_webpage`

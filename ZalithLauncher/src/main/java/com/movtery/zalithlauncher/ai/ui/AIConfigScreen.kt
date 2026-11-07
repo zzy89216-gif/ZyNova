@@ -356,47 +356,6 @@ fun AIConfigContent(
                 }
                 HintText(stringResource(R.string.ai_web_search_note))
 
-                //搜索引擎选择 + 「创建 API」直链
-                val engine = AISettings.searchEngine.state
-                SectionTitle(stringResource(R.string.ai_web_engine_title))
-                AiChoiceFlow {
-                    listOf(
-                        "duckduckgo" to R.string.ai_web_engine_ddg,
-                        "baidu" to R.string.ai_web_engine_baidu,
-                        "bing" to R.string.ai_web_engine_bing,
-                        "custom" to R.string.ai_web_engine_custom
-                    ).forEach { entry ->
-                        AiChoicePill(
-                            text = stringResource(entry.second),
-                            selected = engine == entry.first,
-                            onClick = { AISettings.searchEngine.save(entry.first) }
-                        )
-                    }
-                }
-
-                //崩溃后静默自动修复
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.ai_crash_auto_title),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = stringResource(R.string.ai_crash_auto_desc),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = MaterialTheme.typography.labelSmall.fontSize * 1.35f
-                        )
-                    }
-                    Switch(
-                        checked = AISettings.crashAutoRepair.state,
-                        onCheckedChange = { AISettings.crashAutoRepair.save(it) }
-                    )
-                }
-
                 //公有目录权限：AI 要读写 Download 之类的目录时必须先开这个
                 val hasAllFiles = android.os.Environment.isExternalStorageManager()
                 Row(
@@ -435,40 +394,7 @@ fun AIConfigContent(
                     }
                 }
 
-                if (engine != "duckduckgo") {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                        value = AISettings.searchApiKey.state,
-                        onValueChange = { AISettings.searchApiKey.save(it) },
-                        label = { Text(stringResource(R.string.ai_web_api_key)) },
-                        placeholder = { Text(stringResource(R.string.ai_web_api_key_hint)) },
-                        singleLine = true,
-                        visualTransformation = PasswordVisualTransformation(),
-                        trailingIcon = {
-                            TextButton(onClick = {
-                                val url = when (engine) {
-                                    "baidu" -> "https://console.bce.baidu.com/qianfan/ais/console/apiKey"
-                                    "bing" -> "https://portal.azure.com/#create/Microsoft.CognitiveServicesBingSearch-v7"
-                                    else -> "https://github.com/"
-                                }
-                                runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
-                            }) {
-                                Text(stringResource(R.string.ai_web_create_api))
-                            }
-                        }
-                    )
-                    if (engine == "custom") {
-                        OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                            value = AISettings.searchBaseUrl.state,
-                            onValueChange = { AISettings.searchBaseUrl.save(it) },
-                            label = { Text(stringResource(R.string.ai_web_base_url)) },
-                            placeholder = { Text("https://your-search-api.example.com/search") },
-                            singleLine = true
-                        )
-                    }
-                    HintText(stringResource(R.string.ai_web_key_note))
-                }
+                HintText(stringResource(R.string.ai_web_ddg_note))
             }
 
             Spacer(Modifier.height(8.dp))

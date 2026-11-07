@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.6)
+[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
 
 [简体中文](README.md) | [English](README_EN.md) | **繁體中文** | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.6 更新重點
+## ✨ 28.0.7 更新重點
 
-- **修掉 P0 崩潰**：`web_search` 不再於主執行緒發網路請求；**AI 能直接做 Word / PPT**（`create_docx` / `create_pptx`，手寫 OOXML、不加包體，預設存 `Download`）；路徑與圖形設定顯示修正
+- **移除「崩潰自動修復」**；**聯網固定 DuckDuckGo（免 Key）**，不再需要任何設定；`web_search` / `search_mcmod` 修復；`import_from_public` 改按實例目錄；預設主頁改為卡片
 
 ## 🛠️ 主要功能
 

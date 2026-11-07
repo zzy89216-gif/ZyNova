@@ -655,7 +655,7 @@ object AllSettings : SettingsRegistry() {
     /**
      * 启动器主页类型
      */
-    val homePageType = enumSetting("homePageType", HomePageType.Blank)
+    val homePageType = enumSetting("homePageType", HomePageType.Cards)
 
     /**
      * 启动器网络主页下载地址

@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.6)
+[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | **日本語** | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,9 +17,9 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ 28.0.6 の新機能
+## ✨ 28.0.7 の新機能
 
-- **P0 クラッシュを修正**：`web_search` がメインスレッドで通信しなくなりました。**AI が Word / PPT を直接生成**できます（`create_docx` / `create_pptx`、OOXML 手書きで APK は増えず、既定で `Download` に保存）。パスとグラフィック設定の表示も修正
+- **「クラッシュ自動修復」を削除**。**ウェブ検索は DuckDuckGo 固定（キー不要）**になり設定不要。`web_search` / `search_mcmod` を修正、`import_from_public` はインスタンスのディレクトリ基準に、ホームはカード表示が既定
 
 ## 🛠️ 主な機能
 

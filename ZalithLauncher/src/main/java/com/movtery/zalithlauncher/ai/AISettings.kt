@@ -82,20 +82,6 @@ object AISettings : SettingsRegistry() {
      */
     val webSearch = boolSetting("aiWebSearch", true)
 
-    /** 搜索引擎：duckduckgo（免 Key）/ baidu（千帆）/ bing（Azure）/ custom（自建兼容接口）*/
-    /**
-     * 崩溃后是否**自动**把「帮我修复一下崩溃」发给 AI（不弹框）。
-     * 默认关闭：会自动消耗额度，且 AI 可能改动文件，必须先让用户自己开。
-     */
-    val crashAutoRepair = boolSetting("aiCrashAutoRepair", false)
-
-    val searchEngine = stringSetting("aiSearchEngine", "duckduckgo")
-
-    /** 搜索服务的 API Key（百度千帆 / Azure Bing / 自建）*/
-    val searchApiKey = stringSetting("aiSearchApiKey", "")
-
-    /** 自建搜索接口地址（custom 时使用）*/
-    val searchBaseUrl = stringSetting("aiSearchBaseUrl", "")
 
     /**
      * 是否已经向用户展示过「数据会发往你配置的 AI 服务商」这段说明。

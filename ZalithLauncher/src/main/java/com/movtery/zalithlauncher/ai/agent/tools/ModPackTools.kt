@@ -82,7 +82,7 @@ private fun installModPackTool() = aiTool(
         required = listOf("platform", "project_id"),
     ),
     risk = AIToolRisk.WRITE,
-) { args, _ ->
+) { args, ctx ->
     val platform = when (args.str("platform")!!.trim().lowercase()) {
         "modrinth", "mr" -> Platform.MODRINTH
         "curseforge", "cf" -> Platform.CURSEFORGE
@@ -161,7 +161,20 @@ private fun installModPackTool() = aiTool(
         append("（").append(platform.displayName).append(" / ").append(projectId).append("）\n")
         info?.let {
             runCatching {
-                append("游戏版本与加载器：").append(it.getVersionSummary()).append('\n')
+                append("整合包实际游戏版本与加载器：").append(it.getVersionSummary()).append('\n')
+            }
+        }
+        //把「搜索时的过滤条件」和「实际装出来的版本」摆在一起，避免用户以为装错了
+        runCatching {
+            val current = ctx.currentVersion
+            if (current != null && info != null) {
+                val want = current.getVersionSummary()
+                val got = info.getVersionSummary()
+                if (want != got) {
+                    append("⚠️ 注意：当前实例是 ").append(want)
+                        .append("，而这个整合包对应的是 ").append(got)
+                        .append("；整合包只能在它自己的游戏版本里运行。\n")
+                }
             }
         }
         append("这是一个**独立的实例**，之前已有的实例没有被动过。")

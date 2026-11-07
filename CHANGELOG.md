@@ -2,6 +2,37 @@
 
 本项目所有值得注意的变更都会记录在此文件中。格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/)。
 
+## [28.0.7] - 2026-11-07
+
+### 🗑️ 移除
+
+- **删掉「崩溃自动修复」**（整块移除，不留残影）
+  - 删除 `CrashGuard`、`AIPendingPrompt`、启动器主界面的崩溃弹框、
+    `crashAutoRepair` 设置项，以及 `crash_guard_*` / `ai_crash_auto_*` 全部文案
+- **删掉搜索引擎配置**（AI 设置里不再有引擎四选一 / API Key / 「创建 API」）
+  - 联网固定使用 **DuckDuckGo**（免 Key），只保留「允许 AI 联网」一个开关
+
+### 🐛 修复
+
+- **`import_from_public` 导入位置错误**（P1）
+  - 以前相对 App 私有 `games` 根目录解析，开版本隔离时文件会落在游戏读不到的地方；
+    现在按**当前实例的真实 gameDir** 解析，并在返回里给出实际绝对路径
+- **`search_mcmod` 持续失效**（P1）
+  - 重写解析（支持 `//www.mcmod.cn/class/…`、`https://…`、`/class/…` 三种链接形态）；
+    并区分「被限流」「解析失败」「确实没有结果」三种情况
+- **`web_search` 持续失效**（P1）
+  - DuckDuckGo 解析重写为三层兜底：`result__a` 结构 → `uddg=` 重定向 → 普通外链；
+    遇到人机校验会明确提示改用 `fetch_webpage`
+- **整合包安装版本与搜索条件不符**（P2）
+  - 安装后回显「整合包实际游戏版本与加载器」，与当前实例不一致时明确提示
+- **Fabric API 校验 `lateinit` 异常**（P3）
+  - `thisPrimaryFile has not been initialized` 现在判为「不兼容」并走正常下载，
+    不再出现「compatible=false 却跳过下载」
+
+### 🔧 变更
+
+- **默认主页改为「主页卡片」**（`homePageType` 默认值 `Blank` → `Cards`）
+
 ## [28.0.6] - 2026-11-07
 
 ### 🐛 修复

@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.6)
+[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
 
 [简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **Русский**
 
@@ -17,9 +17,9 @@
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ Что нового в 28.0.6
+## ✨ Что нового в 28.0.7
 
-- **Исправлен P0-краш**: `web_search` больше не ходит в сеть из главного потока. **ИИ умеет создавать Word / PPT** (`create_docx` / `create_pptx`, OOXML вручную — APK не растёт, по умолчанию сохраняется в `Download`). Также исправлены пути и отображение графических настроек
+- **Удалено «автоисправление крашей»**. **Поиск теперь всегда DuckDuckGo (без ключа)** — настраивать ничего не нужно. Исправлены `web_search` / `search_mcmod`, `import_from_public` работает от каталога инстанса, домашняя страница по умолчанию — карточки
 
 ## 🛠️ Возможности
 

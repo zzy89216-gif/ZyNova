@@ -175,11 +175,15 @@ internal fun publicFileTools(): List<AITool> = listOf(
             required = listOf("source", "target"),
         ),
         risk = AIToolRisk.WRITE,
-    ) { args, _ ->
+    ) { args, ctx ->
         if (!isGranted()) return@aiTool PERMISSION_HINT
         val src = resolvePublic(args.str("source")!!)
         require(src.exists()) { "源不存在：${src.absolutePath}" }
-        val dst = AIToolSupport.resolveInside(args.str("target")!!, PathManager.DIR_GAME)
+        //⚠️ 必须解析到**当前实例的游戏目录**：以前用 PathManager.DIR_GAME（App 私有 games 根），
+        //开版本隔离时文件会落在游戏根本不会读的地方，界面显示「导入成功」但游戏里看不到。
+        val instanceDir = runCatching { AIToolSupport.resolveVersion(null, ctx).getGameDir() }.getOrNull()
+            ?: return@aiTool "无法确定当前实例的游戏目录，请先选中一个实例再导入"
+        val dst = AIToolSupport.resolveInside(args.str("target")!!, instanceDir)
         dst.parentFile?.mkdirs()
         if (src.isDirectory) src.copyRecursively(dst, overwrite = true)
         else src.copyTo(dst, overwrite = true)

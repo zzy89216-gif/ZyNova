@@ -5,7 +5,7 @@
 # ZyNova
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.0.6-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.6)
+[![Release](https://img.shields.io/badge/Release-28.0.7-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.0.7)
 
 [简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
 
@@ -17,13 +17,14 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 
-## ✨ What's new in 28.0.6
+## ✨ What's new in 28.0.7
 
-- **P0 crash fixed**: `web_search` no longer issues network calls on the main thread (`NetworkOnMainThreadException`); all three web tools now run on IO
-- **The AI can create Word / PPT files**: `create_docx` / `create_pptx` with hand-written OOXML (no Apache POI, so the APK does not grow), saved to `Download` by default
-- **Search has a fallback**: when `web_search` fails it switches to `fetch_webpage` instead of aborting
-- **Paths and options corrected**: instance parent folders (`Minecraft`, `versions`) are listable; graphics mode / particles / FOV now report the real game values
-- **Misc**: Photo Picker no longer spams permission errors, no more empty log shells, and "JVM limit" now reads as the launcher process heap
+- **Removed the crash auto-fix feature** entirely — code, dialog, setting and strings
+- **Web access needs no configuration now**: the engine picker / API key / "Create API" are gone; it always uses DuckDuckGo (no key), with a single on/off switch
+- **Search fixed**: `web_search` (three-layer DuckDuckGo parsing) and `search_mcmod` (link formats + rate-limit detection) return results again
+- **Import fixed**: `import_from_public` now resolves against the current instance's game directory, so files are actually visible in game
+- **Modpacks**: the installed game version is echoed, with a clear warning when it differs from the current instance
+- **Default home page is now the card layout**
 
 ## 🛠️ Features
 

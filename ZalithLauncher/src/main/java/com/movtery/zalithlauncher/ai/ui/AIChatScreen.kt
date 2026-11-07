@@ -121,12 +121,6 @@ fun AIChatScreen(
 
     val messages by viewModel.messages.collectAsStateWithLifecycle()
 
-    //崩溃自愈：从主界面带过来的「帮我修复一下崩溃」只消费一次
-    LaunchedEffect(Unit) {
-        com.movtery.zalithlauncher.ai.AIPendingPrompt.consume()?.let { prompt ->
-            viewModel.send(prompt)
-        }
-    }
 
     /**
      * 只渲染「真的有东西可显示」的消息。

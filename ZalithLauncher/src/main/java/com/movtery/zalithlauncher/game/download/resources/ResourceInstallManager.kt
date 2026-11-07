@@ -530,7 +530,19 @@ object ResourceInstallManager {
                 loaderName = loaderName
             )
         }.onFailure { e ->
-            Logger.warning(TAG, "Failed to check the installed Fabric API version", e)
+            //⚠️ 历史问题：实例里残留了别的游戏版本的 Fabric API 时，读取本地版本信息会抛
+            //`lateinit property thisPrimaryFile has not been initialized`。
+            //以前只记一条 WARNING 然后继续走「已安装 → 跳过」逻辑，会出现
+            //「日志自称 compatible=false 却仍然跳过下载」，导致游戏缺前置。
+            //现在把这种情况明确判为「不兼容」，让后续走正常下载流程。
+            if (e is UninitializedPropertyAccessException) {
+                Logger.info(
+                    TAG,
+                    "Installed Fabric API has incomplete metadata (thisPrimaryFile uninitialized); treating as incompatible"
+                )
+            } else {
+                Logger.warning(TAG, "Failed to check the installed Fabric API version", e)
+            }
         }.getOrDefault(false)
     }
 
