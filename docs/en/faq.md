@@ -16,5 +16,6 @@ Two mailboxes — pick the one that matches your ecosystem:
 |---|---|
 | <ZyNovaLauncher@163.com> | China ecosystem (Chinese mailboxes incl. QQ Mail) |
 | <ZyNovaLauncher@outlook.com> | Global ecosystem (overseas users, English) |
+| <https://x.com/ZyNovaProject> | Official X account (announcements, release news) |
 
 Please include the launcher version (Settings → About), game version + loader, reproduction steps and a log link.

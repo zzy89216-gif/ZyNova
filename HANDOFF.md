@@ -14,6 +14,8 @@
 - **许可证**：GPL-3.0（上游也是 GPL-3.0，ZyNova 必须保持开源）
 - **GitHub 仓库**：<https://github.com/zzy89216-gif/ZyNova>（分支 `main`）
 - **Discord**：<https://discord.gg/QwPpZQHrTa>（**永久邀请**，Discord API 校验 `expires_at = null`）
+- **官方 X（主账号）**：<https://x.com/ZyNovaProject>
+- **邮箱**：国内生态 <ZyNovaLauncher@163.com>；全球生态 <ZyNovaLauncher@outlook.com>
 - **包名**：`com.zynova.launcher`
 - **namespace**：仍为 `com.movtery.zalithlauncher`，**不要改 namespace**，否则要改几百个文件的 package 声明
 - **核心原则**：**Context First. Less Steps.**

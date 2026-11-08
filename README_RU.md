@@ -19,6 +19,7 @@
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- X (официальный основной аккаунт): <https://x.com/ZyNovaProject>
 - Для Китая: <ZyNovaLauncher@163.com>
 - Для остального мира: <ZyNovaLauncher@outlook.com>
 
@@ -65,6 +66,7 @@
 - Проблемы: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
 - Почта: для Китая <ZyNovaLauncher@163.com> | для остального мира <ZyNovaLauncher@outlook.com>
+- Официальный X: <https://x.com/ZyNovaProject>
 - Поддержать: <https://afdian.com/a/hizzy>
 
 ## ⚖️ Лицензия

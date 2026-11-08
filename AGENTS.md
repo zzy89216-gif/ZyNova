@@ -20,6 +20,8 @@
 | 最低系统 | Android 8.0（`minSdk 26`），`targetSdk 34`，`compileSdk 37` |
 | 构建 | JDK 17 + Android SDK/NDK，`./gradlew ZalithLauncher:assembleRelease` |
 | 核心原则 | **Context First. Less Steps.** 能自动判断就不让用户选；能一步就别拆两步 |
+| 官方渠道 | GitHub <https://github.com/zzy89216-gif/ZyNova> · Discord <https://discord.gg/QwPpZQHrTa> · X（主账号）<https://x.com/ZyNovaProject> |
+| 联系邮箱 | 国内生态 <ZyNovaLauncher@163.com> · 全球生态 <ZyNovaLauncher@outlook.com> |
 
 ## 二、当前状态（写这份文档时的事实）
 
@@ -78,6 +80,11 @@
 curl -s "https://api.github.com/repos/zzy89216-gif/ZyNova/actions/runs?per_page=3" -H "Authorization: Bearer $TOKEN"
 ```
 push 到 main 会触发 `build_apk.yml`，**约 19 分钟**。**红构建不许发版。**
+
+> 🕒 **只改文档不会触发编译**：`build_apk.yml` 加了 `paths-ignore`（`**.md`、`docs/**`、`LICENSE`、`ISSUE_TEMPLATE` 等）。
+> 整次 push 只碰这些路径时，工作流不会启动——以前改个错别字也要等 19 分钟，维护者嫌慢。
+> 确实想手动跑一次：Actions → **Build ZyNova APK** → *Run workflow*（`workflow_dispatch`）。
+> 发版时的编译不走这个工作流，走 `release_ci.yml` → `build.yml`。
 
 ### 2. 删除旧 Release / tag（**必须在构建结束之后**）
 ```bash
@@ -158,7 +165,7 @@ PY
 | 删 Issue | REST 没有删除接口，用 GraphQL `deleteIssue`（先 `GET /issues/{n}` 拿 `node_id`） |
 | Token | classic token，需 repo 权限；**绝不写进仓库/文档/APK**（`BuildConfig` 里也不要） |
 | Git 历史 | **不要重写**（维护者明确要求） |
-| 构建耗时 | 一次 push 构建 ≈ 19 分钟，一次发布构建 ≈ 18 分钟，规划时间时按这个算 |
+| 构建耗时 | 一次 push 构建 ≈ 19 分钟，一次发布构建 ≈ 18 分钟（只改文档的 push 已被 `paths-ignore` 跳过） |
 | 条款文本冻结 | APK 内的条款/声明是打包时冻结的，改条款必须重新构建 |
 | `gradle.properties` 位置 | 版本号在 `ZalithLauncher/gradle.properties`，不在根目录 |
 | `namespace` | 不要改 `com.movtery.zalithlauncher`，否则要改几百个文件的 package |
@@ -179,12 +186,12 @@ PY
    `sora-editor` = LGPL-2.1、`tm4e` = EPL-2.0、`XZ for Java` = 0BSD、
    `ANGLE` / `LWJGL` / `MMKV` = BSD-3-Clause、`SDL3` = Zlib。
    （记得同步 `assets/licenses/` 副本，并跟一次真实构建走）
-2. **关于页加上两个联系邮箱**（当前 28.1.0 的包里**还没有**，文档里已经写了）：
-   - <ZyNovaLauncher@163.com> —— 国内生态
-   - <ZyNovaLauncher@outlook.com> —— 全球生态
+2. **关于页加上联系方式**（当前 28.1.0 的包里**还没有**，文档里已经写了）：
+   - 邮箱：<ZyNovaLauncher@163.com>（国内生态）、<ZyNovaLauncher@outlook.com>（全球生态）
+   - 官方 X：<https://x.com/ZyNovaProject>
 
-   落点建议：`AboutInfoScreen`（设置 → 关于）加一个「联系邮箱」分组，
-   两个邮箱都能点击复制 / 发信（`Intent(ACTION_SENDTO, mailto:)`），
+   落点建议：`AboutInfoScreen`（设置 → 关于）加一个「联系与关注」分组，
+   两个邮箱可点击发信（`Intent(ACTION_SENDTO, mailto:)`）或复制，X 用 `ACTION_VIEW` 打开；
    文案同时补进 `strings.xml` 的中英文（其余语言可先复用英文）。
 3. 每版发完核对三个资产名与 `uploaded` 状态。
 
