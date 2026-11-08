@@ -2132,16 +2132,46 @@ HTTP 403
 
 ### 后续待办 ⬜
 
-#### 下次发版顺手做（不要单独为它发版）
+#### 下次发版顺手做（维护者明确要求，别漏）
 
-1. **`THIRD_PARTY_NOTICES.md` 第 5 节补明示许可证**：现在只写了「在应用内逐项查看」，
-   没把常见组件的许可证写死在文中。建议补一张表：
-   `sora-editor` = LGPL-2.1、`tm4e` = EPL-2.0、`XZ for Java` = 0BSD、
-   `ANGLE` / `LWJGL` / `MMKV` = BSD-3-Clause、`SDL3` = Zlib。
-   ⚠️ 改这个文件时必须**同时复制到** `ZalithLauncher/src/main/assets/licenses/THIRD_PARTY_NOTICES.md`
-   （APK 内冻结副本，应用内「第三方声明」页直接渲染它），
-   并且**跟着一次真实构建走**——只改仓库不改包，会出现「应用内文本 ≠ 仓库文本」。
-2. 每版发完核对三个资产名：`ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`。
+> 维护者原话：**「下次发 APK 的时候也要把这个写进关于页面」**。
+> 当前 28.1.0 的包里**没有**联系方式入口，只写进了文档（README / FAQ / 本文件）。
+
+#### 1. 关于页展示联系方式（下次打 APK 必做）
+
+- 落点：`ZalithLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/settings/AboutInfoScreen.kt`，
+  在现有「开源与合规」分组附近新增一个 **「联系与关注」** 分组。
+- 展示项（文案一字不差）：
+
+  | 项 | 值 |
+  |---|---|
+  | 官方 X（主账号） | <https://x.com/ZyNovaProject> |
+  | 国内生态邮箱 | <ZyNovaLauncher@163.com> |
+  | 全球生态邮箱 | <ZyNovaLauncher@outlook.com> |
+
+- 交互：
+  - 两个邮箱点击走 `Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:..."))`，找不到邮件 App 时退回「复制到剪贴板」；
+  - X 点击走 `Intent(Intent.ACTION_VIEW, Uri.parse("https://x.com/ZyNovaProject"))`；
+  - 三者都支持长按复制，复制后给一个 Toast 提示。
+- 文案：`strings.xml` **中英文都要加**，建议键名
+  `about_contact_title` / `about_contact_x` / `about_contact_email_cn` / `about_contact_email_global` / `about_contact_copied`；
+  其余语言可先复用英文，后续再补。
+- 做完后回来把本节改成「✅ 已随 <版本> 进包」，并写进 `CHANGELOG.md` 该版本的「新增」。
+
+#### 2. 第三方声明补明示许可证（顺带）
+
+- `THIRD_PARTY_NOTICES.md` 第 5 节目前只写「在应用内逐项查看」，建议补表：
+  `sora-editor` = LGPL-2.1、`tm4e` = EPL-2.0、`XZ for Java` = 0BSD、
+  `ANGLE` / `LWJGL` / `MMKV` = BSD-3-Clause、`SDL3` = Zlib。
+- ⚠️ 必须**同时复制到** `ZalithLauncher/src/main/assets/licenses/THIRD_PARTY_NOTICES.md`
+  （APK 内冻结副本，应用内「第三方声明」页直接渲染它），并且**跟着一次真实构建走**。
+
+#### 3. 每版发完核对资产（固定动作）
+
+- 三个资产名：`ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`；
+- 状态必须全是 `uploaded`；下载链接抽查应为 200。
+
+---
 
 #### 27.10.2 计划（统一跟踪：Issue #42）✅ 已随 27.10.2 测试版完成
 
@@ -3283,9 +3313,5 @@ surface 重建后渲染状态未恢复、窗口引用计数多算）；
   文档规则仍在 [`AGENTS.md`](AGENTS.md) 第五节，检查命令也留在那儿。
 
 ### 下次发版顺手做
-见 [`AGENTS.md`](AGENTS.md) 第八节：
-
-1. 第三方声明（`THIRD_PARTY_NOTICES.md` 第 5 节）补明示许可证，并同步 `assets/licenses/` 副本；
-2. **关于页加上两个联系邮箱**（28.1.0 的包里还没有，只有文档写了）：
-   国内生态 <ZyNovaLauncher@163.com>、全球生态 <ZyNovaLauncher@outlook.com>；
-3. 每版核对三个资产名与 `uploaded` 状态。
+见本文件上面「后续待办」里的 **《下次发版顺手做（维护者明确要求，别漏）》**，以及 [`AGENTS.md`](AGENTS.md) 第八节。
+一句话版本：**下次打 APK 时，把官方 X 和两个邮箱写进「关于页」**。
