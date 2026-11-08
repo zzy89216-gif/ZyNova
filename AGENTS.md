@@ -179,44 +179,9 @@ PY
   现在文档检查靠本节第五部分的命令 / 人工检查，**不要擅自把它加回 CI**。
 - 维护者要「正常维护、正常修 Bug、正常发版」，**不要**在标题、版本名、文档里加「LTS / 长期支持」这类标签。
 - Release 说明允许玩梗（README 也允许），但**不能写不存在的功能**，也不能把没修的写成修好了。
+- **发版待办不再写进文档**，统一放在 Issue 里跟踪：<https://github.com/zzy89216-gif/ZyNova/issues/50>（下一个版本要做的事）。
 
-## 八、下次发版顺手做（维护者明确要求，别漏）
-
-> 维护者原话：**「下次发 APK 的时候也要把这个写进关于页面」**。
-> 当前 28.1.0 的包里**没有**联系方式入口，只写进了文档（README / FAQ / HANDOFF）。
-
-### 1. 关于页展示联系方式（下次打 APK 必做）
-
-- 落点：`ZalithLauncher/.../ui/screens/content/settings/AboutInfoScreen.kt`，
-  在「开源与合规」分组附近新增 **「联系与关注」** 分组。
-- 展示项（一字不差）：
-
-  | 项 | 值 |
-  |---|---|
-  | 官方 X（主账号） | <https://x.com/ZyNovaProject> |
-  | 国内生态邮箱 | <ZyNovaLauncher@163.com> |
-  | 全球生态邮箱 | <ZyNovaLauncher@outlook.com> |
-
-- 交互：邮箱走 `ACTION_SENDTO` + `mailto:`（没有邮件 App 就复制到剪贴板）；X 走 `ACTION_VIEW`；都支持长按复制 + Toast 提示。
-- 文案：`strings.xml` 中英文都加，建议键名
-  `about_contact_title` / `about_contact_x` / `about_contact_email_cn` / `about_contact_email_global` / `about_contact_copied`；
-  其余语言可先复用英文。
-- 做完把这一节标成「✅ 已随 <版本> 进包」，并写进 `CHANGELOG.md` 该版本的「新增」。
-
-### 2. 第三方声明补明示许可证（顺带）
-
-- `THIRD_PARTY_NOTICES.md` 第 5 节补表：
-  `sora-editor` = LGPL-2.1、`tm4e` = EPL-2.0、`XZ for Java` = 0BSD、
-  `ANGLE` / `LWJGL` / `MMKV` = BSD-3-Clause、`SDL3` = Zlib。
-- ⚠️ 必须**同时复制到** `ZalithLauncher/src/main/assets/licenses/THIRD_PARTY_NOTICES.md`，
-  并且**跟着一次真实构建走**（应用内渲染的是 APK 里那份）。
-
-### 3. 每版发完核对资产（固定动作）
-
-- `ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`；
-- 三个都要 `uploaded`，下载链接抽查 200。
-
-## 九、给你的建议顺序
+## 八、给你的建议顺序
 
 1. 读本文件 → `HANDOFF.md` 对应章节 → `CHANGELOG.md` 首条 → `docs/zh/README.md`。
 2. `git log --oneline -20` 看最近做了什么。
