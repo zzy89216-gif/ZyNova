@@ -19,6 +19,8 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- 中国向け窓口：<ZyNovaLauncher@163.com>
+- グローバル窓口：<ZyNovaLauncher@outlook.com>
 
 ## ✨ 28.1.0 の新機能
 
@@ -63,6 +65,7 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 - 不具合報告：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
 - 支援：<https://afdian.com/a/hizzy>
+- メール：中国向け <ZyNovaLauncher@163.com> ｜ グローバル <ZyNovaLauncher@outlook.com>
 
 ## ⚖️ ライセンス
 

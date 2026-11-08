@@ -19,6 +19,8 @@
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- Для Китая: <ZyNovaLauncher@163.com>
+- Для остального мира: <ZyNovaLauncher@outlook.com>
 
 ## ✨ Что нового в 28.1.0
 
@@ -62,6 +64,7 @@
 
 - Проблемы: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
+- Почта: для Китая <ZyNovaLauncher@163.com> | для остального мира <ZyNovaLauncher@outlook.com>
 - Поддержать: <https://afdian.com/a/hizzy>
 
 ## ⚖️ Лицензия

@@ -3281,4 +3281,9 @@ surface 重建后渲染状态未恢复、窗口引用计数多算）；
   文档规则仍在 [`AGENTS.md`](AGENTS.md) 第五节，检查命令也留在那儿。
 
 ### 下次发版顺手做
-见 [`AGENTS.md`](AGENTS.md) 第八节（第三方声明补明示许可证 / 核对三个资产名）。
+见 [`AGENTS.md`](AGENTS.md) 第八节：
+
+1. 第三方声明（`THIRD_PARTY_NOTICES.md` 第 5 节）补明示许可证，并同步 `assets/licenses/` 副本；
+2. **关于页加上两个联系邮箱**（28.1.0 的包里还没有，只有文档写了）：
+   国内生态 <ZyNovaLauncher@163.com>、全球生态 <ZyNovaLauncher@outlook.com>；
+3. 每版核对三个资产名与 `uploaded` 状态。

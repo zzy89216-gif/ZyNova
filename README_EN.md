@@ -19,6 +19,8 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- China ecosystem mailbox: <ZyNovaLauncher@163.com>
+- Global ecosystem mailbox: <ZyNovaLauncher@outlook.com>
 
 ## ✨ What's new in 28.1.0
 
@@ -65,6 +67,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 - Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
+- Email: China ecosystem <ZyNovaLauncher@163.com> | global ecosystem <ZyNovaLauncher@outlook.com>
 - Sponsor: <https://afdian.com/a/hizzy>
 
 ## ⚖️ License

@@ -20,6 +20,8 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- 国内生态邮箱（QQ 邮箱也可发到这里）：<ZyNovaLauncher@163.com>
+- 全球生态邮箱：<ZyNovaLauncher@outlook.com>
 
 ## ✨ 28.1.0 更新要点
 
@@ -52,6 +54,7 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 ## 💖 支持
 
 - 反馈：<https://github.com/zzy89216-gif/ZyNova/issues> · Discord：<https://discord.gg/QwPpZQHrTa>
+- 邮箱：国内生态 <ZyNovaLauncher@163.com> ｜ 全球生态 <ZyNovaLauncher@outlook.com>
 - 赞助：<https://afdian.com/a/hizzy>
 
 ## ⚖️ 许可证

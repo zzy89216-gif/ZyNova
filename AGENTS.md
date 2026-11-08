@@ -179,7 +179,14 @@ PY
    `sora-editor` = LGPL-2.1、`tm4e` = EPL-2.0、`XZ for Java` = 0BSD、
    `ANGLE` / `LWJGL` / `MMKV` = BSD-3-Clause、`SDL3` = Zlib。
    （记得同步 `assets/licenses/` 副本，并跟一次真实构建走）
-2. 每版发完核对三个资产名与 `uploaded` 状态。
+2. **关于页加上两个联系邮箱**（当前 28.1.0 的包里**还没有**，文档里已经写了）：
+   - <ZyNovaLauncher@163.com> —— 国内生态
+   - <ZyNovaLauncher@outlook.com> —— 全球生态
+
+   落点建议：`AboutInfoScreen`（设置 → 关于）加一个「联系邮箱」分组，
+   两个邮箱都能点击复制 / 发信（`Intent(ACTION_SENDTO, mailto:)`），
+   文案同时补进 `strings.xml` 的中英文（其余语言可先复用英文）。
+3. 每版发完核对三个资产名与 `uploaded` 状态。
 
 ## 九、给你的建议顺序
 

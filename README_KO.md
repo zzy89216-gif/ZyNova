@@ -19,6 +19,8 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- 중국 생태계 문의: <ZyNovaLauncher@163.com>
+- 글로벌 생태계 문의: <ZyNovaLauncher@outlook.com>
 
 ## ✨ 28.1.0 업데이트
 
@@ -62,6 +64,7 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 
 - 문제 신고: <https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord: <https://discord.gg/QwPpZQHrTa>
+- 이메일: 중국 생태계 <ZyNovaLauncher@163.com> | 글로벌 생태계 <ZyNovaLauncher@outlook.com>
 - 후원: <https://afdian.com/a/hizzy>
 
 ## ⚖️ 라이선스

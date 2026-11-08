@@ -19,6 +19,9 @@
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
+- 信箱：國內生態 <ZyNovaLauncher@163.com> ｜ 全球生態 <ZyNovaLauncher@outlook.com>
+- 國內生態信箱：<ZyNovaLauncher@163.com>
+- 全球生態信箱：<ZyNovaLauncher@outlook.com>
 
 ## ✨ 28.1.0 更新重點
 
