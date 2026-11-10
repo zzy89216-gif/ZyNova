@@ -4,14 +4,14 @@
 
 # ZyNova — 多语言介绍 / Language index
 
-简体中文主页面在仓库根目录：[README.md](../README.md)。其他语言各占一个子目录，目录里的 `README.md` 就是该语言的介绍页。
+简体中文与英文放在仓库根目录（[README.md](../README.md) · [README_EN.md](../README_EN.md)），其余语言各占一个子目录，目录里的 `README.md` 就是该语言的介绍页。
 
-The Simplified Chinese page is the repository root [README.md](../README.md). Every other language lives in its own folder, and the `README.md` inside it **is** that language's introduction page.
+Simplified Chinese and English live at the repository root ([README.md](../README.md) · [README_EN.md](../README_EN.md)). Every other language has its own folder, and the `README.md` inside it **is** that language's introduction page.
 
 | 语言 / Language | 目录 / Folder | 说明 / Notes |
 |---|---|---|
 | 简体中文 | [README.md](../README.md) | 主页面，含国内生态说明 |
-| English | [en](en/README.md) | — |
+| English | [README_EN.md](../README_EN.md) | — |
 | 繁體中文 | [zh-Hant](zh-Hant/README.md) | 台灣／香港用語 |
 | 日本語 | [ja](ja/README.md) | — |
 | 한국어 | [ko](ko/README.md) | — |
