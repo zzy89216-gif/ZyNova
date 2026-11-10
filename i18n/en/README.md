@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
@@ -10,7 +10,11 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
-[简体中文](README.md) | **English** | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | [Русский](README_RU.md)
+<p align="center"><sub>
+<b>English</b> · <a href="../../README.md">简体中文</a> · <a href="../zh-Hant/README.md">繁體中文</a> · <a href="../ja/README.md">日本語</a> · <a href="../ko/README.md">한국어</a> · <a href="../tr/README.md">Türkçe</a> · <a href="../ru/README.md">Русский</a> · <a href="../vi/README.md">Tiếng Việt</a> · <a href="../th/README.md">ไทย</a> · <a href="../de/README.md">Deutsch</a> · <a href="../es/README.md">Español</a> · <a href="../fr/README.md">Français</a>
+<br>
+<a href="../uk/README.md">Українська</a> · <a href="../pl/README.md">Polski</a> · <a href="../pt-BR/README.md">Português (Brasil)</a> · <a href="../ar/README.md">العربية</a> · <a href="../fa/README.md">فارسی</a> · <a href="../id/README.md">Bahasa Indonesia</a> · <a href="../it/README.md">Italiano</a> · <a href="../el/README.md">Ελληνικά</a> · <a href="../ml/README.md">മലയാളം</a> · <a href="../ur-Latn/README.md">Roman Urdu</a> · <a href="../ro/README.md">Română</a> · <a href="../bg/README.md">Български</a>
+</sub></p>
 
 ---
 
@@ -45,22 +49,22 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 ## 📚 Docs
 
-> 📚 **Full documentation (72 articles, English)**：[docs/en/README.md](docs/en/README.md)
+> 📚 **Full documentation (72 articles, English)**：[docs/en/README.md](../../docs/en/README.md)
 
 
 
 | Content | File |
 |---|---|
-| User docs hub | [docs/en/README.md](docs/en/README.md) |
-| Install / usage / export | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
-| Renderers / login / favorites / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
-| Troubleshooting / FAQ / data | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| Building | [docs/en/build.md](docs/en/build.md) |
-| Changelog | [CHANGELOG.md](CHANGELOG.md) |
-| Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
-| Onboarding entry (state / release flow / traps / doc rules) | [AGENTS.md](AGENTS.md) |
-| Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
-| License | [LICENSE](LICENSE) |
+| User docs hub | [docs/en/README.md](../../docs/en/README.md) |
+| Install / usage / export | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
+| Renderers / login / favorites / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
+| Troubleshooting / FAQ / data | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
+| Building | [docs/en/build.md](../../docs/en/build.md) |
+| Changelog | [CHANGELOG.md](../../CHANGELOG.md) |
+| Handoff / architecture / workflow | [HANDOFF.md](../../HANDOFF.md) |
+| Onboarding entry (state / release flow / traps / doc rules) | [AGENTS.md](../../AGENTS.md) |
+| Third-party licenses | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
+| License | [LICENSE](../../LICENSE) |
 
 
 
@@ -75,7 +79,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 ## ⚖️ License
 
 GPL-3.0, must stay open source. Third-party components and the licence of each are listed in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [docs/en/licenses.md](docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) and [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta is AGPL-3.0** (stricter than the rest): it is shipped unmodified. If you modify it and
 > redistribute, AGPL-3.0 §13 requires you to publish the corresponding source.

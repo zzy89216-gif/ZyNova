@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
@@ -10,7 +10,11 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
-[简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | **한국어** | [Русский](README_RU.md)
+<p align="center"><sub>
+<a href="../en/README.md">English</a> · <a href="../../README.md">简体中文</a> · <a href="../zh-Hant/README.md">繁體中文</a> · <a href="../ja/README.md">日本語</a> · <b>한국어</b> · <a href="../tr/README.md">Türkçe</a> · <a href="../ru/README.md">Русский</a> · <a href="../vi/README.md">Tiếng Việt</a> · <a href="../th/README.md">ไทย</a> · <a href="../de/README.md">Deutsch</a> · <a href="../es/README.md">Español</a> · <a href="../fr/README.md">Français</a>
+<br>
+<a href="../uk/README.md">Українська</a> · <a href="../pl/README.md">Polski</a> · <a href="../pt-BR/README.md">Português (Brasil)</a> · <a href="../ar/README.md">العربية</a> · <a href="../fa/README.md">فارسی</a> · <a href="../id/README.md">Bahasa Indonesia</a> · <a href="../it/README.md">Italiano</a> · <a href="../el/README.md">Ελληνικά</a> · <a href="../ml/README.md">മലയാളം</a> · <a href="../ur-Latn/README.md">Roman Urdu</a> · <a href="../ro/README.md">Română</a> · <a href="../bg/README.md">Български</a>
+</sub></p>
 
 ---
 
@@ -42,22 +46,22 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 
 ## 📚 문서
 
-> 📚 **전체 문서(72편, 영어)**：[docs/en/README.md](docs/en/README.md)
+> 📚 **전체 문서(72편, 영어)**：[docs/en/README.md](../../docs/en/README.md)
 
 
 
 | 내용 | 파일 |
 |---|---|
-| 사용자 문서 | [docs/en/README.md](docs/en/README.md) |
-| 설치 / 사용 / 내보내기 | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
-| 렌더러 / 로그인 / 즐겨찾기 / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
-| 문제 해결 / FAQ / 데이터 | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| 빌드 | [docs/en/build.md](docs/en/build.md) |
-| 변경 기록 | [CHANGELOG.md](CHANGELOG.md) |
-| 인수인계 / 구조 / 개발 흐름 | [HANDOFF.md](HANDOFF.md) |
-| 인수인계 입구(현황 / 릴리스 절차 / 주의점 / 문서 규칙) | [AGENTS.md](AGENTS.md) |
-| 서드파티 라이선스 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
-| 라이선스 | [LICENSE](LICENSE) |
+| 사용자 문서 | [docs/en/README.md](../../docs/en/README.md) |
+| 설치 / 사용 / 내보내기 | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
+| 렌더러 / 로그인 / 즐겨찾기 / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
+| 문제 해결 / FAQ / 데이터 | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
+| 빌드 | [docs/en/build.md](../../docs/en/build.md) |
+| 변경 기록 | [CHANGELOG.md](../../CHANGELOG.md) |
+| 인수인계 / 구조 / 개발 흐름 | [HANDOFF.md](../../HANDOFF.md) |
+| 인수인계 입구(현황 / 릴리스 절차 / 주의점 / 문서 규칙) | [AGENTS.md](../../AGENTS.md) |
+| 서드파티 라이선스 | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
+| 라이선스 | [LICENSE](../../LICENSE) |
 
 
 
@@ -71,7 +75,7 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 
 ## ⚖️ 라이선스
 
-GPL-3.0(오픈소스 유지). 서드파티 라이선스는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+GPL-3.0(오픈소스 유지). 서드파티 라이선스는 [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 
 ---
 

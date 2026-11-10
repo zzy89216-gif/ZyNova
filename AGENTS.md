@@ -68,7 +68,7 @@
 
 ### 0. 前置
 - 版本号只改 `ZalithLauncher/gradle.properties`（name + code），**别处不要写死版本号**。
-- 同步：`CHANGELOG.md`、`HANDOFF.md`、`README*.md`（六种语言）、`docs/`。
+- 同步：`CHANGELOG.md`、`HANDOFF.md`、`docs/`，以及介绍页 `README.md` + `i18n/*/README.md`（24 种语言，索引见 `i18n/README.md`）。
 - 推送命令（Token 只放命令行，**绝不入库**）：
   ```bash
   git -c credential.helper= push "https://<user>:<TOKEN>@github.com/zzy89216-gif/ZyNova.git" HEAD:main

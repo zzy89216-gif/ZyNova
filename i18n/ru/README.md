@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
@@ -10,7 +10,11 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
-[简体中文](README.md) | [English](README_EN.md) | [繁體中文](README_ZH_TW.md) | [日本語](README_JA_JP.md) | [한국어](README_KO.md) | **Русский**
+<p align="center"><sub>
+<a href="../en/README.md">English</a> · <a href="../../README.md">简体中文</a> · <a href="../zh-Hant/README.md">繁體中文</a> · <a href="../ja/README.md">日本語</a> · <a href="../ko/README.md">한국어</a> · <a href="../tr/README.md">Türkçe</a> · <b>Русский</b> · <a href="../vi/README.md">Tiếng Việt</a> · <a href="../th/README.md">ไทย</a> · <a href="../de/README.md">Deutsch</a> · <a href="../es/README.md">Español</a> · <a href="../fr/README.md">Français</a>
+<br>
+<a href="../uk/README.md">Українська</a> · <a href="../pl/README.md">Polski</a> · <a href="../pt-BR/README.md">Português (Brasil)</a> · <a href="../ar/README.md">العربية</a> · <a href="../fa/README.md">فارسی</a> · <a href="../id/README.md">Bahasa Indonesia</a> · <a href="../it/README.md">Italiano</a> · <a href="../el/README.md">Ελληνικά</a> · <a href="../ml/README.md">മലയാളം</a> · <a href="../ur-Latn/README.md">Roman Urdu</a> · <a href="../ro/README.md">Română</a> · <a href="../bg/README.md">Български</a>
+</sub></p>
 
 ---
 
@@ -42,22 +46,22 @@
 
 ## 📚 Документация
 
-> 📚 **Полная документация (72 статьи, английский)**：[docs/en/README.md](docs/en/README.md)
+> 📚 **Полная документация (72 статьи, английский)**：[docs/en/README.md](../../docs/en/README.md)
 
 
 
 | Содержание | Файл |
 |---|---|
-| Документация | [docs/en/README.md](docs/en/README.md) |
-| Установка / использование / экспорт | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
-| Рендереры / вход / избранное / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
-| Диагностика / FAQ / данные | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| Сборка | [docs/en/build.md](docs/en/build.md) |
-| История изменений | [CHANGELOG.md](CHANGELOG.md) |
-| Передача / архитектура / процесс | [HANDOFF.md](HANDOFF.md) |
-| Вход для нового сопровождающего (состояние / релиз / подводные камни / правила документации) | [AGENTS.md](AGENTS.md) |
-| Сторонние лицензии | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
-| Лицензия | [LICENSE](LICENSE) |
+| Документация | [docs/en/README.md](../../docs/en/README.md) |
+| Установка / использование / экспорт | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
+| Рендереры / вход / избранное / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
+| Диагностика / FAQ / данные | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
+| Сборка | [docs/en/build.md](../../docs/en/build.md) |
+| История изменений | [CHANGELOG.md](../../CHANGELOG.md) |
+| Передача / архитектура / процесс | [HANDOFF.md](../../HANDOFF.md) |
+| Вход для нового сопровождающего (состояние / релиз / подводные камни / правила документации) | [AGENTS.md](../../AGENTS.md) |
+| Сторонние лицензии | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
+| Лицензия | [LICENSE](../../LICENSE) |
 
 
 
@@ -71,7 +75,7 @@
 
 ## ⚖️ Лицензия
 
-GPL-3.0, проект остаётся открытым. Сторонние компоненты: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+GPL-3.0, проект остаётся открытым. Сторонние компоненты: [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 
 ---
 
