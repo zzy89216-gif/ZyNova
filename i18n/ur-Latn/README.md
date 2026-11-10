@@ -12,65 +12,67 @@
 
 > ⭐ **ZyNova 28.1.0 jari ho gaya (global compliance build).**
 
+
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 ---
 
-Android ke liye **Minecraft: Java Edition** launcher, jo ZalithLauncher2 ke source code par mustaqil tor par maintain aur release hota hai. Ye official build nahi hai.
+Android ke liye **Minecraft: Java Edition** launcher. ZalithLauncher2 ke code se mustaqil tor par banaya aur release kiya jata hai; ye official build nahi hai.
 
-Maqsad: **kam taps**. Jo kuch automate ho sakta hai — game install karna, mods aur modpacks jama karna, settings badalna, logs parhna — wo AI agent sambhalta hai.
-
-- GitHub：<https://github.com/zzy89216-gif/ZyNova>
-- Bugs aur tajawizat：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- X (official main account)：<https://x.com/ZyNovaProject>
-- China ecosystem mailbox：<ZyNovaLauncher@163.com>
-- Global mailbox：<ZyNovaLauncher@outlook.com>
+Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pehle khud faisla karta hai, aur sirf tab poochta hai jab waqai faisla na ho sake.
 
 ## ✨ 28.1.0 mein naya
 
-- **Pehli baar chalane par compliance flow**：teen documents — ① EULA + privacy policy, ② third-party open source notice + disclaimers aur risks, ③ tutorial + applicable regions aur legal jurisdiction. Har document ko **aakhir tak scroll karke alag se tick** karna hoga, phir age group chuniye (purane users bhi update ke baad ek baar ye dekhenge).
-- **Na-baalighon ke liye waqt ki hadd**：18 se kam umar wale sirf Juma, Hafta, Itwaar aur sarkari chhuttiyon mein **20:00–21:00** game chala sakte hain. 2026 ki chhutiyan Chinese State Council calendar (国办发明电〔2025〕7号) ke mutabiq din-ba-din di gayi hain; make-up working days ko working day mana jayega.
-- **Disclaimers poori tarah likhe gaye**：save ka nuqsan, device garam hona, third-party ban, service band hona aur aise khatrat wazeh tor par bataye gaye hain.
-- **Iske ilawa**：home cards loading par atakte nahi, AI web search chalta hai, import instance folder mein jata hai, crash ke baad auto-fix hata diya gaya hai.
+- **Pehli baar chalane par compliance flow**: teen documents (① EULA + privacy policy, ② third-party open source notice + disclaimers aur risks, ③ tutorial + regions aur legal jurisdiction). Har ek ko **aakhir tak scroll karke alag se tick** karna hoga; phir age group chuniye (purane users bhi update ke baad ek baar ye dekhenge).
+- **Na-baalighon ke liye waqt**: 18 se kam umar wale sirf Juma, Hafta, Itwaar aur sarkari chhuttiyon mein **20:00–21:00** game chala sakte hain. 2026 ki chhutiyan Chinese State Council calendar ke mutabiq din-ba-din di gayi hain; make-up working days ko working day mana jayega.
+- **Disclaimers poori tarah likhe gaye**: save ka nuqsan, device garam hona, third-party ban, service band hona — sab wazeh.
+- **Iske ilawa**: home cards loading par atakte nahi, AI web search chalta hai, import instance folder mein jata hai, crash ke baad auto-fix hata diya gaya.
 
 ## 🛠️ Kya kar sakta hai
 
-- **AI Agent**：default DeepSeek — game, modpacks aur mods install karta hai, settings badalta hai, logs parhta hai, game launch karta hai
-- **Renderers**：Auto / MobileGlues / GL4ES / LTW (experimental)
-- **Resource core**：Modrinth / CurseForge search, dependency resolution, download, verify, install
-- **Favourites aur archive**：online favourites + private archive, SHA-256 dedupe
-- **Fabric API guard**：Fabric API / Quilted Fabric API / Legacy Fabric API install flow se add hoti hain — duplicate, search ya delete nahi ho sakti
+- **AI Agent**: default DeepSeek — game, modpacks aur mods install karta hai, settings badalta hai, logs parhta hai, game launch karta hai
+- **Renderers**: Auto / MobileGlues / GL4ES / LTW (experimental)
+- **Resource core**: Modrinth / CurseForge search, dependency resolution, download, verify, install
+- **Favourites aur archive**: online favourites + private archive, SHA-256 dedupe
+- **Fabric API guard**: sirf install flow se add hoti hain — duplicate, search ya delete nahi ho sakti
+
+## 🚀 3 qadam
+
+1. [Releases](https://github.com/zzy89216-gif/ZyNova/releases) se APK le kar install karein (Android 8.0+)
+2. Pehli baar: teen documents aakhir tak parhein, har ek tick karein, age group chunein
+3. Microsoft account se login karein, version chunein ya install karein, game chalayein
+
+## 📖 Istilah
+
+- **Modpack**: mods ka ek bundle jo ek hi baar mein install hota hai
+- **Shader**: behtar roshni aur paani, graphics settings mein on hota hai
+- **Instance**: alag folder jismein version, mods aur settings hoti hain
 
 ## 📦 Download aur build
 
-- Download：<https://github.com/zzy89216-gif/ZyNova/releases> (hamesha latest version lein)
-- Khud build karein：JDK 17 + Android SDK / NDK, phir `./gradlew ZalithLauncher:assembleRelease`
-- Note：pehli baar chalane par compliance flow aata hai; regions aur age limits ki tafseel [docs/en/licenses.md](../../docs/en/licenses.md) mein hai.
+- Download: <https://github.com/zzy89216-gif/ZyNova/releases> (hamesha latest)
+- Khud build: JDK 17 + Android SDK / NDK, phir `./gradlew ZalithLauncher:assembleRelease`
+- Note: pehli baar compliance flow aata hai; tafseel [docs/en/licenses.md](../../docs/en/licenses.md) mein
 
 ## 📚 Documentation
 
-> 📚 Documentation filhaal Chinese aur English mein hai (70+ articles); ye page Roman Urdu taaruf hai.
+> 📚 Documentation filhaal Chinese aur English mein hai (har ek 77 articles); ye page Roman Urdu taaruf hai.
 
 | Content | File |
 |---|---|
 | Documentation index | [docs/en/README.md](../../docs/en/README.md) |
 | Install / usage / export | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
-| Rendering / login / favourites / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
-| Troubleshooting / FAQ / data aur privacy | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Build | [docs/en/build.md](../../docs/en/build.md) |
-| Changelog | [CHANGELOG.md](../../CHANGELOG.md) |
-| Handoff / architecture / workflow | [HANDOFF.md](../../HANDOFF.md) |
-| Naye caretaker ke liye entry (state / release / traps / doc rules) | [AGENTS.md](../../AGENTS.md) |
-| Third-party licences | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
-| Licence | [LICENSE](../../LICENSE) |
+| Rendering / login / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
+| Troubleshooting / FAQ / privacy | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
+| Build / changelog | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
+| Handoff / third-party licences / licence | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Support
 
 - Masla report karein：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
-- Email：global <ZyNovaLauncher@outlook.com> ｜ China <ZyNovaLauncher@163.com>
+- Email：<ZyNovaLauncher@outlook.com>
 - Official X：<https://x.com/ZyNovaProject>
 - Project ko support karein：<https://afdian.com/a/hizzy>
 
@@ -80,8 +82,8 @@ GPL-3.0 — project open source rehta hai. Third-party components aur unke licen
 [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) aur [docs/en/licenses.md](../../docs/en/licenses.md) mein hain.
 
 > ⚠️ **Terracotta (multiplayer) AGPL-3.0 par hai**, baaki sab se sakht: bila tabdeeli distribute hota hai.
-> Agar aap ise modify karke dobara distribute karein, to AGPL-3.0 §13 ke tehat mutabiq source code
-> publish karna hoga.
+> Agar ise modify karke dobara distribute karein, to AGPL-3.0 §13 ke tehat mutabiq source code publish
+> karna hoga.
 
 ---
 

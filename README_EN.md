@@ -10,74 +10,83 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 released (global compliance build).**
+> ⭐ **ZyNova 28.1.0 is out (global compliance build).**
+
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 ---
 
-A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source. Independently maintained; not an official build.
+**Minecraft: Java Edition** on Android, built from the ZalithLauncher2 sources and maintained independently — not an official build.
+
+The design bet is blunt: **fewer decisions**. Most launchers hand you a wall of settings and let you sort it out. ZyNova tries to decide first and explain later — install the game, fetch the mods and their dependencies, read the crash log, then launch. When it can't decide, it asks once.
+
+## 🚀 Three steps to play
+
+1. Grab the APK from [Releases](https://github.com/zzy89216-gif/ZyNova/releases) and install it (Android 8.0+).
+2. First launch walks you through three compliance documents — scroll each to the end, tick it, pick your age group.
+3. Sign in with your Microsoft account, pick or install a version, hit play.
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
-- X (official main account): <https://x.com/ZyNovaProject>
-- China ecosystem mailbox: <ZyNovaLauncher@163.com>
-- Global ecosystem mailbox: <ZyNovaLauncher@outlook.com>
+- X (official account)：<https://x.com/ZyNovaProject>
+- Mail：<ZyNovaLauncher@outlook.com>
 
 ## ✨ What's new in 28.1.0
 
-- **First-launch compliance flow**: 3 merged documents — ① EULA + Privacy Policy, ② third-party open-source notice + disclaimers and risks, ③ tutorial + supported regions and legal jurisdiction. Each one **must be scrolled to the bottom and ticked separately** before you can continue, then pick your age group (existing users see it once after updating too)
-- **Under-18 time limit**: minors may only launch the game on Friday, Saturday, Sunday and statutory holidays, **20:00–21:00**; the 2026 holidays follow the State Council schedule (国办发明电〔2025〕7号), and make-up working days are treated as workdays
-- **Disclaimers are explicit**: save loss, device heat, third-party bans, service shutdown and similar risks are all stated
-- Also includes: card home no longer hangs on loading, AI web search works, imports go to the instance directory, crash auto-fix removed
+- **First-launch compliance flow**：three merged documents — ① EULA + Privacy Policy, ② third-party open-source notice + disclaimers and risks, ③ tutorial + supported regions and jurisdiction. Each one **must be scrolled to the bottom and ticked separately**, then you choose an age group (existing users see it once after updating too).
+- **Time window for minors**：under 18, the game can only start on Friday, Saturday, Sunday and statutory holidays, **20:00–21:00**. The 2026 holidays follow the State Council schedule (国办发明电〔2025〕7号); make-up working days count as workdays.
+- **Disclaimers, written out**：save loss, device heat, third-party bans, service shutdown — all stated instead of buried.
+- **Also**：card home no longer hangs on loading, AI web search works, imports land in the instance folder, crash auto-fix removed.
 
 ## 🛠️ Features
 
-- **AI Agent**: DeepSeek by default — installs the game, modpacks and mods, edits configs, reads logs, launches the game
-- **Renderers**: Auto / MobileGlues / GL4ES / LTW (experimental)
-- **Resource core**: Modrinth / CurseForge search, dependency resolution, download, verification, install
-- **Favorites & archive**: online favorites plus a private archive with SHA-256 dedupe
-- **Preload API guard**: Fabric API / Quilted Fabric API / Legacy Fabric API are added by the install flow and can't be duplicated, searched, deleted or disabled manually
+- **AI Agent**：DeepSeek by default — installs the game, modpacks and mods, edits settings, reads logs, launches
+- **Renderers**：Auto / MobileGlues / GL4ES / LTW (experimental)
+- **Resource core**：Modrinth / CurseForge search, dependency resolution, download, verification, install
+- **Favorites & archive**：online favorites plus a private archive with SHA-256 dedupe
+- **Fabric API guard**：Fabric API / Quilted Fabric API / Legacy Fabric API are added by the install flow and can't be duplicated, searched, deleted or disabled by hand
 
 ## 📦 Download and build
 
-- Download: <https://github.com/zzy89216-gif/ZyNova/releases>
-- Build: JDK 17 plus Android SDK / NDK, then `./gradlew ZalithLauncher:assembleRelease`
+- Download：<https://github.com/zzy89216-gif/ZyNova/releases> (always the latest)
+- Build yourself：JDK 17 + Android SDK / NDK, then `./gradlew ZalithLauncher:assembleRelease`
+- Heads-up：the compliance flow appears on first launch; fine print lives in [docs/en/licenses.md](docs/en/licenses.md).
 
 ## 📚 Docs
 
-> 📚 **Full documentation (77 articles, English)**：[docs/en/README.md](docs/en/README.md)
+> 📚 The full documentation exists in Chinese and English (77 articles each); this page is the English entry.
 
 | Content | File |
 |---|---|
-| User docs hub | [docs/en/README.md](docs/en/README.md) |
+| Docs hub | [docs/en/README.md](docs/en/README.md) |
 | Install / usage / export | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
 | Renderers / login / favorites / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
-| Troubleshooting / FAQ / data | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
+| Troubleshooting / FAQ / data & privacy | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
 | Building | [docs/en/build.md](docs/en/build.md) |
 | Changelog | [CHANGELOG.md](CHANGELOG.md) |
 | Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
-| Onboarding entry (state / release flow / traps / doc rules) | [AGENTS.md](AGENTS.md) |
+| Onboarding entry (state / release / traps / doc rules) | [AGENTS.md](AGENTS.md) |
 | Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 | License | [LICENSE](LICENSE) |
 
 ## 💖 Support
 
-- Issues: <https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord: <https://discord.gg/QwPpZQHrTa>
-- Email: China ecosystem <ZyNovaLauncher@163.com> | global ecosystem <ZyNovaLauncher@outlook.com>
-- Official X: <https://x.com/ZyNovaProject>
-- Sponsor: <https://afdian.com/a/hizzy>
+- Bugs & requests：<https://github.com/zzy89216-gif/ZyNova/issues>
+- Discord：<https://discord.gg/QwPpZQHrTa>
+- Mail：<ZyNovaLauncher@outlook.com>
+- X：<https://x.com/ZyNovaProject>
+- Sponsor：<https://afdian.com/a/hizzy>
 
 ## ⚖️ License
 
-GPL-3.0, must stay open source. Third-party components and the licence of each are listed in
+GPL-3.0 — the project stays open source. Third-party components and their licenses are listed in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [docs/en/licenses.md](docs/en/licenses.md).
 
-> ⚠️ **Terracotta is AGPL-3.0** (stricter than the rest): it is shipped unmodified. If you modify it and
-> redistribute, AGPL-3.0 §13 requires you to publish the corresponding source.
+> ⚠️ **Terracotta (multiplayer) is AGPL-3.0**, stricter than everything else: it ships unmodified. If you
+> modify and redistribute it, AGPL-3.0 §13 requires you to publish the corresponding source.
 
 ---
 

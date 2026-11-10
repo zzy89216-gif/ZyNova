@@ -12,75 +12,77 @@
 
 > ⭐ **ZyNova 28.1.0 telah dirilis (versi kepatuhan global).**
 
+
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 ---
 
-Peluncur **Minecraft: Java Edition** untuk Android, dikelola dan dirilis secara independen dari kode sumber ZalithLauncher2. Ini bukan build resmi.
+Peluncur **Minecraft: Java Edition** untuk Android, dikelola sendiri dari kode ZalithLauncher2. Bukan build resmi.
 
-Tujuannya: **lebih sedikit ketukan**. Apa pun yang bisa diotomatiskan — memasang game, mengumpulkan mod dan modpack, mengubah pengaturan, membaca log — diserahkan ke agen AI.
-
-- GitHub：<https://github.com/zzy89216-gif/ZyNova>
-- Laporan bug dan saran：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- X (akun utama resmi)：<https://x.com/ZyNovaProject>
-- Kotak surat ekosistem Tiongkok：<ZyNovaLauncher@163.com>
-- Kotak surat global：<ZyNovaLauncher@outlook.com>
+Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengaturan, peluncur memutuskan dulu dan hanya bertanya kalau memang tidak bisa.
 
 ## ✨ Yang baru di 28.1.0
 
-- **Alur kepatuhan saat pertama dibuka**：tiga dokumen gabungan — ① EULA + kebijakan privasi, ② pemberitahuan sumber terbuka pihak ketiga + penafian dan risiko, ③ panduan pemakaian + wilayah yang berlaku dan yurisdiksi. Setiap dokumen harus **digulir sampai habis dan dicentang satu per satu**, baru setelah itu memilih kelompok usia (pengguna lama juga melewatinya sekali setelah pembaruan).
-- **Jendela waktu untuk anak di bawah umur**：di bawah 18 tahun hanya bisa menjalankan game pada Jumat, Sabtu, Minggu, dan hari libur resmi, pukul **20.00–21.00**. Libur 2026 mengikuti kalender Dewan Negara Tiongkok (国办发明电〔2025〕7号); hari kerja pengganti dihitung sebagai hari kerja.
-- **Penafian ditulis tuntas**：kehilangan save, perangkat panas, akun diblokir pihak ketiga, layanan berhenti, dan risiko sejenis dinyatakan jelas.
-- **Selain itu**：kartu beranda tidak lagi macet memuat, pencarian web AI berfungsi, impor masuk ke folder instance, perbaikan otomatis setelah crash dihapus.
+- **Alur kepatuhan saat pertama dibuka**: tiga dokumen gabungan (① EULA + kebijakan privasi, ② pemberitahuan sumber terbuka pihak ketiga + penafian dan risiko, ③ panduan + wilayah dan yurisdiksi). Masing-masing harus **digulir sampai habis dan dicentang sendiri**; setelah itu pilih kelompok usia (pengguna lama juga lewat sekali setelah pembaruan).
+- **Jendela waktu untuk anak di bawah umur**: di bawah 18 tahun hanya bisa menjalankan game pada Jumat, Sabtu, Minggu, dan hari libur resmi pukul **20.00–21.00**. Libur 2026 mengikuti kalender Dewan Negara Tiongkok; hari kerja pengganti dihitung sebagai hari kerja.
+- **Penafian ditulis tuntas**: kehilangan save, perangkat panas, diblokir pihak ketiga, layanan berhenti — semuanya dinyatakan.
+- **Selain itu**: kartu beranda tidak macet memuat, pencarian web AI berfungsi, impor masuk ke folder instance, perbaikan otomatis setelah crash dihapus.
 
 ## 🛠️ Kemampuan
 
-- **Agen AI**：bawaan DeepSeek — memasang game, modpack, dan mod, mengubah pengaturan, membaca log, menjalankan game
-- **Renderer**：Otomatis / MobileGlues / GL4ES / LTW (eksperimental)
-- **Inti sumber daya**：pencarian Modrinth / CurseForge, penyelesaian dependensi, unduh, verifikasi, pasang
-- **Favorit dan arsip**：favorit daring + arsip pribadi, deduplikasi SHA-256
-- **Perlindungan API Fabric**：Fabric API / Quilted Fabric API / Legacy Fabric API ditambahkan oleh alur pemasangan — tidak bisa diduplikasi, dicari, atau dihapus
+- **Agen AI**: bawaan DeepSeek — memasang game, modpack, dan mod, mengubah pengaturan, membaca log, menjalankan game
+- **Renderer**: Otomatis / MobileGlues / GL4ES / LTW (eksperimental)
+- **Inti sumber daya**: pencarian Modrinth / CurseForge, penyelesaian dependensi, unduh, verifikasi, pasang
+- **Favorit dan arsip**: favorit daring + arsip pribadi, deduplikasi SHA-256
+- **Perlindungan API Fabric**: hanya ditambahkan lewat alur pemasangan — tidak bisa diduplikasi, dicari, atau dihapus
+
+## 🚀 3 langkah main
+
+1. Unduh APK dari [Releases](https://github.com/zzy89216-gif/ZyNova/releases) lalu pasang (Android 8.0+)
+2. Saat pertama dibuka, baca tiga dokumen sampai habis, centang satu per satu, pilih kelompok usia
+3. Masuk dengan akun Microsoft, pilih atau pasang versi, jalankan
+
+## 📖 Glosarium
+
+- **Modpack**: kumpulan mod yang dipasang sekaligus
+- **Shader**: pencahayaan dan air lebih bagus, diaktifkan di pengaturan grafis
+- **Instance**: folder terpisah berisi versi, mod, dan pengaturannya sendiri
 
 ## 📦 Unduh dan build sendiri
 
-- Unduh：<https://github.com/zzy89216-gif/ZyNova/releases> (selalu pakai versi terbaru)
-- Build sendiri：JDK 17 + Android SDK / NDK, lalu `./gradlew ZalithLauncher:assembleRelease`
-- Catatan：saat pertama dibuka muncul alur kepatuhan; rincian wilayah dan batas usia ada di [docs/en/licenses.md](../../docs/en/licenses.md).
+- Unduh: <https://github.com/zzy89216-gif/ZyNova/releases> (selalu versi terbaru)
+- Build sendiri: JDK 17 + Android SDK / NDK, lalu `./gradlew ZalithLauncher:assembleRelease`
+- Catatan: alur kepatuhan muncul saat pertama dibuka; rincian di [docs/en/licenses.md](../../docs/en/licenses.md)
 
 ## 📚 Dokumentasi
 
-> 📚 Dokumentasi saat ini tersedia dalam bahasa Tionghoa dan Inggris (70+ artikel); halaman ini adalah pengantar bahasa Indonesia.
+> 📚 Dokumentasi tersedia dalam bahasa Tionghoa dan Inggris (77 artikel masing-masing); halaman ini pengantar bahasa Indonesia.
 
 | Isi | Berkas |
 |---|---|
 | Indeks dokumentasi | [docs/en/README.md](../../docs/en/README.md) |
 | Pasang / pemakaian / ekspor | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
-| Renderer / masuk akun / favorit / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
-| Penanganan masalah / FAQ / data dan privasi | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Build sendiri | [docs/en/build.md](../../docs/en/build.md) |
-| Catatan perubahan | [CHANGELOG.md](../../CHANGELOG.md) |
-| Serah terima / arsitektur / alur kerja | [HANDOFF.md](../../HANDOFF.md) |
-| Pintu masuk kontributor (status / rilis / jebakan / aturan dokumen) | [AGENTS.md](../../AGENTS.md) |
-| Lisensi pihak ketiga | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
-| Lisensi | [LICENSE](../../LICENSE) |
+| Renderer / masuk akun / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
+| Penanganan masalah / FAQ / privasi | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
+| Build / catatan perubahan | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
+| Serah terima / lisensi pihak ketiga / lisensi | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Dukungan
 
 - Laporkan masalah：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
-- Email：global <ZyNovaLauncher@outlook.com> ｜ Tiongkok <ZyNovaLauncher@163.com>
+- Email：<ZyNovaLauncher@outlook.com>
 - X resmi：<https://x.com/ZyNovaProject>
 - Dukung proyek：<https://afdian.com/a/hizzy>
 
 ## ⚖️ Lisensi
 
-GPL-3.0 — proyek tetap sumber terbuka. Komponen pihak ketiga dan lisensinya tercantum di
+GPL-3.0 — proyek tetap sumber terbuka. Komponen pihak ketiga dan lisensinya ada di
 [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) dan [docs/en/licenses.md](../../docs/en/licenses.md).
 
-> ⚠️ **Terracotta (multipemain) memakai AGPL-3.0**, lebih ketat daripada komponen lain: didistribusikan
-> tanpa perubahan. Jika Anda mengubahnya lalu menyebarkan ulang, Pasal 13 AGPL-3.0 mewajibkan Anda
+> ⚠️ **Terracotta (multipemain) memakai AGPL-3.0**, lebih ketat dari yang lain: didistribusikan tanpa
+> perubahan. Jika Anda mengubahnya lalu menyebarkan ulang, Pasal 13 AGPL-3.0 mewajibkan Anda
 > mempublikasikan kode sumber terkait.
 
 ---

@@ -12,13 +12,27 @@
 
 > ⭐ **ZyNova 28.1.0 正式发布（全球化商业合规版）。**
 
+
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 ---
 
-Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码自行维护发布，GPL-3.0。
-目标是「少点几下」：玩家的操作尽量交给 AI 和自动化流程。
+Android 上的 **Minecraft: Java Edition** 启动器，基于 ZalithLauncher2 源码自行维护发布，GPL-3.0。
+
+设计思路只有一句：**少点几下**。多数启动器把设置摊开让玩家自己选，ZyNova 反过来——先替你判断，判断不了再问一次。装游戏、找模组、理依赖、读崩溃日志，都尽量由 AI 代劳。
+
+## 🎯 谁适合用
+
+- 手机上只装了这一个启动器，想「打开就能玩」的人
+- 整合包玩家：几十个模组、依赖一堆，懒得手动对齐版本
+- 出了问题只会截图问人的人：把日志丢给 AI，比翻十页帖子快
+
+## ⚡ 30 秒上手
+
+1. 从 [Releases](https://github.com/zzy89216-gif/ZyNova/releases) 下载 APK 安装（要求 Android 8.0 及以上）
+2. 首次启动读完 3 份条款：每份滑到底、单独勾选，再选年龄段
+3. 登录微软账号 → 选版本（或让 AI 装）→ 启动
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
@@ -42,10 +56,17 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 - **收藏与归档**：在线收藏 + 私有目录归档，SHA-256 去重
 - **前置 API 防呆**：Fabric / Quilted / Legacy Fabric API 由安装流程自动加入，不可重复安装、搜不到、删不掉
 
+## 🌐 国内网络这块
+
+- 启动器会按需使用镜像；镜像缺文件时自动回退官方（见 [docs/zh/mirrors.md](docs/zh/mirrors.md)）
+- CurseForge 资源可能要走镜像，Modrinth 通常可以直连
+- 下载出错先换网络、关代理/加速器试试，别急着卸载重装
+
 ## 📦 下载与构建
 
 - 下载：<https://github.com/zzy89216-gif/ZyNova/releases>（认准最新版）
 - 自行构建：JDK 17 + Android SDK / NDK，然后 `./gradlew ZalithLauncher:assembleRelease`
+- 提示：首次启动会走合规流程，条款细则见 [docs/zh/licenses.md](docs/zh/licenses.md)
 
 ## 📚 文档
 
@@ -58,7 +79,7 @@ Android 上的 Minecraft: Java Edition 启动器，基于 ZalithLauncher2 源码
 ## 💖 支持
 
 - 反馈：<https://github.com/zzy89216-gif/ZyNova/issues> · Discord：<https://discord.gg/QwPpZQHrTa>
-- 邮箱：国内生态 <ZyNovaLauncher@163.com> ｜ 全球生态 <ZyNovaLauncher@outlook.com>
+- 邮箱：<ZyNovaLauncher@163.com> ｜ <ZyNovaLauncher@outlook.com>
 - 官方 X：<https://x.com/ZyNovaProject>
 - 赞助：<https://afdian.com/a/hizzy>
 

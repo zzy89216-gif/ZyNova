@@ -12,65 +12,62 @@
 
 > ⭐ **ZyNova 28.1.0 ya está disponible (versión con cumplimiento global).**
 
+
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
 
 ---
 
-Un lanzador de **Minecraft: Java Edition** para Android, mantenido y publicado de forma independiente a partir del código de ZalithLauncher2. No es una compilación oficial.
+Un lanzador de **Minecraft: Java Edition** para Android, mantenido de forma independiente a partir del código de ZalithLauncher2. No es una compilación oficial.
 
-La idea: **menos toques**. Todo lo que se pueda automatizar —instalar el juego, reunir los mods, ajustar opciones, leer los registros— lo hace el agente de IA.
-
-- GitHub：<https://github.com/zzy89216-gif/ZyNova>
-- Incidencias y sugerencias：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- X (cuenta principal oficial)：<https://x.com/ZyNovaProject>
-- Correo del ecosistema chino：<ZyNovaLauncher@163.com>
-- Correo global：<ZyNovaLauncher@outlook.com>
+La idea: **menos toques**. En lugar de soltarte veinte ajustes, el lanzador decide primero y solo pregunta cuando de verdad no puede decidir.
 
 ## ✨ Novedades de la 28.1.0
 
-- **Flujo de cumplimiento en el primer arranque**：tres documentos unificados — ① EULA + política de privacidad, ② avisos de código abierto de terceros + descargos y riesgos, ③ tutorial + regiones admitidas y jurisdicción. Cada documento hay que **desplazarlo hasta el final y aceptarlo por separado**; después se elige el grupo de edad (quien ya tenía la app también lo ve una vez tras actualizar).
-- **Franja horaria para menores**：los menores de 18 años solo pueden iniciar el juego los viernes, sábados, domingos y festivos legales, de **20:00 a 21:00**. Los festivos de 2026 siguen el calendario del Consejo de Estado chino (国办发明电〔2025〕7号); los días de recuperación cuentan como laborables.
-- **Descargos bien explícitos**：pérdida de partidas, calentamiento del dispositivo, bloqueos de terceros, cierre de servicios y riesgos similares se avisan sin rodeos.
-- **También**：la pantalla de inicio ya no se queda cargando, la búsqueda web de la IA funciona, las importaciones van a la carpeta de la instancia y se eliminó la reparación automática de fallos.
+- **Flujo de cumplimiento en el primer arranque**: tres documentos unificados (① EULA + política de privacidad, ② avisos de código abierto de terceros + descargos y riesgos, ③ tutorial + regiones admitidas y jurisdicción). Cada uno hay que **desplazarlo hasta el final y aceptarlo por separado**; después se elige el grupo de edad (quien ya tenía la app lo ve una vez tras actualizar).
+- **Franja horaria para menores**: menos de 18 años, solo viernes, sábados, domingos y festivos legales, de **20:00 a 21:00**. Los festivos de 2026 siguen el calendario del Consejo de Estado chino; los días de recuperación cuentan como laborables.
+- **Descargos bien explícitos**: pérdida de partidas, calentamiento del dispositivo, bloqueos de terceros, cierre de servicios: todo avisado.
+- **También**: la pantalla de inicio ya no se queda cargando, la búsqueda web de la IA funciona, las importaciones van a la carpeta de la instancia y se quitó la reparación automática de fallos.
 
 ## 🛠️ Funciones
 
-- **Agente de IA**：DeepSeek por defecto — instala el juego, modpacks y mods, cambia ajustes, lee registros y lanza el juego
-- **Renderizadores**：Auto / MobileGlues / GL4ES / LTW (experimental)
-- **Núcleo de recursos**：búsqueda en Modrinth / CurseForge, resolución de dependencias, descarga, verificación e instalación
-- **Favoritos y archivo**：favoritos en línea más archivo privado con deduplicación SHA-256
-- **Protección de la API de Fabric**：Fabric API / Quilted Fabric API / Legacy Fabric API los añade el instalador; no se pueden duplicar, buscar ni borrar
+- **Agente de IA**: DeepSeek por defecto — instala el juego, modpacks y mods, cambia ajustes, lee registros y lanza el juego
+- **Renderizadores**: Auto / MobileGlues / GL4ES / LTW (experimental)
+- **Núcleo de recursos**: búsqueda en Modrinth / CurseForge, resolución de dependencias, descarga, verificación e instalación
+- **Favoritos y archivo**: favoritos en línea más archivo privado con deduplicación SHA-256
+- **Protección de la API de Fabric**: Fabric API / Quilted Fabric API / Legacy Fabric API los añade el instalador; no se pueden duplicar, buscar ni borrar
+
+## 📖 Glosario rápido
+
+- **Modpack**: colección de mods que se instala como un bloque
+- **Shader**: iluminación y agua mejoradas; se activan en los ajustes gráficos
+- **Instancia**: carpeta propia con su versión, sus mods y sus ajustes
+- **Renderizador**: capa que dibuja el juego (MobileGlues / GL4ES / LTW)
 
 ## 📦 Descarga y compilación
 
-- Descarga：<https://github.com/zzy89216-gif/ZyNova/releases> (usa siempre la última versión)
-- Compilar por tu cuenta：JDK 17 + Android SDK / NDK, y luego `./gradlew ZalithLauncher:assembleRelease`
-- Aviso：el flujo de cumplimiento aparece en el primer arranque. Las regiones habilitadas y los límites de edad están en [docs/en/licenses.md](../../docs/en/licenses.md).
+- Descarga: <https://github.com/zzy89216-gif/ZyNova/releases> (siempre la última versión)
+- Compilar por tu cuenta: JDK 17 + Android SDK / NDK y luego `./gradlew ZalithLauncher:assembleRelease`
+- Aviso: el flujo de cumplimiento aparece en el primer arranque; detalles en [docs/en/licenses.md](../../docs/en/licenses.md)
 
 ## 📚 Documentación
 
-> 📚 La documentación existe de momento en chino e inglés (más de 70 artículos); esta página es la introducción en español.
+> 📚 La documentación existe en chino e inglés (77 artículos cada uno); esta página es la introducción en español.
 
 | Contenido | Archivo |
 |---|---|
 | Índice de la documentación | [docs/en/README.md](../../docs/en/README.md) |
 | Instalación / uso / exportación | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
-| Renderizado / inicio de sesión / favoritos / IA | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
-| Solución de problemas / FAQ / datos y privacidad | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Compilación | [docs/en/build.md](../../docs/en/build.md) |
-| Registro de cambios | [CHANGELOG.md](../../CHANGELOG.md) |
-| Traspaso / arquitectura / flujo de trabajo | [HANDOFF.md](../../HANDOFF.md) |
-| Entrada para colaboradores (estado / publicación / trampas / normas de documentación) | [AGENTS.md](../../AGENTS.md) |
-| Licencias de terceros | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
-| Licencia | [LICENSE](../../LICENSE) |
+| Renderizado / inicio de sesión / IA | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
+| Problemas / FAQ / datos y privacidad | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
+| Compilación / registro de cambios | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
+| Traspaso / licencias de terceros / licencia | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Apoyo
 
 - Reportar fallos：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
-- Correo：global <ZyNovaLauncher@outlook.com> ｜ China <ZyNovaLauncher@163.com>
+- Correo：<ZyNovaLauncher@outlook.com>
 - X oficial：<https://x.com/ZyNovaProject>
 - Apoyar el proyecto：<https://afdian.com/a/hizzy>
 

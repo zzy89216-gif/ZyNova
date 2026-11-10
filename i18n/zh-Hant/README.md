@@ -18,21 +18,20 @@
 
 ---
 
-Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原始碼自行開發與發佈，並非官方版本。
+Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原始碼獨立開發與發佈，不是官方版本。
 
-目標是「**少點幾下**」：安裝遊戲、整理模組與整合包、調整設定、讀取日誌這類能自動化的事，都交給 AI 代理處理。
+一句話講完設計：**少點幾下**。多數啟動器把設定攤開讓你挑，ZyNova 反過來——先幫你判斷，判斷不了才問一次。
 
-- GitHub：<https://github.com/zzy89216-gif/ZyNova>
-- Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- X（官方主帳號）：<https://x.com/ZyNovaProject>
-- 國內生態信箱（QQ 信箱也可寄這裡）：<ZyNovaLauncher@163.com>
-- 全球生態信箱：<ZyNovaLauncher@outlook.com>
+## 🧭 跟其他啟動器哪裡不一樣
+
+- **不讓你在設定裡迷路**：安裝、版本對齊、模組依賴，能自動就自動
+- **模組地獄有人幫扛**：整合包幾十個模組、依賴一長串，交給流程去解
+- **當機不用猜**：把日誌交給 AI 讀，比在論壇翻十頁快
 
 ## ✨ 28.1.0 更新重點
 
-- **首次啟動合規流程**：3 份合併文件（① EULA + 隱私政策、② 第三方開源合規聲明 + 補充免責與風險告知、③ 使用教學 + 適用地區與法律管轄），每份都**必須滑到最底部並單獨勾選**才能繼續，全部完成後再選年齡層（舊用戶升級後同樣會走一次）。
-- **未成年人時段限制**：未滿 18 歲僅能在週五、週六、週日與法定假日 **20:00–21:00** 啟動遊戲；2026 年假日依中國國務院通知（国办发明电〔2025〕7号）逐日列出，補班日以工作日處理。
+- **首次啟動合規流程**：3 份合併文件（①EULA + 隱私政策、②第三方開源合規聲明 + 補充免責與風險告知、③使用教學 + 適用地區與法律管轄），每份都**必須滑到最底部並單獨勾選**，全部完成後再選年齡層（舊用戶升級後同樣會走一次）。
+- **未成年人時段限制**：未滿 18 歲僅能在週五、週六、週日與法定假日 **20:00–21:00** 啟動遊戲；2026 年假日依中國國務院通知逐日列出，補班日以工作日處理。
 - **免責聲明寫完整**：存檔遺失、裝置發熱、第三方封鎖帳號、服務停止等風險都明確告知。
 - **同時包含**：首頁卡片不再卡在載入、AI 聯網搜尋可用、匯入改走實例目錄、已移除當機自動修復。
 
@@ -44,26 +43,33 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 - **收藏與封存**：線上收藏 + 私有目錄封存，以 SHA-256 去重
 - **前置 API 防呆**：Fabric API / Quilted Fabric API / Legacy Fabric API 由安裝流程自動加入，無法重複安裝、搜尋不到、也刪不掉
 
+## 🔤 用語對照（台灣／香港）
+
+| 這裡的說法 | 你可能看到的其他寫法 |
+|---|---|
+| 模組 | MOD、插件（較少用） |
+| 整合包 | MOD 包、模組包 |
+| 光影 | Shader、著色器 |
+| 存檔 | 世界存檔、地圖 |
+| 啟動器 | Launcher |
+
 ## 📦 下載與建置
 
-- 下載：<https://github.com/zzy89216-gif/ZyNova/releases>（請認明最新版）
+- 下載：<https://github.com/zzy89216-gif/ZyNova/releases>（認明最新版）
 - 自行建置：JDK 17 + Android SDK / NDK，執行 `./gradlew ZalithLauncher:assembleRelease`
-- 注意：首次啟動會顯示合規流程；條款細節見 [docs/en/licenses.md](../../docs/en/licenses.md)。
+- 注意：首次啟動會顯示合規流程，條款細節見 [docs/zh/licenses.md](../../docs/zh/licenses.md)（簡體）
 
 ## 📚 文件
 
-> 📚 文件目前只有中文與英文兩套（各 77 篇）；本頁是繁體中文介紹。
+> 📚 官方文件目前只有簡體中文與英文兩套（各 77 篇）；以下連結為簡體中文版，用語略有差異。
 
 | 內容 | 檔案 |
 |---|---|
-| 文件總覽 | [docs/en/README.md](../../docs/en/README.md) |
-| 安裝 / 使用 / 匯出 | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
-| 渲染器 / 登入 / 收藏 / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/favorites.md](../../docs/en/favorites.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
-| 疑難排解 / 常見問題 / 資料與隱私 | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| 建置 | [docs/en/build.md](../../docs/en/build.md) |
+| 文件中心 | [docs/zh/README.md](../../docs/zh/README.md) |
+| 安裝 / 使用 / 匯出 | [docs/zh/install.md](../../docs/zh/install.md) · [docs/zh/usage.md](../../docs/zh/usage.md) |
+| 渲染器 / 登入 / 收藏 / AI | [docs/zh/renderers.md](../../docs/zh/renderers.md) · [docs/zh/login.md](../../docs/zh/login.md) · [docs/zh/favorites.md](../../docs/zh/favorites.md) · [docs/zh/ai-agent.md](../../docs/zh/ai-agent.md) |
+| 疑難排解 / 常見問題 / 資料與隱私 | [docs/zh/troubleshooting.md](../../docs/zh/troubleshooting.md) · [docs/zh/faq.md](../../docs/zh/faq.md) · [docs/zh/data-and-privacy.md](../../docs/zh/data-and-privacy.md) |
 | 更新日誌 | [CHANGELOG.md](../../CHANGELOG.md) |
-| 交接 / 架構 / 開發流程 | [HANDOFF.md](../../HANDOFF.md) |
-| 接手入口（現況 / 發版流程 / 注意事項 / 文件規則） | [AGENTS.md](../../AGENTS.md) |
 | 第三方授權 | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
 | 授權 | [LICENSE](../../LICENSE) |
 
@@ -71,14 +77,14 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 
 - 回報問題：<https://github.com/zzy89216-gif/ZyNova/issues>
 - Discord：<https://discord.gg/QwPpZQHrTa>
-- 信箱：全球 <ZyNovaLauncher@outlook.com> ｜ 國內 <ZyNovaLauncher@163.com>
+- 信箱：<ZyNovaLauncher@outlook.com>
 - 官方 X：<https://x.com/ZyNovaProject>
 - 贊助：<https://afdian.com/a/hizzy>
 
 ## ⚖️ 授權
 
 GPL-3.0，必須保持開源。第三方元件與各自的授權見
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) 與 [docs/en/licenses.md](../../docs/en/licenses.md)。
+[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) 與 [docs/zh/licenses.md](../../docs/zh/licenses.md)。
 
 > ⚠️ **陶瓦聯機 Terracotta（多人連線）為 AGPL-3.0**，比其他元件更嚴格：本專案原樣散布、未修改其
 > 二進位檔。若你修改後再散布，需依 AGPL-3.0 §13 公開對應原始碼。
