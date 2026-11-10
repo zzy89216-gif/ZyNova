@@ -1,3 +1,9 @@
+<p align="center"><sub>
+<a href="../../README_EN.md">English</a> · <a href="../../README.md">简体中文</a> · <b>繁體中文</b> · <a href="../ja/README.md">日本語</a> · <a href="../ko/README.md">한국어</a> · <a href="../tr/README.md">Türkçe</a> · <a href="../ru/README.md">Русский</a> · <a href="../vi/README.md">Tiếng Việt</a> · <a href="../th/README.md">ไทย</a> · <a href="../de/README.md">Deutsch</a> · <a href="../es/README.md">Español</a> · <a href="../fr/README.md">Français</a>
+<br>
+<a href="../uk/README.md">Українська</a> · <a href="../pl/README.md">Polski</a> · <a href="../pt-BR/README.md">Português (Brasil)</a> · <a href="../ar/README.md">العربية</a> · <a href="../fa/README.md">فارسی</a> · <a href="../id/README.md">Bahasa Indonesia</a> · <a href="../it/README.md">Italiano</a> · <a href="../el/README.md">Ελληνικά</a> · <a href="../ml/README.md">മലയാളം</a> · <a href="../ur-Latn/README.md">Roman Urdu</a> · <a href="../ro/README.md">Română</a> · <a href="../bg/README.md">Български</a>
+</sub></p>
+
 <p align="center">
   <img src="../../assets/icon.png" width="160" alt="ZyNova">
 </p>
@@ -6,15 +12,8 @@
 
 > ⭐ **ZyNova 28.1.0 正式發佈（全球化商業合規版）。**
 
-
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
-
-<p align="center"><sub>
-<a href="../../README_EN.md">English</a> · <a href="../../README.md">简体中文</a> · <b>繁體中文</b> · <a href="../ja/README.md">日本語</a> · <a href="../ko/README.md">한국어</a> · <a href="../tr/README.md">Türkçe</a> · <a href="../ru/README.md">Русский</a> · <a href="../vi/README.md">Tiếng Việt</a> · <a href="../th/README.md">ไทย</a> · <a href="../de/README.md">Deutsch</a> · <a href="../es/README.md">Español</a> · <a href="../fr/README.md">Français</a>
-<br>
-<a href="../uk/README.md">Українська</a> · <a href="../pl/README.md">Polski</a> · <a href="../pt-BR/README.md">Português (Brasil)</a> · <a href="../ar/README.md">العربية</a> · <a href="../fa/README.md">فارسی</a> · <a href="../id/README.md">Bahasa Indonesia</a> · <a href="../it/README.md">Italiano</a> · <a href="../el/README.md">Ελληνικά</a> · <a href="../ml/README.md">മലയാളം</a> · <a href="../ur-Latn/README.md">Roman Urdu</a> · <a href="../ro/README.md">Română</a> · <a href="../bg/README.md">Български</a>
-</sub></p>
 
 ---
 
@@ -51,8 +50,6 @@
 
 > 📚 **完整文件中心（72 篇，英文）**：[docs/en/README.md](../../docs/en/README.md)
 
-
-
 | 內容 | 檔案 |
 |---|---|
 | 使用者文件中心 | [docs/en/README.md](../../docs/en/README.md) |
@@ -65,8 +62,6 @@
 | 接手入口（狀態 / 發版流程 / 坑 / 文件規則） | [AGENTS.md](../../AGENTS.md) |
 | 第三方授權 | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
 | 授權 | [LICENSE](../../LICENSE) |
-
-
 
 ## 💖 支持
 
