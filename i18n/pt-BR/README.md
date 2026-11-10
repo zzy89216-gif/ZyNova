@@ -35,8 +35,6 @@ A ideia: **menos toques**. Tudo o que dá para automatizar — instalar o jogo, 
 - **Isenções escritas sem rodeios**：perda de save, aquecimento do aparelho, banimento por terceiros, encerramento de serviço e riscos parecidos são avisados com clareza.
 - **Também**：os cards da tela inicial não travam mais no carregamento, a busca na web da IA funciona, a importação vai para a pasta da instância e a correção automática de crash foi removida.
 
-> 🌍 **Regiões disponíveis na 28.1.0**：China, Estados Unidos, Coreia do Sul, Japão e Rússia. Em outras regiões, o primeiro uso mostra uma página de aviso e o app encerra com segurança.
-
 ## 🛠️ O que faz
 
 - **Agente de IA**：DeepSeek por padrão — instala o jogo, modpacks e mods, altera configurações, lê logs, inicia o jogo

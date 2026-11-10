@@ -35,8 +35,6 @@ Maqsad: **kam taps**. Jo kuch automate ho sakta hai — game install karna, mods
 - **Disclaimers poori tarah likhe gaye**：save ka nuqsan, device garam hona, third-party ban, service band hona aur aise khatrat wazeh tor par bataye gaye hain.
 - **Iske ilawa**：home cards loading par atakte nahi, AI web search chalta hai, import instance folder mein jata hai, crash ke baad auto-fix hata diya gaya hai.
 
-> 🌍 **28.1.0 mein available regions**：China, USA, South Korea, Japan aur Russia. Baaki regions mein pehli baar chalane par notice page dikhta hai aur app safely band ho jati hai.
-
 ## 🛠️ Kya kar sakta hai
 
 - **AI Agent**：default DeepSeek — game, modpacks aur mods install karta hai, settings badalta hai, logs parhta hai, game launch karta hai

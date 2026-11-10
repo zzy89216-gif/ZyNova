@@ -35,8 +35,6 @@ Scopul: **mai puține atingeri**. Tot ce se poate automatiza — instalarea jocu
 - **Limitările de răspundere sunt scrise explicit**：pierderea salvarilor, încălzirea dispozitivului, blocările aplicate de terți, oprirea serviciului și riscuri similare sunt anunțate clar.
 - **De asemenea**：cardurile din pagina principală nu mai rămân blocate la încărcare, căutarea web a AI funcționează, importurile merg în folderul instanței, repararea automată după crash a fost eliminată.
 
-> 🌍 **Regiuni disponibile în 28.1.0**：China, SUA, Coreea de Sud, Japonia și Rusia. În alte regiuni, la prima pornire apare o pagină informativă, iar aplicația se închide în siguranță.
-
 ## 🛠️ Ce poate face
 
 - **Agent AI**：DeepSeek implicit — instalează jocul, modpack-urile și modurile, modifică setările, citește logurile, pornește jocul

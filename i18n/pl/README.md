@@ -35,8 +35,6 @@ Cel: **mniej kliknięć**. Wszystko, co da się zautomatyzować — instalację 
 - **Wyłączenia odpowiedzialności bez owijania w bawełnę**：utrata zapisów, nagrzewanie urządzenia, bany od stron trzecich, wyłączenie usługi i podobne ryzyka są wprost wymienione.
 - **Poza tym**：karty na stronie głównej nie wiszą już na ładowaniu, wyszukiwanie internetowe AI działa, import trafia do katalogu instancji, usunięto automatyczną naprawę po awarii.
 
-> 🌍 **Regiony dostępne w 28.1.0**：Chiny, USA, Korea Południowa, Japonia i Rosja. W pozostałych regionach przy pierwszym uruchomieniu pojawia się strona informacyjna, a aplikacja zamyka się bezpiecznie.
-
 ## 🛠️ Co potrafi
 
 - **Agent AI**：domyślnie DeepSeek — instaluje grę, modpacki i mody, zmienia ustawienia, czyta logi, uruchamia grę

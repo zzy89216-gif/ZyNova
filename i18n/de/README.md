@@ -35,8 +35,6 @@ Das Ziel: **weniger tippen**. Was sich automatisieren lässt – Spiel installie
 - **Haftungsausschlüsse ausformuliert**：Spielstandverlust, Hitzeentwicklung des Geräts, Sperren durch Drittanbieter, Einstellung von Diensten und ähnliche Risiken werden ausdrücklich benannt.
 - **Außerdem**：Startseite lädt nicht mehr endlos, KI-Websuche funktioniert, Importe landen im Instanzordner, automatische Crash-Reparatur entfernt.
 
-> 🌍 **Verfügbare Regionen in 28.1.0**：China, USA, Südkorea, Japan und Russland. In allen anderen Regionen erscheint beim ersten Start eine Hinweisseite, danach beendet sich die App sicher.
-
 ## 🛠️ Funktionen
 
 - **KI-Agent**：standardmäßig DeepSeek – installiert Spiel, Modpacks und Mods, ändert Einstellungen, liest Logs, startet das Spiel

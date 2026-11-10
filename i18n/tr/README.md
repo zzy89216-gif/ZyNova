@@ -35,8 +35,6 @@ Amaç: **daha az dokunuş**. Oyunu kurmak, modları ve mod paketlerini toplamak,
 - **Sorumluluk reddi açıkça yazıldı**：kayıt kaybı, cihazın ısınması, üçüncü taraf yasaklamaları, hizmetin kapanması gibi riskler açıkça bildirilir.
 - **Ayrıca**：ana sayfa kartları artık yüklemede takılmıyor, yapay zekâ web araması çalışıyor, içe aktarma örnek (instance) klasörüne gidiyor, otomatik çökme onarımı kaldırıldı.
 
-> 🌍 **28.1.0'da kullanılabilen bölgeler**：Çin, ABD, Güney Kore, Japonya ve Rusya. Diğer bölgelerde ilk açılışta bilgi sayfası gösterilip uygulama güvenli biçimde kapanır.
-
 ## 🛠️ Neler yapabilir
 
 - **Yapay zekâ ajanı**：varsayılan DeepSeek — oyunu, mod paketlerini ve modları kurar, ayarları değiştirir, günlükleri okur, oyunu başlatır

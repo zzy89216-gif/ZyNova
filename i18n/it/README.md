@@ -35,8 +35,6 @@ L'obiettivo: **meno tocchi**. Tutto ciò che si può automatizzare — installar
 - **Esoneri espliciti**：perdita dei salvataggi, surriscaldamento del dispositivo, ban da parte di terzi, chiusura di un servizio e rischi simili sono dichiarati senza giri di parole.
 - **Inoltre**：la home non resta più bloccata sul caricamento, la ricerca web dell'IA funziona, le importazioni finiscono nella cartella dell'istanza, rimossa la riparazione automatica dei crash.
 
-> 🌍 **Aree disponibili nella 28.1.0**：Cina, Stati Uniti, Corea del Sud, Giappone e Russia. Altrove al primo avvio compare una pagina informativa e l'app si chiude in modo sicuro.
-
 ## 🛠️ Funzioni
 
 - **Agente IA**：DeepSeek per impostazione predefinita — installa gioco, modpack e mod, modifica le impostazioni, legge i log, avvia il gioco

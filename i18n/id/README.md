@@ -35,8 +35,6 @@ Tujuannya: **lebih sedikit ketukan**. Apa pun yang bisa diotomatiskan — memasa
 - **Penafian ditulis tuntas**：kehilangan save, perangkat panas, akun diblokir pihak ketiga, layanan berhenti, dan risiko sejenis dinyatakan jelas.
 - **Selain itu**：kartu beranda tidak lagi macet memuat, pencarian web AI berfungsi, impor masuk ke folder instance, perbaikan otomatis setelah crash dihapus.
 
-> 🌍 **Wilayah yang tersedia di 28.1.0**：Tiongkok, Amerika Serikat, Korea Selatan, Jepang, dan Rusia. Di wilayah lain, saat pertama dibuka akan muncul halaman pemberitahuan lalu aplikasi keluar dengan aman.
-
 ## 🛠️ Kemampuan
 
 - **Agen AI**：bawaan DeepSeek — memasang game, modpack, dan mod, mengubah pengaturan, membaca log, menjalankan game

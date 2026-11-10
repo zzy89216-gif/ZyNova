@@ -35,8 +35,6 @@ La idea: **menos toques**. Todo lo que se pueda automatizar —instalar el juego
 - **Descargos bien explícitos**：pérdida de partidas, calentamiento del dispositivo, bloqueos de terceros, cierre de servicios y riesgos similares se avisan sin rodeos.
 - **También**：la pantalla de inicio ya no se queda cargando, la búsqueda web de la IA funciona, las importaciones van a la carpeta de la instancia y se eliminó la reparación automática de fallos.
 
-> 🌍 **Regiones disponibles en la 28.1.0**：China, Estados Unidos, Corea del Sur, Japón y Rusia. En el resto de regiones, el primer arranque muestra una página informativa y la app se cierra de forma segura.
-
 ## 🛠️ Funciones
 
 - **Agente de IA**：DeepSeek por defecto — instala el juego, modpacks y mods, cambia ajustes, lee registros y lanza el juego

@@ -35,8 +35,6 @@ Mục tiêu: **ít thao tác hơn**. Những việc có thể tự động hoá 
 - **Miễn trừ trách nhiệm nói rõ**：mất dữ liệu lưu, máy nóng, bị bên thứ ba khoá tài khoản, dịch vụ ngừng hoạt động… đều được nêu minh bạch.
 - **Ngoài ra**：trang chủ không còn treo ở trạng thái tải, tìm kiếm web của AI đã chạy, nhập dữ liệu vào đúng thư mục instance, đã bỏ tính năng tự sửa lỗi khi crash.
 
-> 🌍 **Khu vực dùng được trong 28.1.0**：Trung Quốc, Hoa Kỳ, Hàn Quốc, Nhật Bản và Nga. Ở khu vực khác, lần mở đầu tiên sẽ hiện trang thông báo rồi thoát an toàn.
-
 ## 🛠️ Tính năng
 
 - **Trợ lý AI**：mặc định DeepSeek — cài game, modpack và mod, đổi cài đặt, đọc log, khởi chạy game
