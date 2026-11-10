@@ -48,7 +48,7 @@
 
 ## 📚 文件
 
-> 📚 **完整文件中心（72 篇，英文）**：[docs/en/README.md](../../docs/en/README.md)
+> 📚 **完整文件中心（77 篇，英文）**：[docs/en/README.md](../../docs/en/README.md)
 
 | 內容 | 檔案 |
 |---|---|

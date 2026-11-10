@@ -48,7 +48,7 @@ A Minecraft: Java Edition launcher for Android, built on ZalithLauncher2 source.
 
 ## 📚 Docs
 
-> 📚 **Full documentation (72 articles, English)**：[docs/en/README.md](docs/en/README.md)
+> 📚 **Full documentation (77 articles, English)**：[docs/en/README.md](docs/en/README.md)
 
 | Content | File |
 |---|---|

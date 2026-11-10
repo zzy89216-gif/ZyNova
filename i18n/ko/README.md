@@ -45,7 +45,7 @@ Android용 Minecraft: Java Edition 런처입니다. ZalithLauncher2 소스를 �
 
 ## 📚 문서
 
-> 📚 **전체 문서(72편, 영어)**：[docs/en/README.md](../../docs/en/README.md)
+> 📚 **전체 문서(77편, 영어)**：[docs/en/README.md](../../docs/en/README.md)
 
 | 내용 | 파일 |
 |---|---|

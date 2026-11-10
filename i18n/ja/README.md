@@ -45,7 +45,7 @@ Android 向けの Minecraft: Java Edition ランチャー。ZalithLauncher2 の�
 
 ## 📚 ドキュメント
 
-> 📚 **ドキュメント一覧（72 記事、英語）**：[docs/en/README.md](../../docs/en/README.md)
+> 📚 **ドキュメント一覧（77 記事、英語）**：[docs/en/README.md](../../docs/en/README.md)
 
 | 内容 | ファイル |
 |---|---|

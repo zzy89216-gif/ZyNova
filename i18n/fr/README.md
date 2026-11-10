@@ -35,6 +35,8 @@ L'objectif : **moins de clics**. Tout ce qui peut être automatisé — installe
 - **Avertissements explicites**：perte de sauvegarde, chauffe de l'appareil, bannissement par un tiers, arrêt d'un service — tous ces risques sont clairement annoncés.
 - **Également**：la page d'accueil ne reste plus bloquée en chargement, la recherche web de l'IA fonctionne, les imports vont dans le dossier de l'instance, la réparation automatique après crash a été retirée.
 
+> 🌍 **Régions disponibles dans la 28.1.0**：Chine, États-Unis, Corée du Sud, Japon et Russie. Ailleurs, le premier lancement affiche une page d'information puis l'application se ferme proprement.
+
 ## 🛠️ Fonctionnalités
 
 - **Agent IA**：DeepSeek par défaut — installe le jeu, les modpacks et les mods, modifie les réglages, lit les logs, lance le jeu
