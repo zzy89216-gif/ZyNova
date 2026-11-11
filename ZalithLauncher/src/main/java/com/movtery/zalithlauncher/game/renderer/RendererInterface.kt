@@ -33,6 +33,15 @@ interface RendererInterface {
     fun getUniqueIdentifier(): String
 
     /**
+     * 当前设备上这个渲染器是否可用。
+     *
+     * 默认 `true`；**依赖特定 ABI 原生库的渲染器必须重写**。
+     * 返回 `false` 时，[com.movtery.zalithlauncher.game.renderer.Renderers] 不会把它注册进列表，
+     * 用户在设置里**根本看不到这个选项**——而不是选了之后启动才失败。
+     */
+    fun isAvailableOnDevice(): Boolean = true
+
+    /**
      * 获取渲染器的名称
      */
     fun getRendererName(): String

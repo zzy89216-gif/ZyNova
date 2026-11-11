@@ -50,6 +50,10 @@ object LegalDocuments {
             LegalLanguage.RO -> "《Acord de licență pentru utilizatorul final + Politica de confidențialitate》"
             LegalLanguage.BG -> "《Лицензионно споразумение за краен потребител + Политика за поверителност》"
             LegalLanguage.EL -> "《Άδεια τελικού χρήστη + Πολιτική απορρήτου》"
+            LegalLanguage.AR -> "《اتفاقية ترخيص المستخدم النهائي + سياسة الخصوصية》"
+            LegalLanguage.FA -> "《توافق‌نامه مجوز کاربر نهایی + سیاست حفظ حریم خصوصی》"
+            LegalLanguage.ML -> "《അന്തിമ ഉപയോക്തൃ ലൈസൻസ് കരാർ + സ്വകാര്യതാ നയം》"
+            LegalLanguage.UR_LATN -> "《End User License Agreement + Privacy Policy》"
             else -> "《End User License Agreement + Privacy Policy》"
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -72,6 +76,10 @@ object LegalDocuments {
             LegalLanguage.RO -> "《Notificări privind componentele open source + Avertismente suplimentare de risc》"
             LegalLanguage.BG -> "《Уведомления за компоненти с отворен код + Допълнителни предупреждения за рискове》"
             LegalLanguage.EL -> "《Σημειώσεις στοιχείων ανοιχτού κώδικα + Πρόσθετες προειδοποιήσεις κινδύνου》"
+            LegalLanguage.AR -> "《إشعارات مكوّنات المصدر المفتوح + إفصاحات مخاطر إضافية》"
+            LegalLanguage.FA -> "《اعلان اجزای متن‌باز + هشدارهای ریسک تکمیلی》"
+            LegalLanguage.ML -> "《ഓപ്പൺ സോഴ്സ് ഘടകങ്ങളുടെ അറിയിപ്പ് + അധിക അപകടസൂചനകൾ》"
+            LegalLanguage.UR_LATN -> "《Open-source Components Notice + Izafi Risk Disclosure》"
             else -> "《Third-Party Open-Source Notices + Additional Risk Disclosure》"
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -94,6 +102,10 @@ object LegalDocuments {
             LegalLanguage.RO -> "《Primii pași + Regiuni și legea aplicabilă》"
             LegalLanguage.BG -> "《Първи стъпки + Региони и приложимо право》"
             LegalLanguage.EL -> "《Πρώτα βήματα + Περιοχές και εφαρμοστέο δίκαιο》"
+            LegalLanguage.AR -> "《البدء + المناطق والقانون الواجب التطبيق》"
+            LegalLanguage.FA -> "《شروع کار + منطقه‌ها و قانون حاکم》"
+            LegalLanguage.ML -> "《തുടക്കം + പ്രദേശങ്ങളും ബാധകമായ നിയമവും》"
+            LegalLanguage.UR_LATN -> "《Shuruat + Regions aur Laagu Qanoon》"
             else -> "《Getting Started + Regions and Governing Law》"
         }
     }
@@ -123,6 +135,10 @@ object LegalDocuments {
             LegalLanguage.RO -> TERMS_RO
             LegalLanguage.BG -> TERMS_BG
             LegalLanguage.EL -> TERMS_EL
+            LegalLanguage.AR -> TERMS_AR
+            LegalLanguage.FA -> TERMS_FA
+            LegalLanguage.ML -> TERMS_ML
+            LegalLanguage.UR_LATN -> TERMS_UR_LATN
             else -> TERMS_EN
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -145,6 +161,10 @@ object LegalDocuments {
             LegalLanguage.RO -> LICENSES_RO
             LegalLanguage.BG -> LICENSES_BG
             LegalLanguage.EL -> LICENSES_EL
+            LegalLanguage.AR -> LICENSES_AR
+            LegalLanguage.FA -> LICENSES_FA
+            LegalLanguage.ML -> LICENSES_ML
+            LegalLanguage.UR_LATN -> LICENSES_UR_LATN
             else -> LICENSES_EN
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -167,6 +187,10 @@ object LegalDocuments {
             LegalLanguage.RO -> GUIDE_RO
             LegalLanguage.BG -> GUIDE_BG
             LegalLanguage.EL -> GUIDE_EL
+            LegalLanguage.AR -> GUIDE_AR
+            LegalLanguage.FA -> GUIDE_FA
+            LegalLanguage.ML -> GUIDE_ML
+            LegalLanguage.UR_LATN -> GUIDE_UR_LATN
             else -> GUIDE_EN
         }
     }
@@ -259,6 +283,41 @@ object LegalDocuments {
             JURIS_TERMS_EL, JURIS_LICENSES_EL, JURIS_GUIDE_EL,
             window = " Τα άτομα κάτω των {age} ετών μπορούν να ξεκινούν το παιχνίδι μόνο Παρασκευή, Σάββατο, Κυριακή και στις επίσημες αργίες, 20:00–21:00.",
             noWindow = " Τα άτομα κάτω από αυτή την ηλικία χρειάζονται συγκατάθεση κηδεμόνα."
+        )
+        LegalLanguage.AR -> JurisText(
+            JURIS_TERMS_AR, JURIS_LICENSES_AR, JURIS_GUIDE_AR,
+            window = " لا يجوز لمن هم دون {age} سنة تشغيل اللعبة إلا أيام الجمعة والسبت والأحد والعطلات الرسمية من 20:00 إلى 21:00.",
+            noWindow = " يحتاج من هم دون هذا السن إلى موافقة وليّ الأمر."
+        )
+        LegalLanguage.FA -> JurisText(
+            JURIS_TERMS_FA, JURIS_LICENSES_FA, JURIS_GUIDE_FA,
+            window = " افراد زیر {age} سال تنها جمعه، شنبه، یکشنبه و تعطیلات رسمی از ساعت ۲۰:۰۰ تا ۲۱:۰۰ می‌توانند بازی را اجرا کنند.",
+            noWindow = " افراد زیر این سن به رضایت سرپرست نیاز دارند."
+        )
+        LegalLanguage.ML -> JurisText(
+            JURIS_TERMS_ML, JURIS_LICENSES_ML, JURIS_GUIDE_ML,
+            window = " {age} വയസ്സിൽ താഴെയുള്ളവർക്ക് വെള്ളി, ശനി, ഞായർ ദിവസങ്ങളിലും സർക്കാർ അവധിദിനങ്ങളിലും 20:00 മുതൽ 21:00 വരെ മാത്രമേ ഗെയിം തുടങ്ങാൻ കഴിയൂ.",
+            noWindow = " ആ പ്രായത്തിൽ താഴെയുള്ളവർക്ക് രക്ഷിതാവിന്റെ സമ്മതം ആവശ്യമാണ്."
+        )
+        LegalLanguage.UR_LATN -> JurisText(
+            JURIS_TERMS_UR_LATN, JURIS_LICENSES_UR_LATN, JURIS_GUIDE_UR_LATN,
+            window = " {age} saal se kam umar ke log game sirf Juma, Hafta aur Itwar aur sarkari chhuttiyon mein 20:00 se 21:00 tak shuru kar sakte hain.",
+            noWindow = " Is umar se kam walon ko sarparast ki razamandi chahiye."
+        )
+        LegalLanguage.JA -> JurisText(
+            JURIS_TERMS_JA, JURIS_LICENSES_JA, JURIS_GUIDE_JA,
+            window = " {age}歳未満は金曜・土曜・日曜および祝日の 20:00〜21:00 のみゲームを起動できます。",
+            noWindow = " この年齢未満は保護者の同意が必要です。"
+        )
+        LegalLanguage.KO -> JurisText(
+            JURIS_TERMS_KO, JURIS_LICENSES_KO, JURIS_GUIDE_KO,
+            window = " {age}세 미만은 금요일, 토요일, 일요일 및 공휴일에 20:00~21:00에만 게임을 시작할 수 있습니다.",
+            noWindow = " 이 연령 미만은 보호자의 동의가 필요합니다."
+        )
+        LegalLanguage.RU -> JurisText(
+            JURIS_TERMS_RU, JURIS_LICENSES_RU, JURIS_GUIDE_RU,
+            window = " Лица младше {age} лет могут запускать игру только по пятницам, субботам, воскресеньям и в праздничные дни с 20:00 до 21:00.",
+            noWindow = " Лицам младше этого возраста нужно согласие опекуна."
         )
         //其余语言暂用英文地区条款，正文仍是各自语言（不会出现空白）
         else -> JurisText(

@@ -13,19 +13,17 @@
 
 现在有两个 flavor：
 
-- `universal`：4 个 ABI；
-- `arm64`：仅 arm64-v8a。
+- `universal`：4 个 ABI（唯一 flavor，不再有 `arm64` 版）。
 
 产物路径：
 
 ```
 ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<版本>.apk
-ZalithLauncher/build/outputs/apk/arm64/release/ZyNova-<版本>-arm64-v8a.apk
 ```
 
 ## CI
 
-- push 到 `main`：`.github/workflows/build_apk.yml` 构建两个 APK；
+- push 到 `main`：`.github/workflows/build_apk.yml` 构建通用版 APK；
 - 发布 Release：`.github/workflows/release_ci.yml` 调用 `build.yml` 上传 APK 与 mapping。
 
 ## 发布前

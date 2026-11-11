@@ -18,8 +18,6 @@
 
 package com.movtery.zalithlauncher.game.renderer
 
-import android.os.Build
-
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.LTWRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.MobileGluesRenderer
@@ -60,10 +58,8 @@ object Renderers {
             GL4ESRenderer
         )
 
-        //LTW 只提供 arm64-v8a 的 libltw_turbo.so；其他 ABI 上不注册，避免选中后加载失败
-        if (Build.SUPPORTED_ABIS.contains("arm64-v8a")) {
-            addRenderer(LTWRenderer)
-        }
+        //LTW 自带 ABI 判断（isAvailableOnDevice），其他架构上会被 addRenderer 跳过后不显示
+        addRenderer(LTWRenderer)
     }
 
     /**
@@ -167,6 +163,11 @@ object Renderers {
      * 加入单个渲染器
      */
     fun addRenderer(renderer: RendererInterface): Boolean {
+        //本机架构跑不了的渲染器直接不注册：设置里不出现，避免「选了才发现起不来」
+        if (!renderer.isAvailableOnDevice()) {
+            Logger.info(TAG, "Renderer skipped (unsupported ABI on this device): ${renderer.getRendererName()}")
+            return false
+        }
         return if (renderers.any { it.getUniqueIdentifier() == renderer.getUniqueIdentifier() }) {
             Logger.warning(TAG, "The unique identifier of this renderer (${renderer.getRendererName()} - ${renderer.getUniqueIdentifier()}) conflicts with an already loaded renderer. " +
                     "Normally, this shouldn't happen. You deliberately caused this conflict, didn't you, user?")

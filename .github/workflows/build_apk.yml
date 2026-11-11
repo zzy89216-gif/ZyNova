@@ -43,7 +43,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Release APK (universal + arm64)
+      - name: Build Release APK (universal only)
         run: |
           chmod +x gradlew
           ./gradlew ZalithLauncher:assembleRelease

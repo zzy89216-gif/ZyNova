@@ -37,6 +37,14 @@ import com.movtery.zalithlauncher.setting.AllSettings
  * 「非稳定正式版」，只建议愿意承担崩溃风险的用户手动选择；「自动」不会选它。
  */
 object LTWRenderer : RendererInterface {
+    /**
+     * 随包只有 arm64-v8a 的 `libltw_turbo.so`。
+     * 其他架构（armeabi-v7a / x86 / x86_64）上直接判定不可用，
+     * 于是设置里的渲染器列表**不会出现 LTW**，而不是让用户选中后启动崩溃。
+     */
+    override fun isAvailableOnDevice(): Boolean =
+        android.os.Build.SUPPORTED_ABIS.any { it.equals("arm64-v8a", ignoreCase = true) }
+
     override fun getRendererId(): String = "opengles3_ltw"
 
     override fun getUniqueIdentifier(): String = "b3f1c8e2-7a4d-4f9a-9c2e-1d5a6b8c0e71"

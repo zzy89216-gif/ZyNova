@@ -32,7 +32,7 @@
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
 | Release | 只有 `v28.1.0` 一个，tag 指向 **`65f0ba3`**（打这个包用的提交） |
 | main | 可能比 tag 新（后续只改了文档），**这是正常现象** |
-| 发布资产 | `ZyNova-28.1.0.apk`、`ZyNova-28.1.0-arm64-v8a.apk`、`mapping.universal.zip` |
+| 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
 
 > ⚠️ **条款版本与应用版本已解耦**（2026-11 起）：`OnboardingState.CURRENT_LEGAL_VERSION` 是独立常量，
@@ -119,9 +119,8 @@ POST /repos/zzy89216-gif/ZyNova/releases
 ### 4. 等发布构建 / 核对资产（约 18 分钟）
 `release_ci.yml` 会在 `release: published` 时跑 `build.yml` 并上传，核对：
 - `ZyNova-<版本>.apk`
-- `ZyNova-<版本>-arm64-v8a.apk`
 - `mapping.universal.zip`
-- 三个都必须是 `uploaded`；用 `curl -sIL -o /dev/null -w '%{http_code}'` 抽查下载链接应为 200。
+- 两个都必须是 `uploaded`；用 `curl -sIL -o /dev/null -w '%{http_code}'` 抽查下载链接应为 200。
 
 > ⚠️ **坑 4（资产名）**：APK 文件名只取版本号的数字部分（`launcherVersionFileTag = launcher_version_name.substringBefore(' ')`）。
 > 如果版本名带后缀（如 `28.1.1 beta`），空格会被 GitHub 转成点，出现 `ZyNova-28.1.1.beta.apk` 这种名字。

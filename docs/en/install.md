@@ -2,14 +2,13 @@
 
 ## 1. Which APK
 
-Every release ships two APKs:
+Every release ships one universal APK:
 
 | File | Devices | Notes |
 |---|---|---|
 | `ZyNova-<version>.apk` | All Android devices | Universal: arm64-v8a / armeabi-v7a / x86 / x86_64 |
-| `ZyNova-<version>-arm64-v8a.apk` | arm64 only | Smaller; no 32-bit or x86 libraries |
 
-The universal build is the safest choice for almost every phone. Pick the arm64 build only when you are sure the device is arm64 and you want to save space.
+The old `-arm64-v8a` slim build has been dropped; the universal build has the full feature set on arm64 phones too.
 The experimental LTW renderer only ships arm64 libraries, so it never shows up on 32-bit / x86 devices.
 
 ## 2. Install

@@ -31,11 +31,12 @@ val defaultKeyPassword = project.findProperty("default_key_password") as? String
 val defaultCurseForgeApiKey = project.findProperty("curseforge_api_key") as? String
 
 /**
- * 发布两个 APK：
- * 1. `universal`：包含全部 4 个 ABI；
- * 2. `arm64`：只包含 arm64-v8a（LTW 也只提供 arm64 库）。
+ * 只发布**一个**通用版 APK：包含全部 ABI（arm64-v8a / armeabi-v7a / x86 / x86_64）。
  *
- * 两个 flavor 共用同一份代码与资源，Release 构建保持代码混淆。
+ * 维护者 2026-11 决定：取消单独的 `arm64` 体积优化版。
+ * 原因：两个包对用户的区分成本高于省下的体积，且「测试渲染器」（LTW-Turbo）本来就放在
+ * `src/main/jniLibs/arm64-v8a`，通用版已经包含，arm64 版并没有多出任何功能。
+ * 之后发版只出 `ZyNova-<版本>.apk` + `mapping.universal.zip`。
  */
 val projectArch: String = "all"
 
@@ -87,12 +88,6 @@ android {
     productFlavors {
         create("universal") {
             dimension = "abi"
-        }
-        create("arm64") {
-            dimension = "abi"
-            ndk {
-                abiFilters.add("arm64-v8a")
-            }
         }
     }
 
@@ -157,10 +152,8 @@ androidComponents {
         variant.outputs.forEach { output ->
             if (output is VariantOutputImpl) {
                 val baseName = "$launcherName-${if (variant.buildType == "release") launcherVersionFileTag else "Debug-$launcherVersionFileTag"}"
-                //通用版不带后缀，arm64 版带 -arm64-v8a，避免两个 APK 同名覆盖
-                val flavor = variant.productFlavors.firstOrNull()?.second.orEmpty()
-                val abiSuffix = if (flavor == "arm64") "-arm64-v8a" else ""
-                output.outputFileName = "$baseName$abiSuffix.apk"
+                //只有一个 flavor，不再需要 ABI 后缀
+                output.outputFileName = "$baseName.apk"
             }
         }
     }

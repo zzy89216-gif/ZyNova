@@ -13,20 +13,18 @@ Requires JDK 17 + Android SDK/NDK.
 
 There are two flavors:
 
-- `universal`: all 4 ABIs;
-- `arm64`: arm64-v8a only.
+- `universal`: all 4 ABIs (the only flavor; the `arm64` variant is gone).
 
-Output paths:
+Output path:
 
 ```
 ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<version>.apk
-ZalithLauncher/build/outputs/apk/arm64/release/ZyNova-<version>-arm64-v8a.apk
 ```
 
 ## CI
 
-- Push to `main`: `.github/workflows/build_apk.yml` builds both APKs;
-- Publishing a Release: `.github/workflows/release_ci.yml` calls `build.yml` to upload the APKs and mapping.
+- Push to `main`: `.github/workflows/build_apk.yml` builds the universal APK;
+- Publishing a Release: `.github/workflows/release_ci.yml` calls `build.yml` to upload the APK and mapping.
 
 ## Before a release
 
