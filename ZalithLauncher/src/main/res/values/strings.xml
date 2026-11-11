@@ -1685,8 +1685,6 @@
     <string name="settings_renderer_version_unknown">Unknown</string>
     <string name="settings_renderer_priority_title">Auto selection order</string>
     <string name="settings_renderer_priority_summary">With Auto, the launcher picks the first renderer that supports this game version, in the order MobileGlues, GL4ES.</string>
-    <string name="settings_renderer_gl4es_empty_title">GL4ES has nothing to configure</string>
-    <string name="settings_renderer_gl4es_empty_summary">It is a fixed compatibility codepath that the launcher already sets up for you.</string>
     <string name="settings_renderer_advanced_title">Advanced options</string>
     <string name="settings_renderer_advanced_summary">These are for people who know what they are doing. Wrong values can cause glitches, crashes or worse performance. Leave them alone if unsure.</string>
     <string name="settings_renderer_advanced_show">Show advanced options</string>
@@ -1989,4 +1987,14 @@
     <string name="onboarding_age_hint">Under-18 players may only play on Fridays, Saturdays, Sundays and statutory holidays, 20:00–21:00.</string>
     <string name="onboarding_enter_minor">Continue as under 18</string>
     <string name="onboarding_enter_adult">Continue as 18 or older</string>
+    <string name="onboarding_checkbox">I have read and agree to the entire document</string>
+    <string name="onboarding_scroll_hint">Scroll to the bottom to continue</string>
+    <string name="onboarding_reached_end">—— End of document ——</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_prev">Previous</string>
+    <string name="onboarding_finish_docs">All read — choose age group</string>
+    <string name="onboarding_age_under18">Under 18</string>
+    <string name="onboarding_age_adult">18 or older</string>
+    <string name="onboarding_age_note">Answer truthfully. Age affects the play time available to you where the law requires it.</string>
+    <string name="onboarding_age_hint_global">If the law in your region requires guardian consent for minors, please use this software only with that consent.</string>
 </resources>

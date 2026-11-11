@@ -1667,8 +1667,6 @@
     <string name="settings_renderer_version_unknown">未知</string>
     <string name="settings_renderer_priority_title">自动选择的顺序</string>
     <string name="settings_renderer_priority_summary">选「自动」时，会按 MobileGlues、GL4ES 的顺序，挑第一个能跑你这个游戏版本的渲染器。</string>
-    <string name="settings_renderer_gl4es_empty_title">GL4ES 没有可调选项</string>
-    <string name="settings_renderer_gl4es_empty_summary">它是一套固定的兼容方案，启动器已经配好了，不需要你改什么。</string>
     <string name="settings_renderer_advanced_title">高级参数</string>
     <string name="settings_renderer_advanced_summary">下面这些是给懂行的人调的。改错可能花屏、闪退或者更卡，不确定就保持默认。</string>
     <string name="settings_renderer_advanced_show">展开高级参数</string>
@@ -1971,4 +1969,14 @@
     <string name="onboarding_age_hint">根据未成年人保护要求：未满 18 周岁仅可在周五、周六、周日及法定节假日的 20:00–21:00 游玩。</string>
     <string name="onboarding_enter_minor">以「未满 18 周岁」进入</string>
     <string name="onboarding_enter_adult">以「已满 18 周岁」进入</string>
+    <string name="onboarding_checkbox">我已阅读并同意本份文档的全部内容</string>
+    <string name="onboarding_scroll_hint">请继续向下滑动阅读至末尾</string>
+    <string name="onboarding_reached_end">—— 已到末尾 ——</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_prev">上一份</string>
+    <string name="onboarding_finish_docs">已读完全部，去选择年龄</string>
+    <string name="onboarding_age_under18">未满 18 周岁</string>
+    <string name="onboarding_age_adult">已满 18 周岁</string>
+    <string name="onboarding_age_note">请如实填写。在法律有要求的地区，年龄会影响你可游玩的时间。</string>
+    <string name="onboarding_age_hint_global">你所在地区的法律若要求监护人同意，请在取得同意后使用本软件。</string>
 </resources>

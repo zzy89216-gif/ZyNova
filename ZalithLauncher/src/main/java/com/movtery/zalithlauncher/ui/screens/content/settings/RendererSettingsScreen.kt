@@ -231,36 +231,6 @@ fun RendererSettingsScreen(
                 }
             }
 
-            if (isGL4ES) {
-                AnimatedItem(scope) { yOffset ->
-                    SettingsCardColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                    ) {
-                        SettingsCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            position = CardPosition.Single
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(all = 16.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.settings_renderer_gl4es_empty_title),
-                                    style = MaterialTheme.typography.titleSmall
-                                )
-                                Text(
-                                    text = stringResource(R.string.settings_renderer_gl4es_empty_summary),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
             // ── 显示与性能（所有渲染器通用）────────────────────────
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(

@@ -39,7 +39,10 @@ import com.movtery.zalithlauncher.R
  * 严格流程：每份文档**必须滑到底部**并勾选「我已阅读并同意」，才能点下一步；
  * 全部读完后选择年龄段，才进入主界面。
  *
- * ⚠️ 老用户升级后同样会走一遍（见 [OnboardingState.needsOnboarding]）。
+ * 文本来源：`LegalDocuments`（该语言正文 + 该地区补充条款）。
+ * 所以同一个用户在何地、用什么语言，看到的是不同的一份。
+ *
+ * ⚠️ 老用户升级后**不再**重走（只有当 [OnboardingState.CURRENT_LEGAL_VERSION] 变化时才重走）。
  */
 @Composable
 fun OnboardingScreen(onDone: () -> Unit) {
@@ -52,15 +55,19 @@ fun OnboardingScreen(onDone: () -> Unit) {
         }.getOrNull()
     }
 
-    //三份合并后的核心文档：条款(许可协议+隐私) / 开源与风险 / 使用须知(教程+地区管辖)
-    val docs = remember(noticesAsset) {
+    //地区与语言在进入引导时定一次：中途改系统语言不会把正在读的文档换掉
+    val region = remember { RegionGate.region() ?: LegalRegions.byCountry("CN")!! }
+    val lang = remember { LegalLanguage.of() }
+
+    val docs = remember(noticesAsset, region, lang) {
+        val terms = LegalDocuments.build(LegalDocId.TERMS, region, lang)
+        val licenses = LegalDocuments.build(LegalDocId.LICENSES, region, lang)
+        val guide = LegalDocuments.build(LegalDocId.GUIDE, region, lang)
         listOf(
-            "《最终用户许可协议 + 隐私政策》" to
-                (LegalTexts.eula + "\n\n" + LegalTexts.privacy),
-            "《第三方开源合规声明 + 补充免责与风险告知》" to
-                ((noticesAsset ?: LegalTexts.thirdParty) + "\n\n" + LegalTexts.risks),
-            "《使用教程 + 适用地区与法律管辖》" to
-                (LegalTexts.tutorial + "\n\n" + LegalTexts.regions)
+            terms,
+            //许可证全文仍用 APK 内那份，前面是本语言的摘要与本地区条款
+            licenses.copy(body = licenses.body + "\n\n" + (noticesAsset ?: "")),
+            guide
         )
     }
 
@@ -88,7 +95,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = if (step < docs.size) "${step + 1} / ${docs.size}  ${docs[step].first}"
+                text = if (step < docs.size) "${step + 1} / ${docs.size}  ${docs[step].title}"
                 else stringResource(R.string.onboarding_age_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
@@ -104,18 +111,22 @@ fun OnboardingScreen(onDone: () -> Unit) {
                 if (step < docs.size) {
                     //把 AGPL / LGPL / 免责 等关键词标红，避免用户一扫而过
                     Text(
-                        text = highlightLegal(docs[step].second),
+                        text = highlightLegal(docs[step].body),
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = if (atBottom) "—— 已到末尾 ——" else "请继续向下滑动阅读至末尾",
+                        text = if (atBottom) stringResource(R.string.onboarding_reached_end)
+                        else stringResource(R.string.onboarding_scroll_hint),
                         style = MaterialTheme.typography.labelSmall,
                         color = if (atBottom) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
                     Text(
-                        stringResource(R.string.onboarding_age_hint),
+                        stringResource(
+                            if (region.playTimeWindow) R.string.onboarding_age_hint
+                            else R.string.onboarding_age_hint_global
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -128,23 +139,22 @@ fun OnboardingScreen(onDone: () -> Unit) {
                         //「已满 18 周岁」永远处于禁用状态，用户根本选不了。
                         if (minor) {
                             Button(onClick = { minor = true }, modifier = Modifier.weight(1f)) {
-                                Text("✓ 未满 18 周岁")
+                                Text("✓ " + stringResource(R.string.onboarding_age_under18))
                             }
                             OutlinedButton(onClick = { minor = false }, modifier = Modifier.weight(1f)) {
-                                Text("已满 18 周岁")
+                                Text(stringResource(R.string.onboarding_age_adult))
                             }
                         } else {
                             OutlinedButton(onClick = { minor = true }, modifier = Modifier.weight(1f)) {
-                                Text("未满 18 周岁")
+                                Text(stringResource(R.string.onboarding_age_under18))
                             }
                             Button(onClick = { minor = false }, modifier = Modifier.weight(1f)) {
-                                Text("✓ 已满 18 周岁")
+                                Text("✓ " + stringResource(R.string.onboarding_age_adult))
                             }
                         }
                     }
                     Text(
-                        "选择「未满 18 周岁」后，只能在本软件内于周五、周六、周日和法定节假日的 20:00–21:00 启动游戏；" +
-                            "选择「已满 18 周岁」不设时间限制。请如实填写。",
+                        stringResource(R.string.onboarding_age_note),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -160,7 +170,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
                         onCheckedChange = { agreed = it }
                     )
                     Text(
-                        text = "我已阅读并同意本份文档的全部内容",
+                        text = stringResource(R.string.onboarding_checkbox),
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
@@ -169,14 +179,19 @@ fun OnboardingScreen(onDone: () -> Unit) {
                         OutlinedButton(
                             onClick = { step--; agreed = false },
                             modifier = Modifier.weight(1f)
-                        ) { Text("上一份") }
+                        ) { Text(stringResource(R.string.onboarding_prev)) }
                     }
                     Button(
                         modifier = Modifier.weight(2f),
                         enabled = agreed && atBottom,
                         onClick = { step++; agreed = false }
                     ) {
-                        Text(if (step == docs.size - 1) "已读完全部，去选择年龄" else "下一步")
+                        Text(
+                            stringResource(
+                                if (step == docs.size - 1) R.string.onboarding_finish_docs
+                                else R.string.onboarding_next
+                            )
+                        )
                     }
                 }
             } else {
@@ -201,19 +216,19 @@ fun OnboardingScreen(onDone: () -> Unit) {
 /**
  * 法律文本关键词高亮：
  * - `AGPL` / `LGPL` → 错误色（许可证义务最重的部分）
- * - `不承担` / `免责` / `风险` / `无法使用` → 错误色
+ * - 免责 / 风险 / 制裁 / 无法使用 → 错误色
  * - 一级标题（以《 开头的一行）→ 加粗 + 主题色
  */
 private fun highlightLegal(text: String): androidx.compose.ui.text.AnnotatedString {
     val danger = androidx.compose.ui.graphics.Color(0xFFE53935)
+    val titleBlue = androidx.compose.ui.graphics.Color(0xFF3B6FF6)
     val builder = androidx.compose.ui.text.AnnotatedString.Builder()
     text.lines().forEachIndexed { index, line ->
         val isTitle = line.trimStart().startsWith("《")
         val base = androidx.compose.ui.text.SpanStyle(
             fontWeight = if (isTitle) androidx.compose.ui.text.font.FontWeight.SemiBold
             else androidx.compose.ui.text.font.FontWeight.Normal,
-            color = if (isTitle) androidx.compose.ui.graphics.Color(0xFF3B6FF6)
-            else androidx.compose.ui.graphics.Color.Unspecified
+            color = if (isTitle) titleBlue else androidx.compose.ui.graphics.Color.Unspecified
         )
         builder.pushStyle(base)
         builder.append(line)
@@ -224,7 +239,10 @@ private fun highlightLegal(text: String): androidx.compose.ui.text.AnnotatedStri
     val raw = builder.toAnnotatedString()
     return androidx.compose.ui.text.buildAnnotatedString {
         append(raw)
-        val regex = Regex("AGPL|LGPL|不承担任何|免责|风险|无法使用|不允许|必须")
+        val regex = Regex(
+            "AGPL|LGPL|不承担任何|免责|风险|无法使用|不允许|必须|制裁|" +
+                "not liable|no warranty|risk|unreachable|sanction|must not|prohibited"
+        )
         regex.findAll(raw.text).forEach { m ->
             addStyle(
                 androidx.compose.ui.text.SpanStyle(
