@@ -38,6 +38,9 @@ object LegalDocuments {
             LegalLanguage.RU -> "《Лицензионное соглашение + Политика конфиденциальности》"
             LegalLanguage.DE -> "《Endnutzer-Lizenzvereinbarung + Datenschutzerklärung》"
             LegalLanguage.FR -> "《Contrat de licence utilisateur final + Politique de confidentialité》"
+            LegalLanguage.ES -> "《Contrato de licencia de usuario final + Política de privacidad》"
+            LegalLanguage.PT_BR -> "《Contrato de licença de usuário final + Política de privacidade》"
+            LegalLanguage.IT -> "《Contratto di licenza con l'utente finale + Informativa sulla privacy》"
             else -> "《End User License Agreement + Privacy Policy》"
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -48,6 +51,9 @@ object LegalDocuments {
             LegalLanguage.RU -> "《Уведомление о сторонних компонентах + Дополнительные риски》"
             LegalLanguage.DE -> "《Hinweise zu Open-Source-Komponenten + Ergänzende Risikohinweise》"
             LegalLanguage.FR -> "《Mentions open source tierces + Avertissements de risque complémentaires》"
+            LegalLanguage.ES -> "《Avisos de componentes de código abierto + Avisos de riesgo adicionales》"
+            LegalLanguage.PT_BR -> "《Avisos de componentes de código aberto + Avisos de risco adicionais》"
+            LegalLanguage.IT -> "《Note sui componenti open source + Ulteriori avvisi di rischio》"
             else -> "《Third-Party Open-Source Notices + Additional Risk Disclosure》"
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -58,6 +64,9 @@ object LegalDocuments {
             LegalLanguage.RU -> "《Руководство + Регионы и применимое право》"
             LegalLanguage.DE -> "《Erste Schritte + Regionen und anwendbares Recht》"
             LegalLanguage.FR -> "《Premiers pas + Régions et droit applicable》"
+            LegalLanguage.ES -> "《Primeros pasos + Regiones y ley aplicable》"
+            LegalLanguage.PT_BR -> "《Primeiros passos + Regiões e lei aplicável》"
+            LegalLanguage.IT -> "《Primi passi + Regioni e legge applicabile》"
             else -> "《Getting Started + Regions and Governing Law》"
         }
     }
@@ -75,6 +84,9 @@ object LegalDocuments {
             LegalLanguage.RU -> TERMS_RU
             LegalLanguage.DE -> TERMS_DE
             LegalLanguage.FR -> TERMS_FR
+            LegalLanguage.ES -> TERMS_ES
+            LegalLanguage.PT_BR -> TERMS_PT_BR
+            LegalLanguage.IT -> TERMS_IT
             else -> TERMS_EN
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -85,6 +97,9 @@ object LegalDocuments {
             LegalLanguage.RU -> LICENSES_RU
             LegalLanguage.DE -> LICENSES_DE
             LegalLanguage.FR -> LICENSES_FR
+            LegalLanguage.ES -> LICENSES_ES
+            LegalLanguage.PT_BR -> LICENSES_PT_BR
+            LegalLanguage.IT -> LICENSES_IT
             else -> LICENSES_EN
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -95,6 +110,9 @@ object LegalDocuments {
             LegalLanguage.RU -> GUIDE_RU
             LegalLanguage.DE -> GUIDE_DE
             LegalLanguage.FR -> GUIDE_FR
+            LegalLanguage.ES -> GUIDE_ES
+            LegalLanguage.PT_BR -> GUIDE_PT_BR
+            LegalLanguage.IT -> GUIDE_IT
             else -> GUIDE_EN
         }
     }
@@ -127,6 +145,21 @@ object LegalDocuments {
             JURIS_TERMS_FR, JURIS_LICENSES_FR, JURIS_GUIDE_FR,
             window = " Les moins de {age} ans ne peuvent lancer le jeu que le vendredi, le samedi, le dimanche et les jours fériés, de 20 h à 21 h.",
             noWindow = " Les mineurs doivent obtenir l'accord d'un représentant légal."
+        )
+        LegalLanguage.ES -> JurisText(
+            JURIS_TERMS_ES, JURIS_LICENSES_ES, JURIS_GUIDE_ES,
+            window = " Los menores de {age} años solo pueden iniciar el juego los viernes, sábados, domingos y días festivos, de 20:00 a 21:00.",
+            noWindow = " Los menores necesitan la autorización de su representante legal."
+        )
+        LegalLanguage.PT_BR -> JurisText(
+            JURIS_TERMS_PT_BR, JURIS_LICENSES_PT_BR, JURIS_GUIDE_PT_BR,
+            window = " Menores de {age} anos só podem iniciar o jogo às sextas, sábados, domingos e feriados, das 20h às 21h.",
+            noWindow = " Menores precisam da autorização de um responsável legal."
+        )
+        LegalLanguage.IT -> JurisText(
+            JURIS_TERMS_IT, JURIS_LICENSES_IT, JURIS_GUIDE_IT,
+            window = " I minori di {age} anni possono avviare il gioco solo il venerdì, il sabato, la domenica e nei giorni festivi, dalle 20:00 alle 21:00.",
+            noWindow = " I minori necessitano dell'autorizzazione di un genitore o tutore."
         )
         //其余语言暂用英文地区条款，正文仍是各自语言（不会出现空白）
         else -> JurisText(
