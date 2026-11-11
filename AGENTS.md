@@ -27,13 +27,14 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | `28.1.0`（**不带任何后缀，不要写 LTS**） |
-| versionCode | `281001` |
+| 版本名 | 当前 `28.1.1 测试版`（预发行；正式线仍是 `28.1.0`） |
+| versionCode | `281101` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | 只有 `v28.1.0` 一个，tag 指向 **`65f0ba3`**（打这个包用的提交） |
-| main | 可能比 tag 新（后续只改了文档），**这是正常现象** |
+| Release | `v28.1.0`（正式）+ `v28.1.1-beta`（预发行，tag 指向测试构建的提交） |
+| main | 已并入 28.1.1 测试版代码；`beta` / `beta-28.2` 分支已删除 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
+| 下一轮待办 | [`下一次的更新内容.md`](下一次的更新内容.md)（功能 + 多语言 + RTL 的完整清单） |
 
 > ⚠️ **条款版本与应用版本已解耦**（2026-11 起）：`OnboardingState.CURRENT_LEGAL_VERSION` 是独立常量，
 > 不再取 `BuildConfig.VERSION_NAME`。应用升级、系统语言/时区变化**都不再**要求重新同意；
@@ -183,7 +184,12 @@ PY
   现在文档检查靠本节第五部分的命令 / 人工检查，**不要擅自把它加回 CI**。
 - 维护者要「正常维护、正常修 Bug、正常发版」，**不要**在标题、版本名、文档里加「LTS / 长期支持」这类标签。
 - Release 说明允许玩梗（README 也允许），但**不能写不存在的功能**，也不能把没修的写成修好了。
-- **发版待办不再写进文档**，统一放在 Issue 里跟踪：<https://github.com/zzy89216-gif/ZyNova/issues/50>（下一个版本要做的事）。
+- **发版待办不再写进文档**，统一放在 Issue 里跟踪。<br>
+  除 Issue 外，仓库根目录保留一份 [`下一次的更新内容.md`](下一次的更新内容.md)，作为下一轮的集中清单（Issue 关闭后仍可追溯）。
+- **28.1.1 起只发一个通用版 APK**：取消 `-arm64-v8a` 体积优化版（功能完全相同，只是省体积），
+  发版资产固定为 `ZyNova-<版本>.apk` + `mapping.universal.zip`。别再把它加回来。
+- **条款版本不跟应用版本**：`OnboardingState.CURRENT_LEGAL_VERSION` 是独立常量，见第二节。
+- 测试分支用完即删：28.1.1 的 `beta` / `beta-28.2` 已合并进 `main` 并删除，之后直接在 `main` 上迭代。
 
 ## 八、给你的建议顺序
 
