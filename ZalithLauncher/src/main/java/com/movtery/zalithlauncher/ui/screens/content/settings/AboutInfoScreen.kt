@@ -153,6 +153,9 @@ fun AboutInfoScreen(
                             }
                         )
 
+                        //吉祥物「无聊的克林」（议题 #62）：视觉弱于维护者条目，只做展示
+                        MascotRow()
+
                         //ZyNova 自己的赞助入口
                         //⚠️ 不要和下方致谢区「上游作者 MovTery」的赞助入口混用：
                         //那一个用的是 URL_SUPPORT（上游作者的页面），属于必须保留的署名信息。
@@ -258,6 +261,14 @@ fun AboutInfoScreen(
                         )
                     }
                 }
+            }
+
+            //联系与关注（议题 #50）：官方 X + 国内/全球生态邮箱
+            animatedItem(scope) { yOffset ->
+                ContactSection(
+                    modifier = Modifier.offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
+                    openLink = openLink
+                )
             }
 
             //开源与合规板块

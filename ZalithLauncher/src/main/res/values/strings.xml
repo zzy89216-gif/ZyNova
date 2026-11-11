@@ -1372,6 +1372,15 @@
     <string name="control_editor_exit_confirm">Exit Directly</string>
     <!-- About -->
     <string name="about_launcher_title">About Launcher</string>
+    <string name="about_contact_title">Contact &amp; Follow</string>
+    <string name="about_contact_x">Official X (main account)</string>
+    <string name="about_contact_email_cn">China ecosystem email</string>
+    <string name="about_contact_email_global">Global ecosystem email</string>
+    <string name="about_contact_copied">Copied to clipboard</string>
+    <string name="about_mascot_title">无聊的克林</string>
+    <string name="about_mascot_tag">Mascot</string>
+    <string name="about_mascot_text">ZyNova Mascot</string>
+    <string name="about_mascot_desc">Mascot: Wuliaode Kelin</string>
     <string name="about_launcher_version">Launcher Version: %s</string>
     <string name="about_launcher_unofficial_notice">ZyNova is an unofficial modified version of ZalithLauncher2, independently maintained by zzy, and is not an official release.</string>
     <string name="about_launcher_license">License</string>

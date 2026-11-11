@@ -1372,6 +1372,15 @@
     <string name="control_editor_exit_confirm">直接退出</string>
     <!--  关于  -->
     <string name="about_launcher_title">关于启动器</string>
+    <string name="about_contact_title">联系与关注</string>
+    <string name="about_contact_x">官方 X（主账号）</string>
+    <string name="about_contact_email_cn">国内生态邮箱</string>
+    <string name="about_contact_email_global">全球生态邮箱</string>
+    <string name="about_contact_copied">已复制到剪贴板</string>
+    <string name="about_mascot_title">无聊的克林</string>
+    <string name="about_mascot_tag">吉祥物</string>
+    <string name="about_mascot_text">ZyNova Mascot</string>
+    <string name="about_mascot_desc">吉祥物：无聊的克林</string>
     <string name="about_launcher_version">启动器版本：%s</string>
     <string name="about_launcher_unofficial_notice">ZyNova 是 ZalithLauncher2 的非官方修改版本，由 zzy 独立维护，并非官方发布。</string>
     <string name="about_launcher_license">许可证</string>
