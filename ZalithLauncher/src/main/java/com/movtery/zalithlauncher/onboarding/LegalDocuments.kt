@@ -41,6 +41,7 @@ object LegalDocuments {
             LegalLanguage.ES -> "《Contrato de licencia de usuario final + Política de privacidad》"
             LegalLanguage.PT_BR -> "《Contrato de licença de usuário final + Política de privacidade》"
             LegalLanguage.IT -> "《Contratto di licenza con l'utente finale + Informativa sulla privacy》"
+            LegalLanguage.TR -> "《Son Kullanıcı Lisans Sözleşmesi + Gizlilik Politikası》"
             else -> "《End User License Agreement + Privacy Policy》"
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -54,6 +55,7 @@ object LegalDocuments {
             LegalLanguage.ES -> "《Avisos de componentes de código abierto + Avisos de riesgo adicionales》"
             LegalLanguage.PT_BR -> "《Avisos de componentes de código aberto + Avisos de risco adicionais》"
             LegalLanguage.IT -> "《Note sui componenti open source + Ulteriori avvisi di rischio》"
+            LegalLanguage.TR -> "《Açık kaynak bileşen bildirimleri + Ek risk bildirimleri》"
             else -> "《Third-Party Open-Source Notices + Additional Risk Disclosure》"
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -67,6 +69,7 @@ object LegalDocuments {
             LegalLanguage.ES -> "《Primeros pasos + Regiones y ley aplicable》"
             LegalLanguage.PT_BR -> "《Primeiros passos + Regiões e lei aplicável》"
             LegalLanguage.IT -> "《Primi passi + Regioni e legge applicabile》"
+            LegalLanguage.TR -> "《Başlangıç + Bölgeler ve geçerli hukuk》"
             else -> "《Getting Started + Regions and Governing Law》"
         }
     }
@@ -87,6 +90,7 @@ object LegalDocuments {
             LegalLanguage.ES -> TERMS_ES
             LegalLanguage.PT_BR -> TERMS_PT_BR
             LegalLanguage.IT -> TERMS_IT
+            LegalLanguage.TR -> TERMS_TR
             else -> TERMS_EN
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -100,6 +104,7 @@ object LegalDocuments {
             LegalLanguage.ES -> LICENSES_ES
             LegalLanguage.PT_BR -> LICENSES_PT_BR
             LegalLanguage.IT -> LICENSES_IT
+            LegalLanguage.TR -> LICENSES_TR
             else -> LICENSES_EN
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -113,6 +118,7 @@ object LegalDocuments {
             LegalLanguage.ES -> GUIDE_ES
             LegalLanguage.PT_BR -> GUIDE_PT_BR
             LegalLanguage.IT -> GUIDE_IT
+            LegalLanguage.TR -> GUIDE_TR
             else -> GUIDE_EN
         }
     }
@@ -160,6 +166,11 @@ object LegalDocuments {
             JURIS_TERMS_IT, JURIS_LICENSES_IT, JURIS_GUIDE_IT,
             window = " I minori di {age} anni possono avviare il gioco solo il venerdì, il sabato, la domenica e nei giorni festivi, dalle 20:00 alle 21:00.",
             noWindow = " I minori necessitano dell'autorizzazione di un genitore o tutore."
+        )
+        LegalLanguage.TR -> JurisText(
+            JURIS_TERMS_TR, JURIS_LICENSES_TR, JURIS_GUIDE_TR,
+            window = " {age} yaş altındakiler oyunu yalnızca cuma, cumartesi, pazar ve resmî tatillerde 20:00–21:00 arasında başlatabilir.",
+            noWindow = " Bu yaşın altındakiler için veli onayı gerekir."
         )
         //其余语言暂用英文地区条款，正文仍是各自语言（不会出现空白）
         else -> JurisText(
