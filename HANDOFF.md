@@ -34,7 +34,7 @@
 |---|---|
 | `docs/README.md` | **中英双语文档入口**（跳转到 `docs/zh/` 或 `docs/en/`） |
 | `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 77 篇，文件名一一对应 |
-| `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、两个 APK 怎么选 |
+| `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、安装包说明（只有一个通用版） |
 | `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
 | `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
 | `docs/renderers*.md` / `docs/mobileglues.md` / `docs/gl4es.md` / `docs/ltw.md` | 渲染器总览与各渲染器专题 |
@@ -2555,10 +2555,11 @@ HTTP 403
 - 静态检查（import 解析、字符串引用、残留引用、隐私扫描等）
 - `git add` + `git commit` + `git push`
 
-### 构建形态（26.3.0 起）
+### 构建形态（28.1.1 起）
 
-- **产出两个 APK**：`universal`（`arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`）与 `arm64-v8a`
-- `projectArch` 仍为 `"all"`；ABI 裁剪由 Gradle flavor 的 `ndk.abiFilters` 完成
+- **只产出一个 APK**：`universal`（`arm64-v8a` / `armeabi-v7a` / `x86` / `x86_64`）
+- 原来的 `arm64` 体积优化 flavor 已删除（功能完全相同，只省一点体积）
+- `projectArch` 仍为 `"all"`；需要裁剪 ABI 时再按需加 flavor，别直接改回两包
 - Release 构建开启代码混淆：`isMinifyEnabled = true` + `isShrinkResources = true`，
   产物同时提供 `mapping.txt`（混淆映射）用于排查崩溃堆栈
 - 本地命令：`./gradlew ZalithLauncher:assembleRelease`
@@ -3074,10 +3075,10 @@ Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*
 APK 编译与产物上传全部由 GitHub Actions 自动完成，**不需要手工下载 artifact 再上传**。
 
 > 📦 **产物命名约定**：APK 文件名里的版本号只取**数字部分**（`launcherVersionFileTag` =
-> `launcher_version_name.substringBefore(' ')`），所以当前 `28.1.0` 产出的是
-> `ZyNova-28.1.0.apk` / `ZyNova-28.1.0-arm64-v8a.apk`。这条规则是为将来版本名带后缀
-> （例如临时标 `28.1.1 beta`）准备的：空格会被 GitHub 转成点，文件名会变成带后缀的样子。
-> 发布后请核对三个资产名：`ZyNova-<版本>.apk`、`ZyNova-<版本>-arm64-v8a.apk`、`mapping.universal.zip`。
+> `launcher_version_name.substringBefore(' ')`），所以 `28.1.1 测试版` 产出的是
+> `ZyNova-28.1.1.apk`。这条规则是为版本名带后缀准备的：空格会被 GitHub 转成点，
+> 文件名会变成带后缀的样子。
+> 发布后请核对**两个**资产名：`ZyNova-<版本>.apk`、`mapping.universal.zip`。
 
 ⚠️ **`<TOKEN>` 由用户临时提供、`<VERSION>` 替换为实际版本号，二者都不要写入任何文件**。
 Token 只放在环境变量或临时凭据助手里，用完即弃（见第八节红线 2）。
@@ -3206,10 +3207,10 @@ curl -sL -X POST -H "Authorization: Bearer $TOKEN" \
 
 ### Release 应包含的产物
 
-27.9.0 起**两个 APK**：
+> ⚠️ **28.1.1 起只有一个 APK**，下表是当前口径；`27.9.0 ~ 28.1.0` 期间曾有两个，
+> 那条旧规则已作废，别再按它核对资产。
 
 - `ZyNova-<VERSION>.apk`（通用：`arm64-v8a` + `armeabi-v7a` + `x86` + `x86_64`，已代码混淆）
-- `ZyNova-<VERSION>-arm64-v8a.apk`（仅 arm64-v8a，体积更小）
 - `mapping.universal.zip` / 对应的 mapping 压缩包（混淆映射，用于还原崩溃堆栈）
   > workflow 的 artifact 路径是 `apk/<flavor>/release/*.apk`，
   > 不要再用旧的 `apk/release/*.apk`。

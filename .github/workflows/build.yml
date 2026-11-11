@@ -1,6 +1,6 @@
 name: Build APK
 
-# 发布两个 APK：universal（全部 ABI）与 arm64-v8a。
+# 只发布一个通用版 APK（全部 ABI）；arm64 体积优化版已于 28.1.1 取消。
 # Release 构建保持代码混淆（见 ZalithLauncher/build.gradle.kts 的 buildTypes.release）。
 
 on:

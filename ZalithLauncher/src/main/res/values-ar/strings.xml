@@ -318,7 +318,7 @@
     <string name="generic_saved">محفوض</string>
     <string name="generic_saving">جارٍ الحفظ…</string>
     <string name="generic_follow_system">أتباع اعدادات الهاتف</string>
-    <string name="error_unauthorized">ليس لديك صلاحيات</string>
+    <string name="error_unauthorized">(%s) ليس لديك صلاحيات. تحقّق من بيانات الدخول وحاول مرة أخرى</string>
     <string name="notification_data_terracotta_message">أثناء جلسات اللعب الجماعي، يستخدم المشغل خدمة في المقدمة لعرض حالة الاتصال الحالية، لذا يلزم الحصول على إذن الإشعار.</string>
     <string name="version_summary_fools_trendy_update">المستقبل هنا! لقد أضفنا التكنولوجيا الحديثة إلى Minecraft!</string>
     <string name="version_summary_fools_3d_shareware">لقد عثرنا على نسخة DOS من لعبة Minecraft لعام 1994 في القبو!</string>

@@ -8,10 +8,10 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | 场景 | 文档 |
 |---|---|
 | 第一次用 | [选哪个 APK](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/choose-apk.md) · [安装与首次启动](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/install.md) |
-| 装游戏 / 装模组 | [安装游戏](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/install-game.md) · [安装模组](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/install-mod.md) |
-| 联机 | [陶瓦联机](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/terracotta.md) · [樱花内网穿透](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/frp.md) |
-| AI 助手 | [AI Agent](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-agent.md) · [工具清单](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-tools.md) |
-| 出问题 | [故障排查](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/troubleshooting.md) · [FAQ](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/faq.md) |
+| 装游戏 / 装模组 | [安装游戏本体](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/install-game.md) · [安装模组](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/install-mod.md) |
+| 联机 | [陶瓦联机（P2P）](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/terracotta.md) · [樱花内网穿透（联机）](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/frp.md) |
+| AI 助手 | [AI Agent](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-agent.md) · [AI 能做什么](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/ai-tools.md) |
+| 出问题 | [故障排查](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/troubleshooting.md) · [常见问题速查](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/faq.md) |
 
 ## 目录
 

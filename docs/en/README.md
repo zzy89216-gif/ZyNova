@@ -7,10 +7,10 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 
 | Need | Read |
 |---|---|
-| First time | [Which APK](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/choose-apk.md) · [Install and first launch](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install.md) |
-| Game / mods | [Install the game](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-game.md) · [Install mods](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-mod.md) |
-| Multiplayer | [Terracotta](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) · [SakuraFrp](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/frp.md) |
-| AI assistant | [AI Agent](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-agent.md) · [Tools](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-tools.md) |
+| First time | [Which APK to download](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/choose-apk.md) · [Installation and first launch](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install.md) |
+| Game / mods | [Installing the game](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-game.md) · [Installing mods](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-mod.md) |
+| Multiplayer | [Terracotta multiplayer (P2P)](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) · [SakuraFrp (playing over the internet)](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/frp.md) |
+| AI assistant | [AI Agent](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-agent.md) · [What the AI can do](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/ai-tools.md) |
 | Troubleshooting | [Troubleshooting](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/troubleshooting.md) · [FAQ](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/faq.md) |
 
 ## Index
