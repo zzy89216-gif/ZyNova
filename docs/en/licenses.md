@@ -108,4 +108,5 @@ Then choose an age group:
 **Available regions**: China, the United States, South Korea, Japan and Russia only (timezone or system country match is enough).
 Anywhere else shows "This product is not available in your region" with a single **Exit** button (safe exit, never a fake crash).
 
-**Re-consent**: `legalVersion` **follows the app version** (no hard-coded constant); a change of app version, system language or timezone forces re-acceptance.
+**Re-consent**: the terms version is **independent of the app version** and only advances when the legal text changes **substantively**. App updates, system-language changes and timezone changes no longer force re-acceptance.
+The text follows **system language + region**: the language picks the wording, the region picks the applicable law and age rules.
