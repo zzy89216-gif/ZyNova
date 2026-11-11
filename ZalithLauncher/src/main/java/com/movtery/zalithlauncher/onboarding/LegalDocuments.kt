@@ -42,6 +42,10 @@ object LegalDocuments {
             LegalLanguage.PT_BR -> "《Contrato de licença de usuário final + Política de privacidade》"
             LegalLanguage.IT -> "《Contratto di licenza con l'utente finale + Informativa sulla privacy》"
             LegalLanguage.TR -> "《Son Kullanıcı Lisans Sözleşmesi + Gizlilik Politikası》"
+            LegalLanguage.VI -> "《Thỏa thuận cấp phép người dùng cuối + Chính sách quyền riêng tư》"
+            LegalLanguage.TH -> "《ข้อตกลงอนุญาตให้ใช้สิทธิผู้ใช้ปลายทาง + นโยบายความเป็นส่วนตัว》"
+            LegalLanguage.ID -> "《Perjanjian Lisensi Pengguna Akhir + Kebijakan Privasi》"
+            LegalLanguage.PL -> "《Umowa licencyjna użytkownika końcowego + Polityka prywatności》"
             else -> "《End User License Agreement + Privacy Policy》"
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -56,6 +60,10 @@ object LegalDocuments {
             LegalLanguage.PT_BR -> "《Avisos de componentes de código aberto + Avisos de risco adicionais》"
             LegalLanguage.IT -> "《Note sui componenti open source + Ulteriori avvisi di rischio》"
             LegalLanguage.TR -> "《Açık kaynak bileşen bildirimleri + Ek risk bildirimleri》"
+            LegalLanguage.VI -> "《Thông báo thành phần mã nguồn mở + Cảnh báo rủi ro bổ sung》"
+            LegalLanguage.TH -> "《ประกาศคอมโพเนนต์โอเพนซอร์ส + คำเตือนความเสี่ยงเพิ่มเติม》"
+            LegalLanguage.ID -> "《Pemberitahuan Komponen Sumber Terbuka + Pemberitahuan Risiko Tambahan》"
+            LegalLanguage.PL -> "《Informacje o komponentach open source + Dodatkowe ostrzeżenia o ryzyku》"
             else -> "《Third-Party Open-Source Notices + Additional Risk Disclosure》"
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -70,6 +78,10 @@ object LegalDocuments {
             LegalLanguage.PT_BR -> "《Primeiros passos + Regiões e lei aplicável》"
             LegalLanguage.IT -> "《Primi passi + Regioni e legge applicabile》"
             LegalLanguage.TR -> "《Başlangıç + Bölgeler ve geçerli hukuk》"
+            LegalLanguage.VI -> "《Bắt đầu + Khu vực và pháp luật áp dụng》"
+            LegalLanguage.TH -> "《เริ่มต้นใช้งาน + ภูมิภาคและกฎหมายที่ใช้บังคับ》"
+            LegalLanguage.ID -> "《Memulai + Wilayah dan Hukum yang Berlaku》"
+            LegalLanguage.PL -> "《Pierwsze kroki + Regiony i prawo właściwe》"
             else -> "《Getting Started + Regions and Governing Law》"
         }
     }
@@ -91,6 +103,10 @@ object LegalDocuments {
             LegalLanguage.PT_BR -> TERMS_PT_BR
             LegalLanguage.IT -> TERMS_IT
             LegalLanguage.TR -> TERMS_TR
+            LegalLanguage.VI -> TERMS_VI
+            LegalLanguage.TH -> TERMS_TH
+            LegalLanguage.ID -> TERMS_ID
+            LegalLanguage.PL -> TERMS_PL
             else -> TERMS_EN
         }
         LegalDocId.LICENSES -> when (lang) {
@@ -105,6 +121,10 @@ object LegalDocuments {
             LegalLanguage.PT_BR -> LICENSES_PT_BR
             LegalLanguage.IT -> LICENSES_IT
             LegalLanguage.TR -> LICENSES_TR
+            LegalLanguage.VI -> LICENSES_VI
+            LegalLanguage.TH -> LICENSES_TH
+            LegalLanguage.ID -> LICENSES_ID
+            LegalLanguage.PL -> LICENSES_PL
             else -> LICENSES_EN
         }
         LegalDocId.GUIDE -> when (lang) {
@@ -119,6 +139,10 @@ object LegalDocuments {
             LegalLanguage.PT_BR -> GUIDE_PT_BR
             LegalLanguage.IT -> GUIDE_IT
             LegalLanguage.TR -> GUIDE_TR
+            LegalLanguage.VI -> GUIDE_VI
+            LegalLanguage.TH -> GUIDE_TH
+            LegalLanguage.ID -> GUIDE_ID
+            LegalLanguage.PL -> GUIDE_PL
             else -> GUIDE_EN
         }
     }
@@ -171,6 +195,26 @@ object LegalDocuments {
             JURIS_TERMS_TR, JURIS_LICENSES_TR, JURIS_GUIDE_TR,
             window = " {age} yaş altındakiler oyunu yalnızca cuma, cumartesi, pazar ve resmî tatillerde 20:00–21:00 arasında başlatabilir.",
             noWindow = " Bu yaşın altındakiler için veli onayı gerekir."
+        )
+        LegalLanguage.VI -> JurisText(
+            JURIS_TERMS_VI, JURIS_LICENSES_VI, JURIS_GUIDE_VI,
+            window = " Người dưới {age} tuổi chỉ có thể khởi chạy trò chơi vào thứ Sáu, thứ Bảy, Chủ nhật và ngày lễ, từ 20:00 đến 21:00.",
+            noWindow = " Người dưới độ tuổi đó cần sự đồng ý của người giám hộ."
+        )
+        LegalLanguage.TH -> JurisText(
+            JURIS_TERMS_TH, JURIS_LICENSES_TH, JURIS_GUIDE_TH,
+            window = " ผู้ที่มีอายุต่ำกว่า {age} ปีเริ่มเกมได้เฉพาะวันศุกร์ เสาร์ อาทิตย์ และวันหยุดนักขัตฤกษ์ เวลา 20:00–21:00",
+            noWindow = " ผู้ที่อายุต่ำกว่านั้นต้องได้รับความยินยอมจากผู้ปกครอง"
+        )
+        LegalLanguage.ID -> JurisText(
+            JURIS_TERMS_ID, JURIS_LICENSES_ID, JURIS_GUIDE_ID,
+            window = " Pengguna di bawah {age} tahun hanya dapat memulai permainan pada Jumat, Sabtu, Minggu, dan hari libur resmi pukul 20.00–21.00.",
+            noWindow = " Pengguna di bawah usia tersebut memerlukan persetujuan wali."
+        )
+        LegalLanguage.PL -> JurisText(
+            JURIS_TERMS_PL, JURIS_LICENSES_PL, JURIS_GUIDE_PL,
+            window = " Osoby poniżej {age} lat mogą uruchamiać grę tylko w piątki, soboty, niedziele i dni ustawowo wolne w godzinach 20:00–21:00.",
+            noWindow = " Osoby poniżej tego wieku potrzebują zgody opiekuna."
         )
         //其余语言暂用英文地区条款，正文仍是各自语言（不会出现空白）
         else -> JurisText(
