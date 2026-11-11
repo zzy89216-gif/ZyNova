@@ -217,7 +217,8 @@ fun LauncherSettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Middle,
                         unit = AllSettings.launcherLanguage,
-                        items = AppLanguage.entries,
+                        //只列出翻译已就绪的语言：半成品语言宁可不给选，也别让人切过去看一屏英文
+                        items = AppLanguage.entries.filter { it.selectable },
                         title = stringResource(R.string.settings_launcher_language),
                         getItemText = { stringResource(it.textRes) },
                         onValueChange = {

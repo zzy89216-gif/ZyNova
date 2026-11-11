@@ -25,24 +25,42 @@ import com.movtery.zalithlauncher.R
 
 enum class AppLanguage(
     val tag: String,
-    @param:StringRes val textRes: Int
+    @param:StringRes val textRes: Int,
+    /**
+     * 是否在设置的语言列表里显示。
+     *
+     * 维护者要求：**翻译没做完的语言先不要露出来**，否则用户切过去看到一半英文、一半机翻，
+     * 比不给选更糟。判定口径：该 locale 的 `strings.xml` 覆盖率达到 85% 且占位符零错位，
+     * 才把这里改成 `true`（覆盖率用仓库里那段 python 脚本量）。
+     */
+    val selectable: Boolean = true
 ) {
     //按语言代码字母顺序排序
     FOLLOW_SYSTEM("", R.string.generic_follow_system),
-    ARABIC("ar", R.string.language_arabic),
+    ARABIC("ar", R.string.language_arabic, selectable = false),
+    BULGARIAN("bg", R.string.language_bulgarian, selectable = false),
     ENGLISH("en", R.string.language_english),
-    SPANISH("es", R.string.language_spanish),
-    FILIPINO("fil", R.string.language_filipino),
+    SPANISH("es", R.string.language_spanish, selectable = false),
+    PERSIAN("fa", R.string.language_persian, selectable = false),
+    FILIPINO("fil", R.string.language_filipino, selectable = false),
+    FRENCH("fr", R.string.language_french, selectable = false),
+    GREEK("el", R.string.language_greek, selectable = false),
     INDONESIAN("id", R.string.language_indonesian),
-    ITALIAN("it", R.string.language_italian),
+    ITALIAN("it", R.string.language_italian, selectable = false),
     JAPANESE("ja", R.string.language_japanese),
-    KOREAN("ko", R.string.language_korean),
+    KOREAN("ko", R.string.language_korean, selectable = false),
+    MALAYALAM("ml", R.string.language_malayalam, selectable = false),
+    GERMAN("de", R.string.language_german, selectable = false),
+    POLISH("pl", R.string.language_polish, selectable = false),
     PORTUGUESE("pt", R.string.language_portuguese),
     BRAZILIAN_PORTUGUESE("pt-BR", R.string.language_brazilian_portuguese),
+    ROMANIAN("ro", R.string.language_romanian, selectable = false),
     RUSSIAN("ru", R.string.language_russian),
-    THAI("th", R.string.language_thai),
+    THAI("th", R.string.language_thai, selectable = false),
     TURKISH("tr", R.string.language_turkish),
-    UYGHUR("ug", R.string.language_uyghur),
+    UYGHUR("ug", R.string.language_uyghur, selectable = false),
+    UKRAINIAN("uk", R.string.language_ukrainian, selectable = false),
+    URDU_ROMAN("ur", R.string.language_urdu_roman, selectable = false),
     VIETNAMESE("vi", R.string.language_vietnamese),
     SIMPLIFIED_CHINESE("zh-CN", R.string.language_simplified_chinese),
     TRADITIONAL_CHINESE("zh-TW", R.string.language_traditional_chinese),

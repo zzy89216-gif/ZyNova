@@ -1426,6 +1426,17 @@
     <string name="url_wiki_minecraft_game_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
     <!-- Language -->
     <string name="language_english" translatable="false">English</string>
+    <string name="language_bulgarian" translatable="false">Български</string>
+    <string name="language_persian" translatable="false">فارسی</string>
+    <string name="language_french" translatable="false">Français</string>
+    <string name="language_greek" translatable="false">Ελληνικά</string>
+    <string name="language_malayalam" translatable="false">മലയാളം</string>
+    <string name="language_german" translatable="false">Deutsch</string>
+    <string name="language_polish" translatable="false">Polski</string>
+    <string name="language_romanian" translatable="false">Română</string>
+    <string name="language_ukrainian" translatable="false">Українська</string>
+    <string name="language_urdu_roman" translatable="false">Roman Urdu</string>
+
     <string name="language_simplified_chinese" translatable="false">简体中文</string>
     <string name="language_traditional_chinese" translatable="false">繁體中文</string>
     <string name="language_japanese" translatable="false">日本語</string>
