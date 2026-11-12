@@ -176,7 +176,8 @@ private class ModPackViewModel: ViewModel() {
             context = context,
             version = version,
             iconUrl = iconUrl,
-            scope = viewModelScope,
+            //安装跑在 App 级作用域：退出下载页、切后台都继续，不要绑在页面 ViewModel 上
+            scope = com.movtery.zalithlauncher.coroutine.TaskSystem.appScope,
             waitForVersionName = ::waitForVersionName,
             waitForConfirmMobileData = ::waitForConfirmMobileData
         ).also {
@@ -211,7 +212,17 @@ private class ModPackViewModel: ViewModel() {
     }
 
     override fun onCleared() {
-        cancel()
+        //离开页面不再无条件取消安装：
+        //- 已经过了「输入版本名 / 确认移动网络」两个对话框，就让它在后台继续跑完；
+        //- 还停在对话框上时没有界面可回答，只能取消，避免协程永远挂起。
+        val waitingForInput =
+            versionNameOperation is VersionNameOperation.Waiting ||
+                confirmMobileDataOperation is ConfirmMobileDataOperation.Waiting
+        if (waitingForInput) {
+            cancel()
+        } else {
+            installer = null
+        }
     }
 }
 
