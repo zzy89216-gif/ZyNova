@@ -12,6 +12,10 @@
 
 > ⭐ **ZyNova 28.1.0 is out (global compliance build).**
 
+> 🧪 **28.1.2 beta (pre-release)**: game data moved to the public `/ZyNova` folder, a dedicated SakuraFrp page with a tutorial,
+> two multiplayer cards, DeepSeek official web search, selectable AI messages, background modpack installs and UI text for 12 languages.
+> Download: [v28.1.2-beta](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.2-beta) (test build; use stable 28.1.0 for daily play)
+
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)

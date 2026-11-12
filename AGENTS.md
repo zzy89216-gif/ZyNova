@@ -30,8 +30,8 @@
 | 版本名 | 当前 `28.1.2 测试版`（预发行；正式线仍是 `28.1.0`） |
 | versionCode | `281102` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.1.0`（正式）+ `v28.1.1-beta`（预发行）；28.1.2 待发 |
-| main | 已并入 28.1.1 测试版代码；`beta` / `beta-28.2` 分支已删除 |
+| Release | `v28.1.0`（正式）+ `v28.1.2-beta`（预发行，28.1.2 测试版） |
+| main | 28.1.2 测试版代码；只有 `main` 一个分支 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
 | 下一轮待办 | [`下一次的更新内容.md`](下一次的更新内容.md)（功能 + 多语言 + RTL 的完整清单） |
@@ -67,7 +67,7 @@
 
 ### 其他
 - **游戏数据在公共存储**：`/storage/emulated/0/ZyNova`（`PathManager.PUBLIC_GAME_DIR_NAME`），
-  无「所有文件访问」权限时回退私有目录；老用户升级弹窗询问是否迁移（`GameDirMigration`）
+  无「所有文件访问」权限时回退私有目录；老用户升级**强制迁移**（`GameDirMigration`，带进度、可续传、失败回退）
 - 默认主页 = **Cards**（主页卡片），数据 IO 线程加载 + 回前台刷新
 - `options.txt` 用真实键：`graphicsMode`(0/1/2)、`particles`(0/1/2)、`fov`(归一化)
 - 返回导航递归下探最深层（修「下载页点返回直接回主界面」）
