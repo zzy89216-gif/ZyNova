@@ -1407,10 +1407,7 @@
     <string name="download_assets_filter_category_with_source">%1$s (somente %2$s)</string>
     <string name="download_assets_search_failed">A busca falhou, tente novamente mais tarde</string>
     <string name="download_assets_missing_dependencies_title">Algumas dependências obrigatórias não foram instaladas</string>
-    <string name="download_assets_missing_dependencies">O recurso foi instalado, mas as seguintes dependências obrigatórias não puderam ser instaladas:
-%1$s
-
-Instale-as manualmente, caso contrário o jogo pode travar ao iniciar.</string>
+    <string name="download_assets_missing_dependencies">O recurso foi instalado, mas as seguintes dependências obrigatórias não puderam ser instaladas: %1$s Instale-as manualmente, caso contrário o jogo pode travar ao iniciar.</string>
     <string name="download_assets_quick_install_resolving">Resolvendo recurso e dependências…</string>
     <string name="download_assets_quick_install_progress">Instalação com um clique (%1$d/%2$d): %3$s</string>
     <string name="download_assets_quick_install_done">%1$s foi instalado</string>
@@ -1452,17 +1449,12 @@ Instale-as manualmente, caso contrário o jogo pode travar ao iniciar.</string>
     <string name="account_supporting_microsoft_tip_link_text">Atalhos que você pode precisar:</string>
     <string name="account_supporting_microsoft_tip_link_make_gameid">Criar perfil / editar nome do perfil</string>
     <string name="account_supporting_microsoft_tip_hint_t1">Siga os passos abaixo para adicionar sua conta:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. Clique no botão "Entrar" — o launcher tentará obter um código de verificação;
-</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. Digite o código exibido por %s na página que abrir e clique em "Permitir acesso";
-</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. Siga as instruções da página para concluir o login;
-</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. Quando aparecer "Permitir que este app acesse suas informações?", clique em "Aceitar";
-</string>
+    <string name="account_supporting_microsoft_tip_hint_t2">1. Clique no botão "Entrar" — o launcher tentará obter um código de verificação;</string>
+    <string name="account_supporting_microsoft_tip_hint_t3">2. Digite o código exibido por %s na página que abrir e clique em "Permitir acesso";</string>
+    <string name="account_supporting_microsoft_tip_hint_t4">3. Siga as instruções da página para concluir o login;</string>
+    <string name="account_supporting_microsoft_tip_hint_t5">4. Quando aparecer "Permitir que este app acesse suas informações?", clique em "Aceitar";</string>
     <string name="account_supporting_microsoft_tip_hint_t6">5. Quando a página mostrar "Tudo pronto!", a conta será adicionada automaticamente. Aguarde um instante.</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">Se a página mostrar "Erro" ou a conta não for adicionada, repita os passos acima.
-</string>
+    <string name="account_supporting_microsoft_tip_hint_t7">Se a página mostrar "Erro" ou a conta não for adicionada, repita os passos acima.</string>
     <string name="account_supporting_microsoft_tip_hint_t8">Dica: se a conexão estiver ruim, a página pode carregar devagar ou não abrir. Tente usar um proxy de rede e repetir.</string>
     <string name="versions_config_renderer_follow_global">Seguir configuração global</string>
     <string name="settings_game_graphics_api_auto_title">API gráfica (automática)</string>

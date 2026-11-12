@@ -1219,10 +1219,7 @@
     <string name="download_assets_filter_category_with_source">%1$s (только %2$s)</string>
     <string name="download_assets_search_failed">Поиск не удался, повторите позже</string>
     <string name="download_assets_missing_dependencies_title">Некоторые обязательные зависимости не установлены</string>
-    <string name="download_assets_missing_dependencies">Сам ресурс установлен, но следующие обязательные зависимости установить не удалось:
-%1$s
-
-Установите их вручную, иначе игра может упасть при запуске.</string>
+    <string name="download_assets_missing_dependencies">Сам ресурс установлен, но следующие обязательные зависимости установить не удалось: %1$s Установите их вручную, иначе игра может упасть при запуске.</string>
     <string name="download_assets_quick_install_resolving">Разрешение ресурса и зависимостей…</string>
     <string name="download_assets_quick_install_progress">Установка в один клик (%1$d/%2$d): %3$s</string>
     <string name="download_assets_quick_install_done">%1$s установлен</string>
