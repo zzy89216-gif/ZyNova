@@ -40,7 +40,7 @@ enum class AppLanguage(
     ARABIC("ar", R.string.language_arabic, selectable = false),
     BULGARIAN("bg", R.string.language_bulgarian, selectable = false),
     ENGLISH("en", R.string.language_english),
-    SPANISH("es", R.string.language_spanish, selectable = false),
+    SPANISH("es", R.string.language_spanish),
     PERSIAN("fa", R.string.language_persian, selectable = false),
     FILIPINO("fil", R.string.language_filipino, selectable = false),
     FRENCH("fr", R.string.language_french, selectable = false),
