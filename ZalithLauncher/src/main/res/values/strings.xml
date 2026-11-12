@@ -1891,6 +1891,30 @@
     <!-- SakuraFrp tunnel (frp) -->
     <string name="frp_title">SakuraFrp Tunnel</string>
     <string name="frp_entry_title">SakuraFrp tunnel</string>
+    <string name="frp_guide_tab_prepare">Before you start</string>
+    <string name="frp_guide_tab_host">Host a game</string>
+    <string name="frp_guide_tab_faq">Troubleshooting</string>
+    <string name="frp_guide_prepare_title">Get an access key</string>
+    <string name="frp_guide_prepare_1">Open natfrp.com and sign up; email verification is required.</string>
+    <string name="frp_guide_prepare_2">Finish real-name verification. Tunnels will not start without it.</string>
+    <string name="frp_guide_prepare_3">Copy the access key from User → Access Key. It is not your login password.</string>
+    <string name="frp_guide_prepare_4">Free accounts have a traffic quota, and servers you advertise publicly must use a multi-line node.</string>
+    <string name="frp_guide_prepare_note">The access key is stored encrypted on this device only and is never uploaded to ZyNova.</string>
+    <string name="frp_guide_host_title">Open a tunnel and join</string>
+    <string name="frp_guide_host_1">Paste the access key on the right and sign in.</string>
+    <string name="frp_guide_host_2">Pick a node: a multi-line node in the same region is the safe choice.</string>
+    <string name="frp_guide_host_3">Create a tunnel: type TCP, local port 25565 (the default).</string>
+    <string name="frp_guide_host_4">Start the tunnel and wait for “connected”. The public address appears at the top of this page.</string>
+    <string name="frp_guide_host_5">In Minecraft press Esc → Open to LAN, and keep the port the same as the tunnel.</string>
+    <string name="frp_guide_host_6">Send address:port to your friends; they join via Multiplayer → Direct Connect.</string>
+    <string name="frp_guide_host_note">Both sides need the same game version and the same mods.</string>
+    <string name="frp_guide_faq_title">Common problems</string>
+    <string name="frp_guide_faq_1">Friends cannot connect: check the tunnel is running, LAN is open, and the ports match.</string>
+    <string name="frp_guide_faq_2">Quota or verification errors come from the provider — handle them in the panel.</string>
+    <string name="frp_guide_faq_3">The tunnel drops in the background: allow background running and disable battery restrictions.</string>
+    <string name="frp_guide_faq_4">Only you can join: you are probably on a single-line node; switch to multi-line.</string>
+    <string name="frp_guide_faq_note">This page keeps the tunnel log; attach it when asking for help.</string>
+
     <string name="frp_entry_summary">Share your LAN world over the internet. Sign in with an access token and pick a tunnel.</string>
     <string name="frp_login_title">Access token</string>
     <string name="frp_login_desc">Paste the access token from the SakuraFrp dashboard (Profile → View access token). It is encrypted with Android Keystore and never leaves this device.</string>

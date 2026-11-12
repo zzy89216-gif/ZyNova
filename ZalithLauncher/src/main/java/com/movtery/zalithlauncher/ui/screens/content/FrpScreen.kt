@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -155,9 +156,17 @@ fun FrpScreen(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
+            //版式与「陶瓦联机」一致：左侧教程，右侧操作
+            Row(modifier = Modifier.fillMaxSize()) {
+            FrpTutorialMenu(
+                modifier = Modifier
+                    .weight(0.5f)
+                    .padding(start = 12.dp)
+            )
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(0.5f)
+                    .fillMaxHeight()
                     .verticalScrollWithBar(rememberScrollState())
                     .padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -366,6 +375,7 @@ fun FrpScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
                 }
+            }
             }
         }
     }

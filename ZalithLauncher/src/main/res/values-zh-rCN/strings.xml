@@ -1862,6 +1862,30 @@
     <!-- 樱花内网穿透（frp） -->
     <string name="frp_title">樱花内网穿透</string>
     <string name="frp_entry_title">樱花内网穿透</string>
+    <string name="frp_guide_tab_prepare">开始之前</string>
+    <string name="frp_guide_tab_host">开服联机</string>
+    <string name="frp_guide_tab_faq">出问题怎么办</string>
+    <string name="frp_guide_prepare_title">先拿到访问密钥</string>
+    <string name="frp_guide_prepare_1">打开 natfrp.com 注册账号，完成邮箱验证。</string>
+    <string name="frp_guide_prepare_2">完成实名认证；没有实名，隧道无法启动。</string>
+    <string name="frp_guide_prepare_3">在「用户信息 → 访问密钥」里复制访问密钥，那不是登录密码。</string>
+    <string name="frp_guide_prepare_4">免费账号有流量额度；对外公开宣传的服务器必须用「多线」节点。</string>
+    <string name="frp_guide_prepare_note">访问密钥只在本机加密保存，不会上传到 ZyNova。</string>
+    <string name="frp_guide_host_title">开隧道、进游戏</string>
+    <string name="frp_guide_host_1">在右侧粘贴访问密钥并登录。</string>
+    <string name="frp_guide_host_2">选节点：同地区的「多线」节点最稳。</string>
+    <string name="frp_guide_host_3">创建隧道：类型选 TCP，本机端口填 25565（默认）。</string>
+    <string name="frp_guide_host_4">启动隧道，等状态变成「已连接」，页面顶部会出现公网地址。</string>
+    <string name="frp_guide_host_5">游戏里按 Esc → 对局域网开放，端口保持与隧道一致。</string>
+    <string name="frp_guide_host_6">把 地址:端口 发给朋友，对方在「多人游戏 → 直接连接」里填写。</string>
+    <string name="frp_guide_host_note">双方需要相同的游戏版本和相同的模组。</string>
+    <string name="frp_guide_faq_title">常见问题</string>
+    <string name="frp_guide_faq_1">朋友连不上：确认隧道在运行、游戏已开局域网、端口一致。</string>
+    <string name="frp_guide_faq_2">额度不足或要求实名，是服务商侧的，去面板处理。</string>
+    <string name="frp_guide_faq_3">切后台就掉线：允许后台运行，关闭省电限制。</string>
+    <string name="frp_guide_faq_4">只有自己能进：多半用了单线节点，换多线。</string>
+    <string name="frp_guide_faq_note">本页会保留隧道日志，求助时一并附上。</string>
+
     <string name="frp_entry_summary">把本机的局域网世界映射到公网。填入访问密钥、选一条隧道即可开联机。</string>
     <string name="frp_login_title">访问密钥</string>
     <string name="frp_login_desc">在樱花面板「用户信息 → 查看访问密钥」复制后粘贴到这里。密钥会用 Android Keystore 加密保存，只留在本机。</string>

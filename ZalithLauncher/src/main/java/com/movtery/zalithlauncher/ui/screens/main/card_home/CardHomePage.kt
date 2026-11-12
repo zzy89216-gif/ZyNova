@@ -61,7 +61,6 @@ import com.movtery.zalithlauncher.game.home.HomeLayoutStore
 import com.movtery.zalithlauncher.game.home.HomeServer
 import com.movtery.zalithlauncher.game.home.HomeWorld
 import com.movtery.zalithlauncher.game.version.installed.Version
-import com.movtery.zalithlauncher.game.version.saves.WorldCreator
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.ui.components.HomeMaterialButton
@@ -282,10 +281,6 @@ private fun InstanceModule(
     onWorldCreated: () -> Unit,
     onServerCreated: () -> Unit,
 ) {
-    var createWorldOpen by remember { mutableStateOf(false) }
-    var addServerOpen by remember { mutableStateOf(false) }
-    //低于 1.12.2 的实例不提供创建世界（没有可靠的 level.dat 模板）
-    val canCreateWorld = remember(instance.instance) { WorldCreator.supports(instance.instance) }
     //该实例内部的世界 / 服务器各自的拖动排序
     val worldReorder = rememberReorderState { dragged, target ->
         val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
@@ -363,26 +358,6 @@ private fun InstanceModule(
                     horizontalArrangement = Arrangement.spacedBy(4.dp * scale),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (canCreateWorld) {
-                        HomeMaterialButton(
-                            onClick = { createWorldOpen = true },
-                            text = stringResource(R.string.home_quick_create_world),
-                            material = material,
-                            shape = MaterialTheme.shapes.small,
-                            minHeight = 28.dp,
-                            textStyle = MaterialTheme.typography.labelSmall,
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
-                        )
-                    }
-                    HomeMaterialButton(
-                        onClick = { addServerOpen = true },
-                        text = stringResource(R.string.home_quick_add_server),
-                        material = material,
-                        shape = MaterialTheme.shapes.small,
-                        minHeight = 28.dp,
-                        textStyle = MaterialTheme.typography.labelSmall,
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
-                    )
                     HomeMaterialButton(
                         onClick = onLaunch,
                         text = stringResource(R.string.home_instance_launch),
@@ -442,30 +417,6 @@ private fun InstanceModule(
                 }
             }
         }
-    }
-
-    if (createWorldOpen) {
-        CreateWorldDialog(
-            instance = instance.instance,
-            onDismiss = { createWorldOpen = false },
-            onCreated = { folderName ->
-                createWorldOpen = false
-                onWorldCreated()
-                onPlayWorld(instance.instance, folderName)
-            }
-        )
-    }
-
-    if (addServerOpen) {
-        AddServerDialog(
-            instance = instance.instance,
-            onDismiss = { addServerOpen = false },
-            onAdded = { address ->
-                addServerOpen = false
-                onServerCreated()
-                onJoinServer(instance.instance, address)
-            }
-        )
     }
 }
 
