@@ -26,6 +26,17 @@ import java.io.File
 
 class PathManager {
     companion object {
+        /**
+         * 公共存储下的游戏目录名。
+         *
+         * 维护者要求：游戏文件放到**文件管理器一打开就能看到**的地方，目录名用启动器的名字。
+         * 所以是 `/storage/emulated/0/ZyNova`，不是 `Android/data/...`。
+         *
+         * ⚠️ 名字是**固定的**，不要跟着 `launcher_name` 变——用户改个显示名就把数据目录改了，
+         * 等于把已有实例弄丢。
+         */
+        const val PUBLIC_GAME_DIR_NAME = "ZyNova"
+
         lateinit var DIR_FILES_PRIVATE: File
         lateinit var DIR_FILES_EXTERNAL: File
         lateinit var DIR_CACHE: File
@@ -71,7 +82,8 @@ class PathManager {
             DIR_RUNTIME_MOD = context.getDir("runtime_mod", 0)
 
             DIR_DATA_BASES = File(DIR_FILES_PRIVATE.parentFile, "databases")
-            DIR_GAME = File(DIR_FILES_PRIVATE, "games")
+            //游戏数据优先放公共存储（文件管理器可见）；权限不足或迁移未完成时回退到私有目录
+            DIR_GAME = resolveGameDir()
             DIR_ACCOUNT_SKIN = File(DIR_GAME, "account_skins")
             DIR_ACCOUNT_CAPE = File(DIR_GAME, "account_capes")
             DIR_MULTIRT = File(DIR_GAME, "runtimes")
@@ -124,6 +136,50 @@ class PathManager {
             DIR_CONTROL_LAYOUTS.mkdirs()
             DIR_TERRACOTTA.mkdirs()
             DIR_STYLES.mkdirs()
+        }
+
+        /** 公共存储下的游戏根目录 */
+        fun publicGameDir(): File =
+            File(Environment.getExternalStorageDirectory(), PUBLIC_GAME_DIR_NAME)
+
+        /** 私有目录下的旧游戏根目录（28.2.0 之前的位置） */
+        fun legacyGameDir(): File = File(DIR_FILES_PRIVATE, "games")
+
+        fun hasContent(dir: File): Boolean =
+            dir.isDirectory && (dir.list()?.isNotEmpty() == true)
+
+        /**
+         * 是否有权写公共存储。
+         *
+         * Android 11 起必须拿到「所有文件访问」；更早的版本只要有存储权限即可。
+         * 拿不到就回退私有目录，**绝不因为权限问题让启动器起不来**。
+         */
+        private fun canWritePublicStorage(): Boolean {
+            val allowed = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                runCatching { Environment.isExternalStorageManager() }.getOrDefault(false)
+            } else true
+            if (!allowed) return false
+            return runCatching { publicGameDir().let { it.exists() || it.mkdirs() } }.getOrDefault(false)
+        }
+
+        /**
+         * 决定这次用哪个游戏根目录。
+         *
+         * 优先级：
+         * 1. 公共目录已经有内容 → 直接用；
+         * 2. 只有旧的私有目录有内容 → **先继续用旧目录**，同时在后台把数据搬到公共目录，
+         *    搬完并校验成功后才删除旧目录（下次启动自动用新目录）。
+         *    这样迁移中途退出、失败都不会丢实例；
+         * 3. 全新安装 → 直接用公共目录（没权限就回退私有）。
+         */
+        private fun resolveGameDir(): File {
+            val public = publicGameDir()
+            val legacy = legacyGameDir()
+            if (hasContent(public)) return public
+            //旧目录有数据：先继续用着，由 [GameDirMigration] 弹窗问用户要不要搬，
+            //**不在启动时偷偷搬**（几 GB 数据放主线程/无提示地搬，体验和风险都不对）
+            if (hasContent(legacy)) return legacy
+            return if (canWritePublicStorage()) public else legacy
         }
 
         /**

@@ -669,6 +669,9 @@ object AllSettings : SettingsRegistry() {
     /** 同意时的「系统语言|时区」签名（变化后要求重新同意）*/
     val onboardingLocaleSignature = stringSetting("onboardingLocaleSignature", "")
 
+    /** 是否已经问过「把游戏数据迁移到公共目录」（只问一次，避免每次启动都弹） */
+    val gameDirMigrationAsked = boolSetting("gameDirMigrationAsked", false)
+
 
     val homePageType = enumSetting("homePageType", HomePageType.Cards)
 

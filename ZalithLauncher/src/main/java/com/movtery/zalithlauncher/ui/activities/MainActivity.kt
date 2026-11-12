@@ -30,6 +30,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -254,13 +260,22 @@ class MainActivity : BaseAppCompatActivity() {
                         showDownloadPlugins(event.link)
                     }
                     is EventViewModel.Event.Launch.Game -> {
-                        if (allowLaunchUnderAgeRule()) launchGameViewModel.tryLaunch(event.version)
+                        if (allowLaunchUnderAgeRule()) {
+                            com.movtery.zalithlauncher.path.GameDirMigration.ensureStorageAccess(this@MainActivity)
+                            launchGameViewModel.tryLaunch(event.version)
+                        }
                     }
                     is EventViewModel.Event.Launch.PlayServer -> {
-                        if (allowLaunchUnderAgeRule()) launchGameViewModel.quickPlayServer(event.version, event.address)
+                        if (allowLaunchUnderAgeRule()) {
+                            com.movtery.zalithlauncher.path.GameDirMigration.ensureStorageAccess(this@MainActivity)
+                            launchGameViewModel.quickPlayServer(event.version, event.address)
+                        }
                     }
                     is EventViewModel.Event.Launch.PlaySave -> {
-                        if (allowLaunchUnderAgeRule()) launchGameViewModel.quickPlaySave(event.version, event.saveName)
+                        if (allowLaunchUnderAgeRule()) {
+                            com.movtery.zalithlauncher.path.GameDirMigration.ensureStorageAccess(this@MainActivity)
+                            launchGameViewModel.quickPlaySave(event.version, event.saveName)
+                        }
                     }
                     is EventViewModel.Event.LogShare.ShareGameLog -> {
                         val file = event.logFile
@@ -344,6 +359,43 @@ class MainActivity : BaseAppCompatActivity() {
                         onDone = { onboardingDone.value = true }
                     )
                     return@ZalithLauncherTheme
+                }
+
+                //老用户升级：私有目录里还有游戏数据时，问一次要不要迁到公共目录（/ZyNova）
+                var migrationPrompt by remember {
+                    mutableStateOf(com.movtery.zalithlauncher.path.GameDirMigration.needsPrompt())
+                }
+                if (migrationPrompt) {
+                    AlertDialog(
+                        onDismissRequest = { },
+                        title = { Text(stringResource(R.string.game_dir_migration_title)) },
+                        text = { Text(stringResource(R.string.game_dir_migration_message)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                migrationPrompt = false
+                                com.movtery.zalithlauncher.path.GameDirMigration.migrate { ok ->
+                                    runOnUiThread {
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            if (ok) R.string.game_dir_migration_done else R.string.game_dir_migration_failed,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    R.string.game_dir_migration_running,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }) { Text(stringResource(R.string.game_dir_migration_move)) }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                migrationPrompt = false
+                                com.movtery.zalithlauncher.path.GameDirMigration.markAsked()
+                            }) { Text(stringResource(R.string.game_dir_migration_later)) }
+                        }
+                    )
                 }
                 ObserveFullScreenSetting(AllSettings.launcherFullScreen.state)
                 Box {

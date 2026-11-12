@@ -2041,4 +2041,14 @@
     <string name="onboarding_age_adult">18 or older</string>
     <string name="onboarding_age_note">Answer truthfully. Age affects the play time available to you where the law requires it.</string>
     <string name="onboarding_age_hint_global">If the law in your region requires guardian consent for minors, please use this software only with that consent.</string>
+    <string name="game_dir_migration_title">Move game data?</string>
+    <string name="game_dir_migration_message">Old game files were found in the app's private folder, where the file manager cannot see them. Move them to /ZyNova in public storage?
+
+Accounts and settings are not affected, and choosing Later deletes nothing.</string>
+    <string name="game_dir_migration_move">Move now</string>
+    <string name="game_dir_migration_later">Later</string>
+    <string name="game_dir_migration_running">Migrating in the background. Keep using the launcher; the new location takes effect the next time you open it.</string>
+    <string name="game_dir_migration_done">Game data moved to /ZyNova.</string>
+    <string name="game_dir_migration_failed">Migration failed; the old data was kept.</string>
+    <string name="game_dir_need_all_files">To make game files visible in the file manager, allow "All files access" for ZyNova.</string>
 </resources>
