@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.context.copyLocalFile
 import com.movtery.zalithlauncher.contract.MediaPickerContract
 import com.movtery.zalithlauncher.coroutine.Task
@@ -407,6 +408,19 @@ private fun VersionQuickActions(
                 ) {
                     Text(
                         text = stringResource(R.string.versions_overview_version_folder)
+                    )
+                }
+                //隐藏 / 显示主页卡片（成对切换）
+                val cardsHidden by AllSettings.homeCardsHidden.state
+                OutlinedButton(
+                    modifier = Modifier.padding(end = 12.dp),
+                    onClick = { AllSettings.homeCardsHidden.save(!cardsHidden) }
+                ) {
+                    Text(
+                        text = stringResource(
+                            if (cardsHidden) R.string.versions_overview_show_cards
+                            else R.string.versions_overview_hide_cards
+                        )
                     )
                 }
                 OutlinedButton(

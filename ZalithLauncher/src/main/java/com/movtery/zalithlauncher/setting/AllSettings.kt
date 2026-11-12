@@ -672,6 +672,9 @@ object AllSettings : SettingsRegistry() {
     /** 是否已经问过「把游戏数据迁移到公共目录」（只问一次，避免每次启动都弹） */
     val gameDirMigrationAsked = boolSetting("gameDirMigrationAsked", false)
 
+    /** 是否隐藏主页的实例卡片（版本概览的快捷操作里可切换） */
+    val homeCardsHidden = boolSetting("homeCardsHidden", false)
+
 
     val homePageType = enumSetting("homePageType", HomePageType.Cards)
 

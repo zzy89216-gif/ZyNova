@@ -2028,4 +2028,6 @@
     <string name="storage_gate_blocked_message">使用本软件必须允许「所有文件访问」。没有这个权限，启动器无法读写游戏文件，也就无法使用。</string>
     <string name="storage_gate_grant">去授权</string>
     <string name="storage_gate_exit">退出</string>
+    <string name="versions_overview_hide_cards">隐藏主页卡片</string>
+    <string name="versions_overview_show_cards">显示主页卡片</string>
 </resources>

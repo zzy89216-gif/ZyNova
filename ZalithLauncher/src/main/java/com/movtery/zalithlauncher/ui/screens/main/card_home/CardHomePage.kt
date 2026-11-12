@@ -190,6 +190,12 @@ fun cardHomePage(
         return
     }
 
+    //隐藏主页卡片：有实例时直接什么都不显示（不占位、不灰显）；
+    //一个实例都没有时仍然走下面的空状态，给「下载一个实例」的入口。
+    if (AllSettings.homeCardsHidden.state && instances.isNotEmpty()) {
+        return
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
