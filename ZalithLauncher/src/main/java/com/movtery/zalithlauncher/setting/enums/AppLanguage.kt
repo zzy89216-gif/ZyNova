@@ -57,7 +57,7 @@ enum class AppLanguage(
     ROMANIAN("ro", R.string.language_romanian, selectable = false),
     RUSSIAN("ru", R.string.language_russian),
     THAI("th", R.string.language_thai, selectable = false),
-    TURKISH("tr", R.string.language_turkish, selectable = false),
+    TURKISH("tr", R.string.language_turkish),
     UYGHUR("ug", R.string.language_uyghur, selectable = false),
     UKRAINIAN("uk", R.string.language_ukrainian, selectable = false),
     URDU_ROMAN("ur", R.string.language_urdu_roman, selectable = false),
