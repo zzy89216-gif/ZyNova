@@ -2030,4 +2030,7 @@
     <string name="storage_gate_exit">退出</string>
     <string name="versions_overview_hide_cards">隐藏主页卡片</string>
     <string name="versions_overview_show_cards">显示主页卡片</string>
+    <string name="multiplayer_mode_terracotta_title">陶瓦联机</string>
+    <string name="multiplayer_mode_terracotta_summary">双方都装本启动器，进同一个房间即可，不用开端口。</string>
+    <string name="multiplayer_mode_current">当前方式</string>
 </resources>

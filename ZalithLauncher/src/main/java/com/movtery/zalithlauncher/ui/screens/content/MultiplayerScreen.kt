@@ -220,24 +220,53 @@ private fun MainMenu(
 //            )
 //        }
 
-        //樱花内网穿透入口（与陶瓦并列的第二种联机方式）
-        BackgroundCard(
+        //两种联机方式并列成两张卡片：陶瓦（当前页）/ 樱花内网穿透（单独页面）
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onOpenFrp
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(all = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            BackgroundCard(
+                modifier = Modifier.weight(1f),
+                onClick = { }
             ) {
-                Text(
-                    text = stringResource(R.string.frp_entry_title),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Text(
-                    text = stringResource(R.string.frp_entry_summary),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Column(
+                    modifier = Modifier.padding(all = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.multiplayer_mode_terracotta_title),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = stringResource(R.string.multiplayer_mode_terracotta_summary),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.multiplayer_mode_current),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            BackgroundCard(
+                modifier = Modifier.weight(1f),
+                onClick = onOpenFrp
+            ) {
+                Column(
+                    modifier = Modifier.padding(all = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.frp_entry_title),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = stringResource(R.string.frp_entry_summary),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
 

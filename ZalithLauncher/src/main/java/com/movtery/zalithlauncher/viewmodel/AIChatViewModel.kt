@@ -378,6 +378,14 @@ class AIChatViewModel @Inject constructor() : ViewModel() {
      * **不会每个 token 都写文件**。
      * 快照在锁内重新读取，所以即使多次保存排队，最后写入的也一定是最新状态。
      */
+    /**
+     * 立刻落盘一次（切后台 / 退出界面时调用）。
+     *
+     * 议题 #54「重启后变成新对话」：如果用户发完消息就直接杀掉应用，
+     * 之前只在「一轮结束、工具跑完」这些安全点保存，最后几条可能没写盘。
+     */
+    fun persistNow() = persistAsync()
+
     private fun persistAsync() {
         //⚠️ 关键：快照必须在**调用时**就捕获。
         //   如果等协程真正跑起来再去读 currentConversation，

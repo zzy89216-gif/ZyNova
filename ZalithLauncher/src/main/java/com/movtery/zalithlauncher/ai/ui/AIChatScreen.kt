@@ -163,6 +163,18 @@ fun AIChatScreen(
     var showClearConfirm by remember { mutableStateOf(false) }
     var deletingId by remember { mutableStateOf<String?>(null) }
 
+    //切后台/离开对话页时主动落盘一次，避免「聊完直接杀进程」丢掉最后几条（议题 #54）
+    val chatLifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(chatLifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_STOP) {
+                viewModel.persistNow()
+            }
+        }
+        chatLifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { chatLifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
@@ -616,11 +628,16 @@ private fun ConversationRow(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
             .background(background)
-            .clickable(onClick = onClick)
+            //⚠️ 整行不再挂 clickable：以前它会把垃圾桶的第一次点击吃掉，
+            //用户体验成「删除要点两下」。现在只有文字区域可点开对话。
             .padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onClick)
+        ) {
             Text(
                 text = meta.title,
                 style = MaterialTheme.typography.bodyMedium,
