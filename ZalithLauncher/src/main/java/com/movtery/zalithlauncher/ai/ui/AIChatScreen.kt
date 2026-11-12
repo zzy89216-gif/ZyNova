@@ -47,6 +47,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -673,18 +674,24 @@ private fun MessageBubble(message: AIMessage) {
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(horizontal = 14.dp, vertical = 10.dp)
                 ) {
-                    Text(
-                        //密钥类内容「阅后即焚」：AI 已经收到了，界面只留打码后的版本
-                        text = maskSecrets(message.text),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    //可长按选字复制：以前整段是纯 Text，选不了也复制不了
+                    SelectionContainer {
+                        Text(
+                            //密钥类内容「阅后即焚」：AI 已经收到了，界面只留打码后的版本
+                            text = maskSecrets(message.text),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }
 
         AIRole.ASSISTANT -> Column(modifier = Modifier.fillMaxWidth()) {
             if (message.text.isNotBlank()) {
-                ZyMarkdown(content = message.text)
+                //AI 输出同样要能长按选字复制
+                SelectionContainer {
+                    ZyMarkdown(content = message.text)
+                }
             }
             message.error?.let {
                 Text(
