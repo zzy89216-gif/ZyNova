@@ -1292,10 +1292,10 @@ Bunları elle kurun, aksi hâlde oyun açılırken çökebilir.</string>
     <string name="ai_web_search_desc">Hataları ara, mod bilgisi bul, sayfaları oku</string>
     <string name="ai_web_search_note">Yalnızca herkese açık http/https — iç adresler engellenir, yanıtlar kısaltılır</string>
     <string name="ai_public_access_title">Ortak depolamaya erişim</string>
-    <string name="ai_public_access_desc">Yapay zekânın klasör oluşturması, dosya düzenlemesi ve Download'dan içe aktarması için gerekli</string>
+    <string name="ai_public_access_desc">Yapay zekânın klasör oluşturması, dosya düzenlemesi ve Download\'dan içe aktarması için gerekli</string>
     <string name="ai_public_access_granted">İzin verildi — yapay zekâ Download vb. okuyup yazabilir (silmeler geri dönüşüm kutusuna gider)</string>
     <string name="ai_public_access_grant">İzin ver</string>
-    <string name="ai_web_ddg_note">Yalnızca DuckDuckGo kullanılır (anahtar gerekmez); ayrıştırma başarısız olursa yapay zekâ fetch_webpage'e geçer.</string>
+    <string name="ai_web_ddg_note">Yalnızca DuckDuckGo kullanılır (anahtar gerekmez); ayrıştırma başarısız olursa yapay zekâ fetch_webpage\'e geçer.</string>
     <string name="onboarding_minor_blocked">Şu anda oyun başlatılamıyor: %1$s</string>
     <string name="onboarding_accept_all">Yukarıdakilerin tamamını okudum ve kabul ediyorum</string>
     <string name="onboarding_age_title">Yaş grubunuzu seçin</string>
