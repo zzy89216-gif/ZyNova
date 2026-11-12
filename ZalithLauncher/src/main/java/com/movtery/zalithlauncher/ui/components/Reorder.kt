@@ -108,11 +108,16 @@ class ReorderState {
         if (delta == 0f) return
 
         if (dragging == key) {
-            dragOffset += Offset(0f, -delta)
-        } else {
-            shifts[key] = (shifts[key] ?: 0f) + delta
-            layoutVersion++
+            //拖动过程中被拖项的 root 坐标也会变：小范围是「让位/重排」造成的，需要补偿，
+            //否则卡片会从手指下面滑走；大范围通常是页面在滚动，**不能再补偿**，
+            //否则会和手势 delta 叠加成双倍，表现就是「往下滑着拖，卡片被甩出去、暂时消失」。
+            if (kotlin.math.abs(delta) < 64f) {
+                dragOffset += Offset(0f, -delta)
+            }
+            return
         }
+        shifts[key] = (shifts[key] ?: 0f) + delta
+        layoutVersion++
     }
 
     fun start(key: Any) {
@@ -124,6 +129,12 @@ class ReorderState {
     fun drag(delta: Offset) {
         val key = draggingKey ?: return
         dragOffset += delta
+        //兜底：任何异常累积都不允许把卡片甩到屏幕外
+        val maxOffset = 4000f
+        dragOffset = Offset(
+            dragOffset.x.coerceIn(-maxOffset, maxOffset),
+            dragOffset.y.coerceIn(-maxOffset, maxOffset)
+        )
 
         val self = bounds[key] ?: return
         val pointer = self.center + dragOffset
