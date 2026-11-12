@@ -40,7 +40,21 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import java.util.concurrent.TimeUnit
 
-val URL_USER_AGENT: String = "${BuildKeys.LAUNCHER_SHORT_NAME}/Android_${BuildConfig.VERSION_NAME}"
+/**
+ * 版本名可能带中文后缀（如 `28.1.1 测试版`），而 HTTP 头只允许 ASCII。
+ *
+ * 直接把它拼进 User-Agent 会让 OkHttp 抛
+ * `Unexpected char 0xe6 ... in User-Agent value`，登录、下载、搜索全部失败。
+ * 所以这里只保留可打印 ASCII：中文去掉，空格换成下划线；
+ * 万一清空了就退回 `unknown`，绝不产生非法头。
+ */
+private val SAFE_VERSION_NAME: String = BuildConfig.VERSION_NAME
+    .replace(Regex("[^\\x20-\\x7E]"), "")
+    .trim()
+    .replace(' ', '_')
+    .ifBlank { "unknown" }
+
+val URL_USER_AGENT: String = "${BuildKeys.LAUNCHER_SHORT_NAME}/Android_$SAFE_VERSION_NAME"
 val TIME_OUT = TimeUnit.SECONDS.toMillis(30L)
 
 /** 海量小文件多路复用客户端的读超时：比大文件更短，尽快触发换源 */
