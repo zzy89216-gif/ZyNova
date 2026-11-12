@@ -45,7 +45,7 @@ enum class AppLanguage(
     FILIPINO("fil", R.string.language_filipino, selectable = false),
     FRENCH("fr", R.string.language_french, selectable = false),
     GREEK("el", R.string.language_greek, selectable = false),
-    INDONESIAN("id", R.string.language_indonesian, selectable = false),
+    INDONESIAN("id", R.string.language_indonesian),
     ITALIAN("it", R.string.language_italian, selectable = false),
     JAPANESE("ja", R.string.language_japanese),
     KOREAN("ko", R.string.language_korean, selectable = false),
@@ -61,7 +61,7 @@ enum class AppLanguage(
     UYGHUR("ug", R.string.language_uyghur, selectable = false),
     UKRAINIAN("uk", R.string.language_ukrainian, selectable = false),
     URDU_ROMAN("ur", R.string.language_urdu_roman, selectable = false),
-    VIETNAMESE("vi", R.string.language_vietnamese, selectable = false),
+    VIETNAMESE("vi", R.string.language_vietnamese),
     SIMPLIFIED_CHINESE("zh-CN", R.string.language_simplified_chinese),
     TRADITIONAL_CHINESE("zh-TW", R.string.language_traditional_chinese),
 }
