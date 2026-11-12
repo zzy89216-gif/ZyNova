@@ -46,9 +46,11 @@ object GameDirMigration {
     fun needsMigration(): Boolean {
         val legacy = PathManager.legacyGameDir()
         val public = PathManager.publicGameDir()
-        return PathManager.hasContent(legacy) &&
-            !PathManager.hasContent(public) &&
-            PathManager.DIR_GAME.absolutePath == public.absolutePath
+        //当前用的是公共目录（有权限），且旧目录**还在**（迁移成功会把它删掉）→ 需要搬。
+        //⚠️ 不再要求「公共目录为空」：上次中途被杀会留下半成品，这时也要继续搬完，
+        //否则用户会看到只有一半的实例列表。
+        return PathManager.DIR_GAME.absolutePath == public.absolutePath &&
+            PathManager.hasContent(legacy)
     }
 
     /**
@@ -61,6 +63,8 @@ object GameDirMigration {
      * @param onDone true 表示迁移成功（已切到公共目录），false 表示已回退私有目录
      */
     fun runMigration(onDone: (Boolean) -> Unit) {
+        _progress.value = 0f
+        _currentFile.value = ""
         val from = PathManager.legacyGameDir()
         val to = PathManager.publicGameDir()
         Thread({
@@ -93,7 +97,11 @@ object GameDirMigration {
             }.getOrDefault(false)
 
             if (!ok) {
-                //迁移失败：回退到私有目录，保证还能用
+                //迁移失败：清掉这次复制出来的半成品（否则下次启动会以为公共目录已有数据），
+                //再回退私有目录，保证还能用
+                runCatching {
+                    to.listFiles()?.forEach { FileUtils.deleteQuietly(it) }
+                }
                 PathManager.useLegacyGameDir()
             }
             android.os.Handler(android.os.Looper.getMainLooper()).post { onDone(ok) }

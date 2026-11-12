@@ -207,11 +207,11 @@ class PathManager {
         private fun resolveGameDir(): File {
             val public = publicGameDir()
             val legacy = legacyGameDir()
-            if (hasContent(public)) return public
-            //旧目录有数据：先继续用着，由 [GameDirMigration] 弹窗问用户要不要搬，
-            //**不在启动时偷偷搬**（几 GB 数据放主线程/无提示地搬，体验和风险都不对）
-            if (hasContent(legacy)) return legacy
-            return if (canWritePublicStorage()) public else legacy
+            //有权限就**始终**用公共目录：旧数据由 GameDirMigration 在进主界面前搬过去。
+            //⚠️ 这里以前写成「私有目录有数据就继续用私有」，结果 needsMigration 永远为 false，
+            //迁移界面根本不出现，老用户永远搬不过去。
+            if (canWritePublicStorage()) return public
+            return legacy
         }
 
         /**
