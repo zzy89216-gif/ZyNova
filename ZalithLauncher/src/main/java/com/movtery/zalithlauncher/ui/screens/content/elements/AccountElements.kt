@@ -456,8 +456,9 @@ fun AccountItem(
  * （项目原则：Context First, Less Steps —— 但对认证方式而言，
  * 「不替用户决定他能用哪一种账号」比「少点一步」更重要）。
  *
- * 27.3.0 曾把离线 / 第三方入口默认隐藏；**27.4.0 起两个入口重新默认开启**，
- * 因为把入口藏起来会让只想离线玩、或使用自建认证服务器的用户无处可去。
+ * 27.3.0 曾把离线 / 第三方入口默认隐藏；27.4.0 起重新默认开启；
+ * **28.2.0 起改为按界面语言判断**：中文界面展示，其他语言隐藏
+ * （维护者要求；只收入口、不删账号，切回中文即恢复）。
  *
  * ⚠️ 这是**可逆的 UI 层开关**，不是删除。以下内容**全部保持原样**：
  * - 底层认证实现（`game/account/offline`、`game/account/auth_server`、`game/account/yggdrasil`）
@@ -466,11 +467,30 @@ fun AccountItem(
  * - 会话续期、皮肤 / 披风与游戏启动链路
  */
 object AuthEntryPolicy {
-    /** 是否展示「离线登录」入口 */
-    val SHOW_LOCAL_ENTRY = true
+    /**
+     * 当前界面语言是不是中文。
+     *
+     * 读取的是**应用内语言**（设置里切过的那个），没有设置时回退系统语言。
+     * 注意：这里只判断语言，不判断地区——繁体中文同样算"中文界面"。
+     */
+    private fun isChineseUi(): Boolean {
+        val appLocales = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales()
+        val locale = if (!appLocales.isEmpty) appLocales[0] ?: java.util.Locale.getDefault()
+        else java.util.Locale.getDefault()
+        return locale.language.equals("zh", ignoreCase = true)
+    }
 
-    /** 是否展示「第三方认证」入口（添加认证服务器 + 已添加的服务器列表） */
-    val SHOW_THIRD_PARTY_ENTRY = true
+    /**
+     * 是否展示「离线登录」入口：**只有中文界面才展示**。
+     *
+     * 维护者要求：非中文用户看到的是"直接登录微软账号"，
+     * 离线 / 第三方入口不出现；从中文切到其他语言只是把入口收起来，
+     * **已有账号不删除**，切回中文会照常出现。
+     */
+    val SHOW_LOCAL_ENTRY: Boolean get() = isChineseUi()
+
+    /** 是否展示「第三方认证」入口（添加认证服务器 + 已添加的服务器列表）：同样只在中文界面展示 */
+    val SHOW_THIRD_PARTY_ENTRY: Boolean get() = isChineseUi()
 
     /**
      * 是否仍把「登录菜单」作为「添加账号」的入口。
@@ -481,7 +501,7 @@ object AuthEntryPolicy {
      * 此时「添加账号」直接进入 Microsoft 登录说明弹窗，少一层没有意义的菜单
      * （项目原则：Context First, Less Steps）。
      */
-    val USE_LOGIN_MENU = SHOW_LOCAL_ENTRY || SHOW_THIRD_PARTY_ENTRY
+    val USE_LOGIN_MENU: Boolean get() = SHOW_LOCAL_ENTRY || SHOW_THIRD_PARTY_ENTRY
 }
 
 @Composable
