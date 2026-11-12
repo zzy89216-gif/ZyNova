@@ -2013,9 +2013,7 @@
     <string name="onboarding_age_note">请如实填写。在法律有要求的地区，年龄会影响你可游玩的时间。</string>
     <string name="onboarding_age_hint_global">你所在地区的法律若要求监护人同意，请在取得同意后使用本软件。</string>
     <string name="game_dir_migration_title">迁移游戏数据？</string>
-    <string name="game_dir_migration_message">在应用的私有目录里发现了旧的游戏文件，那里文件管理器看不到。要迁移到公共存储的 /ZyNova 目录吗？
-
-账号和设置不受影响；选「暂不迁移」不会删除任何东西。</string>
+    <string name="game_dir_migration_message">在应用的私有目录里发现了旧的游戏文件，那里文件管理器看不到。要迁移到公共存储的 /ZyNova 目录吗？\n\n账号和设置不受影响；选「暂不迁移」不会删除任何东西。</string>
     <string name="game_dir_migration_move">开始迁移</string>
     <string name="game_dir_migration_later">暂不迁移</string>
     <string name="game_dir_migration_running">正在后台迁移，可以继续使用启动器；迁移完成后下次打开即用新目录。</string>
