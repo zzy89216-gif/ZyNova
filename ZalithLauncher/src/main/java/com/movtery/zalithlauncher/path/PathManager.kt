@@ -86,8 +86,11 @@ class PathManager {
             DIR_GAME = resolveGameDir()
             DIR_ACCOUNT_SKIN = File(DIR_GAME, "account_skins")
             DIR_ACCOUNT_CAPE = File(DIR_GAME, "account_capes")
-            DIR_MULTIRT = File(DIR_GAME, "runtimes")
-            DIR_JNA = File(DIR_GAME, "jna_dir")
+            //⚠️ Java 运行时与 JNA 必须留在**应用私有目录**：
+            //公共存储（/storage/emulated/0）是 noexec 挂载，放那里的 .so 无法加载，
+            //游戏会直接起不来。数据可以放公共目录，可执行文件不行。
+            DIR_MULTIRT = File(DIR_FILES_PRIVATE, "runtimes")
+            DIR_JNA = File(DIR_FILES_PRIVATE, "jna_dir")
             DIR_COMPONENTS = File(DIR_FILES_PRIVATE, "components")
             DIR_MOUSE_POINTER = File(DIR_FILES_PRIVATE, "mouse_pointer")
             DIR_BACKGROUND = File(DIR_FILES_PRIVATE, "background")
@@ -110,8 +113,37 @@ class PathManager {
             FILE_LAUNCHER_BACKGROUND = File(DIR_BACKGROUND, "background01.file")
             FILE_TERRACOTTA_LOG = File(DIR_FILES_EXTERNAL, "terracotta.log")
 
+            //先搬运行时（此时目标目录还没被 createDirs 建出来），再创建其余目录
+            migrateRuntimesToPrivate()
             createDirs()
             handleLegacy()
+        }
+
+        /**
+         * 旧的 Java 运行时 / JNA 曾经放在 `games/runtimes`、`games/jna_dir`。
+         * 现在它们固定在私有目录，这里把旧位置的搬过来（同一分区，rename 很快）。
+         */
+        private fun migrateRuntimesToPrivate() {
+            runCatching {
+                val legacyGame = legacyGameDir()
+                listOf(
+                    File(legacyGame, "runtimes") to DIR_MULTIRT,
+                    File(legacyGame, "jna_dir") to DIR_JNA,
+                ).forEach { (from, to) ->
+                    val targetEmpty = !to.exists() || (to.list()?.isEmpty() != false)
+                    if (from.exists() && targetEmpty) {
+                        to.parentFile?.mkdirs()
+                        if (!from.renameTo(to)) {
+                            FileUtils.copyDirectory(from, to)
+                            FileUtils.deleteQuietly(from)
+                        }
+                    }
+                }
+            }.onFailure {
+                com.movtery.zalithlauncher.utils.logging.Logger.warning(
+                    "PathManager", "Migrate runtimes failed: ${it.message}"
+                )
+            }
         }
 
         private fun createDirs() {
