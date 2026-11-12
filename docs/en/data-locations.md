@@ -13,6 +13,6 @@ Game data lives in **public storage**, visible in any file manager:
 | Settings / tokens | MMKV (private app storage) |
 | MobileGlues config | `mobileglues/config.json` |
 
-- Upgrading from an older version: if game data is still in the private app folder, the launcher asks once whether to move it to `/ZyNova`. Choosing "Later" deletes nothing; you can also copy `files/games/` into `ZyNova/` manually.
+- Upgrading from an older version: if game data is still in the private app folder, the launcher **migrates it automatically** to `/ZyNova` before the main screen, showing progress. The old folder is deleted only after a successful copy-and-verify; on failure it falls back to private storage, so nothing is lost. If the app is closed mid-way, migration resumes next time.
 - "All files access" is required to read and write `/ZyNova`. Without it the launcher falls back to private storage and reminds you before launching a game.
 - Uninstalling the app does **not** delete game data under `/ZyNova`; remove it there yourself.

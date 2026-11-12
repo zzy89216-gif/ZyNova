@@ -57,7 +57,7 @@
 
 **当前版本：28.1.2 测试版**（`launcher_version_code=281102`，预发行）
 
-### 28.1.1 的结构性变化
+### 28.1.1 / 28.1.2 的结构性变化
 
 - **条款正文模块化**：`onboarding/LegalDocuments.kt` 组装「该语言正文 + 该地区补充条款」，
   正文本体在 `LegalBodies*.kt`，地区模板在 `LegalJuris*.kt`；新增语言只需补常量 + 一个分支。
