@@ -18,6 +18,12 @@
 
 package com.movtery.zalithlauncher.ui.screens.content
 
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import com.movtery.zalithlauncher.contract.MediaPickerContract
+import com.movtery.zalithlauncher.coroutine.Task
+import com.movtery.zalithlauncher.coroutine.TaskSystem
+import com.movtery.zalithlauncher.ui.androidText
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -83,8 +89,28 @@ fun PersonalizationScreen(
                 val backgroundViewModel = LocalBackgroundViewModel.current
                 val hasBackground = backgroundViewModel?.isValid == true
 
-                //壁纸：真正的选图 / 选视频流程在设置页（需要系统选择器 + 导入进度），
-                //这里只做入口，避免把两套导入逻辑各自维护一份
+                //壁纸：直接在这里拉起系统选择器（议题 #53）
+                //以前点一下会跳到「设置 → 通用」，用户以为坏了；现在点一次就选图/视频。
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val picker = rememberLauncherForActivityResult(
+                    contract = MediaPickerContract(
+                        allowImages = true,
+                        allowVideos = true,
+                        allowMultiple = false
+                    )
+                ) { result ->
+                    if (result != null && backgroundViewModel != null) {
+                        TaskSystem.submitTask(
+                            Task.runTask(
+                                dispatcher = kotlinx.coroutines.Dispatchers.IO,
+                                task = { task ->
+                                    task.updateMessage(androidText(R.string.settings_launcher_background_importing))
+                                    backgroundViewModel.import(context, result[0])
+                                }
+                            )
+                        )
+                    }
+                }
                 SettingsCard(
                     modifier = Modifier.fillMaxWidth(),
                     position = CardPosition.Top,
@@ -96,11 +122,7 @@ fun PersonalizationScreen(
                             R.string.personalization_wallpaper_summary_empty
                         }
                     ),
-                    onClick = {
-                        //追加在栈顶：从个性化进设置后，返回会回到个性化页（上一级），而不是跳主界面
-                        settingsScreen.navigateTo(NormalNavKey.Settings.Launcher)
-                        backScreenViewModel.mainScreen.navigateTo(settingsScreen)
-                    },
+                    onClick = { picker.launch(Unit) },
                     trailingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_arrow_right_rounded),
