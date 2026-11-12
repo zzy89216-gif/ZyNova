@@ -411,7 +411,7 @@ private fun VersionQuickActions(
                     )
                 }
                 //隐藏 / 显示主页卡片（成对切换）
-                val cardsHidden by AllSettings.homeCardsHidden.state
+                val cardsHidden = AllSettings.homeCardsHidden.state
                 OutlinedButton(
                     modifier = Modifier.padding(end = 12.dp),
                     onClick = { AllSettings.homeCardsHidden.save(!cardsHidden) }
