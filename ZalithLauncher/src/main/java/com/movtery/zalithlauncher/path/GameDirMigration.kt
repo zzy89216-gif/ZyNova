@@ -18,8 +18,9 @@ import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
 import com.movtery.zalithlauncher.R
-import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.apache.commons.io.FileUtils
 import java.io.File
 
@@ -27,47 +28,75 @@ object GameDirMigration {
 
     private const val TAG = "GameDirMigration"
 
-    /** 本次启动是否需要弹「是否迁移」 */
-    fun needsPrompt(): Boolean {
-        if (AllSettings.gameDirMigrationAsked.getValue()) return false
+    private val _progress = MutableStateFlow(0f)
+    /** 0f..1f，给迁移界面用 */
+    val progress: StateFlow<Float> = _progress
+
+    private val _currentFile = MutableStateFlow("")
+    /** 正在复制的文件（相对路径） */
+    val currentFile: StateFlow<String> = _currentFile
+
+    /**
+     * 是否需要**强制迁移**。
+     *
+     * 维护者 2026-11-12 决定：不再问，直接把旧数据搬到公共目录。
+     * 条件：旧私有目录有数据、公共目录还没有、且当前已经在用公共目录
+     * （没拿到「所有文件访问」时会回退私有目录，这时不迁移，等授权后再说）。
+     */
+    fun needsMigration(): Boolean {
         val legacy = PathManager.legacyGameDir()
         val public = PathManager.publicGameDir()
-        //旧目录有数据，且公共目录还没有（否则就是已经迁过了）
-        return PathManager.hasContent(legacy) && !PathManager.hasContent(public)
-    }
-
-    /** 用户选了「不迁移」：记一笔，别再问 */
-    fun markAsked() {
-        AllSettings.gameDirMigrationAsked.save(true)
+        return PathManager.hasContent(legacy) &&
+            !PathManager.hasContent(public) &&
+            PathManager.DIR_GAME.absolutePath == public.absolutePath
     }
 
     /**
-     * 后台迁移。成功后旧目录会被删除，下次启动直接使用公共目录。
-     * 回调在主线程以外，调用方自己切线程。
+     * 强制迁移（带进度）。
+     *
+     * 流程：统计文件数 → 逐个复制并回报进度 → 数量校验 → 删除旧目录。
+     * **校验不通过不删旧目录**，并回退到私有目录继续用，避免用户数据凭空消失。
+     *
+     * @param onProgress 0f..1f 与当前文件名
+     * @param onDone true 表示迁移成功（已切到公共目录），false 表示已回退私有目录
      */
-    fun migrate(onFinished: (Boolean) -> Unit) {
-        markAsked()
+    fun runMigration(onDone: (Boolean) -> Unit) {
         val from = PathManager.legacyGameDir()
         val to = PathManager.publicGameDir()
         Thread({
             val ok = runCatching {
-                Logger.info(TAG, "Migrating: ${from.absolutePath} -> ${to.absolutePath}")
+                Logger.info(TAG, "Forced migration: ${from.absolutePath} -> ${to.absolutePath}")
+                val files = from.walkTopDown().filter { it.isFile }.toList()
+                val total = files.size.coerceAtLeast(1)
                 to.mkdirs()
-                FileUtils.copyDirectory(from, to)
-                val oldCount = from.walkTopDown().count()
-                val newCount = to.walkTopDown().count()
-                if (newCount >= oldCount) {
+                files.forEachIndexed { index, file ->
+                    val relative = file.absolutePath.removePrefix(from.absolutePath).trimStart('/')
+                    val target = File(to, relative)
+                    target.parentFile?.mkdirs()
+                    file.copyTo(target, overwrite = true)
+                    if (index % 25 == 0 || index == files.lastIndex) {
+                        _progress.value = (index + 1f) / total
+                        _currentFile.value = relative
+                    }
+                }
+                val copied = to.walkTopDown().count { it.isFile }
+                if (copied >= files.size) {
                     FileUtils.deleteQuietly(from)
-                    Logger.info(TAG, "Migration finished ($newCount files)")
+                    Logger.info(TAG, "Forced migration finished ($copied files)")
                     true
                 } else {
-                    Logger.warning(TAG, "Migration incomplete ($oldCount -> $newCount), kept old dir")
+                    Logger.warning(TAG, "Migration incomplete ($copied/${files.size}), keeping old dir")
                     false
                 }
             }.onFailure {
-                Logger.warning(TAG, "Migration failed: ${it.message}")
+                Logger.warning(TAG, "Forced migration failed: ${it.message}")
             }.getOrDefault(false)
-            onFinished(ok)
+
+            if (!ok) {
+                //迁移失败：回退到私有目录，保证还能用
+                PathManager.useLegacyGameDir()
+            }
+            android.os.Handler(android.os.Looper.getMainLooper()).post { onDone(ok) }
         }, "game-dir-migration").start()
     }
 

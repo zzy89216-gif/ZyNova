@@ -215,6 +215,22 @@ class PathManager {
         }
 
         /**
+         * 迁移失败时回退到私有目录：改回路径并重建依赖它的文件常量。
+         * 宁可继续用私有目录，也不能让用户的实例"消失"。
+         */
+        fun useLegacyGameDir() {
+            runCatching {
+                DIR_GAME = legacyGameDir()
+                FILE_MINECRAFT_VERSIONS = File(DIR_GAME, "minecraft_versions.json")
+                DIR_ACCOUNT_SKIN = File(DIR_GAME, "account_skins")
+                DIR_ACCOUNT_CAPE = File(DIR_GAME, "account_capes")
+                DIR_GAME.mkdirs()
+                DIR_ACCOUNT_SKIN.mkdirs()
+                DIR_ACCOUNT_CAPE.mkdirs()
+            }
+        }
+
+        /**
          * 处理历史遗留的旧文件
          */
         private fun handleLegacy() {

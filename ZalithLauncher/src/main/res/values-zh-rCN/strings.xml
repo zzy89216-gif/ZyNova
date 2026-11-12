@@ -2022,4 +2022,12 @@
     <string name="game_dir_migration_done">游戏数据已迁移到 /ZyNova。</string>
     <string name="game_dir_migration_failed">迁移失败，旧数据已保留。</string>
     <string name="game_dir_need_all_files">为了让文件管理器能看到游戏文件，请给 ZyNova 开启「所有文件访问」。</string>
+    <string name="game_dir_migration_screen_title">正在迁移游戏数据</string>
+    <string name="game_dir_migration_screen_hint">正在搬到 /ZyNova，好让文件管理器能看到。请不要退出应用，这一步只会做一次。</string>
+    <string name="storage_gate_title">允许管理所有文件</string>
+    <string name="storage_gate_message">ZyNova 把游戏文件放在公共存储的 /ZyNova 目录，这样文件管理器能直接看到。Android 需要「所有文件访问」权限才能读写这里。</string>
+    <string name="storage_gate_blocked_title">必须授权</string>
+    <string name="storage_gate_blocked_message">使用本软件必须允许「所有文件访问」。没有这个权限，启动器无法读写游戏文件，也就无法使用。</string>
+    <string name="storage_gate_grant">去授权</string>
+    <string name="storage_gate_exit">退出</string>
 </resources>

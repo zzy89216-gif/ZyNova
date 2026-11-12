@@ -350,6 +350,31 @@ class MainActivity : BaseAppCompatActivity() {
                     return@ZalithLauncherTheme
                 }
 
+                //进主界面前先过存储权限门禁：没有「所有文件访问」就没法读写 /ZyNova
+                var storageGranted by remember {
+                    mutableStateOf(
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
+                            com.movtery.zalithlauncher.path.GameDirMigration.hasAllFilesAccess()
+                    )
+                }
+                if (!storageGranted) {
+                    com.movtery.zalithlauncher.ui.screens.splash.StoragePermissionScreen(
+                        onGranted = {
+                            //刚拿到权限：重新解析路径，这次才会真正切到公共目录 /ZyNova
+                            runCatching {
+                                com.movtery.zalithlauncher.context.refreshContext(this@MainActivity)
+                            }
+                            storageGranted = true
+                        },
+                        onExit = {
+                            finishAffinity()
+                            android.os.Process.killProcess(android.os.Process.myPid())
+                        }
+                    )
+                    return@ZalithLauncherTheme
+                }
+
+
                 //首次启动：先看 3 份合并文档（每份滑到底并勾选）+ 选年龄，完成后才进主界面
                 val onboardingDone = androidx.compose.runtime.remember {
                     androidx.compose.runtime.mutableStateOf(!OnboardingState.needsOnboarding())
@@ -361,41 +386,15 @@ class MainActivity : BaseAppCompatActivity() {
                     return@ZalithLauncherTheme
                 }
 
-                //老用户升级：私有目录里还有游戏数据时，问一次要不要迁到公共目录（/ZyNova）
-                var migrationPrompt by remember {
-                    mutableStateOf(com.movtery.zalithlauncher.path.GameDirMigration.needsPrompt())
+                //老用户升级：私有目录里还有游戏数据时，**强制**迁到公共目录（/ZyNova）
+                var migrationPending by remember {
+                    mutableStateOf(com.movtery.zalithlauncher.path.GameDirMigration.needsMigration())
                 }
-                if (migrationPrompt) {
-                    AlertDialog(
-                        onDismissRequest = { },
-                        title = { Text(stringResource(R.string.game_dir_migration_title)) },
-                        text = { Text(stringResource(R.string.game_dir_migration_message)) },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                migrationPrompt = false
-                                com.movtery.zalithlauncher.path.GameDirMigration.migrate { ok ->
-                                    runOnUiThread {
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            if (ok) R.string.game_dir_migration_done else R.string.game_dir_migration_failed,
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    R.string.game_dir_migration_running,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }) { Text(stringResource(R.string.game_dir_migration_move)) }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = {
-                                migrationPrompt = false
-                                com.movtery.zalithlauncher.path.GameDirMigration.markAsked()
-                            }) { Text(stringResource(R.string.game_dir_migration_later)) }
-                        }
+                if (migrationPending) {
+                    com.movtery.zalithlauncher.ui.screens.splash.GameDataMigrationScreen(
+                        onDone = { migrationPending = false }
                     )
+                    return@ZalithLauncherTheme
                 }
                 ObserveFullScreenSetting(AllSettings.launcherFullScreen.state)
                 Box {

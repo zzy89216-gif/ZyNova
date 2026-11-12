@@ -2051,4 +2051,12 @@ Accounts and settings are not affected, and choosing Later deletes nothing.</str
     <string name="game_dir_migration_done">Game data moved to /ZyNova.</string>
     <string name="game_dir_migration_failed">Migration failed; the old data was kept.</string>
     <string name="game_dir_need_all_files">To make game files visible in the file manager, allow "All files access" for ZyNova.</string>
+    <string name="game_dir_migration_screen_title">Moving game data</string>
+    <string name="game_dir_migration_screen_hint">Moving to /ZyNova so the file manager can see it. Please keep the app open; this only happens once.</string>
+    <string name="storage_gate_title">Allow access to all files</string>
+    <string name="storage_gate_message">ZyNova stores game files in /ZyNova in public storage so that any file manager can see them. Android requires the "All files access" permission for that.</string>
+    <string name="storage_gate_blocked_title">Permission required</string>
+    <string name="storage_gate_blocked_message">Using ZyNova requires the "All files access" permission. Without it the launcher cannot read or write game files, so it cannot run.</string>
+    <string name="storage_gate_grant">Grant access</string>
+    <string name="storage_gate_exit">Exit</string>
 </resources>
