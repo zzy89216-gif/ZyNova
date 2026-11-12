@@ -2062,4 +2062,10 @@
     <string name="multiplayer_mode_terracotta_title">Terracotta</string>
     <string name="multiplayer_mode_terracotta_summary">Both players install this launcher and join the same room; no port forwarding.</string>
     <string name="multiplayer_mode_current">Current</string>
+    <string name="ai_search_engine_duckduckgo">DuckDuckGo (no key)</string>
+    <string name="ai_search_engine_deepseek">DeepSeek Search (official)</string>
+    <string name="ai_search_engine_title">Search engine</string>
+    <string name="ai_search_engine_deepseek_price">Billed per successful request (~$0.75 / 1000). Failed or empty searches are free.</string>
+    <string name="ai_search_key_title">DeepSeek Search key</string>
+    <string name="ai_search_key_summary">Leave empty to reuse the main DeepSeek key.</string>
 </resources>

@@ -17,14 +17,22 @@ package com.movtery.zalithlauncher.ai.agent.tools
 
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.agent.AITool
+import com.movtery.zalithlauncher.ai.AISearchEngine
 import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -176,7 +184,82 @@ internal fun webTools(): List<AITool> = listOf(
  * 3. 再不行扫普通外链。
  * 任何一层命中就返回，避免「页面明明有结果却说没有」。
  */
+/**
+ * 搜索入口：按设置选引擎。
+ *
+ * DeepSeek 优先（结果带 summary/content，中文更准）；
+ * 未配置 Key、余额不足、限流、超时或返回异常时**静默降级**到 DuckDuckGo，
+ * 保证「联网查一下」这件事不会因为引擎故障整段卡死。
+ */
 private fun searchWeb(query: String, limit: Int): String {
+    if (AISettings.searchEngine.state == AISearchEngine.DEEPSEEK) {
+        val key = AISettings.searchApiKey.state.ifBlank { AISettings.apiKey.state }
+        if (key.isNotBlank()) {
+            runCatching { deepSeekSearch(query, limit, key) }
+                .onSuccess { return it }
+                .onFailure { e ->
+                    Logger.warning(TAG, "DeepSeek search failed, falling back to DuckDuckGo", e)
+                }
+        }
+    }
+    return duckDuckGoSearch(query, limit)
+}
+
+/**
+ * DeepSeek 官方 Search API。
+ *
+ * 端点：`POST https://api.deepseek.com/v1/tools/search`
+ * 请求：`query`(1~128 字符) / `count`(1~50) / `need_content`(是否返回正文)
+ * 计费：按**成功请求**计，约 $0.75 / 1000 次；失败、空结果、超时不收费。
+ */
+private fun deepSeekSearch(query: String, limit: Int, key: String): String {
+    val payload = buildString {
+        append("{\"query\":")
+        append(org.json.JSONObject.quote(query))
+        append(",\"count\":").append(limit.coerceIn(1, 50))
+        append(",\"need_content\":true}")
+    }
+    val request = Request.Builder()
+        .url("https://api.deepseek.com/v1/tools/search")
+        .header("Authorization", "Bearer $key")
+        .header("Content-Type", "application/json")
+        .header("User-Agent", USER_AGENT)
+        .post(payload.toRequestBody("application/json".toMediaType()))
+        .build()
+
+    httpClient.newCall(request).execute().use { response ->
+        if (!response.isSuccessful) {
+            throw IOException("DeepSeek Search HTTP ${response.code}")
+        }
+        val body = response.body?.string().orEmpty()
+        val root = Json.parseToJsonElement(body).jsonObject
+        val results = root["results"]?.jsonArray ?: return "没有搜到结果。"
+        if (results.isEmpty()) return "没有搜到结果。"
+
+        val sb = StringBuilder()
+        sb.append("搜索（DeepSeek）：").append(query).append('\n')
+        results.take(limit).forEachIndexed { index, element ->
+            val item = element.jsonObject
+            val title = item["title"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
+            val url = item["url"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
+            val summary = item["summary"]?.jsonPrimitive?.contentOrNullSafe()
+                ?: item["snippet"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
+            val content = item["content"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
+            sb.append(index + 1).append(". ").append(title).append('\n')
+            sb.append("   ").append(url).append('\n')
+            if (summary.isNotBlank()) sb.append("   ").append(summary).append('\n')
+            if (content.isNotBlank()) {
+                sb.append("   正文：").append(content.take(1200)).append('\n')
+            }
+        }
+        return sb.toString()
+    }
+}
+
+private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? =
+    runCatching { content }.getOrNull()
+
+private fun duckDuckGoSearch(query: String, limit: Int): String {
     val url = "https://html.duckduckgo.com/html/?q=" + java.net.URLEncoder.encode(query, "UTF-8")
     val html = get(url)
 

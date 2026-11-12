@@ -2033,4 +2033,10 @@
     <string name="multiplayer_mode_terracotta_title">陶瓦联机</string>
     <string name="multiplayer_mode_terracotta_summary">双方都装本启动器，进同一个房间即可，不用开端口。</string>
     <string name="multiplayer_mode_current">当前方式</string>
+    <string name="ai_search_engine_duckduckgo">DuckDuckGo（免 Key）</string>
+    <string name="ai_search_engine_deepseek">DeepSeek 官方搜索</string>
+    <string name="ai_search_engine_title">搜索引擎</string>
+    <string name="ai_search_engine_deepseek_price">按成功请求计费（约 $0.75 / 1000 次）；失败与空结果不计费。</string>
+    <string name="ai_search_key_title">DeepSeek 搜索 Key</string>
+    <string name="ai_search_key_summary">留空则复用主模型的 DeepSeek Key。</string>
 </resources>

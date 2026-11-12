@@ -82,6 +82,17 @@ object AISettings : SettingsRegistry() {
      */
     val webSearch = boolSetting("aiWebSearch", true)
 
+    /** 联网搜索用哪个引擎（DeepSeek 官方 Search / DuckDuckGo 网页） */
+    val searchEngine = enumSetting("aiSearchEngine", AISearchEngine.DUCKDUCKGO)
+
+    /**
+     * DeepSeek Search 专用 Key。
+     *
+     * 主模型就是 DeepSeek 时留空即可，会自动复用 [apiKey]；
+     * 只有主模型是别家时才需要单独填。
+     */
+    val searchApiKey = stringSetting("aiSearchApiKey", "")
+
 
     /**
      * 是否已经向用户展示过「数据会发往你配置的 AI 服务商」这段说明。

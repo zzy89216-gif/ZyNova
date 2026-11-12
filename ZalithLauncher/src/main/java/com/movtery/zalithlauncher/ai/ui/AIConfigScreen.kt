@@ -356,6 +356,43 @@ fun AIConfigContent(
                 }
                 HintText(stringResource(R.string.ai_web_search_note))
 
+                //搜索引擎：DeepSeek 官方 / DuckDuckGo（#48）
+                Text(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = stringResource(R.string.ai_search_engine_title),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                val engine = AISettings.searchEngine.state
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = engine == com.movtery.zalithlauncher.ai.AISearchEngine.DUCKDUCKGO,
+                        onClick = {
+                            AISettings.searchEngine.save(com.movtery.zalithlauncher.ai.AISearchEngine.DUCKDUCKGO)
+                        }
+                    )
+                    Text(stringResource(R.string.ai_search_engine_duckduckgo), style = MaterialTheme.typography.bodyMedium)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = engine == com.movtery.zalithlauncher.ai.AISearchEngine.DEEPSEEK,
+                        onClick = {
+                            AISettings.searchEngine.save(com.movtery.zalithlauncher.ai.AISearchEngine.DEEPSEEK)
+                        }
+                    )
+                    Text(stringResource(R.string.ai_search_engine_deepseek), style = MaterialTheme.typography.bodyMedium)
+                }
+                if (engine == com.movtery.zalithlauncher.ai.AISearchEngine.DEEPSEEK) {
+                    HintText(stringResource(R.string.ai_search_engine_deepseek_price))
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+                        value = AISettings.searchApiKey.state,
+                        onValueChange = { AISettings.searchApiKey.save(it) },
+                        label = { Text(stringResource(R.string.ai_search_key_title)) },
+                        supportingText = { Text(stringResource(R.string.ai_search_key_summary)) },
+                        singleLine = true
+                    )
+                }
+
                 //公有目录权限：AI 要读写 Download 之类的目录时必须先开这个
                 val hasAllFiles = android.os.Environment.isExternalStorageManager()
                 Row(
