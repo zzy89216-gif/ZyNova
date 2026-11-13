@@ -85,7 +85,13 @@ object GameDirMigration {
                 }
                 val copied = to.walkTopDown().count { it.isFile }
                 if (copied >= files.size) {
-                    FileUtils.deleteQuietly(from)
+                    //⚠️ 不再直接删除旧目录：改成改名保留（同一分区，瞬间完成）。
+                    //万一复制过程中有文件被跳过/写坏，用户的数据还在，不会真的丢。
+                    //占用的空间由用户在确认游戏正常后自行清理，或者下个版本再做自动清理。
+                    val backup = File(from.parentFile, "games.migrated-" + System.currentTimeMillis())
+                    if (!from.renameTo(backup)) {
+                        Logger.warning(TAG, "Migration done but could not rename old dir; kept as-is")
+                    }
                     Logger.info(TAG, "Forced migration finished ($copied files)")
                     true
                 } else {

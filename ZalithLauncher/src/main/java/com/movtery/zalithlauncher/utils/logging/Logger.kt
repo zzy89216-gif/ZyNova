@@ -236,6 +236,29 @@ object Logger : CoroutineScope {
     /**
      * 输出日志
      */
+    /**
+     * 日志脱敏。
+     *
+     * 日志会被「一键分享」发出去，而且存放在应用外部目录，
+     * 一旦把 `apiKey=...`、`Bearer xxx` 这类内容写进去，等于把钥匙公开。
+     * 这里统一在入口抹掉，调用方不用各自记得。
+     */
+    private val SECRET_PATTERNS = listOf(
+        Regex("(?i)(api[_-]?key|apikey|token|access[_-]?token|secret|password|pwd)=([^&\\s\"]+)"),
+        Regex("(?i)(Authorization:\\s*Bearer\\s+)([A-Za-z0-9._\\-]+)"),
+        Regex("(?i)(Bearer\\s+)([A-Za-z0-9._\\-]{12,})"),
+    )
+
+    private fun redact(text: String): String {
+        var result = text
+        SECRET_PATTERNS.forEach { regex ->
+            result = regex.replace(result) { m ->
+                if (m.groupValues.size >= 3) m.groupValues[1] + "***" else "***"
+            }
+        }
+        return result
+    }
+
     fun log(level: Level, tag: String, message: String, throwable: Throwable? = null) {
         if (!isInitialized.get()) return
 
@@ -243,7 +266,7 @@ object Logger : CoroutineScope {
             time = System.currentTimeMillis(),
             tag = tag,
             level = level,
-            message = message,
+            message = redact(message),
             throwable = throwable
         )
 
