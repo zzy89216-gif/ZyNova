@@ -127,7 +127,7 @@ internal fun instanceTools(): List<AITool> = listOf(
             append("启动器进程堆上限：").append(AIToolSupport.humanSize(Runtime.getRuntime().maxMemory()))
                 .append("（这只是启动器自身的 JVM 堆，不代表游戏能用的内存；游戏内存看下面对局配置）").append('\n')
             append("启动器数据目录：").append(PathManager.DIR_FILES_PRIVATE.absolutePath).append('\n')
-            append("外部数据目录：").append(PathManager.DIR_FILES_EXTERNAL.absolutePath).append('\n')
+            append("用户可见目录：").append(PathManager.userVisibleRoot().absolutePath).append('\n')
             append("游戏根目录：").append(PathManager.DIR_GAME.absolutePath).append('\n')
             append("日志目录：").append(PathManager.DIR_LAUNCHER_LOGS.absolutePath).append('\n')
         }

@@ -21,10 +21,12 @@ file manager tidy while still letting you edit configs or drop in mods.
 - **New installs** need no migration: everything starts under `/ZyNova/.Minecraft`.
 - **Upgrading from an older version**: if game data is still in the private app folder, the launcher
   migrates it **before the main screen** and shows a full-screen progress page; you tap Next when it
-  finishes. It copies and verifies first, then renames the old folder to `games.migrated-<timestamp>`
-  instead of deleting it, so you can remove it yourself once everything works. On failure the partial
-  copy is cleaned up and the launcher falls back to private storage, so nothing is lost. Closing the app
-  mid-way is fine; migration resumes next time.
+  finishes. It copies both your instances (`files/.minecraft`) and the launcher data (`files/games`:
+  runtimes, skin cache, favourites) into `.Minecraft`, verifies every file, and only then removes the old
+  private folders. On failure the partial copy is cleaned up and the launcher falls back to private
+  storage, so nothing is lost. Closing the app mid-way is fine; migration resumes next time.
+- The default entry under "Choose folder" is `/ZyNova/.Minecraft`; stale records that pointed at the
+  private folder are cleaned up, so you never see a path you cannot open.
 - "All files access" is required to read and write `/ZyNova`; without it the launcher cannot be used
   (a startup page blocks and guides you to grant it).
 - Uninstalling the app does **not** delete game data under `/ZyNova`; remove it there yourself.

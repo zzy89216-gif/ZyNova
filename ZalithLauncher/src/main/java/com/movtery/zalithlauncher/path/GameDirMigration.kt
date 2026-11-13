@@ -44,14 +44,22 @@ object GameDirMigration {
      * （没拿到「所有文件访问」时会回退私有目录，这时不迁移，等授权后再说）。
      */
     fun needsMigration(): Boolean {
-        val legacy = PathManager.legacyGameDir()
         val public = PathManager.publicGameDir()
         //当前用的是公共目录（有权限），且旧目录**还在**（迁移成功会把它删掉）→ 需要搬。
         //⚠️ 不再要求「公共目录为空」：上次中途被杀会留下半成品，这时也要继续搬完，
         //否则用户会看到只有一半的实例列表。
+        //⚠️ 两个旧目录都要看：`files/games`（运行时 / 皮肤缓存 / 收藏记录）和
+        //   `files/.minecraft`（**真正的实例**，GamePathManager 以前的默认目录）。
         return PathManager.DIR_GAME.absolutePath == public.absolutePath &&
-            PathManager.hasContent(legacy)
+            (PathManager.hasContent(PathManager.legacyGameDir()) ||
+                PathManager.hasContent(PathManager.legacyInstanceDir()))
     }
+
+    /** 需要搬的旧目录（存在且有内容才算） */
+    private fun sources(): List<File> = listOf(
+        PathManager.legacyInstanceDir(),
+        PathManager.legacyGameDir()
+    ).filter { PathManager.hasContent(it) }
 
     /**
      * 强制迁移（带进度）。
@@ -65,37 +73,48 @@ object GameDirMigration {
     fun runMigration(onDone: (Boolean) -> Unit) {
         _progress.value = 0f
         _currentFile.value = ""
-        val from = PathManager.legacyGameDir()
         val to = PathManager.publicGameDir()
         Thread({
+            val sources = sources()
             val ok = runCatching {
-                Logger.info(TAG, "Forced migration: ${from.absolutePath} -> ${to.absolutePath}")
-                val files = from.walkTopDown().filter { it.isFile }.toList()
+                Logger.info(
+                    TAG,
+                    "Forced migration: " + sources.joinToString { it.absolutePath } + " -> " + to.absolutePath
+                )
+                val files = sources.flatMap { from ->
+                    from.walkTopDown().filter { it.isFile }.map { from to it }.toList()
+                }
                 val total = files.size.coerceAtLeast(1)
                 to.mkdirs()
-                files.forEachIndexed { index, file ->
+                files.forEachIndexed { index, (from, file) ->
                     val relative = file.absolutePath.removePrefix(from.absolutePath).trimStart('/')
                     val target = File(to, relative)
-                    target.parentFile?.mkdirs()
-                    file.copyTo(target, overwrite = true)
+                    //两个来源都往同一个根里合并：目标已存在时**跳过**，
+                    //不能拿旧的覆盖公共目录里已经迁好/更新的同名文件
+                    if (!target.exists()) {
+                        target.parentFile?.mkdirs()
+                        file.copyTo(target, overwrite = true)
+                    }
                     if (index % 25 == 0 || index == files.lastIndex) {
                         _progress.value = (index + 1f) / total
                         _currentFile.value = relative
                     }
                 }
-                val copied = to.walkTopDown().count { it.isFile }
+                val copied = files.count { (from, file) ->
+                    val relative = file.absolutePath.removePrefix(from.absolutePath).trimStart('/')
+                    File(to, relative).exists()
+                }
                 if (copied >= files.size) {
-                    //⚠️ 不再直接删除旧目录：改成改名保留（同一分区，瞬间完成）。
-                    //万一复制过程中有文件被跳过/写坏，用户的数据还在，不会真的丢。
-                    //占用的空间由用户在确认游戏正常后自行清理，或者下个版本再做自动清理。
-                    val backup = File(from.parentFile, "games.migrated-" + System.currentTimeMillis())
-                    if (!from.renameTo(backup)) {
-                        Logger.warning(TAG, "Migration done but could not rename old dir; kept as-is")
+                    //校验通过：删掉旧的私有目录（维护者要求「清理掉、全部移植到公有目录」）。
+                    //删之前已经把每个文件都确认搬到了新位置，所以不会出现「搬一半就没了」。
+                    sources.forEach { from ->
+                        runCatching { FileUtils.deleteDirectory(from) }
+                            .onFailure { Logger.warning(TAG, "Cannot clean up ${from.absolutePath}: ${it.message}") }
                     }
                     Logger.info(TAG, "Forced migration finished ($copied files)")
                     true
                 } else {
-                    Logger.warning(TAG, "Migration incomplete ($copied/${files.size}), keeping old dir")
+                    Logger.warning(TAG, "Migration incomplete ($copied/${files.size}), keeping old dirs")
                     false
                 }
             }.onFailure {

@@ -302,7 +302,9 @@ fun MainScreen(
                 openFileManager = {
                     eventViewModel.sendEvent(
                         EventViewModel.Event.OpenFileManager(
-                            rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
+                            //游戏数据在公共目录，文件管理器就该从 `/ZyNova` 进去
+                            //（私有目录里已经没有用户数据了，指过去只会看到一片空白）
+                            rootPath = PathManager.userVisibleRoot().absolutePath
                         )
                     )
                 },

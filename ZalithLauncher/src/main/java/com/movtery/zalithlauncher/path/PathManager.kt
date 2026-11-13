@@ -194,6 +194,19 @@ class PathManager {
             File(publicRootDir(), PUBLIC_GAME_DIR_INNER)
 
         /**
+         * 给用户看的根目录：内置文件管理器、AI 指路、文档里的路径都用它。
+         *
+         * 正在用公共目录时是 `/storage/emulated/0/ZyNova`
+         * （里面有 `logs` 和 `.Minecraft`，用户能直接点进去）；
+         * 没拿到「所有文件访问」而回退私有目录时，才退回 `Android/data/<包名>/files`。
+         *
+         * ⚠️ 不要再写死 `DIR_FILES_EXTERNAL`：数据在公共目录，把用户/AI 指向私有目录，
+         * 他会看到「一个文件都没有」。
+         */
+        fun userVisibleRoot(): File =
+            if (DIR_GAME.absolutePath == publicGameDir().absolutePath) publicRootDir() else DIR_FILES_EXTERNAL
+
+        /**
          * 启动日志放哪。
          *
          * 用公共目录时放 `/ZyNova/logs`（用户反馈问题时直接在文件管理器里能找到、能发出来）；
@@ -247,8 +260,17 @@ class PathManager {
             }
         }
 
-        /** 私有目录下的旧游戏根目录（28.2.0 之前的位置） */
+        /** 私有目录下的旧游戏根目录（28.2.0 之前放运行时、皮肤缓存的位置） */
         fun legacyGameDir(): File = File(DIR_FILES_PRIVATE, "games")
+
+        /**
+         * 私有目录下的旧**实例**根目录。
+         *
+         * ⚠️ 这一处很容易漏：实例（`versions/assets/libraries`）以前并不是放在 `files/games`，
+         * 而是 `GamePathManager` 的默认游戏目录 `Android/data/<包名>/files/.minecraft`。
+         * 只搬 `files/games` 会出现「迁移完成、实例全不见了」——所以两个都要搬。
+         */
+        fun legacyInstanceDir(): File = File(DIR_FILES_EXTERNAL, ".minecraft")
 
         fun hasContent(dir: File): Boolean =
             dir.isDirectory && (dir.list()?.isNotEmpty() == true)

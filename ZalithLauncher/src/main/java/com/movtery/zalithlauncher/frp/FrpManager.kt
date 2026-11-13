@@ -463,7 +463,8 @@ object FrpManager {
         val roots = runCatching {
             GamePathManager.gamePathData.value.map { File(it.path) }
         }.getOrDefault(emptyList()).ifEmpty {
-            listOf(File(PathManager.DIR_FILES_EXTERNAL, ".minecraft"))
+            //兜底：直接用当前游戏根目录（公共目录），别再去私有目录找
+            listOf(PathManager.DIR_GAME)
         }
 
         val logs = roots

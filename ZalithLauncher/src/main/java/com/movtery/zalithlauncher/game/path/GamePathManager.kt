@@ -48,7 +48,16 @@ private const val TAG = "GamePathManager"
 object GamePathManager {
     private val scope = CoroutineScope(Dispatchers.IO)
     private val mutex = Mutex()
-    private val defaultGamePath = File(PathManager.DIR_FILES_EXTERNAL, ".minecraft").absolutePath
+    /**
+     * 默认游戏目录 = **公共存储里的 `/ZyNova/.Minecraft`**（`PathManager.DIR_GAME`）。
+     *
+     * ⚠️ 这里以前是 `Android/data/<包名>/files/.minecraft`（私有目录），
+     * 直接写死会让「游戏数据搬到公共目录」只搬了运行时和皮肤缓存、**实例还留在私有目录**，
+     * 用户在文件管理器里永远看不到自己的存档。所以默认目录必须跟着 `PathManager` 走：
+     * 有「所有文件访问」时是公共目录，没有时自动回退旧的私有目录（保证还能用）。
+     */
+    private val defaultGamePath: String
+        get() = PathManager.DIR_GAME.absolutePath
     /**
      * 默认游戏目录的ID
      */
@@ -60,6 +69,21 @@ object GamePathManager {
     private val _currentPath = MutableStateFlow(defaultGamePath)
     /** 当前选择的路径 */
     val currentPath = _currentPath.asStateFlow()
+
+    /**
+     * 是否是「旧的私有目录」路径。
+     *
+     * 两类都算：以前的实例根 `files/.minecraft`、以前的运行时/缓存根 `files/games`。
+     * 这些记录在「选择目录」里对用户没有任何用处（普通文件管理器打不开），
+     * 数据也已经搬到公共目录，所以加载时直接丢掉。
+     */
+    private fun isLegacyPrivatePath(path: String): Boolean {
+        if (path.isBlank()) return false
+        val legacyInstance = PathManager.legacyInstanceDir().absolutePath
+        val legacyGame = PathManager.legacyGameDir().absolutePath
+        return path == legacyInstance || path.startsWith("$legacyInstance/") ||
+            path == legacyGame || path.startsWith("$legacyGame/")
+    }
 
     /**
      * 当前游戏路径
@@ -91,7 +115,21 @@ object GamePathManager {
                 run parseConfig@{
                     //从数据库中加载游戏目录
                     val paths = gamePathDao.getAllPaths()
-                    newValue.addAll(paths.sortedBy { it.title })
+                    //⚠️ 旧版本默认目录是私有目录（`Android/data/<包名>/files/.minecraft`）。
+                    //现在数据全部在公共目录，这些指向私有目录的记录已经没意义：
+                    //留着只会在「选择目录」里出现一个用户根本打不开、还会误导人的路径。
+                    //所以这里直接把它们从数据库里删掉（不动磁盘上的数据，迁移由 GameDirMigration 负责）。
+                    val legacy = paths.filter { isLegacyPrivatePath(it.path) }
+                    if (legacy.isNotEmpty()) {
+                        legacy.forEach { path ->
+                            runCatching { gamePathDao.deletePath(path) }
+                                .onFailure { e ->
+                                    Logger.warning(TAG, "Failed to drop legacy game path ${path.path}: ${e.message}")
+                                }
+                        }
+                        Logger.info(TAG, "Dropped ${legacy.size} legacy private game paths")
+                    }
+                    newValue.addAll(paths.filterNot { isLegacyPrivatePath(it.path) }.sortedBy { it.title })
                 }
 
                 _gamePathData.update { newValue }

@@ -40,6 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonSyntaxException
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.coroutine.Task
+import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.download.jvm_server.JvmCrashException
 import com.movtery.zalithlauncher.game.download.jvm_server.isProcessStartRefused
 import com.movtery.zalithlauncher.game.download.modpack.install.ModpackImporter
@@ -48,6 +50,7 @@ import com.movtery.zalithlauncher.game.download.modpack.install.UnsupportedPackR
 import com.movtery.zalithlauncher.game.download.modpack.platform.PackPlatform
 import com.movtery.zalithlauncher.game.version.download.DownloadFailedException
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
+import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.MarqueeText
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.fadeEdge
@@ -57,6 +60,8 @@ import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.Pa
 import com.movtery.zalithlauncher.ui.screens.content.elements.TitleTaskFlowDialog
 import com.movtery.zalithlauncher.utils.logging.Logger
 import io.ktor.client.plugins.HttpRequestTimeoutException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.SerializationException
 import java.net.ConnectException
@@ -105,8 +110,12 @@ class ModpackImportViewModel : ViewModel() {
     var confirmMobileDataOperation by mutableStateOf<ConfirmMobileDataOperation>(ConfirmMobileDataOperation.None)
 
     //等待用户输入版本名称相关
-    private var versionNameContinuation: (Continuation<String>)? = null
+    private var versionNameContinuation: CancellableContinuation<String>? = null
+    /** 导入器建议的实例名：ViewModel 被清掉时用它兜底 */
+    private var pendingSuggestedName: String? = null
+
     suspend fun waitForVersionName(name: String): String {
+        pendingSuggestedName = name
         return suspendCancellableCoroutine { cont ->
             versionNameContinuation = cont
             versionNameOperation = VersionNameOperation.Waiting(name)
@@ -124,7 +133,7 @@ class ModpackImportViewModel : ViewModel() {
     }
 
     //警告使用移动网络相关
-    private var confirmMobileData : (Continuation<Boolean>)? = null
+    private var confirmMobileData: CancellableContinuation<Boolean>? = null
     suspend fun waitForConfirmMobileData(): Boolean {
         return suspendCancellableCoroutine { cont ->
             confirmMobileData = cont
@@ -161,37 +170,99 @@ class ModpackImportViewModel : ViewModel() {
             return
         }
         importOperation = ModpackImportOperation.Import
-        importer = ModpackImporter(
+
+        //⚠️ 用**应用级作用域**跑导入：
+        //维护者要求「后台静默」——离开页面、切后台、甚至 Activity 重建（旋转 / 分屏）都不能中断，
+        //否则用户挑完整合包随手切个微信，回来发现又得重来。
+        val newImporter = ModpackImporter(
             context = context,
             uri = uri,
-            scope = viewModelScope,
+            scope = TaskSystem.appScope,
             waitForVersionName = ::waitForVersionName,
             waitForConfirmMobileData = ::waitForConfirmMobileData
-        ).also {
-            it.startImport(
-                onFinished = { version ->
-                    importer = null
-                    VersionsManager.refresh("[Modpack] ModpackImporter.onFinished", version)
-                    importOperation = ModpackImportOperation.Finished
-                    onStop()
+        )
+        importer = newImporter
+
+        //进度不再用弹窗挡住用户：交给全局任务队列，去任务面板里看进度、也能在那里取消。
+        //（与 `ModPackTools.installModPackWithProgress` 同一套做法：AI 发起的安装和手动导入行为一致）
+        val done = java.util.concurrent.atomic.AtomicBoolean(false)
+        val cancelled = java.util.concurrent.atomic.AtomicBoolean(false)
+        val lastVersion = java.util.concurrent.atomic.AtomicReference<String?>(null)
+        val failure = java.util.concurrent.atomic.AtomicReference<Throwable?>(null)
+
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = "import_modpack_${System.currentTimeMillis()}",
+                task = { task ->
+                    task.updateProgress(-1f)
+                    task.updateTitle(androidText(R.string.import_modpack))
+                    task.updateMessage(androidText(R.string.import_modpack))
+
+                    newImporter.startImport(
+                        isRunning = {},
+                        onFinished = { version ->
+                            lastVersion.set(version)
+                            done.set(true)
+                        },
+                        onCancelled = {
+                            cancelled.set(true)
+                            done.set(true)
+                        },
+                        onError = { th ->
+                            failure.set(th)
+                            done.set(true)
+                        }
+                    )
+
+                    //镜像导入器内部各阶段的进度：任务面板里那条进度就是用户能看到的全部反馈
+                    while (!done.get()) {
+                        val list = newImporter.taskFlow.value
+                        if (list.isNotEmpty()) {
+                            val average = list
+                                .map { it.task.progress.value.coerceIn(0f, 1f) }
+                                .average()
+                                .toFloat()
+                            task.updateProgress(average)
+                            list.firstOrNull { it.task.stage.value.name == "RUNNING" }
+                                ?.let { task.updateMessage(it.title) }
+                        }
+                        delay(500)
+                    }
                 },
-                onCancelled = {
-                    importer = null
-                    importOperation = ModpackImportOperation.None
-                    onStop()
+                onCancel = {
+                    //从任务面板取消：必须把真正的导入器也停掉，
+                    //否则会变成「界面说取消了、后台还在写文件」
+                    runCatching { newImporter.cancel() }
                 },
-                onError = { th ->
+                onFinally = {
+                    //被取消时不会走 onError，这里兜底
+                    if (!done.get() && failure.get() == null && !cancelled.get()) {
+                        cancelled.set(true)
+                    }
                     importer = null
-                    importOperation = if (th is PackNotSupportedException) {
-                        //整合包不受支持，无法导入
-                        ModpackImportOperation.NotSupport(th.reason)
+                    if (cancelled.get()) {
+                        importOperation = ModpackImportOperation.None
                     } else {
-                        ModpackImportOperation.Error(th)
+                        val version = lastVersion.get()
+                        val th = failure.get()
+                        if (th != null) {
+                            importOperation = if (th is PackNotSupportedException) {
+                                //整合包不受支持，无法导入
+                                ModpackImportOperation.NotSupport(th.reason)
+                            } else {
+                                ModpackImportOperation.Error(th)
+                            }
+                        } else if (version != null) {
+                            VersionsManager.refresh("[Modpack] ModpackImporter.onFinished", version)
+                            importOperation = ModpackImportOperation.Finished
+                        } else {
+                            importOperation = ModpackImportOperation.None
+                        }
                     }
                     onStop()
                 }
             )
-        }
+        )
         onStart()
     }
 
@@ -203,8 +274,22 @@ class ModpackImportViewModel : ViewModel() {
         confirmMobileDataOperation = ConfirmMobileDataOperation.None
     }
 
+    /**
+     * ⚠️ 这里**不再 cancel()**。
+     *
+     * 导入跑在 [TaskSystem.appScope] 上，Activity 重建（旋转、分屏、改语言）时
+     * ViewModel 会被清掉，但任务应当继续；顺手取消会导致「什么都没干，导入自己没了」。
+     * 只把「等用户输入」的挂起收个尾，免得协程永远挂着：
+     * - 版本名：直接用导入器建议的名字（用户本来也只是想改个名）
+     * - 移动网络：按同意处理（用户是主动开始导入的）
+     */
     override fun onCleared() {
-        cancel()
+        versionNameContinuation?.takeIf { it.isActive }?.resume(pendingSuggestedName ?: "")
+        versionNameContinuation = null
+        confirmMobileData?.takeIf { it.isActive }?.resume(true)
+        confirmMobileData = null
+        versionNameOperation = VersionNameOperation.None
+        confirmMobileDataOperation = ConfirmMobileDataOperation.None
     }
 }
 
@@ -218,19 +303,10 @@ fun ModpackImportOperation(
     when (operation) {
         is ModpackImportOperation.None -> {}
         is ModpackImportOperation.Import -> {
-            if (importer != null) {
-                val tasks by importer.taskFlow.collectAsStateWithLifecycle()
-                if (tasks.isNotEmpty()) {
-                    TitleTaskFlowDialog(
-                        title = stringResource(R.string.import_modpack),
-                        tasks = tasks,
-                        onCancel = {
-                            onCancel()
-                            changeOperation(ModpackImportOperation.None)
-                        }
-                    )
-                }
-            }
+            //⚠️ 这里**故意不弹进度窗**：
+            //导入已经交给全局任务队列（见 `import()`），用户可以在任务面板里看进度、取消，
+            //同时继续挑别的整合包或干别的事——「后台静默」要的就是这个。
+            //`importer` 参数保留是为了兼容调用点与后续可能的「点任务跳到导入页」。
         }
         is ModpackImportOperation.NotSupport -> {
             AlertDialog(
