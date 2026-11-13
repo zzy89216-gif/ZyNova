@@ -110,7 +110,7 @@ fun ClassesIdentifier(
 ) {
     BasicIdentifier(
         painter = painterResource(classes.getDrawable()),
-        text = stringResource(classes.getText()),
+        text = stringResource(classes.getTextRes()),
         modifier = modifier,
         iconSize = iconSize,
         color = color,
@@ -128,7 +128,7 @@ private fun PlatformClasses.getDrawable() = when (this) {
     PlatformClasses.SHADERS -> R.drawable.ic_lightbulb
 }
 
-private fun PlatformClasses.getText() = when (this) {
+fun PlatformClasses.getTextRes() = when (this) {
     PlatformClasses.MOD -> R.string.download_category_mod
     PlatformClasses.MOD_PACK -> R.string.download_category_modpack
     PlatformClasses.RESOURCE_PACK -> R.string.download_category_resource_pack

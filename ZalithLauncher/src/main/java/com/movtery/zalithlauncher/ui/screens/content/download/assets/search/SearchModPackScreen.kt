@@ -91,6 +91,8 @@ fun SearchModPackScreen(
     downloadModPackScreenCurrentKey: TitledNavKey?,
     viewModel: ModpackImportViewModel,
     eventViewModel: EventViewModel,
+    /** 搜索结果卡片的一键下载：点一下装该项目最新版本（主页与实例资源管理都可用） */
+    onQuickInstall: ((Platform, projectId: String, iconUrl: String?) -> Unit)? = null,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
     val initialPlatform = remember {
@@ -157,6 +159,7 @@ fun SearchModPackScreen(
                 }
             }
         },
+        onQuickInstall = onQuickInstall,
         swapToDownload = swapToDownload,
         extraFilter = {
             //新增导入整合包按钮

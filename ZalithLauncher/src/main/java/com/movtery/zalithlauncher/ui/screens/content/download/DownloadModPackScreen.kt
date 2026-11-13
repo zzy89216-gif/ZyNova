@@ -96,6 +96,8 @@ import java.nio.channels.UnresolvedAddressException
 import java.util.concurrent.TimeoutException
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
+import com.movtery.zalithlauncher.game.download.assets.platform.Platform
+import com.movtery.zalithlauncher.game.download.assets.platform.getVersions
 
 /** 整合包安装状态操作 */
 private sealed interface ModPackInstallOperation {
@@ -161,6 +163,43 @@ private class ModPackViewModel: ViewModel() {
         confirmMobileData?.resume(use)
         confirmMobileData = null
         confirmMobileDataOperation = ConfirmMobileDataOperation.None
+    }
+
+    /**
+     * 搜索结果卡片的一键下载
+     *
+     * 结果卡片上只有一个项目，没有「选版本」这一步，所以先取该项目的最新版本，
+     * 再交给现有链路（通知权限 → 兼容性警告 → 后台安装）。
+     * 主页与「版本设置 → 资源管理」两个入口都可以用。
+     */
+    fun quickInstall(
+        context: Context,
+        platform: Platform,
+        projectId: String,
+        iconUrl: String?
+    ) {
+        if (installOperation != ModPackInstallOperation.None) return
+        viewModelScope.launch {
+            runCatching { getVersions(projectID = projectId, platform = platform) }
+                .onSuccess { versions ->
+                    val version = versions.firstOrNull()
+                    if (version == null) {
+                        installOperation = ModPackInstallOperation.Error(
+                            IllegalStateException("No downloadable version")
+                        )
+                        return@onSuccess
+                    }
+                    installOperation = if (!NotificationManager.checkNotificationEnabled(context)) {
+                        ModPackInstallOperation.WarningForNotification(version, iconUrl)
+                    } else {
+                        ModPackInstallOperation.Warning(version, iconUrl)
+                    }
+                }
+                .onFailure { th ->
+                    Logger.warning("InstallModpack", "Failed to fetch modpack versions.", th)
+                    installOperation = ModPackInstallOperation.Error(th)
+                }
+        }
     }
 
     /**
@@ -358,7 +397,16 @@ fun DownloadModPackScreen(
                         downloadModPackScreenKey = key,
                         downloadModPackScreenCurrentKey = downloadModPackScreenKey,
                         viewModel = importerViewModel,
-                        eventViewModel = eventViewModel
+                        eventViewModel = eventViewModel,
+                        //一键下载：主页资源中心与实例资源管理都直接可用（不需要实例上下文）
+                        onQuickInstall = { platform, projectId, iconUrl ->
+                            viewModel.quickInstall(
+                                context = context,
+                                platform = platform,
+                                projectId = projectId,
+                                iconUrl = iconUrl
+                            )
+                        }
                     ) { platform, projectId, iconUrl ->
                         backStack.navigateTo(
                             NormalNavKey.DownloadAssets(platform, projectId, PlatformClasses.MOD_PACK, iconUrl)

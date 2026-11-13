@@ -33,21 +33,25 @@ import com.movtery.zalithlauncher.setting.AllSettings
  *
  * | 槽位 | 与主圆角的关系 |
  * |---|---|
- * | extraSmall | ×0.36 |
- * | small | ×0.54 |
- * | medium | ×0.73 |
- * | large（卡片）| ×1.00 |
- * | extraLarge（面板/对话框）| ×1.36 |
+ * | extraSmall | ×0.60 |
+ * | small | ×0.85 |
+ * | medium（小图标/徽章）| ×1.00 |
+ * | large（卡片）| ×1.20 |
+ * | extraLarge（面板/对话框）| ×1.45 |
+ *
+ * ⚠️ 卡片槽位刻意比主圆角更大：圆角从「主圆角」直接等于卡片圆角时，
+ * 转弯来得太急（直线突然拐进圆弧）。放大到 1.2 倍后，曲线更早开始、
+ * 进入直角的过程更平缓，卡片看起来像是「顺着弯道并进主路」而不是原地急打方向。
  */
 @Composable
 fun modernShapes(radius: Int = AllSettings.launcherCornerRadius.state): Shapes {
     val card = radius.dp
     return Shapes(
-        extraSmall = RoundedCornerShape(card * 0.36f),
-        small = RoundedCornerShape(card * 0.54f),
-        medium = RoundedCornerShape(card * 0.73f),
-        large = RoundedCornerShape(card),
-        extraLarge = RoundedCornerShape(card * 1.36f)
+        extraSmall = RoundedCornerShape(card * 0.60f),
+        small = RoundedCornerShape(card * 0.85f),
+        medium = RoundedCornerShape(card),
+        large = RoundedCornerShape(card * 1.20f),
+        extraLarge = RoundedCornerShape(card * 1.45f)
     )
 }
 

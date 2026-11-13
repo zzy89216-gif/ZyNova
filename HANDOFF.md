@@ -48,14 +48,21 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.1.6**（`launcher_version_code=281106`，**预发行**，版本名不带后缀；正式线仍是 28.1.0）；
+- 当前版本 **28.2.0**（`launcher_version_code=282000`，**正式版**，版本名不带后缀）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.1.6**（`launcher_version_code=281106`，预发行）
+**当前版本：28.2.0**（`launcher_version_code=282000`，正式版）
+
+### 28.2.0 的结构性变化
+
+- **卡片圆角 = 设置值 × 1.2**（`modernShapes`）：卡片槽位刻意比主圆角大，曲线更早开始；
+  不要再把 `large` 槽位改回 ×1.0——维护者明确说那样像「急转弯」。
+- **一键下载不再依赖实例上下文**：收藏页卡片（`FavoritesScreen`）与整合包搜索结果
+  （`SearchModPackScreen.onQuickInstall`）都直接给下载按钮；没有实例上下文时装到当前实例。
 
 ### 28.1.6 的结构性变化
 

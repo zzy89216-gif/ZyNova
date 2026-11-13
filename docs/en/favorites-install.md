@@ -8,7 +8,7 @@ When you reach the resource pages from "Version settings → Resources → Downl
 - Required dependencies (for example a mod's required libraries) are downloaded and installed together, so you do not have to hunt them down.
 - If a required dependency really cannot be found, the app says exactly what is missing instead of pretending the install succeeded.
 
-Entered from the home screen's resource center, there is no instance context, so the favorites page stays browse-only: open a card's details, then choose the instance yourself.
+Entered from the home screen's resource center there is no instance context, so the download button installs into the **current instance**; to target a different one, come in through that instance's "Version settings → Resources". Tapping the card itself still opens details (type, size, checksum).
 
 ## Local archive
 

@@ -7,7 +7,7 @@ Entry: **the palette button in the top capsule**. The five most-used options use
 | Wallpaper | image / video | none |
 | Background opacity | 20%–100% | 80% |
 | Background blur | 0–40dp (capped at 24dp) | 0 |
-| Card corner radius | 12–36dp | 28dp |
+| Card corner radius | 12–36dp | 36dp |
 | Glass strength | 2%–16% | 8% |
 
 “More settings” at the bottom opens Settings → General; both edit the same configuration.
@@ -22,4 +22,6 @@ Entry: **the palette button in the top capsule**. The five most-used options use
 
 - Too flat → glass strength 12%–16%;
 - Cards blend together → glass strength 2%–4%, or a smaller radius;
+- Cards actually use **1.2× the configured radius** (about 43dp at the default): the curve starts earlier and
+  eases into the corner instead of snapping from a straight edge into an arc; small icons and badges scale too.
 - Stutters on an old phone → blur 0–8dp and opacity 100% (blur is then skipped).

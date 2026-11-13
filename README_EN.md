@@ -10,24 +10,25 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 is out (global compliance build).**
+> ⭐ **ZyNova 28.2.0 is out (stable).** Everything fixed in the 28.1.1 – 28.1.6 betas is included,
+> plus: one-tap download from favorites, one-tap modpack download from search results and version lists,
+> and smoother card corners.
 
-> 🧪 **28.1.6 (beta, pre-release)**: favorites cards now share the resource download list's layout,
-> and when you come from "Version settings → Resources" each card has a one-tap download that installs
-> the resource together with its required dependencies; modpack version lists gained the same one-tap
-> install; modpack install runs in the background; SakuraFrp auto-refresh no longer throws errors at you;
-> hiding one instance card no longer hides all of them; dragging home cards no longer flickers;
-> default corner radius 36dp / glass 2%.
-> Already shipped: the account page crash fix (WebView serving skins from public storage), the
-> un-scrollable SakuraFrp tutorial, stale state after returning from system settings, card-width seams;
-> LTW options on their own page; reworked sponsor entry; the public folder keeping only `logs` and
-> `.Minecraft` with a full-screen migration that waits for Next; the floating Terracotta / SakuraFrp
-> switcher; LittleSkin quick sign-in; home cards swapping at half overlap.
-> Download: [Releases](https://github.com/zzy89216-gif/ZyNova/releases) (pre-release; use stable 28.1.0 for daily play)
+> ✨ **Highlights in 28.2.0**:
+> **Simpler favorites** — no description, no download counts; the download button is big and the unfavorite
+> button is small, and one tap installs the resource with its required dependencies;
+> **One-tap modpacks** — a download button right on each search result card, no detour through the details
+> page, working both from the home screen and from an instance's resource manager;
+> **Smoother corners** — card corners use 1.2× the configured radius so the curve eases in instead of
+> turning abruptly from a straight edge into an arc.
+> Also included: revoking "All files access" while running no longer makes data look gone (P0), the account
+> page crash fix, background modpack installs, no more SakuraFrp refresh errors, per-instance home card
+> hiding, flicker-free card dragging, and 36dp / 2% glass defaults.
+> Download: [Releases](https://github.com/zzy89216-gif/ZyNova/releases)
 
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.1.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.0)
+[![Release](https://img.shields.io/badge/Release-28.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.0)
 
 ---
 

@@ -90,8 +90,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.movtery.zalithlauncher.game.download.assets.quickInstallResource
-import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.ResultProjectLayout
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
+import androidx.compose.material3.Surface
+import androidx.compose.ui.text.style.TextOverflow
+import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.AssetsIcon
+import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.getTextRes
+import com.movtery.zalithlauncher.ui.theme.cardColor
+import com.movtery.zalithlauncher.ui.theme.onCardColor
 
 /** 超过这个大小先问一句再导入（本地归档会真的占掉这么多空间） */
 private const val LARGE_FILE_THRESHOLD = 512L * 1024L * 1024L
@@ -582,54 +587,100 @@ private fun OnlineFavoritesContent(
 
         entries.forEach { entry ->
             val remote = entry.remote
-            val classes = remember(entry) { entry.project.classes }
-            val description = remember(entry) {
-                remote?.platformSummary()?.takeIf { it.isNotBlank() }
-                    ?: entry.project.description.takeIf { it.isNotBlank() }
-                    ?: "—"
+            //简化卡片：只有图标 / 标题 / 作者与类别，右侧两个按钮——取消收藏（小）与下载（大）
+            val title = remember(entry) {
+                remote?.platformTitle()?.takeIf { it.isNotBlank() } ?: entry.project.title
             }
-            //和资源下载列表（模组 / 资源包等）完全同款的卡片：
-            //图标、标题、作者、描述、下载量、收藏量、加载器与类别标签都在
-            ResultProjectLayout(
+            val subtitle = remember(entry) {
+                buildString {
+                    val author = remote?.platformAuthor()?.takeIf { it.isNotBlank() }
+                        ?: entry.project.authors.joinToString(", ").takeIf { it.isNotBlank() }
+                    if (author != null) append(author).append(" · ")
+                    append(context.getString(entry.project.classes.getTextRes()))
+                    if (entry.invalid) {
+                        append(" · ")
+                        append(context.getString(R.string.favorites_online_invalid))
+                    }
+                }
+            }
+            val icon = remote?.platformIconUrl() ?: entry.project.iconUrl
+
+            Surface(
                 modifier = Modifier.fillMaxWidth(),
-                platform = entry.platform,
-                title = remote?.platformTitle()?.takeIf { it.isNotBlank() } ?: entry.project.title,
-                description = if (entry.invalid) {
-                    "${context.getString(R.string.favorites_online_invalid)} · $description"
-                } else {
-                    description
-                },
-                classes = classes,
-                iconUrl = remote?.platformIconUrl() ?: entry.project.iconUrl,
-                author = remote?.platformAuthor()?.takeIf { it.isNotBlank() }
-                    ?: entry.project.authors.joinToString(", ").takeIf { it.isNotBlank() },
-                downloads = remote?.platformDownloadCount() ?: 0L,
-                follows = remote?.platformFollows(),
-                modloaders = remote?.platformModLoaders(),
-                categories = remember(entry, classes) { remote?.platformCategories(classes) },
-                compactActions = true,
-                //一键下载：从实例的资源管理进来时，直接把收藏的资源
-                //（连同必需前置）装进那个实例，不再询问装到哪里
-                onInstall = installTargetVersion?.let { target ->
-                    {
-                        quickInstallResource(
-                            platform = entry.platform,
-                            projectId = entry.project.projectId,
-                            classes = classes,
-                            targetVersionName = target,
-                            submitError = submitError
+                shape = MaterialTheme.shapes.large,
+                color = cardColor(),
+                contentColor = onCardColor(),
+                onClick = { detail = entry }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    AssetsIcon(
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp)),
+                        size = 44.dp,
+                        iconUrl = icon
+                    )
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
-                },
-                isFavorite = true,
-                onFavoriteToggle = {
-                    FavoriteProjectsRepository.unfavorite(
-                        entry.platform,
-                        entry.project.projectId
-                    )
-                },
-                onClick = { detail = entry }
-            )
+
+                    //取消收藏：刻意做小，别抢标题和下载按钮的位置
+                    IconButton(
+                        modifier = Modifier.size(30.dp),
+                        onClick = {
+                            FavoriteProjectsRepository.unfavorite(
+                                entry.platform,
+                                entry.project.projectId
+                            )
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(R.drawable.ic_favorite_outlined),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            contentDescription = stringResource(R.string.favorites_online_remove)
+                        )
+                    }
+
+                    //下载：做大的那个——点一下直接装进实例（含必需前置）
+                    IconButton(
+                        modifier = Modifier.size(46.dp),
+                        onClick = {
+                            quickInstallResource(
+                                platform = entry.platform,
+                                projectId = entry.project.projectId,
+                                classes = entry.project.classes,
+                                targetVersionName = installTargetVersion,
+                                submitError = submitError
+                            )
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(28.dp),
+                            painter = painterResource(R.drawable.ic_download_2_filled),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = stringResource(R.string.download_assets_quick_install)
+                        )
+                    }
+                }
+            }
         }
 
         detail?.let { entry ->
