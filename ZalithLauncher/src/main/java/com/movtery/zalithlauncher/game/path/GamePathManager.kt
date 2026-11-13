@@ -57,7 +57,14 @@ object GamePathManager {
      * 有「所有文件访问」时是公共目录，没有时自动回退旧的私有目录（保证还能用）。
      */
     private val defaultGamePath: String
-        get() = PathManager.DIR_GAME.absolutePath
+        get() = if (PathManager.DIR_GAME.absolutePath == PathManager.publicGameDir().absolutePath) {
+            //正常情况：公共目录 `/ZyNova/.Minecraft`
+            PathManager.DIR_GAME.absolutePath
+        } else {
+            //回退私有目录时（没权限 / 迁移失败），实例其实还在旧的 `files/.minecraft`，
+            //不能指向 `files/games`（那里只有运行时和皮肤缓存，用户会看到「一个实例都没有」）
+            PathManager.legacyInstanceDir().absolutePath
+        }
     /**
      * 默认游戏目录的ID
      */

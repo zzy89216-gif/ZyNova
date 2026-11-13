@@ -89,9 +89,10 @@ object GameDirMigration {
                 files.forEachIndexed { index, (from, file) ->
                     val relative = file.absolutePath.removePrefix(from.absolutePath).trimStart('/')
                     val target = File(to, relative)
-                    //两个来源都往同一个根里合并：目标已存在时**跳过**，
-                    //不能拿旧的覆盖公共目录里已经迁好/更新的同名文件
-                    if (!target.exists()) {
+                    //两个来源都往同一个根里合并。目标已存在且大小一致时才跳过
+                    //（上次搬到一半留下的同名文件）；大小不一致说明那是不完整的，
+                    //用源文件覆盖，避免「校验通过了、文件却是坏的」。
+                    if (!target.exists() || target.length() != file.length()) {
                         target.parentFile?.mkdirs()
                         file.copyTo(target, overwrite = true)
                     }
