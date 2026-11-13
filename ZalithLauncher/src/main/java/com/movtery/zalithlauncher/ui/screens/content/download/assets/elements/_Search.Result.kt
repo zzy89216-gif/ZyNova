@@ -447,6 +447,13 @@ fun ResultProjectLayout(
     isFavorite: Boolean = false,
     /** 收藏 / 取消收藏；为 null 时不显示收藏按钮 */
     onFavoriteToggle: (() -> Unit)? = null,
+    /**
+     * 紧凑动作按钮
+     *
+     * 收藏页这类以「取消收藏 / 一键下载」为主的列表里，
+     * 动作按钮不需要占满 48dp 的触摸板，缩小后标题与描述能多显示一些。
+     */
+    compactActions: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -582,11 +589,13 @@ fun ResultProjectLayout(
             //收藏按钮：资源列表里直接收藏，不用再绕去收藏页
             onFavoriteToggle?.let { toggle ->
                 IconButton(
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .then(if (compactActions) Modifier.size(32.dp) else Modifier),
                     onClick = toggle
                 ) {
                     Icon(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(if (compactActions) 18.dp else 24.dp),
                         painter = painterResource(
                             if (isFavorite) R.drawable.ic_favorite_filled
                             else R.drawable.ic_favorite_outlined
@@ -607,11 +616,13 @@ fun ResultProjectLayout(
             //快捷安装按钮：具备实例上下文时才显示，直接安装到当前实例
             onInstall?.let { install ->
                 IconButton(
-                    modifier = Modifier.align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .then(if (compactActions) Modifier.size(36.dp) else Modifier),
                     onClick = install
                 ) {
                     Icon(
-                        modifier = Modifier.size(26.dp),
+                        modifier = Modifier.size(if (compactActions) 20.dp else 26.dp),
                         painter = painterResource(R.drawable.ic_download_2_filled),
                         contentDescription = stringResource(R.string.download_assets_quick_install)
                     )

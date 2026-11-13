@@ -57,6 +57,15 @@
 
 **当前版本：28.1.6**（`launcher_version_code=281106`，预发行）
 
+### 28.1.6 的结构性变化
+
+- **收藏页带安装上下文**：`FavoritesScreen(installTargetVersion, submitError)`。
+  `DownloadScreen` 把 `ScreenBackStackViewModel.resourceInstallTarget` 透传进来，
+  收藏卡片因此能显示「一键下载」；安装走 `quickInstallResource()`（同样递归装必需前置），
+  从主页资源中心进入时该参数为 null，保持纯浏览。
+- **收藏页卡片复用资源列表卡片**：直接使用 `ResultProjectLayout`（`compactActions = true`
+  缩小 ♥ / 下载按钮）。不要在收藏页另写一套卡片，否则又会和资源下载页长得不一样。
+
 ### 28.1.3 的结构性变化
 
 - **数据根目录 = `/ZyNova/.Minecraft`**（`PathManager.DIR_GAME`）。根目录只留 `logs` 与 `.Minecraft`；

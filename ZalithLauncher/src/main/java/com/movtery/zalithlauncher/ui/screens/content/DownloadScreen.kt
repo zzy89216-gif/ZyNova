@@ -255,6 +255,10 @@ private fun NavigationUI(
                     FavoritesScreen(
                         screenKey = favKey,
                         currentKey = backScreenViewModel.downloadScreen.currentKey,
+                        //带上进入资源页面时的实例上下文：从「版本设置 → 资源管理」进来时，
+                        //收藏页可以直接把资源（含必需前置）下载进该实例
+                        installTargetVersion = backScreenViewModel.resourceInstallTarget,
+                        submitError = submitError
                     )
                 }
                 entry<NestedNavKey.DownloadMod> { key ->

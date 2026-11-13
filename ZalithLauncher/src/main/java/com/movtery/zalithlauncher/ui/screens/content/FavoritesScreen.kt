@@ -25,12 +25,10 @@ import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
-import coil3.compose.AsyncImage
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.clip
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Tab
-import androidx.compose.foundation.clickable
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -88,6 +86,12 @@ import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.movtery.zalithlauncher.game.download.assets.quickInstallResource
+import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.ResultProjectLayout
+import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 
 /** 超过这个大小先问一句再导入（本地归档会真的占掉这么多空间） */
 private const val LARGE_FILE_THRESHOLD = 512L * 1024L * 1024L
@@ -107,9 +111,15 @@ private const val LARGE_FILE_THRESHOLD = 512L * 1024L * 1024L
 @Composable
 private fun LocalArchiveContent(
     modifier: Modifier = Modifier,
+    /** 安装上下文：有目标实例时直接装进该实例，不再弹实例选择 */
+    installTargetVersion: String? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val versions by VersionsManager.versions.collectAsStateWithLifecycle()
+    val targetVersion = remember(versions, installTargetVersion) {
+        installTargetVersion?.let { name -> versions.firstOrNull { it.getVersionName() == name } }
+    }
 
     var entries by remember { mutableStateOf<List<FavoriteEntry>>(emptyList()) }
     var totalSize by remember { mutableStateOf(0L) }
@@ -270,13 +280,30 @@ private fun LocalArchiveContent(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(all = 16.dp),
+                            .padding(all = 12.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            //和资源下载卡片一致的「左图标 + 中信息」结构
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(26.dp),
+                                    painter = painterResource(R.drawable.ic_star_filled),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                            }
+
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = entry.name,
@@ -286,11 +313,24 @@ private fun LocalArchiveContent(
                                 Text(
                                     text = entrySummary(context, entry),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    text = entry.source,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                    maxLines = 1
                                 )
                             }
-                            IconButton(onClick = { pendingDelete = entry }) {
+
+                            //删除按钮做小，避免和右侧信息抢空间
+                            IconButton(
+                                modifier = Modifier.size(32.dp),
+                                onClick = { pendingDelete = entry }
+                            ) {
                                 Icon(
+                                    modifier = Modifier.size(18.dp),
                                     painter = painterResource(R.drawable.ic_delete_outlined),
                                     contentDescription = stringResource(R.string.generic_delete)
                                 )
@@ -303,7 +343,52 @@ private fun LocalArchiveContent(
                         ) {
                             TextButton(
                                 enabled = !busy && entry.type.canInstall,
-                                onClick = { installEntry = entry }
+                                onClick = {
+                                    //上下文优先：从实例的资源管理进来时，直接装进该实例（含必需前置），
+                                    //不再让用户重复选一次实例
+                                    if (targetVersion != null) {
+                                        busy = true
+                                        scope.launch {
+                                            message = runCatching {
+                                                val r = FavoriteInstaller.install(entry, targetVersion)
+                                                buildString {
+                                                    append(
+                                                        context.getString(
+                                                            R.string.favorites_install_done,
+                                                            targetVersion.getVersionName()
+                                                        )
+                                                    )
+                                                    if (r.installedDependencies.isNotEmpty()) {
+                                                        append("\n")
+                                                        append(
+                                                            context.getString(
+                                                                R.string.favorites_install_dependencies,
+                                                                r.installedDependencies.joinToString(", ")
+                                                            )
+                                                        )
+                                                    }
+                                                    if (r.missingDependencies.isNotEmpty()) {
+                                                        append("\n")
+                                                        append(
+                                                            context.getString(
+                                                                R.string.favorites_install_missing,
+                                                                r.missingDependencies.joinToString(", ")
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            }.getOrElse { th ->
+                                                context.getString(
+                                                    R.string.favorites_import_failed,
+                                                    th.message ?: th.javaClass.simpleName
+                                                )
+                                            }
+                                            busy = false
+                                        }
+                                    } else {
+                                        installEntry = entry
+                                    }
+                                }
                             ) {
                                 Text(text = stringResource(R.string.favorites_action_install))
                             }
@@ -402,6 +487,9 @@ private fun LocalArchiveContent(
 fun FavoritesScreen(
     screenKey: TitledNavKey,
     currentKey: TitledNavKey?,
+    /** 资源安装上下文（目标实例名称）；为 null 表示资源中心里的纯浏览模式 */
+    installTargetVersion: String? = null,
+    submitError: (ErrorViewModel.ThrowableMessage) -> Unit = {},
 ) {
     var tab by remember { mutableStateOf(0) }
 
@@ -421,8 +509,11 @@ fun FavoritesScreen(
             }
 
             when (tab) {
-                0 -> OnlineFavoritesContent()
-                else -> LocalArchiveContent()
+                0 -> OnlineFavoritesContent(
+                    installTargetVersion = installTargetVersion,
+                    submitError = submitError
+                )
+                else -> LocalArchiveContent(installTargetVersion = installTargetVersion)
             }
         }
     }
@@ -430,7 +521,10 @@ fun FavoritesScreen(
 
 /** 在线收藏：搬自上游 ZalithLauncher2 的 FavoriteProjectsRepository */
 @Composable
-private fun OnlineFavoritesContent() {
+private fun OnlineFavoritesContent(
+    installTargetVersion: String? = null,
+    submitError: (ErrorViewModel.ThrowableMessage) -> Unit = {},
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
@@ -487,73 +581,55 @@ private fun OnlineFavoritesContent() {
         }
 
         entries.forEach { entry ->
-            BackgroundCard(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(all = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    val icon = entry.remote?.platformIconUrl() ?: entry.project.iconUrl
-                    if (!icon.isNullOrBlank()) {
-                        AsyncImage(
-                            model = icon,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { detail = entry }
-                    ) {
-                        Text(
-                            text = entry.remote?.platformTitle() ?: entry.project.title,
-                            style = MaterialTheme.typography.titleSmall,
-                            maxLines = 1
-                        )
-                        Text(
-                            text = buildString {
-                                val remote = entry.remote
-                                val authors = remote?.platformAuthor()?.takeIf { it.isNotBlank() }
-                                    ?: entry.project.authors.joinToString(", ")
-                                if (authors.isNotBlank()) append(authors).append(" · ")
-                                append(
-                                    context.getString(
-                                        R.string.favorites_online_classes,
-                                        entry.project.classes.name
-                                    )
-                                )
-                                if (entry.invalid) {
-                                    append(" · ")
-                                    append(context.getString(R.string.favorites_online_invalid))
-                                }
-                            },
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2
-                        )
-                    }
-
-                    IconButton(
-                        onClick = {
-                            FavoriteProjectsRepository.unfavorite(
-                                entry.platform,
-                                entry.project.projectId
-                            )
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_favorite_outlined),
-                            contentDescription = stringResource(R.string.favorites_online_remove)
-                        )
-                    }
-                }
+            val remote = entry.remote
+            val classes = remember(entry) { entry.project.classes }
+            val description = remember(entry) {
+                remote?.platformSummary()?.takeIf { it.isNotBlank() }
+                    ?: entry.project.description.takeIf { it.isNotBlank() }
+                    ?: "—"
             }
+            //和资源下载列表（模组 / 资源包等）完全同款的卡片：
+            //图标、标题、作者、描述、下载量、收藏量、加载器与类别标签都在
+            ResultProjectLayout(
+                modifier = Modifier.fillMaxWidth(),
+                platform = entry.platform,
+                title = remote?.platformTitle()?.takeIf { it.isNotBlank() } ?: entry.project.title,
+                description = if (entry.invalid) {
+                    "${context.getString(R.string.favorites_online_invalid)} · $description"
+                } else {
+                    description
+                },
+                classes = classes,
+                iconUrl = remote?.platformIconUrl() ?: entry.project.iconUrl,
+                author = remote?.platformAuthor()?.takeIf { it.isNotBlank() }
+                    ?: entry.project.authors.joinToString(", ").takeIf { it.isNotBlank() },
+                downloads = remote?.platformDownloadCount() ?: 0L,
+                follows = remote?.platformFollows(),
+                modloaders = remote?.platformModLoaders(),
+                categories = remember(entry, classes) { remote?.platformCategories(classes) },
+                compactActions = true,
+                //一键下载：从实例的资源管理进来时，直接把收藏的资源
+                //（连同必需前置）装进那个实例，不再询问装到哪里
+                onInstall = installTargetVersion?.let { target ->
+                    {
+                        quickInstallResource(
+                            platform = entry.platform,
+                            projectId = entry.project.projectId,
+                            classes = classes,
+                            targetVersionName = target,
+                            submitError = submitError
+                        )
+                    }
+                },
+                isFavorite = true,
+                onFavoriteToggle = {
+                    FavoriteProjectsRepository.unfavorite(
+                        entry.platform,
+                        entry.project.projectId
+                    )
+                },
+                onClick = { detail = entry }
+            )
         }
 
         detail?.let { entry ->
