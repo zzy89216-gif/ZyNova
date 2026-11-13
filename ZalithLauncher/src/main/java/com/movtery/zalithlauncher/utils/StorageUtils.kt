@@ -48,6 +48,23 @@ var canHandlePermission: Boolean = false
     private set
 
 /**
+ * 「现在能不能用游戏目录」的统一判断。
+ *
+ * - Android 11+：必须拿到「所有文件访问」（`MANAGE_EXTERNAL_STORAGE`）；
+ * - Android 8–10：用运行时读写存储权限。
+ *
+ * 启动页的存储门禁、以及 `PathManager` 的公共目录写入判断都以它为准，
+ * 避免出现「以为有权限、其实写不进去」的半残状态。
+ */
+fun isStorageReady(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        runCatching { Environment.isExternalStorageManager() }.getOrDefault(false)
+    } else {
+        hasStoragePermissions(context)
+    }
+}
+
+/**
  * 检查存储权限，并检查是否能够处理存储权限申请
  * @return 是否拥有存储权限
  */

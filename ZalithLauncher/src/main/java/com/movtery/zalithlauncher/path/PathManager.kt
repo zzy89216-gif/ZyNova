@@ -276,28 +276,10 @@ class PathManager {
             dir.isDirectory && (dir.list()?.isNotEmpty() == true)
 
         /**
-         * 是否有权写公共存储。
+         * 游戏根目录**永远是公共目录** `/ZyNova/.Minecraft`。
          *
-         * Android 11 起必须拿到「所有文件访问」；更早的版本只要有存储权限即可。
-         * 拿不到就回退私有目录，**绝不因为权限问题让启动器起不来**。
-         */
-        private fun canWritePublicStorage(): Boolean {
-            val allowed = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                runCatching { Environment.isExternalStorageManager() }.getOrDefault(false)
-            } else true
-            if (!allowed) return false
-            return runCatching { publicGameDir().let { it.exists() || it.mkdirs() } }.getOrDefault(false)
-        }
-
-        /**
-         * 决定这次用哪个游戏根目录。
-         *
-         * 优先级：
-         * 1. 公共目录已经有内容 → 直接用；
-         * 2. 只有旧的私有目录有内容 → **先继续用旧目录**，同时在后台把数据搬到公共目录，
-         *    搬完并校验成功后才删除旧目录（下次启动自动用新目录）。
-         *    这样迁移中途退出、失败都不会丢实例；
-         * 3. 全新安装 → 直接用公共目录（没权限就回退私有）。
+         * 私有目录只在 `GameDirMigration` 里作为「迁移来源」被读取，读完之后删除；
+         * 它**不再**是任何情况下的运行目录。
          */
         private fun resolveGameDir(): File {
             //⚠️ **永远使用公共目录**（维护者要求：绝对不能再出现"退回私有目录"）。

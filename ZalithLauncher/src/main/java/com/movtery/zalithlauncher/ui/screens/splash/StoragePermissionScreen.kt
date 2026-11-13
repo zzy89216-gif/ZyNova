@@ -12,10 +12,13 @@
  */
 package com.movtery.zalithlauncher.ui.screens.splash
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +36,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.path.GameDirMigration
+import com.movtery.zalithlauncher.utils.isStorageReady
 import com.movtery.zalithlauncher.utils.logging.Logger
 
 @Composable
@@ -43,15 +47,39 @@ fun StoragePermissionScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var granted by remember { mutableStateOf(GameDirMigration.hasAllFilesAccess()) }
+    var granted by remember { mutableStateOf(isStorageReady(context)) }
     /** 是否已经从设置页返回过一次还没授权——是的话升级成“必须允许”的硬提示 */
     var returnedWithoutGrant by remember { mutableStateOf(false) }
+
+    /**
+     * Android 8–10 没有「所有文件访问」，用的是运行时读写存储权限。
+     * 这里直接请求；给了就继续，拒绝就落到下面的硬提示（只能再去授权或退出）。
+     */
+    val legacyPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        if (result.values.all { it } && isStorageReady(context)) {
+            granted = true
+        } else {
+            returnedWithoutGrant = true
+        }
+    }
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && !isStorageReady(context)) {
+            legacyPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            )
+        }
+    }
 
     // 每次回到前台都重新检查：用户可能在系统设置里刚打开开关
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                val now = GameDirMigration.hasAllFilesAccess()
+                val now = isStorageReady(context)
                 if (now) granted = true
                 else if (!granted) returnedWithoutGrant = true
             }
@@ -65,11 +93,6 @@ fun StoragePermissionScreen(
     }
 
     if (granted) return
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-        //Android 11 以下没有这个权限，直接放行
-        LaunchedEffect(Unit) { onGranted() }
-        return
-    }
 
     AlertDialog(
         //硬提示阶段不允许点外部关闭，只能去授权或退出
@@ -92,15 +115,24 @@ fun StoragePermissionScreen(
         },
         confirmButton = {
             TextButton(onClick = {
-                runCatching {
-                    context.startActivity(
-                        Intent(
-                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                            Uri.parse("package:${context.packageName}")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    runCatching {
+                        context.startActivity(
+                            Intent(
+                                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                Uri.parse("package:${context.packageName}")
+                            )
+                        )
+                    }.onFailure {
+                        Logger.warning("StorageGate", "Cannot open settings: ${it.message}")
+                    }
+                } else {
+                    legacyPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
                         )
                     )
-                }.onFailure {
-                    Logger.warning("StorageGate", "Cannot open settings: ${it.message}")
                 }
             }) { Text(stringResource(R.string.storage_gate_grant)) }
         },

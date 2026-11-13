@@ -160,8 +160,7 @@ class MainActivity : BaseAppCompatActivity() {
      * onResume 会重新求值，值变了就重新走权限门禁 / 重新解析路径。
      */
     private val storageGrantedState = androidx.compose.runtime.mutableStateOf(
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
-            com.movtery.zalithlauncher.path.GameDirMigration.hasAllFilesAccess()
+        com.movtery.zalithlauncher.utils.isStorageReady(this)
     )
 
     /**
@@ -996,8 +995,7 @@ class MainActivity : BaseAppCompatActivity() {
         ControlManager.checkDefaultAndRefresh(this@MainActivity)
 
         //回到前台重新核对一次「所有文件访问」：用户可能刚从系统设置里关掉或打开
-        val granted = Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
-            com.movtery.zalithlauncher.path.GameDirMigration.hasAllFilesAccess()
+        val granted = com.movtery.zalithlauncher.utils.isStorageReady(this)
         if (storageGrantedState.value != granted) {
             storageGrantedState.value = granted
             //两个方向都要重算：
