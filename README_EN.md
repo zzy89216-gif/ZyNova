@@ -12,14 +12,17 @@
 
 > ⭐ **ZyNova 28.1.0 is out (global compliance build).**
 
-> 🧪 **28.1.5 (beta, pre-release)**: fixes a P0 where revoking "All files access" while running made data look
-> gone and re-granting did not recover. Already in 28.1.4: fixes the account page crash (WebView tried to serve skins from public storage),
-> un-scrollable SakuraFrp tutorial, stale state after returning from system settings, and card-width seams;
-> LTW options moved to their own page; sponsor entry reworked on the About page.
-> Already shipped in 28.1.3: the public folder now only keeps `logs` and `.Minecraft`; migration is a full-screen page
-> that waits for you to tap Next; multiplayer is one screen with a floating Terracotta / SakuraFrp switcher that remembers
-> the last choice; both multiplayer tutorials were rewritten against the real flow; LittleSkin quick sign-in; home cards
-> swap once the dragged card covers half of the next one.
+> 🧪 **28.1.6 (beta, pre-release)**: favorites cards now share the resource download list's layout,
+> and when you come from "Version settings → Resources" each card has a one-tap download that installs
+> the resource together with its required dependencies; modpack version lists gained the same one-tap
+> install; modpack install runs in the background; SakuraFrp auto-refresh no longer throws errors at you;
+> hiding one instance card no longer hides all of them; dragging home cards no longer flickers;
+> default corner radius 36dp / glass 2%.
+> Already shipped: the account page crash fix (WebView serving skins from public storage), the
+> un-scrollable SakuraFrp tutorial, stale state after returning from system settings, card-width seams;
+> LTW options on their own page; reworked sponsor entry; the public folder keeping only `logs` and
+> `.Minecraft` with a full-screen migration that waits for Next; the floating Terracotta / SakuraFrp
+> switcher; LittleSkin quick sign-in; home cards swapping at half overlap.
 > Download: [Releases](https://github.com/zzy89216-gif/ZyNova/releases) (pre-release; use stable 28.1.0 for daily play)
 
 

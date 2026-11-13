@@ -4,6 +4,8 @@
 2. Pick a Modrinth or CurseForge project and version.
 3. Installation creates a new instance and resolves dependencies.
 4. The first launch may download more libraries.
+5. Every row in the version list has an install button (same as the mod pages): one tap installs that version without opening its details first;
+   reminders about mobile data or notification permission still appear once, then the install starts.
 
 Modpacks are not regular resources; do not use the resource install path.
 

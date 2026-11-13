@@ -24,6 +24,12 @@
 - **Mod management** enables, disables or deletes mods; Fabric API is added by the Fabric flow and must not be installed twice by hand.
 - **Run log** lives on the version overview page; when something crashes, share the log from there first.
 
+## Home cards
+
+- Long-press a card and drag to reorder; drop it once it **covers half** of another card and they swap, without flicker.
+- The "Hide this instance on Home / Show this instance on Home" button under Instance → Version overview → Quick actions
+  affects **only that instance**; it no longer turns every card off at once.
+
 ## Export
 
 - Instance page → Export → currently **Modrinth modpack format only**.
