@@ -1,122 +1,57 @@
 <p align="center"><sub>
-<b>English</b> · <a href="README.md">简体中文</a> · <a href="i18n/zh-Hant/README.md">繁體中文</a> · <a href="i18n/ja/README.md">日本語</a> · <a href="i18n/ko/README.md">한국어</a> · <a href="i18n/tr/README.md">Türkçe</a> · <a href="i18n/ru/README.md">Русский</a> · <a href="i18n/vi/README.md">Tiếng Việt</a> · <a href="i18n/th/README.md">ไทย</a> · <a href="i18n/de/README.md">Deutsch</a> · <a href="i18n/es/README.md">Español</a> · <a href="i18n/fr/README.md">Français</a>
-<br>
+<a href="README.md">简体中文</a> · <b>English</b> · <a href="i18n/zh-Hant/README.md">繁體中文</a> · <a href="i18n/ja/README.md">日本語</a> · <a href="i18n/ko/README.md">한국어</a> · <a href="i18n/tr/README.md">Türkçe</a> · <a href="i18n/ru/README.md">Русский</a> · <a href="i18n/vi/README.md">Tiếng Việt</a> · <a href="i18n/th/README.md">ไทย</a> · <a href="i18n/de/README.md">Deutsch</a> · <a href="i18n/es/README.md">Español</a> · <a href="i18n/fr/README.md">Français</a><br>
 <a href="i18n/uk/README.md">Українська</a> · <a href="i18n/pl/README.md">Polski</a> · <a href="i18n/pt-BR/README.md">Português (Brasil)</a> · <a href="i18n/ar/README.md">العربية</a> · <a href="i18n/fa/README.md">فارسی</a> · <a href="i18n/id/README.md">Bahasa Indonesia</a> · <a href="i18n/it/README.md">Italiano</a> · <a href="i18n/el/README.md">Ελληνικά</a> · <a href="i18n/ml/README.md">മലയാളം</a> · <a href="i18n/ur-Latn/README.md">Roman Urdu</a> · <a href="i18n/ro/README.md">Română</a> · <a href="i18n/bg/README.md">Български</a>
 </sub></p>
 
-<p align="center">
-  <img src="assets/icon.png" width="160" alt="ZyNova">
-</p>
+<p align="center"><img src="assets/icon.png" width="120" alt="ZyNova"></p>
 
 # ZyNova
 
-> ⭐ **ZyNova 28.2.0 is out (stable).** Everything fixed in the 28.1.1 – 28.1.6 betas is included,
-> plus: one-tap download from favorites, one-tap modpack download from search results and version lists,
-> and smoother card corners.
+**A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
-> ✨ **Highlights in 28.2.0**:
-> **Simpler favorites** — no description, no download counts; the download button is big and the unfavorite
-> button is small, and one tap installs the resource with its required dependencies;
-> **One-tap modpacks** — a download button right on each search result card, no detour through the details
-> page, working both from the home screen and from an instance's resource manager;
-> **Smoother corners** — card corners use 1.2× the configured radius so the curve eases in instead of
-> turning abruptly from a straight edge into an arc.
-> Also included: revoking "All files access" while running no longer makes data look gone (P0), the account
-> page crash fix, background modpack installs, no more SakuraFrp refresh errors, per-instance home card
-> hiding, flicker-free card dragging, and 36dp / 2% glass defaults.
-> Download: [Releases](https://github.com/zzy89216-gif/ZyNova/releases)
-
-
-[![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
+[![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.0)
+[![Docs](https://img.shields.io/badge/Docs-77%20articles-blue)](docs/en/README.md)
 
----
+One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
 
-**Minecraft: Java Edition** on Android, built from the ZalithLauncher2 sources and maintained independently — not an official build.
+## Quick start
 
-The design bet is blunt: **fewer decisions**. Most launchers hand you a wall of settings and let you sort it out. ZyNova tries to decide first and explain later — install the game, fetch the mods and their dependencies, read the crash log, then launch. When it can't decide, it asks once.
+1. Grab the APK from [Releases](https://github.com/zzy89216-gif/ZyNova/releases) (Android 8.0+).
+2. First launch: region check → **allow "All files access"** (game data lives in the public `/ZyNova` folder) → scroll each of the 3 legal documents to the end and tick it → pick an age group.
+3. Sign in (Microsoft / LittleSkin / offline) → pick a version, or let the AI install one → play.
 
-## 🚀 Three steps to play
+> Upgrading from an older build runs a one-time data migration: full-screen progress, tap Next when it finishes. Data stays in `/ZyNova/.Minecraft` and is never lost.
 
-1. Grab the APK from [Releases](https://github.com/zzy89216-gif/ZyNova/releases) and install it (Android 8.0+).
-2. First launch checks your region, then **requires "All files access"** — game data lives in the public
-   `/ZyNova` folder and cannot be read or written without it.
-3. Read the three compliance documents: scroll each to the end, tick it, pick your age group. Upgrading users
-   see a one-time data migration first and tap Next when it finishes.
-4. Sign in (Microsoft, LittleSkin or offline), pick or install a version, hit play.
+## What it does
 
-- GitHub：<https://github.com/zzy89216-gif/ZyNova>
-- Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- X (official account)：<https://x.com/ZyNovaProject>
-- Mail：<ZyNovaLauncher@outlook.com>
-
-## ✨ What's new in 28.1.0
-
-- **First-launch compliance flow**：three merged documents — ① EULA + Privacy Policy, ② third-party open-source notice + disclaimers and risks, ③ tutorial + supported regions and jurisdiction. Each one **must be scrolled to the bottom and ticked separately**, then you choose an age group (existing users see it once after updating too).
-- **Time window for minors**：under 18, the game can only start on Friday, Saturday, Sunday and statutory holidays, **20:00–21:00**. The 2026 holidays follow the State Council schedule (国办发明电〔2025〕7号); make-up working days count as workdays.
-- **Disclaimers, written out**：save loss, device heat, third-party bans, service shutdown — all stated instead of buried.
-- **Also**：card home no longer hangs on loading, AI web search works, imports land in the instance folder, crash auto-fix removed.
-
-## 📂 Where data lives
-
-| Item | Location | After uninstall |
-|---|---|---|
-| Instances / worlds / mods / resource packs / shaders | `/storage/emulated/0/ZyNova/.Minecraft/` | kept |
-| Launcher logs | `/ZyNova/logs/` | kept |
-| Java runtimes / favourites archive / accounts / settings | private app storage | removed |
-
-The root folder only holds two things: `logs`, so a log is easy to send when reporting a problem, and
-`.Minecraft`, which is dot-prefixed and hidden by default in file managers so it is hard to delete by accident.
-See [Data locations](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/data-locations.md) for details.
-
-## 🛠️ Features
-
-- **AI Agent**：DeepSeek by default — installs the game, modpacks and mods, edits settings, reads logs, launches
-- **Renderers**：Auto / MobileGlues / GL4ES / LTW (experimental)
-- **Resource core**：Modrinth / CurseForge search, dependency resolution, download, verification, install
-- **Favorites & archive**：online favorites plus a private archive with SHA-256 dedupe
-- **Fabric API guard**：Fabric API / Quilted Fabric API / Legacy Fabric API are added by the install flow and can't be duplicated, searched, deleted or disabled by hand
-
-## 📦 Download and build
-
-- Download：<https://github.com/zzy89216-gif/ZyNova/releases> (always the latest)
-- Build yourself：JDK 17 + Android SDK / NDK, then `./gradlew ZalithLauncher:assembleRelease`
-- Heads-up：the compliance flow appears on first launch; fine print lives in [docs/en/licenses.md](docs/en/licenses.md).
-
-## 📚 Docs
-
-> 📚 The full documentation exists in Chinese and English (77 articles each); this page is the English entry.
-
-| Content | File |
+| | |
 |---|---|
-| Docs hub | [docs/en/README.md](docs/en/README.md) |
-| Install / usage / export | [docs/en/install.md](docs/en/install.md) · [docs/en/usage.md](docs/en/usage.md) |
-| Renderers / login / favorites / AI | [docs/en/renderers.md](docs/en/renderers.md) · [docs/en/login.md](docs/en/login.md) · [docs/en/favorites.md](docs/en/favorites.md) · [docs/en/ai-agent.md](docs/en/ai-agent.md) |
-| Troubleshooting / FAQ / data & privacy | [docs/en/troubleshooting.md](docs/en/troubleshooting.md) · [docs/en/faq.md](docs/en/faq.md) · [docs/en/data-and-privacy.md](docs/en/data-and-privacy.md) |
-| Building | [docs/en/build.md](docs/en/build.md) |
-| Changelog | [CHANGELOG.md](CHANGELOG.md) |
-| Handoff / architecture / workflow | [HANDOFF.md](HANDOFF.md) |
-| Onboarding entry (state / release / traps / doc rules) | [AGENTS.md](AGENTS.md) |
-| Third-party licenses | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
-| License | [LICENSE](LICENSE) |
+| **AI agent** | DeepSeek by default: installs games / modpacks / mods, changes settings, reads logs, launches — 51 tools |
+| **One-tap install** | Resources and modpacks install in one step from the list, required dependencies included |
+| **Renderers** | Auto / MobileGlues / GL4ES / LTW (experimental, arm64 only) |
+| **Favorites** | Online favorites + local archive (SHA-256 dedupe), one-tap download right on the card |
+| **Multiplayer** | Terracotta (P2P) / SakuraFrp, one screen, tutorials written against the real flow |
+| **Data** | `/storage/emulated/0/ZyNova/.Minecraft` (instances / worlds / mods), logs in `/ZyNova/logs` |
 
-## 💖 Support
+Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-- Bugs & requests：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
-- Mail：<ZyNovaLauncher@outlook.com>
-- X：<https://x.com/ZyNovaProject>
-- Sponsor：<https://afdian.com/a/hizzy>
+## What's new in 28.2.0
 
-## ⚖️ License
+- **Simpler favorites**: no description, no download counts; the download button is big, the unfavorite button small, one tap installs with required dependencies.
+- **One-tap modpacks**: a download button next to the ♥ on search results, and one per version row.
+- **Smoother corners**: card radius is 1.2× the configured value, so the curve eases in instead of turning abruptly.
+- Includes the 28.1.x fixes: revoking storage permission no longer makes data look gone (P0), account page crash, silent background modpack installs, no SakuraFrp refresh errors, per-instance home card hiding, flicker-free dragging.
 
-GPL-3.0 — the project stays open source. Third-party components and their licenses are listed in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and [docs/en/licenses.md](docs/en/licenses.md).
+## Docs and feedback
 
-> ⚠️ **Terracotta (multiplayer) is AGPL-3.0**, stricter than everything else: it ships unmodified. If you
-> modify and redistribute it, AGPL-3.0 §13 requires you to publish the corresponding source.
+User docs: [English](docs/en/README.md) · [中文](docs/zh/README.md) ｜ [Changelog](CHANGELOG.md) ｜ [Third-party notices](THIRD_PARTY_NOTICES.md) ｜ [Licenses](docs/en/licenses.md) ｜ Development and releases: [AGENTS.md](AGENTS.md) · [HANDOFF.md](HANDOFF.md)
 
----
+Feedback: [Issues](https://github.com/zzy89216-gif/ZyNova/issues) · [Discord](https://discord.gg/QwPpZQHrTa) · [X](https://x.com/ZyNovaProject) ｜ Mail: <ZyNovaLauncher@163.com> · <ZyNovaLauncher@outlook.com> ｜ Sponsor: <https://afdian.com/a/hizzy>
+
+## License
+
+GPL-3.0. Component licenses and usage boundaries are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+**Terracotta (multiplayer) is AGPL-3.0** and stricter: it ships unmodified; if you modify and redistribute it, AGPL-3.0 §13 requires publishing the corresponding source.
 
 **ZyNova — Context First. Less Steps.**
