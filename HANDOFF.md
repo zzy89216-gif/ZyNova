@@ -297,6 +297,7 @@ AI `ContentTools` 全部走同一套判定。CurseForge 侧 Quilted / Legacy 的
 **一、樱花内网穿透（SakuraFrp）**
 
 - 入口：多人联机 → 樱花内网穿透；填入访问密钥即可使用
+  （28.1.3 起两种联机方式收在同一页，用屏幕中下方的悬浮菜单切换，见「28.1.3 的结构性变化」）
 - 能力：隧道列表 / 新建 / 编辑 / 删除 / 启动停止 / 复制地址 / 端口检测 / frpc 日志
 - 安全：访问密钥用 Android Keystore AES-GCM 加密后存入 MMKV，只经 `NATFRP_TOKEN`
   环境变量传给子进程；命令行、日志、URL 里都不会出现明文
