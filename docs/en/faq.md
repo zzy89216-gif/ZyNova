@@ -15,6 +15,11 @@ workaround, the launcher simply cannot work.
 Private storage (`Android/data/com.zynova.launcher/`) only holds runtimes, the favourites archive, accounts and settings.
 **Where do I sign in with LittleSkin?** Accounts, then Add account, then **LittleSkin quick sign-in** in the
 login menu; one tap opens the username/password dialog.
+**I revoked the permission by accident — is my data gone?** Nothing is lost. The launcher immediately returns
+to the permission page and does **not** switch the game directory to private storage; allow "All files access"
+again and the data is back (the files never left `/ZyNova/.Minecraft`).
+**The UI stutters?** Glass has a single background blur and no always-on animations. If it is still heavy,
+turn "background blur" down or set "background opacity" to 100% (blur is skipped then).
 **Does the AI delete things?** In full-control mode it can execute writes; use confirm mode if unsure.
 **Logs private?** They may contain IDs and paths; review before sharing.
 
