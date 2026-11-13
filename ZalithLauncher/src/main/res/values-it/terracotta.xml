@@ -66,12 +66,9 @@
     <string name="terracotta_tutorial_guest_tab">Tutorial Ospite</string>
     <string name="terracotta_tutorial_host_tip">Tutorial Ospitante:</string>
     <string name="terracotta_tutorial_guest_tip">Tutorial Ospite:</string>
-    <string name="terracotta_tutorial_host_step_send_invite">- Invia il codice di invito ai tuoi amici</string>
     <string name="terracotta_tutorial_note_title">Note:</string>
     <string name="terracotta_difficulty_easiest">Connessione Eccelente: quasi connesso!</string>
     <string name="terracotta_difficulty_simple">Buona connessione: per favore attendi</string>
     <string name="terracotta_difficulty_tough">Connessione scarsa: attivando percorso alternativo, ma la connessione potrebbe fallire</string>
     <string name="terracotta_difficulty_medium">Connessione media: attivando percorso alternativo, ma la connessione potrebbe fallire</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- Attiva il Multigiocatore nella pagina principale del launcher dopo aver letto l\'avviso utente</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- Questo programma supporta account offline</string>
 </resources>

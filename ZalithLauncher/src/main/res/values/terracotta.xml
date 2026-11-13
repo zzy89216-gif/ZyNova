@@ -76,17 +76,33 @@
     <string name="terracotta_tutorial_guest_tab">Guest Tutorial</string>
     <string name="terracotta_tutorial_host_tip">Host Tutorial:</string>
     <string name="terracotta_tutorial_guest_tip">Guest Tutorial:</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- Enable multiplayer in the launcher homepage after reading the user notice</string>
-    <string name="terracotta_tutorial_step_open_multiplayer_menu">- Launch the game, then find and open the multiplayer menu in-game</string>
-    <string name="terracotta_tutorial_step_vpn_permission">- If prompted to grant VPN permission, allow it; otherwise it will not function properly</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- This software supports offline accounts</string>
-    <string name="terracotta_tutorial_step_interoperability">- This software supports interoperability with software such as FCL, HMCL, and PCL CE (Terracotta) that support the Scaffolding protocol</string>
-    <string name="terracotta_tutorial_host_step_become_host">- Tap "I want to host a session" and scan the game port</string>
-    <string name="terracotta_tutorial_host_step_open_lan">- Enter your world and enable "Open to LAN" in the pause menu</string>
-    <string name="terracotta_tutorial_host_step_copy_invite">- Wait a moment for the invite code to be copied automatically; if not, you can copy it from the multiplayer menu</string>
-    <string name="terracotta_tutorial_host_step_send_invite">- Send the invite code to your friends</string>
-    <string name="terracotta_tutorial_guest_step_become_guest">- Tap "I want to join a session", enter the invite code provided by the host, and wait patiently</string>
-    <string name="terracotta_tutorial_guest_step_join_room">- After joining the room, go to Multiplayer in the main menu, refresh, and double-click to enter the Terracotta lobby</string>
-    <string name="terracotta_tutorial_guest_step_alternate_server">- Offline accounts are not supported when joining via alternate server addresses; resolve this yourself</string>
+    <!-- Host tutorial: written step by step against the real flow; the order matters -->
+    <string name="terracotta_tutorial_host_1">Open the Multiplayer page and turn on "Enable multiplayer", then read the notice and confirm. Both host and guests need this.</string>
+    <string name="terracotta_tutorial_host_2">Allow notifications. Multiplayer status lives in the notification bar, and Android is far more likely to kill the process without it.</string>
+    <string name="terracotta_tutorial_host_3">Turn the switch on BEFORE launching the game: it is read when the game starts, so changing it afterwards does nothing.</string>
+    <string name="terracotta_tutorial_host_4">In your singleplayer world press Esc, choose "Open to LAN", note the port (25565 by default, write it down if you change it), then click "Start LAN world". Skip this and the host step stays stuck on scanning.</string>
+    <string name="terracotta_tutorial_host_5">Tap the floating menu ball in game, then "Menu", then "Multiplayer menu". That entry only exists when "Enable multiplayer" is on.</string>
+    <string name="terracotta_tutorial_host_6">Tap "I want to host". The first time it asks for VPN permission, which is required to create the virtual network adapter.</string>
+    <string name="terracotta_tutorial_host_7">Status goes: scanning LAN world, then starting room, then room started. The scanning step waits until the world is really opened to LAN.</string>
+    <string name="terracotta_tutorial_host_8">When the room starts you get an invite code shaped U/XXXX-XXXX-XXXX-XXXX. It is copied to the clipboard automatically; if not, tap "Copy invite code".</string>
+    <string name="terracotta_tutorial_host_9">Send the invite code to your friends and have them pick "I want to join" in the multiplayer menu.</string>
+    <string name="terracotta_tutorial_host_10">Do not leave the world while playing: leaving it closes the room. To close it on purpose press "Exit"; the invite code dies with the room.</string>
+
+    <!-- Guest tutorial -->
+    <string name="terracotta_tutorial_guest_1">Enable multiplayer on the Multiplayer page and confirm the notice first, then launch the game. Staying on the main menu is enough, no world needed.</string>
+    <string name="terracotta_tutorial_guest_2">Tap the floating menu ball, then "Menu", then "Multiplayer menu", then "I want to join".</string>
+    <string name="terracotta_tutorial_guest_3">The first time it asks for VPN permission; without it the connection never succeeds.</string>
+    <string name="terracotta_tutorial_guest_4">Paste the invite code from the host and confirm. Spaces, dashes and the U/ prefix are cleaned up automatically, and the field tells you which protocol the code belongs to (Terracotta, PCL CE, Scaffolding).</string>
+    <string name="terracotta_tutorial_guest_5">Wait for "joining room" to finish. It shows a success estimate based on both networks; that is only a hint, not the real result.</string>
+    <string name="terracotta_tutorial_guest_6">Only "joined room" means success. If it fails, retry as prompted instead of tapping repeatedly while it is still joining.</string>
+    <string name="terracotta_tutorial_guest_7">Go back to the game main menu, open Multiplayer, refresh the list and double-click the Terracotta lobby entry to join.</string>
+    <string name="terracotta_tutorial_guest_8">If the list stays empty, use "Copy alternate address" in the multiplayer menu and paste it into Multiplayer, then Direct Connection.</string>
+    <string name="terracotta_tutorial_guest_9">Failing to enter the world is almost always a version or mod mismatch: game version, loader and mods must match the host exactly.</string>
+    <string name="terracotta_tutorial_guest_10">Offline accounts work; the alternate-address route does not support offline accounts, so prefer the lobby list.</string>
+
+    <string name="terracotta_tutorial_note_1">Works with other Scaffolding clients such as FCL, HMCL and PCL CE; your friends do not have to use this launcher.</string>
+    <string name="terracotta_tutorial_note_2">Room closed usually means the host left the world or closed the room on purpose; ask them to reopen and send a new code.</string>
+    <string name="terracotta_tutorial_note_3">When it fails, open the log from the multiplayer menu; to report it, use "Share multiplayer core log" on the Multiplayer page.</string>
+
     <string name="terracotta_tutorial_note_title">Notes:</string>
 </resources>

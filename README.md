@@ -12,9 +12,10 @@
 
 > ⭐ **ZyNova 28.1.0 正式发布（全球化商业合规版）。**
 
-> 🧪 **28.1.2 测试版（预发行）**：游戏数据改到公共目录 `/ZyNova`、樱花穿透独立页与教程、联机双卡片、
-> DeepSeek 官方联网搜索、AI 消息可复制、整合包后台安装，以及 12 种语言的界面文案。
-> 下载：[v28.1.2-beta](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.2-beta)（测试版，日常使用建议仍选正式版 28.1.0）
+> 🧪 **28.1.3（测试版，预发行）**：公共目录只保留 `logs` 与 `.Minecraft`；迁移改为全屏、搬完要点「下一步」；
+> 联机页改成底部悬浮菜单（陶瓦 / 樱花就地切换，并记住上次选择）；联机教程按真实流程重写；
+> LittleSkin 快捷登录；主页卡片压住一半即弹起换位。
+> 下载：[Releases](https://github.com/zzy89216-gif/ZyNova/releases)（预发行；日常使用建议仍选正式版 28.1.0）
 
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)

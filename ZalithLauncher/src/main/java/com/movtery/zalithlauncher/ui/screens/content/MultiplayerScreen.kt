@@ -21,6 +21,7 @@ package com.movtery.zalithlauncher.ui.screens.content
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -85,44 +86,77 @@ fun MultiplayerScreen(
 ) {
     val context = LocalContext.current
 
+    //当前展示哪种联机方式：由屏幕中下方的悬浮菜单决定，**不再跳页**。
+    //选择本身写进设置：退出界面、杀掉应用再进来仍停在同一页；
+    //而各个弹窗（登录、建房、加房）都是一次性状态，重新进来是干净的。
+    var mode by remember { mutableStateOf(AllSettings.multiplayerMode.getValue()) }
+
     BaseScreen(
         screenKey = NormalNavKey.Multiplayer,
         currentKey = backScreenViewModel.mainScreen.currentKey
     ) { isVisible ->
-        AnimatedRow(
-            modifier = Modifier.fillMaxSize(),
-            isVisible = isVisible,
-            delayIncrement = 0 //同时进行
-        ) { scope ->
-            AnimatedItem(scope) { xOffset ->
-                TutorialMenu(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .offset { IntOffset(x = -xOffset.roundToPx(), y = 0) }
-                        .padding(start = 12.dp)
-                )
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (mode) {
+                MultiplayerMode.TERRACOTTA -> {
+                    AnimatedRow(
+                        //底部留出悬浮菜单的高度，别让最后一行内容被盖住
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 64.dp),
+                        isVisible = isVisible,
+                        delayIncrement = 0 //同时进行
+                    ) { scope ->
+                        AnimatedItem(scope) { xOffset ->
+                            TutorialMenu(
+                                modifier = Modifier
+                                    .weight(0.5f)
+                                    .offset { IntOffset(x = -xOffset.roundToPx(), y = 0) }
+                                    .padding(start = 12.dp)
+                            )
+                        }
+
+                        AnimatedItem(scope) { xOffset ->
+                            MainMenu(
+                                modifier = Modifier
+                                    .weight(0.5f)
+                                    .offset { IntOffset(x = xOffset.roundToPx(), y = 0) }
+                                    .padding(end = 12.dp),
+                                eventViewModel = eventViewModel,
+                                onShareLogs = {
+                                    val logFile = PathManager.FILE_TERRACOTTA_LOG
+                                    if (logFile.exists()) {
+                                        shareFile(context, logFile)
+                                    } else {
+                                        eventViewModel.sendToast(androidText(R.string.terracotta_export_log_share_null))
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                MultiplayerMode.FRP -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 64.dp)
+                    ) {
+                        FrpContent(isVisible = isVisible)
+                    }
+                }
             }
 
-            AnimatedItem(scope) { xOffset ->
-                MainMenu(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .offset { IntOffset(x = xOffset.roundToPx(), y = 0) }
-                        .padding(end = 12.dp),
-                    eventViewModel = eventViewModel,
-                    onShareLogs = {
-                        val logFile = PathManager.FILE_TERRACOTTA_LOG
-                        if (logFile.exists()) {
-                            shareFile(context, logFile)
-                        } else {
-                            eventViewModel.sendToast(androidText(R.string.terracotta_export_log_share_null))
-                        }
-                    },
-                    onOpenFrp = {
-                        backScreenViewModel.mainScreen.navigateTo(NormalNavKey.Frp)
-                    }
-                )
-            }
+            //屏幕中下方的悬浮切换菜单
+            MultiplayerModeSwitcher(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 14.dp),
+                mode = mode,
+                onModeChange = {
+                    mode = it
+                    AllSettings.multiplayerMode.save(it)
+                }
+            )
         }
     }
 }
@@ -176,8 +210,7 @@ private fun MultiplayerOperation(
 private fun MainMenu(
     modifier: Modifier = Modifier,
     eventViewModel: EventViewModel,
-    onShareLogs: () -> Unit,
-    onOpenFrp: () -> Unit
+    onShareLogs: () -> Unit
 ) {
     val context = LocalContext.current
     var operation by remember { mutableStateOf<MultiplayerOperation>(MultiplayerOperation.None) }
@@ -220,56 +253,6 @@ private fun MainMenu(
 //                style = MaterialTheme.typography.titleSmall
 //            )
 //        }
-
-        //两种联机方式并列成两张卡片：陶瓦（当前页）/ 樱花内网穿透（单独页面）
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            BackgroundCard(
-                modifier = Modifier.weight(1f),
-                onClick = { }
-            ) {
-                Column(
-                    modifier = Modifier.padding(all = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.multiplayer_mode_terracotta_title),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Text(
-                        text = stringResource(R.string.multiplayer_mode_terracotta_summary),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = stringResource(R.string.multiplayer_mode_current),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-            BackgroundCard(
-                modifier = Modifier.weight(1f),
-                onClick = onOpenFrp
-            ) {
-                Column(
-                    modifier = Modifier.padding(all = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.frp_entry_title),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Text(
-                        text = stringResource(R.string.frp_entry_summary),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
 
         //多人联机设置菜单
         SettingsCardColumn(
@@ -433,18 +416,22 @@ private fun TutorialMenu(
                         modifier = Modifier.fillMaxSize(),
                         firstTitle = stringResource(R.string.terracotta_tutorial_host_tip),
                         firstText = {
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_enable_multiplayer))
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_open_multiplayer_menu))
-                            BodyText(stringResource(R.string.terracotta_tutorial_host_step_become_host))
-                            BodyText(stringResource(R.string.terracotta_tutorial_host_step_open_lan))
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_vpn_permission))
-                            BodyText(stringResource(R.string.terracotta_tutorial_host_step_copy_invite))
-                            BodyText(stringResource(R.string.terracotta_tutorial_host_step_send_invite))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_1))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_2))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_3))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_4))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_5))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_6))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_7))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_8))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_9))
+                            BodyText(stringResource(R.string.terracotta_tutorial_host_10))
                         },
                         secondTitle = stringResource(R.string.terracotta_tutorial_note_title),
                         secondText = {
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_offline_account_support))
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_interoperability))
+                            BodyText(stringResource(R.string.terracotta_tutorial_note_1))
+                            BodyText(stringResource(R.string.terracotta_tutorial_note_2))
+                            BodyText(stringResource(R.string.terracotta_tutorial_note_3))
                         }
                     )
                 }
@@ -454,17 +441,22 @@ private fun TutorialMenu(
                         modifier = Modifier.fillMaxSize(),
                         firstTitle = stringResource(R.string.terracotta_tutorial_guest_tip),
                         firstText = {
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_enable_multiplayer))
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_open_multiplayer_menu))
-                            BodyText(stringResource(R.string.terracotta_tutorial_guest_step_become_guest))
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_vpn_permission))
-                            BodyText(stringResource(R.string.terracotta_tutorial_guest_step_join_room))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_1))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_2))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_3))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_4))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_5))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_6))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_7))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_8))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_9))
+                            BodyText(stringResource(R.string.terracotta_tutorial_guest_10))
                         },
                         secondTitle = stringResource(R.string.terracotta_tutorial_note_title),
                         secondText = {
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_offline_account_support))
-                            BodyText(stringResource(R.string.terracotta_tutorial_step_interoperability))
-                            BodyText(stringResource(R.string.terracotta_tutorial_guest_step_alternate_server))
+                            BodyText(stringResource(R.string.terracotta_tutorial_note_1))
+                            BodyText(stringResource(R.string.terracotta_tutorial_note_2))
+                            BodyText(stringResource(R.string.terracotta_tutorial_note_3))
                         }
                     )
                 }

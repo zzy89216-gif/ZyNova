@@ -27,7 +27,7 @@ import java.io.File
 class PathManager {
     companion object {
         /**
-         * 公共存储下的游戏目录名。
+         * 公共存储下对外可见的根目录名。
          *
          * 维护者要求：游戏文件放到**文件管理器一打开就能看到**的地方，目录名用启动器的名字。
          * 所以是 `/storage/emulated/0/ZyNova`，不是 `Android/data/...`。
@@ -36,6 +36,19 @@ class PathManager {
          * 等于把已有实例弄丢。
          */
         const val PUBLIC_GAME_DIR_NAME = "ZyNova"
+
+        /**
+         * 根目录里真正装游戏数据的那一层：`/storage/emulated/0/ZyNova/.Minecraft`。
+         *
+         * 维护者要求（28.1.3）：**公共目录里只留少量该露出来的东西**——
+         * 日志（`logs`）和游戏数据（`.Minecraft`）。
+         * 点开头的名字在文件管理器里默认不显示，用户不会一不小心把 `versions` 当成垃圾删掉，
+         * 但真要去翻实例、改配置时又能进去。
+         */
+        const val PUBLIC_GAME_DIR_INNER = ".Minecraft"
+
+        /** 根目录里放启动日志的那一层 */
+        const val PUBLIC_LOG_DIR_NAME = "logs"
 
         lateinit var DIR_FILES_PRIVATE: File
         lateinit var DIR_FILES_EXTERNAL: File
@@ -100,7 +113,7 @@ class PathManager {
             DIR_CACHE_MOD_UPDATER = File(DIR_CACHE, "temp_mod_updater")
             DIR_CACHE_APP_ICON = File(DIR_CACHE, "app_icons")
             DIR_CACHE_HOME_PAGE = File(DIR_CACHE, "remote_homepage")
-            DIR_LAUNCHER_LOGS = File(DIR_FILES_EXTERNAL, "logs")
+            DIR_LAUNCHER_LOGS = resolveLauncherLogsDir()
             DIR_NATIVE_LOGS = File(DIR_LAUNCHER_LOGS, "native")
             DIR_IMAGE_CACHE = File(DIR_CACHE, "images")
             DIR_CONTROL_LAYOUTS = File(DIR_FILES_EXTERNAL, "control_layouts")
@@ -113,8 +126,10 @@ class PathManager {
             FILE_LAUNCHER_BACKGROUND = File(DIR_BACKGROUND, "background01.file")
             FILE_TERRACOTTA_LOG = File(DIR_FILES_EXTERNAL, "terracotta.log")
 
-            //先搬运行时（此时目标目录还没被 createDirs 建出来），再创建其余目录
+            //先搬运行时（此时目标目录还没被 createDirs 建出来），再处理公共目录的旧布局，
+            //最后创建其余目录
             migrateRuntimesToPrivate()
+            migratePublicFlatLayout()
             createDirs()
             handleLegacy()
         }
@@ -170,9 +185,67 @@ class PathManager {
             DIR_STYLES.mkdirs()
         }
 
-        /** 公共存储下的游戏根目录 */
-        fun publicGameDir(): File =
+        /** 公共存储下的可见根目录：`/storage/emulated/0/ZyNova` */
+        fun publicRootDir(): File =
             File(Environment.getExternalStorageDirectory(), PUBLIC_GAME_DIR_NAME)
+
+        /** 公共存储下的游戏根目录：`/storage/emulated/0/ZyNova/.Minecraft` */
+        fun publicGameDir(): File =
+            File(publicRootDir(), PUBLIC_GAME_DIR_INNER)
+
+        /**
+         * 启动日志放哪。
+         *
+         * 用公共目录时放 `/ZyNova/logs`（用户反馈问题时直接在文件管理器里能找到、能发出来）；
+         * 公共目录不可写就退回 `Android/data/<包名>/files/logs`，**日志永远有地方写**，
+         * 不能因为目录建不出来把启动流程搞崩。
+         */
+        private fun resolveLauncherLogsDir(): File {
+            val external = File(DIR_FILES_EXTERNAL, "logs")
+            if (DIR_GAME.absolutePath != publicGameDir().absolutePath) return external
+            val publicLogs = File(publicRootDir(), PUBLIC_LOG_DIR_NAME)
+            val usable = runCatching { publicLogs.isDirectory || publicLogs.mkdirs() }
+                .getOrDefault(false)
+            return if (usable) publicLogs else external
+        }
+
+        /**
+         * 28.1.3 之前公共目录是「平铺」的：`ZyNova/versions`、`ZyNova/account_skins`……
+         * 现在这些全部收进 `ZyNova/.Minecraft`，根目录只留 `logs` 与 `.Minecraft`。
+         *
+         * 同一分区 rename 是瞬时的，所以这里不需要进度条；rename 失败才退回复制 + 删除。
+         * 目标已存在同名条目时**保持原样**（大概率是上次只搬了一半，交给实例列表各自校验）。
+         */
+        private fun migratePublicFlatLayout() {
+            runCatching {
+                val public = publicGameDir()
+                val root = publicRootDir()
+                if (DIR_GAME.absolutePath != public.absolutePath) return@runCatching
+                if (!root.isDirectory) return@runCatching
+                public.mkdirs()
+                root.listFiles()?.forEach { child ->
+                    val name = child.name
+                    //logs 与 .Minecraft 本来就该留在根目录
+                    if (name == PUBLIC_GAME_DIR_INNER || name == PUBLIC_LOG_DIR_NAME) return@forEach
+                    val target = File(public, name)
+                    if (target.exists()) return@forEach
+                    if (!child.renameTo(target)) {
+                        runCatching {
+                            if (child.isDirectory) {
+                                FileUtils.copyDirectory(child, target)
+                            } else {
+                                FileUtils.copyFile(child, target)
+                            }
+                            FileUtils.deleteQuietly(child)
+                        }
+                    }
+                }
+            }.onFailure {
+                com.movtery.zalithlauncher.utils.logging.Logger.warning(
+                    "PathManager", "Migrate public dir layout failed: ${it.message}"
+                )
+            }
+        }
 
         /** 私有目录下的旧游戏根目录（28.2.0 之前的位置） */
         fun legacyGameDir(): File = File(DIR_FILES_PRIVATE, "games")

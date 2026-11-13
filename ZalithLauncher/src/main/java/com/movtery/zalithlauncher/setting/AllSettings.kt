@@ -42,6 +42,7 @@ import com.movtery.zalithlauncher.game.renderer.mobileglues.MobileGluesMultidraw
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.setting.enums.UiGeneration
 import com.movtery.zalithlauncher.ui.control.HotbarRule
+import com.movtery.zalithlauncher.ui.screens.content.MultiplayerMode
 import com.movtery.zalithlauncher.ui.control.gamepad.JoystickMode
 import com.movtery.zalithlauncher.ui.control.mouse.CENTER_HOTSPOT
 import com.movtery.zalithlauncher.ui.control.mouse.CursorHotspot
@@ -883,6 +884,15 @@ object AllSettings : SettingsRegistry() {
      * 是否启用陶瓦联机
      */
     val enableTerracotta = boolSetting("enableTerracotta", false)
+
+    /**
+     * 联机页上次停在哪个模式（陶瓦 / 樱花穿透）。
+     *
+     * 维护者要求：退出界面、甚至杀掉应用再进来，**仍然停在刚才那页**——
+     * 用户正在配隧道时切出去回微信，回来还要重新找一遍是很烦的。
+     * 因此这个选择落到设置里；而弹窗、输入框这类一次性状态不保存（重新进来就是干净的）。
+     */
+    val multiplayerMode = enumSetting("multiplayerMode", MultiplayerMode.TERRACOTTA)
 
     /**
      * 是否使用自定义 EasyTier 服务器节点

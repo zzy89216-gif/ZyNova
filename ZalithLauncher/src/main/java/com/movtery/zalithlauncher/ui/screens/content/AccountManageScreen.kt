@@ -385,6 +385,9 @@ private fun LoginMenuOperation(
                 onLocalLogin = {
                     actions.onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.Edit))
                 },
+                onLittleSkinLogin = {
+                    actions.onIntent(AccountManageIntent.QuickLoginLittleSkin)
+                },
                 onAuthServerLogin = { server ->
                     actions.onIntent(
                         AccountManageIntent.UpdateOtherLoginOp(

@@ -110,6 +110,26 @@ fun FrpScreen(
     backScreenViewModel: ScreenBackStackViewModel,
     eventViewModel: EventViewModel
 ) {
+    //留作深链入口（联机页现在用底部悬浮菜单在内部切换，不再跳转过来）
+    BaseScreen(
+        screenKey = NormalNavKey.Frp,
+        currentKey = backScreenViewModel.mainScreen.currentKey
+    ) { isVisible ->
+        FrpContent(isVisible = isVisible)
+    }
+}
+
+/**
+ * 樱花穿透的内容区域（不含屏幕容器）。
+ *
+ * 联机页底部的悬浮菜单用它和「陶瓦联机」互相切换，
+ * 所以这里**不要**再套 [BaseScreen]，也不要做入场位移动画——
+ * 切换由外面的悬浮菜单控制，内容直接淡入淡出即可。
+ */
+@Composable
+fun FrpContent(
+    isVisible: Boolean
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -136,11 +156,7 @@ fun FrpScreen(
     val quotaFull = quota > 0 && tunnels.size >= quota
     val groupLevel = user?.groupLevel ?: 0
 
-    BaseScreen(
-        screenKey = NormalNavKey.Frp,
-        currentKey = backScreenViewModel.mainScreen.currentKey
-    ) { isVisible ->
-        LaunchedEffect(isVisible, loggedIn) {
+    LaunchedEffect(isVisible, loggedIn) {
             if (isVisible && loggedIn) {
                 runCatching {
                     FrpManager.refresh()
@@ -377,7 +393,6 @@ fun FrpScreen(
                 }
             }
             }
-        }
     }
 
     if (showCreateDialog) {

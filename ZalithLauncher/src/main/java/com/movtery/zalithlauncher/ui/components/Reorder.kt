@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.ui.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
@@ -36,11 +37,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.zIndex
 import kotlin.math.roundToInt
+
+/** 目标卡片「弹起来」的阈值：被压住自身一半以上 */
+private const val LIFT_THRESHOLD = 0.5f
+
+/** 弹起时的放大倍数 */
+private const val LIFT_SCALE = 1.05f
 
 /**
  * 拖动排序状态
@@ -68,6 +76,16 @@ class ReorderState {
 
     /** 每次布局变化自增，用于触发各项的补间动画 */
     var layoutVersion: Int by mutableIntStateOf(0)
+        private set
+
+    /**
+     * 当前「被拖动项压住过半」的那一项（会弹起来）。
+     *
+     * 维护者要求：往下拖、压住下一张卡片的一半时，那张卡片要自己弹起来，
+     * 让人一眼看出「松手就换到这儿」。所以这里在拖动过程中记录它，
+     * 由 [reorderItem] 播放一个轻微放大的弹起动画。
+     */
+    var liftedKey: Any? by mutableStateOf(null)
         private set
 
     /** 项的屏幕范围（root 坐标） */
@@ -125,7 +143,13 @@ class ReorderState {
         dragOffset = Offset.Zero
     }
 
-    /** 拖动中：更新位移，并在指针进入其它项的范围时请求换位 */
+    /**
+     * 拖动中：更新位移，并按「重叠过半」的规则请求换位。
+     *
+     * 判定口径从「指针进入目标范围」改成「拖动项压住目标**一半以上**」：
+     * - 轻轻碰到就换位会让整页卡片抖个不停，手感很糟；
+     * - 压住一半才换位，同时让目标卡片弹起来，用户能确定松手会落到哪。
+     */
     fun drag(delta: Offset) {
         val key = draggingKey ?: return
         dragOffset += delta
@@ -137,17 +161,40 @@ class ReorderState {
         )
 
         val self = bounds[key] ?: return
-        val pointer = self.center + dragOffset
-        val target = bounds.entries.firstOrNull { (other, rect) ->
-            other != key && rect.contains(pointer)
-        }?.key ?: return
+        val selfRect = self.translate(dragOffset)
 
-        onMove(key, target)
+        val lifted = bounds.entries
+            .asSequence()
+            .filter { it.key != key }
+            .map { (other, rect) -> other to overlapRatio(selfRect, rect) }
+            .filter { it.second > 0f }
+            .maxByOrNull { it.second }
+            ?.takeIf { it.second >= LIFT_THRESHOLD }
+            ?.first
+
+        liftedKey = lifted
+
+        if (lifted != null) {
+            onMove(key, lifted)
+        }
     }
 
     fun end() {
         draggingKey = null
         dragOffset = Offset.Zero
+        liftedKey = null
+    }
+
+    /**
+     * 两个矩形「压住的比例」：纵向与横向各算一次，取大的那个。
+     * 纵向列表看高度，横向列表/网格看宽度，同一套逻辑都能用。
+     */
+    private fun overlapRatio(a: Rect, b: Rect): Float {
+        val overlapHeight = (minOf(a.bottom, b.bottom) - maxOf(a.top, b.top)).coerceAtLeast(0f)
+        val overlapWidth = (minOf(a.right, b.right) - maxOf(a.left, b.left)).coerceAtLeast(0f)
+        val vertical = if (b.height > 0f) overlapHeight / b.height else 0f
+        val horizontal = if (b.width > 0f) overlapWidth / b.width else 0f
+        return maxOf(vertical, horizontal)
     }
 }
 
@@ -210,9 +257,24 @@ fun Modifier.reorderItem(
     }
 
     val dragging = state.isDragging(key)
+    val lifted = !dragging && state.liftedKey == key
+
+    //被压住过半时轻轻放大一下：卡片「弹起来」，用户能确定松手会落到哪
+    val liftScale by animateFloatAsState(
+        targetValue = if (lifted) LIFT_SCALE else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "reorderLift"
+    )
 
     var modifier = this
         .zIndex(if (dragging) 1f else 0f)
+        .graphicsLayer {
+            scaleX = liftScale
+            scaleY = liftScale
+        }
         .onGloballyPositioned { state.onBounds(key, it.boundsInRoot()) }
 
     if (enabled) {

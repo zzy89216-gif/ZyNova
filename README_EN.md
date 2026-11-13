@@ -12,9 +12,11 @@
 
 > ⭐ **ZyNova 28.1.0 is out (global compliance build).**
 
-> 🧪 **28.1.2 beta (pre-release)**: game data moved to the public `/ZyNova` folder, a dedicated SakuraFrp page with a tutorial,
-> two multiplayer cards, DeepSeek official web search, selectable AI messages, background modpack installs and UI text for 12 languages.
-> Download: [v28.1.2-beta](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.1.2-beta) (test build; use stable 28.1.0 for daily play)
+> 🧪 **28.1.3 (beta, pre-release)**: the public folder now only keeps `logs` and `.Minecraft`; migration is a full-screen page
+> that waits for you to tap Next; multiplayer is one screen with a floating Terracotta / SakuraFrp switcher that remembers
+> the last choice; both multiplayer tutorials were rewritten against the real flow; LittleSkin quick sign-in; home cards
+> swap once the dragged card covers half of the next one.
+> Download: [Releases](https://github.com/zzy89216-gif/ZyNova/releases) (pre-release; use stable 28.1.0 for daily play)
 
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)

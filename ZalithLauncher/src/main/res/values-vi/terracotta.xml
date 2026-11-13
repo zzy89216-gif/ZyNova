@@ -71,17 +71,5 @@
     <string name="terracotta_tutorial_guest_tab">Hướng dẫn cho khách</string>
     <string name="terracotta_tutorial_host_tip">Chủ phải làm gì:</string>
     <string name="terracotta_tutorial_guest_tip">Khách phải làm gì:</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- Đọc cái "điều khoản" ở trên rồi bật chơi mạng</string>
-    <string name="terracotta_tutorial_step_open_multiplayer_menu">- Vào game, tìm menu "Chơi mạng" trong ESC</string>
-    <string name="terracotta_tutorial_step_vpn_permission">- Nó hỏi quyền VPN thì ấn cho, không thì chịu chơi kiểu gì</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- Hỗ trợ tài khoản offline (crack cũng chơi được)</string>
-    <string name="terracotta_tutorial_step_interoperability">- Tương thích với FCL, HMCL, PCL CE... nói chung là nhiều cái</string>
-    <string name="terracotta_tutorial_host_step_become_host">- Bấm "Tao làm chủ", nó sẽ quét cổng game</string>
-    <string name="terracotta_tutorial_host_step_open_lan">- Vào world, ESC, chọn "Mở cửa sổ LAN"</string>
-    <string name="terracotta_tutorial_host_step_copy_invite">- Tự động copy mã, nếu không thì tự vào menu chơi mạng mà copy</string>
-    <string name="terracotta_tutorial_host_step_send_invite">- Gửi mã cho bạn, nhắn tin qua Facebook hay Zalo gì đó</string>
-    <string name="terracotta_tutorial_guest_step_become_guest">- Bấm "Tao làm khách", nhập mã của thằng chủ vào, xong ngồi hóng</string>
-    <string name="terracotta_tutorial_guest_step_join_room">- Thấy chữ "đã vào phòng" thì ra màn hình chính game → Chơi mạng → Double chuột vào Terracotta</string>
-    <string name="terracotta_tutorial_guest_step_alternate_server">- Xài địa chỉ dự phòng thì tài khoản offline cút, tự lấy account premium mà chơi</string>
     <string name="terracotta_tutorial_note_title">Lưu ý (đọc kẻo trừ ha):</string>
 </resources>

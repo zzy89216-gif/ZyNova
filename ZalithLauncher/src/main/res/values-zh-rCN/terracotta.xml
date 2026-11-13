@@ -76,17 +76,33 @@
     <string name="terracotta_tutorial_guest_tab">房客教程</string>
     <string name="terracotta_tutorial_host_tip">房主使用方法：</string>
     <string name="terracotta_tutorial_guest_tip">房客使用方法：</string>
-    <string name="terracotta_tutorial_step_enable_multiplayer">- 在启动器多人联机主页阅读用户须知后启用联机功能</string>
-    <string name="terracotta_tutorial_step_open_multiplayer_menu">- 启动游戏，在游戏内的菜单中找到联机菜单并打开</string>
-    <string name="terracotta_tutorial_step_vpn_permission">- 若弹出提示要求申请 VPN 权限，请授予，否则无法正常使用</string>
-    <string name="terracotta_tutorial_step_offline_account_support">- 该软件支持离线账户</string>
-    <string name="terracotta_tutorial_step_interoperability">- 该软件支持与 FCL 和 HMCL 和 PCL CE (Terracotta) 等支持 Scaffolding 协议的软件互联</string>
-    <string name="terracotta_tutorial_host_step_become_host">- 点击“我想当房主”，扫描游戏端口</string>
-    <string name="terracotta_tutorial_host_step_open_lan">- 进入存档，在游戏暂停菜单中打开“对局域网开放”选项</string>
-    <string name="terracotta_tutorial_host_step_copy_invite">- 稍等片刻将自动复制邀请码，若没有自动复制，也可以前往联机菜单复制</string>
-    <string name="terracotta_tutorial_host_step_send_invite">- 将邀请码发送给你的朋友</string>
-    <string name="terracotta_tutorial_guest_step_become_guest">- 点击“我想当房客”，在输入框内输入房主提供的邀请码，并耐心等待</string>
-    <string name="terracotta_tutorial_guest_step_join_room">- 显示已加入房间后，在游戏主界面选择多人游戏并刷新，双击进入陶瓦联机大厅</string>
-    <string name="terracotta_tutorial_guest_step_alternate_server">- 使用备用服务器地址加入游戏时，不支持离线账户，请自行解决</string>
+    <!-- 房主教程：按真实流程逐步写（顺序不能换）-->
+    <string name="terracotta_tutorial_host_1">打开「联机」页，把「启用多人联机」开关打开，读完用户须知点确认。房主和房客都要开。</string>
+    <string name="terracotta_tutorial_host_2">允许通知权限。联机状态显示在通知栏；通知被禁时，后台进程更容易被系统杀掉。</string>
+    <string name="terracotta_tutorial_host_3">先开开关、再启动游戏：这个开关在启动游戏时生效，进游戏以后改没有用。</string>
+    <string name="terracotta_tutorial_host_4">进入一个单人存档，按 Esc →「对局域网开放」→ 记住端口（默认 25565，改了就记下来）→ 点「创建局域网世界」。没做这一步，点房主会一直停在扫描。</string>
+    <string name="terracotta_tutorial_host_5">点游戏里的悬浮菜单球 →「菜单」→「联机菜单」。没开「启用多人联机」时，这一项不会出现。</string>
+    <string name="terracotta_tutorial_host_6">点「我想当房主」。第一次会请求 VPN 权限，必须允许，否则建不了虚拟网卡。</string>
+    <string name="terracotta_tutorial_host_7">状态会依次走过：正在扫描局域网世界 → 正在启动房间 → 已启动房间。扫描那一步要等游戏真的把局域网世界开出来。</string>
+    <string name="terracotta_tutorial_host_8">看到「已启动房间」和邀请码（格式 U/XXXX-XXXX-XXXX-XXXX）。邀请码会自动复制到剪贴板；没复制上就点「复制邀请码」。</string>
+    <string name="terracotta_tutorial_host_9">把邀请码发给朋友，让他们在联机菜单里选「我想当房客」并输入。</string>
+    <string name="terracotta_tutorial_host_10">玩的时候别退出存档：退出存档房间会自动关闭。要关房间按「退出」，房间一关邀请码立刻作废。</string>
+
+    <!-- 房客教程 -->
+    <string name="terracotta_tutorial_guest_1">同样先在「联机」页打开「启用多人联机」并确认用户须知，然后启动游戏，停在主界面即可，不用进存档。</string>
+    <string name="terracotta_tutorial_guest_2">点悬浮菜单球 →「菜单」→「联机菜单」→「我想当房客」。</string>
+    <string name="terracotta_tutorial_guest_3">第一次会请求 VPN 权限，必须允许；不允许就会一直连不上。</string>
+    <string name="terracotta_tutorial_guest_4">粘贴房主给的邀请码后点确定。空格、连字符、U/ 前缀会被自动整理，输入框下面还会显示识别到的类型（陶瓦 / PCL CE / Scaffolding）。</string>
+    <string name="terracotta_tutorial_guest_5">等「正在加入房间」走完。期间会按双方网络状况给出连接成功率预估，那只是参考，不影响真正结果。</string>
+    <string name="terracotta_tutorial_guest_6">出现「已加入房间」才算成功；失败就按提示重来一次，别在「正在加入」时反复点。</string>
+    <string name="terracotta_tutorial_guest_7">回到游戏主界面 →「多人游戏」→ 刷新列表，双击「陶瓦联机大厅」进世界。</string>
+    <string name="terracotta_tutorial_guest_8">列表里没有就用联机菜单里的「复制备用联机地址」，在「多人游戏 → 直接连接」里粘贴。</string>
+    <string name="terracotta_tutorial_guest_9">进不去世界多半是版本或模组不一致：游戏版本、加载器、模组都要和房主一样。</string>
+    <string name="terracotta_tutorial_guest_10">离线账号可以联机；但「备用联机地址」方式不支持离线账号，优先走大厅列表。</string>
+
+    <string name="terracotta_tutorial_note_1">支持与 FCL、HMCL、PCL CE（陶瓦）等 Scaffolding 客户端互通，对面不一定非要用本启动器。</string>
+    <string name="terracotta_tutorial_note_2">提示「房间已关闭」通常是房主退出了存档或主动关了房间，让对方重开再拿新邀请码。</string>
+    <string name="terracotta_tutorial_note_3">连不上时先在联机菜单里点「查看日志」；要反馈就回「联机」页点「分享联机核心日志」。</string>
+
     <string name="terracotta_tutorial_note_title">注意事项：</string>
 </resources>

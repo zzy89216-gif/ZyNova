@@ -474,10 +474,19 @@ object AuthEntryPolicy {
      * 注意：这里只判断语言，不判断地区——繁体中文同样算"中文界面"。
      */
     private fun isChineseUi(): Boolean {
-        val appLocales = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales()
-        val locale = if (!appLocales.isEmpty) appLocales[0] ?: java.util.Locale.getDefault()
-        else java.util.Locale.getDefault()
-        return locale.language.equals("zh", ignoreCase = true)
+        //⚠️ 这是每次重组都会走的热路径，而且它在**账号界面**上：
+        //一旦这里抛异常，表现就是「一进账号管理就崩」，所以整段都兜住。
+        //读不到就按「中文界面」处理——显示全部入口，总比直接崩掉好。
+        return runCatching {
+            val appLocales = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales()
+            //空列表不能取下标（会越界），官方文档写的是返回空列表而不是 null
+            val locale = if (appLocales.isEmpty) {
+                java.util.Locale.getDefault()
+            } else {
+                appLocales[0] ?: java.util.Locale.getDefault()
+            }
+            locale.language.equals("zh", ignoreCase = true)
+        }.getOrDefault(true)
     }
 
     /**
@@ -509,6 +518,7 @@ fun LoginMenuDialog(
     onDismissRequest: () -> Unit,
     onMicrosoftLogin: () -> Unit,
     onLocalLogin: () -> Unit,
+    onLittleSkinLogin: () -> Unit,
     authServers: List<AuthServer>,
     onAuthServerLogin: (server: AuthServer) -> Unit,
     onAddAuthServer: () -> Unit,
@@ -586,6 +596,19 @@ fun LoginMenuDialog(
                                 ),
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
+                                item {
+                                    //LittleSkin 快捷登录：内置地址（littleskin.cn 的 authlib API 根），
+                                    //点一下直接弹账号密码，不用自己去查服务器地址
+                                    LoginItem(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        title = stringResource(R.string.account_little_skin_quick_login),
+                                        onClick = {
+                                            onLittleSkinLogin()
+                                            onDismissRequest()
+                                        }
+                                    )
+                                }
+
                                 item {
                                     //添加认证服务器
                                     InfoLayoutTextItem(

@@ -110,6 +110,8 @@ fun FrpTutorialMenu(modifier: Modifier = Modifier) {
                         R.string.frp_guide_host_4,
                         R.string.frp_guide_host_5,
                         R.string.frp_guide_host_6,
+                        R.string.frp_guide_host_7,
+                        R.string.frp_guide_host_8,
                     ),
                     note = R.string.frp_guide_host_note
                 )

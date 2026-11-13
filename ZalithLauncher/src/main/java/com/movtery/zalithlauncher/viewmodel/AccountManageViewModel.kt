@@ -29,6 +29,7 @@ import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.account.Account
 import com.movtery.zalithlauncher.game.account.AccountsManager
+import com.movtery.zalithlauncher.game.account.LittleSkin
 import com.movtery.zalithlauncher.game.account.accountErrorText
 import com.movtery.zalithlauncher.game.account.addOtherServer
 import com.movtery.zalithlauncher.game.account.auth_server.AuthServerHelper
@@ -168,6 +169,15 @@ sealed interface AccountManageIntent {
         val email: String,
         val pass: String
     ) : AccountManageIntent
+
+    /**
+     * LittleSkin 快捷登录。
+     *
+     * 内置服务器地址是写死的（见 [com.movtery.zalithlauncher.game.account.LittleSkin]），
+     * 所以这里不联网探测，直接把服务器写进表里再弹出账号密码对话框——
+     * 对用户来说就是「点一下、输账号密码、完事」。
+     */
+    data object QuickLoginLittleSkin : AccountManageIntent
 
     /** 添加新的 Yggdrasil 验证服务器 */
     data class AddServer(val url: String) : AccountManageIntent
@@ -379,6 +389,7 @@ class AccountManageViewModel @AssistedInject constructor(
                 intent.userUUID
             )
 
+            is AccountManageIntent.QuickLoginLittleSkin -> quickLoginLittleSkin()
             is AccountManageIntent.LoginWithOtherServer -> loginWithOtherServer(intent)
             is AccountManageIntent.AddServer -> addServer(intent.url)
             is AccountManageIntent.DeleteServer -> deleteServer(intent.server)
@@ -730,6 +741,24 @@ class AccountManageViewModel @AssistedInject constructor(
     private fun createLocalAccount(userName: String, userUUID: String?) {
         localLogin(userName, userUUID)
         onIntent(AccountManageIntent.UpdateLocalLoginOp(LocalLoginOperation.None))
+    }
+
+    /**
+     * LittleSkin 快捷登录：确保服务器在表里，然后直接打开账号密码对话框。
+     *
+     * 用 `saveAuthServer` 而不是 `addOtherServer`：地址、名称、注册链接都是已知常量，
+     * 走探测流程会多一次网络请求、还会因为网络问题失败——用户只是想登录而已。
+     */
+    private fun quickLoginLittleSkin() {
+        viewModelScope.launch {
+            val server = LittleSkin.SERVER
+            if (!AccountsManager.isAuthServerExists(server.baseUrl)) {
+                AccountsManager.saveAuthServer(server)
+            }
+            onIntent(
+                AccountManageIntent.UpdateOtherLoginOp(OtherLoginOperation.OnLogin(server))
+            )
+        }
     }
 
     /** 第三方 Yggdrasil 服务器登录 */

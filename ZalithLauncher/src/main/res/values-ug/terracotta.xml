@@ -71,6 +71,5 @@
     <string name="terracotta_tutorial_guest_tab">مېھمانلار دەرسلىكى</string>
     <string name="terracotta_tutorial_host_tip">ئۆي ئىگىسىنىڭ ئىشلىتىش ئۇسۇلى:</string>
     <string name="terracotta_tutorial_guest_tip">مېھمانلارنىڭ ئىشلىتىش ئۇسۇلى :</string>
-    <string name="terracotta_tutorial_host_step_send_invite">- تەكلىپ كودىنى ھەمراھىڭىزغا ئەۋەتىڭ.</string>
     <string name="terracotta_tutorial_note_title">دىققەت قىلىدىغان ئىشلار:</string>
 </resources>

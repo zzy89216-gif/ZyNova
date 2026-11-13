@@ -27,11 +27,11 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.1.2 测试版`（预发行；正式线仍是 `28.1.0`） |
-| versionCode | `281102` |
+| 版本名 | 当前 `28.1.3`（APK 内**不带后缀**；发行名写作「28.1.3（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
+| versionCode | `281103` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.1.0`（正式）+ `v28.1.2-beta`（预发行，28.1.2 测试版） |
-| main | 28.1.2 测试版代码；只有 `main` 一个分支 |
+| Release | `v28.1.0`（正式）+ `v28.1.3`（发行名「28.1.3（测试版）」，预发行） |
+| main | 28.1.3 代码；只有 `main` 一个分支 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
 | 下一轮待办 | [`下一次的更新内容.md`](下一次的更新内容.md)（功能 + 多语言 + RTL 的完整清单） |
@@ -66,8 +66,9 @@
 已移除：崩溃自动修复（`CrashGuard` / `AIPendingPrompt`）、搜索引擎配置。
 
 ### 其他
-- **游戏数据在公共存储**：`/storage/emulated/0/ZyNova`（`PathManager.PUBLIC_GAME_DIR_NAME`），
-  无「所有文件访问」权限时回退私有目录；老用户升级**强制迁移**（`GameDirMigration`，带进度、可续传、失败回退）
+- **游戏数据在公共存储**：`/storage/emulated/0/ZyNova/.Minecraft`（`PathManager.PUBLIC_GAME_DIR_NAME` + `PUBLIC_GAME_DIR_INNER`），
+  启动日志在同级的 `ZyNova/logs`；无「所有文件访问」权限时回退私有目录；
+  老用户升级**强制迁移**（`GameDirMigration`，全屏进度、可续传、搬完要点「下一步」、失败回退）
 - 默认主页 = **Cards**（主页卡片），数据 IO 线程加载 + 回前台刷新
 - `options.txt` 用真实键：`graphicsMode`(0/1/2)、`particles`(0/1/2)、`fov`(归一化)
 - 返回导航递归下探最深层（修「下载页点返回直接回主界面」）
@@ -192,7 +193,8 @@ PY
   发版资产固定为 `ZyNova-<版本>.apk` + `mapping.universal.zip`。别再把它加回来。
 - **条款版本不跟应用版本**：`OnboardingState.CURRENT_LEGAL_VERSION` 是独立常量，见第二节。
 - 测试分支用完即删：28.1.1 的 `beta` / `beta-28.2` 已合并进 `main` 并删除，之后直接在 `main` 上迭代。
-- **游戏目录固定为公共存储的 `ZyNova`**（28.1.2 起）。不做「首次选择后永久锁死」；
+- **游戏目录固定为公共存储的 `ZyNova/.Minecraft`**（28.1.2 起用公共目录，28.1.3 起收进 `.Minecraft`；
+  根目录只保留 `logs` 与 `.Minecraft`）。不做「首次选择后永久锁死」；
   老数据**强制迁移**（`GameDirMigration`，进主界面前带进度搬完），迁移必须先复制校验再删旧目录，
   中途被杀下次续传，失败回退私有目录。
 - **离线 / 第三方登录入口按界面语言显示**：中文展示，其他语言隐藏；只收入口不删账号。
