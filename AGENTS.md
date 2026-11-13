@@ -27,7 +27,7 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.1.6`（APK 内**不带后缀**；发行名写作「28.1.5（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
+| 版本名 | 当前 `28.1.6`（APK 内**不带后缀**；发行名写作「28.1.6（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
 | versionCode | `281106` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
 | Release | `v28.1.0`（正式）+ `v28.1.6`（发行名「28.1.6（测试版）」，预发行） |
