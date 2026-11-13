@@ -1,6 +1,6 @@
 # Glass material
 
-> The “dynamic glass” toggle was removed in 27.10.2: glass is now a global base material, not an optional effect.
+> The “dynamic glass” toggle is gone: glass is now a global base material, not an optional effect.
 > For the full set of options, see [Personalization and the glass look](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/personalization.md).
 
 - There is exactly **one** background blur in the whole app: the background layer is blurred once, cards / buttons / dialogs never blur anything themselves.

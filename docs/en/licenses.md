@@ -89,7 +89,7 @@ Because the app is now promoted publicly, shipping it counts as **real distribut
 > Pre-release self-check: `grep -rIl "ghp_\|BEGIN .*PRIVATE KEY" .` to make sure no secrets ship in the package.
 > A public release should include at least the APK, this checklist and `THIRD_PARTY_NOTICES.md`.
 
-## 9. First-launch terms and region limits (28.1.0)
+## 9. First-launch terms and region limits
 
 On first launch (including the first launch after updating) **three merged documents** are shown; each must be
 **scrolled to the bottom and ticked individually** before continuing:

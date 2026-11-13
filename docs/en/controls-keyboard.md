@@ -2,4 +2,4 @@
 
 - External keyboards work; watch the focus when the IME opens.
 - Some versions support physical key mapping.
-- Duplicate digit input was fixed in 27.x.
+- Duplicate digit input is fixed: holding a number key no longer fires it repeatedly.

@@ -1,7 +1,15 @@
 # Where the crash log is
 
-- Game crash: Share Logs on the crash screen.
-- Launcher crash: Settings → About / log entry.
-- Run log: version overview → Run log.
+Find the log before you screenshot anything: the first `Caused by` usually explains it.
 
-Logs beat screenshots. Look for the first `Caused by`.
+| Kind | Where |
+|---|---|
+| Game crash | Share log on the crash screen; files under `<instance>/crash-reports/` and `<instance>/logs/latest.log` |
+| Launcher crash | The crash screen lists the stack; the file is `/ZyNova/logs/launcher_crash.log` |
+| Launcher logs | `/ZyNova/logs/` (public storage, visible in any file manager) |
+| Game run log | Instance page, Run log |
+| Multiplayer (Terracotta) | Multiplayer menu, View log; use Share multiplayer core log on the Multiplayer page to send it |
+| SakuraFrp | The log card at the bottom of the page keeps the `frpc` output |
+
+> `ZyNova` is the folder in public storage: `/storage/emulated/0/ZyNova/`.
+> Tokens, `Bearer` headers and `password=` values are redacted automatically, but still skim before sharing.

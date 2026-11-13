@@ -56,8 +56,13 @@ These are not plain strings in `options.txt`; the tools map them for you:
 
 ## Web access
 
-- One switch only: Settings → AI settings → Web access
-- Always **DuckDuckGo** (no key) — no engine or API key to configure
+- Switch: Settings → AI settings → Web access
+- Two engines to choose from:
+  - **DuckDuckGo** (default, no key);
+  - **DeepSeek Search** (needs a search key in AI settings and bills per successful request) — reuse the same
+    key when your main model is DeepSeek.
+- If DeepSeek Search fails (no key, out of credit, rate limited, timeout) it **silently falls back** to
+  DuckDuckGo instead of failing the turn
 - If parsing fails the AI falls back to `fetch_webpage`
 
 

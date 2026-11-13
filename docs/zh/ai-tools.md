@@ -53,8 +53,12 @@
 
 ## 联网
 
-- 只有一个开关：设置 → AI 设置 → 网络搜索 → 允许 AI 联网
-- 固定使用 **DuckDuckGo**（免 Key），不再需要配置任何引擎或 API Key
+- 开关：设置 → AI 设置 → 网络搜索 → 允许 AI 联网
+- 搜索引擎两选一：
+  - **DuckDuckGo**（默认，免 Key）；
+  - **DeepSeek 官方搜索**（要在 AI 设置里填搜索用的 Key，按成功请求计费）——
+    主模型是 DeepSeek 时可以直接复用同一把 Key。
+- DeepSeek 搜索失败（没 Key / 欠费 / 限流 / 超时）会**静默降级**回 DuckDuckGo，不会让整轮对话失败
 - 搜索解析失败时，AI 会自动改用 `fetch_webpage` 抓结果页
 
 

@@ -36,8 +36,9 @@ Android 上的 **Minecraft: Java Edition** 启动器，基于 ZalithLauncher2 �
 ## ⚡ 30 秒上手
 
 1. 从 [Releases](https://github.com/zzy89216-gif/ZyNova/releases) 下载 APK 安装（要求 Android 8.0 及以上）
-2. 首次启动读完 3 份条款：每份滑到底、单独勾选，再选年龄段
-3. 登录微软账号 → 选版本（或让 AI 装）→ 启动
+2. 首次启动先过地区检查，然后**必须允许「所有文件访问」**——游戏数据放在公共目录 `/ZyNova`，没这个权限读写不了
+3. 读完 3 份条款：每份滑到底、单独勾选，再选年龄段（老用户升级会先走一次数据迁移，搬完点「下一步」）
+4. 登录微软账号（或 LittleSkin / 离线）→ 选版本（或让 AI 装）→ 启动
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
@@ -52,6 +53,18 @@ Android 上的 **Minecraft: Java Edition** 启动器，基于 ZalithLauncher2 �
 - **未成年人时段限制**：未满 18 周岁仅可在周五、周六、周日和法定节假日 **20:00–21:00** 启动游戏；法定节假日按国办发明电〔2025〕7号逐日列出，调休上班日按工作日处理
 - **免责声明写全了**：存档丢失、设备发热、第三方封号、服务停服等风险均已明确告知
 - 同时包含：主页卡片不再卡加载、AI 联网搜索可用、导入按实例目录、崩溃自动修复已移除
+
+## 📂 数据在哪
+
+| 内容 | 位置 | 卸载后 |
+|---|---|---|
+| 实例 / 存档 / 模组 / 资源包 / 光影 | `/storage/emulated/0/ZyNova/.Minecraft/` | 保留 |
+| 启动器日志 | `/ZyNova/logs/` | 保留 |
+| Java 运行时 / 收藏归档 / 账号 / 设置 | 应用私有目录 | 删除 |
+
+根目录只有 `logs` 和 `.Minecraft` 两样东西：日志方便你反馈问题时直接发出来，
+`.Minecraft` 点开头、文件管理器默认不显示，避免误删。
+详见 [数据位置](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/data-locations.md)。
 
 ## 🛠️ 能做什么
 

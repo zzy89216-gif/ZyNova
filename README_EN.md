@@ -31,8 +31,11 @@ The design bet is blunt: **fewer decisions**. Most launchers hand you a wall of 
 ## 🚀 Three steps to play
 
 1. Grab the APK from [Releases](https://github.com/zzy89216-gif/ZyNova/releases) and install it (Android 8.0+).
-2. First launch walks you through three compliance documents — scroll each to the end, tick it, pick your age group.
-3. Sign in with your Microsoft account, pick or install a version, hit play.
+2. First launch checks your region, then **requires "All files access"** — game data lives in the public
+   `/ZyNova` folder and cannot be read or written without it.
+3. Read the three compliance documents: scroll each to the end, tick it, pick your age group. Upgrading users
+   see a one-time data migration first and tap Next when it finishes.
+4. Sign in (Microsoft, LittleSkin or offline), pick or install a version, hit play.
 
 - GitHub：<https://github.com/zzy89216-gif/ZyNova>
 - Issues：<https://github.com/zzy89216-gif/ZyNova/issues>
@@ -46,6 +49,18 @@ The design bet is blunt: **fewer decisions**. Most launchers hand you a wall of 
 - **Time window for minors**：under 18, the game can only start on Friday, Saturday, Sunday and statutory holidays, **20:00–21:00**. The 2026 holidays follow the State Council schedule (国办发明电〔2025〕7号); make-up working days count as workdays.
 - **Disclaimers, written out**：save loss, device heat, third-party bans, service shutdown — all stated instead of buried.
 - **Also**：card home no longer hangs on loading, AI web search works, imports land in the instance folder, crash auto-fix removed.
+
+## 📂 Where data lives
+
+| Item | Location | After uninstall |
+|---|---|---|
+| Instances / worlds / mods / resource packs / shaders | `/storage/emulated/0/ZyNova/.Minecraft/` | kept |
+| Launcher logs | `/ZyNova/logs/` | kept |
+| Java runtimes / favourites archive / accounts / settings | private app storage | removed |
+
+The root folder only holds two things: `logs`, so a log is easy to send when reporting a problem, and
+`.Minecraft`, which is dot-prefixed and hidden by default in file managers so it is hard to delete by accident.
+See [Data locations](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/data-locations.md) for details.
 
 ## 🛠️ Features
 

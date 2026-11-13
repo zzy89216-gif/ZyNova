@@ -7,7 +7,8 @@ ZyNova offers two ways to play with friends. Pick one — they do not interfere 
 | [Terracotta](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/terracotta.md) | P2P mesh (EasyTier); both sides join the same virtual LAN | Both players use ZyNova | Friends, no port forwarding |
 | SakuraFrp | Maps a local port to a public node (frp) | A SakuraFrp account + access key | The other side uses a PC client, or you don't want Terracotta |
 
-Entry: **Multiplayer → SakuraFrp**.
+Entry: **Multiplayer** in the top bar, then pick **SakuraFrp** in the floating switcher at the bottom of the
+screen. Both multiplayer modes live on one page, so there is no page jump; the last choice is remembered.
 
 ## Prerequisites
 
