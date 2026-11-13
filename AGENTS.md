@@ -27,11 +27,11 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.1.4`（APK 内**不带后缀**；发行名写作「28.1.4（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
-| versionCode | `281104` |
+| 版本名 | 当前 `28.1.5`（APK 内**不带后缀**；发行名写作「28.1.5（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
+| versionCode | `281105` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.1.0`（正式）+ `v28.1.4`（发行名「28.1.4（测试版）」，预发行） |
-| main | 28.1.4 代码；只有 `main` 一个分支 |
+| Release | `v28.1.0`（正式）+ `v28.1.5`（发行名「28.1.5（测试版）」，预发行） |
+| main | 28.1.5 代码；只有 `main` 一个分支 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
 | 下一轮待办 | [`下一次的更新内容.md`](下一次的更新内容.md)（功能 + 多语言 + RTL 的完整清单） |
@@ -67,7 +67,8 @@
 
 ### 其他
 - **游戏数据在公共存储**：`/storage/emulated/0/ZyNova/.Minecraft`（`PathManager.PUBLIC_GAME_DIR_NAME` + `PUBLIC_GAME_DIR_INNER`），
-  启动日志在同级的 `ZyNova/logs`；无「所有文件访问」权限时回退私有目录；
+  启动日志在同级的 `ZyNova/logs`。**权限被收回时不回退私有目录**：公共目录已有数据就继续指向它，
+  由存储权限门禁拦住（否则会出现「数据看起来全没了、重新授权也回不来」的 P0）；只有全新安装未授权才用私有目录兜底；
   老用户升级**强制迁移**（`GameDirMigration`，全屏进度、可续传、搬完要点「下一步」、失败回退）
 - 默认主页 = **Cards**（主页卡片），数据 IO 线程加载 + 回前台刷新
 - `options.txt` 用真实键：`graphicsMode`(0/1/2)、`particles`(0/1/2)、`fov`(归一化)

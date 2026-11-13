@@ -12,7 +12,8 @@
 
 > ⭐ **ZyNova 28.1.0 is out (global compliance build).**
 
-> 🧪 **28.1.4 (beta, pre-release)**: fixes the account page crash (WebView tried to serve skins from public storage),
+> 🧪 **28.1.5 (beta, pre-release)**: fixes a P0 where revoking "All files access" while running made data look
+> gone and re-granting did not recover. Already in 28.1.4: fixes the account page crash (WebView tried to serve skins from public storage),
 > un-scrollable SakuraFrp tutorial, stale state after returning from system settings, and card-width seams;
 > LTW options moved to their own page; sponsor entry reworked on the About page.
 > Already shipped in 28.1.3: the public folder now only keeps `logs` and `.Minecraft`; migration is a full-screen page

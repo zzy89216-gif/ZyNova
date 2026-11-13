@@ -29,4 +29,7 @@ file manager tidy while still letting you edit configs or drop in mods.
   private folder are cleaned up, so you never see a path you cannot open.
 - "All files access" is required to read and write `/ZyNova`; without it the launcher cannot be used
   (a startup page blocks and guides you to grant it).
+- **Revoking it while the app runs** immediately brings the permission page back and the launcher does
+  **not** switch the game directory to private storage: your data stays in `/ZyNova/.Minecraft` and comes
+  back the moment you re-grant, with no reinstall and no data loss.
 - Uninstalling the app does **not** delete game data under `/ZyNova`; remove it there yourself.

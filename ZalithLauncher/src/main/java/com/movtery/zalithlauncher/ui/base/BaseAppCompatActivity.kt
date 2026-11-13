@@ -31,7 +31,10 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.DarkMode
 import com.movtery.zalithlauncher.setting.loadAllSettings
 import com.movtery.zalithlauncher.utils.checkStoragePermissionsForInit
+import com.movtery.zalithlauncher.utils.hasStoragePermission
 import dagger.hilt.android.AndroidEntryPoint
+
+private const val TAG = "BaseAppCompatActivity"
 
 @AndroidEntryPoint
 open class BaseAppCompatActivity : FullScreenAppCompatActivity() {
@@ -70,7 +73,24 @@ open class BaseAppCompatActivity : FullScreenAppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadAllSettings(this, true)
+
+        //⚠️ P0：运行中「所有文件访问」被关掉 / 重新打开时，必须重新解析一次路径。
+        //以前这里只更新权限标志、不刷新 PathManager，结果是：
+        //关掉权限 → 后续读写全部失败（甚至指向被删掉的私有目录）；重新授权 → 路径还停在旧的，
+        //只能杀进程重启才恢复。现在只要权限状态发生变化，就重算路径 + 重新加载游戏目录。
+        val permissionBefore = hasStoragePermission
         checkStoragePermissions()
+        if (permissionBefore != hasStoragePermission) {
+            runCatching {
+                refreshContext(this)
+                refreshData()
+            }.onFailure {
+                com.movtery.zalithlauncher.utils.logging.Logger.warning(
+                    TAG, "Failed to refresh paths after storage permission change: ${it.message}"
+                )
+            }
+        }
+
         refreshTaskDescription()
     }
 

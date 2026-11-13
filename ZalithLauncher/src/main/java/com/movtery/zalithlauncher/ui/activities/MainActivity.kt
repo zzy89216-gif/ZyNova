@@ -154,6 +154,17 @@ class MainActivity : BaseAppCompatActivity() {
     val backgroundViewModel: BackgroundViewModel by viewModels()
 
     /**
+     * 「所有文件访问」是否已授予。
+     *
+     * 运行中可能被用户在系统设置里关掉，所以不能只在组合里记一次：
+     * onResume 会重新求值，值变了就重新走权限门禁 / 重新解析路径。
+     */
+    private val storageGrantedState = androidx.compose.runtime.mutableStateOf(
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
+            com.movtery.zalithlauncher.path.GameDirMigration.hasAllFilesAccess()
+    )
+
+    /**
      * 整合包导入 ViewModel
      */
     val modpackImportViewModel: ModpackImportViewModel by viewModels()
@@ -350,21 +361,20 @@ class MainActivity : BaseAppCompatActivity() {
                     return@ZalithLauncherTheme
                 }
 
-                //进主界面前先过存储权限门禁：没有「所有文件访问」就没法读写 /ZyNova
-                var storageGranted by remember {
-                    mutableStateOf(
-                        Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
-                            com.movtery.zalithlauncher.path.GameDirMigration.hasAllFilesAccess()
-                    )
-                }
-                if (!storageGranted) {
+                //进主界面前先过存储权限门禁：没有「所有文件访问」就没法读写 /ZyNova。
+                //⚠️ P0：这个状态挂在 Activity 上（不是 remember），并在 onResume 里重新求值——
+                //用户运行中途把权限关掉时，回到前台必须**重新弹出这一页**，
+                //否则整个界面还在用已经读不到的路径，看起来就是"数据全没了"。
+                if (!storageGrantedState.value) {
                     com.movtery.zalithlauncher.ui.screens.splash.StoragePermissionScreen(
                         onGranted = {
-                            //刚拿到权限：重新解析路径，这次才会真正切到公共目录 /ZyNova
+                            //刚拿到权限：重新解析路径，这次才会真正切到公共目录 /ZyNova，
+                            //并让游戏目录管理器重读一遍（否则实例列表还停在私有目录）
                             runCatching {
                                 com.movtery.zalithlauncher.context.refreshContext(this@MainActivity)
+                                refreshData()
                             }
-                            storageGranted = true
+                            storageGrantedState.value = true
                         },
                         onExit = {
                             finishAffinity()
@@ -984,6 +994,20 @@ class MainActivity : BaseAppCompatActivity() {
     override fun onResume() {
         super.onResume()
         ControlManager.checkDefaultAndRefresh(this@MainActivity)
+
+        //回到前台重新核对一次「所有文件访问」：用户可能刚从系统设置里关掉或打开
+        val granted = Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
+            com.movtery.zalithlauncher.path.GameDirMigration.hasAllFilesAccess()
+        if (storageGrantedState.value != granted) {
+            storageGrantedState.value = granted
+            //两个方向都要重算：
+            //- 被收回：PathManager 会保持在公共目录（不再悄悄退回私有目录），界面切回权限门禁页；
+            //- 重新授予：立刻把路径与游戏目录刷新回来，不用杀进程重启。
+            runCatching {
+                com.movtery.zalithlauncher.context.refreshContext(this@MainActivity)
+                if (granted) refreshData()
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi")
