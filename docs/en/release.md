@@ -16,4 +16,7 @@ The full procedure (and its pitfalls) lives in `AGENTS.md`, section 4:
   `X.Y.Z` without a suffix, release title `X.Y.Z (beta)`;
 - A published tag is never overwritten or rewritten; ship a bug fix by bumping the version;
 - Always wait for the running build of an old release to finish before deleting it, otherwise the release
-  workflow recreates it.
+  workflow recreates it;
+- **Turning a pre-release into the stable release**: wait for the new push build to go green → delete the old
+  pre-release (both the Release and the tag) → create the stable Release from the new build's full SHA with
+  `prerelease` unticked. Do not delete the old one first, or there is a window with no installable release.
