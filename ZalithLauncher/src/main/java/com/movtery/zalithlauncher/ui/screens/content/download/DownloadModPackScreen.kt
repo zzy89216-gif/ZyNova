@@ -98,6 +98,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersions
+import kotlinx.coroutines.launch
 
 /** 整合包安装状态操作 */
 private sealed interface ModPackInstallOperation {
