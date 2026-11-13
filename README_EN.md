@@ -12,7 +12,10 @@
 
 > ⭐ **ZyNova 28.1.0 is out (global compliance build).**
 
-> 🧪 **28.1.3 (beta, pre-release)**: the public folder now only keeps `logs` and `.Minecraft`; migration is a full-screen page
+> 🧪 **28.1.4 (beta, pre-release)**: fixes the account page crash (WebView tried to serve skins from public storage),
+> un-scrollable SakuraFrp tutorial, stale state after returning from system settings, and card-width seams;
+> LTW options moved to their own page; sponsor entry reworked on the About page.
+> Already shipped in 28.1.3: the public folder now only keeps `logs` and `.Minecraft`; migration is a full-screen page
 > that waits for you to tap Next; multiplayer is one screen with a floating Terracotta / SakuraFrp switcher that remembers
 > the last choice; both multiplayer tutorials were rewritten against the real flow; LittleSkin quick sign-in; home cards
 > swap once the dragged card covers half of the next one.

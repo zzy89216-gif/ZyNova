@@ -118,10 +118,13 @@ fun AboutInfoScreen(
                                 ) {
                                     Text(text = stringResource(R.string.upgrade_title))
                                 }
+                                //维护者要求：这里不再放「许可证」按钮，改成「赞助」。
+                                //GPL 的许可证与声明仍然能看——下面「开源与合规」板块里有完整入口，
+                                //所以合规义务没有减少，只是把首屏位置让给更常用的赞助入口。
                                 Button(
-                                    onClick = { openLicense(R.raw.gpl_3_license) }
+                                    onClick = { openLink(URL_ZY_NOVA_SUPPORT) }
                                 ) {
-                                    Text(text = stringResource(R.string.about_launcher_license))
+                                    Text(text = stringResource(R.string.about_sponsor))
                                 }
                             }
                         )
@@ -156,19 +159,8 @@ fun AboutInfoScreen(
                         //吉祥物「无聊的克林」（议题 #62）：视觉弱于维护者条目，只做展示
                         MascotRow()
 
-                        //ZyNova 自己的赞助入口
-                        //⚠️ 不要和下方致谢区「上游作者 MovTery」的赞助入口混用：
-                        //那一个用的是 URL_SUPPORT（上游作者的页面），属于必须保留的署名信息。
-                        LinkIconItem(
-                            icon = painterResource(R.drawable.ic_favorite_outlined),
-                            title = stringResource(R.string.about_sponsor),
-                            text = stringResource(
-                                R.string.about_launcher_sponsor_text,
-                                BuildKeys.LAUNCHER_NAME
-                            ),
-                            openLink = { openLink(URL_ZY_NOVA_SUPPORT) },
-                            useImage = false
-                        )
+                        //（这里原本有一张独立的「赞助」卡片，维护者要求删掉：
+                        // 赞助入口已经收进上面的按钮里，单独再摆一张卡片只是重复。）
                     }
                 }
             }

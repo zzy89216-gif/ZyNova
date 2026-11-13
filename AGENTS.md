@@ -27,11 +27,11 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.1.3`（APK 内**不带后缀**；发行名写作「28.1.3（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
-| versionCode | `281103` |
+| 版本名 | 当前 `28.1.4`（APK 内**不带后缀**；发行名写作「28.1.4（测试版）」，勾 pre-release；正式线仍是 `28.1.0`） |
+| versionCode | `281104` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.1.0`（正式）+ `v28.1.3`（发行名「28.1.3（测试版）」，预发行） |
-| main | 28.1.3 代码；只有 `main` 一个分支 |
+| Release | `v28.1.0`（正式）+ `v28.1.4`（发行名「28.1.4（测试版）」，预发行） |
+| main | 28.1.4 代码；只有 `main` 一个分支 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
 | 下一轮待办 | [`下一次的更新内容.md`](下一次的更新内容.md)（功能 + 多语言 + RTL 的完整清单） |

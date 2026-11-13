@@ -45,17 +45,63 @@ class PlayerSkin(
     localSkinsDir: File = PathManager.DIR_ACCOUNT_SKIN,
     localCapeDir: File = PathManager.DIR_ACCOUNT_CAPE,
 ) {
+    /**
+     * 皮肤 / 披风的**真实**位置（公共目录 `/ZyNova/.Minecraft/account_skins`）。
+     */
+    private val sourceSkinsDir: File = localSkinsDir
+    private val sourceCapesDir: File = localCapeDir
+
+    /**
+     * WebView 实际读取的位置：应用**内部缓存**。
+     *
+     * ⚠️ 这里绝对不能直接注册公共目录：`WebViewAssetLoader.InternalStoragePathHandler`
+     * 只接受「应用内部存储」下的目录，传公共目录会抛
+     * `IllegalArgumentException: The given directory ... doesn't exist under an allowed
+     * app internal storage directory`，表现就是**一进账号管理就崩溃**。
+     * 所以先注册内部缓存目录，加载哪张皮肤时再把那张图镜像过来（64×64 的 PNG，代价可以忽略）。
+     */
+    private val servedSkinsDir: File = File(PathManager.DIR_CACHE, "skinview/skins").apply { mkdirs() }
+    private val servedCapesDir: File = File(PathManager.DIR_CACHE, "skinview/capes").apply { mkdirs() }
+
     private val assetLoader = WebViewAssetLoader.Builder()
         .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
         .addPathHandler(
             "/skins/",
-            WebViewAssetLoader.InternalStoragePathHandler(context, localSkinsDir)
+            WebViewAssetLoader.InternalStoragePathHandler(context, servedSkinsDir)
         )
         .addPathHandler(
             "/capes/",
-            WebViewAssetLoader.InternalStoragePathHandler(context, localCapeDir)
+            WebViewAssetLoader.InternalStoragePathHandler(context, servedCapesDir)
         )
         .build()
+
+    /**
+     * 把源文件镜像到可被 WebView 读取的目录，成功返回文件名（不带路径）。
+     *
+     * 源文件不存在就直接返回 null，调用方会回退到默认皮肤。
+     */
+    private fun mirror(source: File, targetDir: File, name: String): String? {
+        return runCatching {
+            if (!source.isFile) return null
+            val target = File(targetDir, name)
+            val outdated = !target.exists() ||
+                target.length() != source.length() ||
+                target.lastModified() < source.lastModified()
+            if (outdated) {
+                source.copyTo(target, overwrite = true)
+                target.setLastModified(source.lastModified())
+            }
+            name
+        }.getOrNull()
+    }
+
+    /** 镜像账号皮肤；返回可在 `/skins/` 下访问的文件名 */
+    private fun mirrorSkin(id: String): String? =
+        mirror(File(sourceSkinsDir, "$id.png"), servedSkinsDir, "$id.png")
+
+    /** 镜像披风；返回可在 `/capes/` 下访问的文件名 */
+    private fun mirrorCape(id: String): String? =
+        mirror(File(sourceCapesDir, "$id.png"), servedCapesDir, "$id.png")
 
     private var webview: WebView? = null
 
@@ -122,10 +168,12 @@ class PlayerSkin(
     fun loadSkin(skinId: String?, model: SkinModelType?) {
         val modelString = model?.takeIf { it != SkinModelType.NONE }?.modelType ?: "auto-detect"
         val jsUrl = skinId?.let { id ->
-            AssetsUrlBuilder()
-                .append("skins")
-                .append("$id.png")
-                .toString()
+            mirrorSkin(id)?.let { fileName ->
+                AssetsUrlBuilder()
+                    .append("skins")
+                    .append(fileName)
+                    .toString()
+            }
         } ?: defaultSkin
         webview?.evaluateJavascript("loadSkin('$jsUrl', '$modelString')", null)
     }
@@ -141,10 +189,12 @@ class PlayerSkin(
 
     fun loadCape(cape: PlayerProfile.Cape?) {
         val path = cape?.takeIf { it != EmptyCape }?.id?.let { id ->
-            AssetsUrlBuilder()
-                .append("capes")
-                .append("$id.png")
-                .toString()
+            mirrorCape(id)?.let { fileName ->
+                AssetsUrlBuilder()
+                    .append("capes")
+                    .append(fileName)
+                    .toString()
+            }
         }
         val jsUrl = path?.let { "'$it'" } ?: "null"
         webview?.evaluateJavascript("loadCape($jsUrl)", null)

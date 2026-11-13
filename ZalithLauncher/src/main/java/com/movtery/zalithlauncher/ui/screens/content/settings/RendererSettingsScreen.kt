@@ -221,15 +221,10 @@ fun RendererSettingsScreen(
                 }
             }
 
-            if (isLTW) {
-                AnimatedItem(scope) { yOffset ->
-                    LTWConfigCards(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
-                    )
-                }
-            }
+            //⚠️ LTW 的参数**不在这里展开**：
+            //上面的渲染器状态卡片点一下就会跳到「LTW 详细设置」独立页面，
+            //把同一堆开关在下面再铺一遍只会让这一页又长又重复（维护者明确要求去掉）。
+            //MobileGlues 保持原样——它的常用开关在这页直接调更方便。
 
             // ── 显示与性能（所有渲染器通用）────────────────────────
             AnimatedItem(scope) { yOffset ->

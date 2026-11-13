@@ -57,6 +57,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -70,6 +71,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
@@ -156,7 +160,26 @@ fun FrpContent(
     val quotaFull = quota > 0 && tunnels.size >= quota
     val groupLevel = user?.groupLevel ?: 0
 
-    LaunchedEffect(isVisible, loggedIn) {
+    /**
+     * 每次回到前台自增一次。
+     *
+     * 维护者的反馈：去系统设置里开了「电池优化白名单」再回来，页面还显示没开，
+     * 必须退出这个页面再进才刷新。原因是这些状态只在首次组合时读了一次。
+     * 所以这里监听 ON_RESUME，回到前台就重新读一次（隧道列表也顺带刷新）。
+     */
+    var resumeTick by remember { mutableIntStateOf(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                resumeTick++
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    LaunchedEffect(isVisible, loggedIn, resumeTick) {
             if (isVisible && loggedIn) {
                 runCatching {
                     FrpManager.refresh()
@@ -382,7 +405,7 @@ fun FrpContent(
                         Text(stringResource(R.string.frp_tunnel_create))
                     }
 
-                    BatteryCard()
+                    BatteryCard(refreshKey = resumeTick)
 
                     LogsCard(
                         logs = logs,
@@ -926,11 +949,12 @@ private fun LogsCard(
  * 电池优化：已允许时只留一行小字，未允许时才展示完整说明与按钮
  */
 @Composable
-private fun BatteryCard() {
+private fun BatteryCard(refreshKey: Int = 0) {
     val context = LocalContext.current
     var allowed by remember { mutableStateOf(isIgnoringBatteryOptimizations(context)) }
 
-    LaunchedEffect(Unit) {
+    //每次回到前台 / 重新进入页面都重新读一次，避免"开了白名单但界面还是提示去开"
+    LaunchedEffect(refreshKey) {
         allowed = isIgnoringBatteryOptimizations(context)
     }
 

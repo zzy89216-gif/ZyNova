@@ -75,7 +75,11 @@ fun BackgroundCard(
         Column(
             //显式裁到卡片形状：模糊与动态高光都画在这一层上，
             //不能依赖 Card 的裁剪（阴影/elevation 下会出现方角溢出）
+            //⚠️ 必须 fillMaxWidth：这一层默认按**内容**宽度收缩，
+            //「操作审计」这种只有一个短句的卡片会出现「玻璃层只铺了一半、右半边露出卡片底色」的接缝，
+            //看起来像卡片宽度不一致 / 文字跑出卡片。铺满后所有卡片宽度一致。
             modifier = Modifier
+                .fillMaxWidth()
                 .clip(shape)
                 .backgroundGlass(blur, colors.containerColor, influencedByBackground),
             content = content
@@ -130,7 +134,9 @@ fun BackgroundCard(
         interactionSource = interactionSource,
     ) {
         Column(
+            //同上：玻璃层要铺满整张卡片，否则短内容的卡片会出现半宽接缝
             modifier = Modifier
+                .fillMaxWidth()
                 .clip(shape)
                 .backgroundGlass(blur, colors.containerColor, influencedByBackground),
             content = content

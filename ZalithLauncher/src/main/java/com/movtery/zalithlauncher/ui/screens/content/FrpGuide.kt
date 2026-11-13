@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.pager.HorizontalPager
+import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
@@ -136,9 +138,12 @@ private fun GuideColumn(
     steps: List<Int>,
     note: Int
 ) {
+    //⚠️ 这一列内容会超出一屏（尤其「开服联机」8 步 + 注意事项），
+    //以前只写了 fillMaxSize 没加滚动，结果**根本滑不动**，后面的步骤永远看不到。
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScrollWithBar(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
