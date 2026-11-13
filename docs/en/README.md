@@ -144,7 +144,7 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [Build and release](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/build.md) |
 | [Local build](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/build-local.md) |
 | [CI build](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/build-ci.md) |
-| [Release](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/release.md) |
+| [Publishing a release](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/release.md) |
 | [Issue templates](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/issue-templates.md) |
 
 ### Other

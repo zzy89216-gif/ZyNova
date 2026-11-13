@@ -9,7 +9,7 @@ and what you are allowed to do with it.
 | | |
 |---|---|
 | Licence | **GNU GPL-3.0** |
-| Full text | [`LICENSE`](https://github.com/zzy89216-gif/ZyNova/blob/main/LICENSE) in the repo root, also readable in-app under Settings → About → Open-source licences |
+| Full text | [`LICENSE`](https://github.com/zzy89216-gif/ZyNova/blob/main/LICENSE) in the repo root, also readable in-app under Settings → About → Open source & compliance |
 | Origin | Maintained from [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2); ZyNova is an **unofficial modified build** |
 | Upstream credits | The copyright notices of Zalith Launcher 2 / Fold Craft Launcher / PojavLauncher are **kept intact** in `LICENSE` and in each source file header |
 
@@ -23,7 +23,7 @@ What GPL-3.0 means in plain words:
 
 The complete list with per-component copyright is in
 [THIRD_PARTY_NOTICES.md](https://github.com/zzy89216-gif/ZyNova/blob/main/THIRD_PARTY_NOTICES.md);
-in-app, Settings → About → Open-source licences lets you open each licence text.
+in-app, Settings → About → Open source & compliance lets you open each licence text.
 
 The ones that matter most:
 
@@ -80,7 +80,7 @@ Because the app is now promoted publicly, shipping it counts as **real distribut
 | 1 | Ship the **full GPL-3.0 text** and copyright notices | ✅ `LICENSE` in the repo, readable in-app |
 | 2 | Provide the **complete corresponding source** (GPL/AGPL) | ✅ public repo <https://github.com/zzy89216-gif/ZyNova> |
 | 3 | Ship **third-party notices** (components + licences + copyright) | ✅ `THIRD_PARTY_NOTICES.md`, also bundled in `assets/licenses/` |
-| 4 | Every third-party licence **full text** reachable | ✅ in-app: Settings → About → Open-source licences |
+| 4 | Every third-party licence **full text** reachable | ✅ in-app: Settings → About → Open source & compliance |
 | 5 | **AGPL-3.0** (Terracotta) called out, binary unmodified | ✅ notices §4 + prominent note on the About page |
 | 6 | LGPL components stay **replaceable** (separate `.so`, no static linking) | ✅ MobileGlues / LTW-Turbo / sora-editor are separate libraries |
 | 7 | Never remove or replace upstream **credits and copyright headers** | ✅ kept in source headers and `LICENSE` |

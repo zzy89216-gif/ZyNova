@@ -8,7 +8,7 @@ ZyNova 是开源软件。**你自己、你的朋友、任何拿到 APK 的人，
 | 项 | 内容 |
 |---|---|
 | 许可证 | **GNU GPL-3.0** |
-| 全文 | 仓库根目录 [`LICENSE`](https://github.com/zzy89216-gif/ZyNova/blob/main/LICENSE)，应用内「设置 → 关于 → 开源许可」也可看 |
+| 全文 | 仓库根目录 [`LICENSE`](https://github.com/zzy89216-gif/ZyNova/blob/main/LICENSE)，应用内「设置 → 关于与支持 → 开源与合规」也可看 |
 | 来源 | 基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 源码维护，ZyNova 是**非官方修改版** |
 | 上游署名 | Zalith Launcher 2 / Fold Craft Launcher / PojavLauncher 一脉的版权声明**完整保留**在 `LICENSE` 与各源文件头部 |
 
@@ -21,7 +21,7 @@ GPL-3.0 的含义（说人话）：
 ## 二、第三方组件：谁、什么许可
 
 完整清单与逐项版权见仓库 [THIRD_PARTY_NOTICES.md](https://github.com/zzy89216-gif/ZyNova/blob/main/THIRD_PARTY_NOTICES.md)，
-应用内「设置 → 关于 → 开源许可」里每一项都能点开看到许可证原文。
+应用内「设置 → 关于与支持 → 开源与合规」里，每个第三方组件的许可证原文都能点开查看。
 
 最需要你知道的四个：
 
@@ -78,7 +78,7 @@ GPL-3.0 的含义（说人话）：
 | 1 | 附 **GPL-3.0 全文**与版权声明 | ✅ 仓库 `LICENSE`，应用内可读 |
 | 2 | 提供**完整对应源码**（GPL/AGPL 要求） | ✅ 公开仓库 <https://github.com/zzy89216-gif/ZyNova> |
 | 3 | 附**第三方声明**（组件清单 + 许可证 + 版权） | ✅ `THIRD_PARTY_NOTICES.md`，并打进 APK `assets/licenses/` |
-| 4 | 每个第三方组件的**许可证原文**可查 | ✅ 应用内「设置 → 关于 → 开源许可」逐项可点开 |
+| 4 | 每个第三方组件的**许可证原文**可查 | ✅ 应用内「设置 → 关于与支持 → 开源与合规」逐项可点开 |
 | 5 | **AGPL-3.0**（Terracotta）单独说明，且二进制未修改 | ✅ 声明第 4 节 + 关于页显著提示 |
 | 6 | LGPL 组件保持**可替换**（独立 `.so`，不静态链接） | ✅ MobileGlues / LTW-Turbo / sora-editor 均为独立库 |
 | 7 | 不删除、不替换上游**署名与版权头** | ✅ 源码头部与 `LICENSE` 保留 |
