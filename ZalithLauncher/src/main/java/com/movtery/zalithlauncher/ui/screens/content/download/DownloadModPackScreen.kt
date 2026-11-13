@@ -373,6 +373,18 @@ fun DownloadModPackScreen(
                         currentKey = downloadModPackScreenKey,
                         key = assetsKey,
                         eventViewModel = eventViewModel,
+                        //一键安装（列表每行一个按钮，与模组页同款 UI）：
+                        //点一下直接装这一版，不先进详情页。
+                        onQuickInstall = { _, version ->
+                            if (viewModel.installOperation is ModPackInstallOperation.None) {
+                                viewModel.installOperation =
+                                    if (!NotificationManager.checkNotificationEnabled(context)) {
+                                        ModPackInstallOperation.WarningForNotification(version, null)
+                                    } else {
+                                        ModPackInstallOperation.Warning(version, null)
+                                    }
+                            }
+                        },
                         onItemClicked = { _, version, iconUrl, _ ->
                             if (viewModel.installOperation !is ModPackInstallOperation.None) {
                                 //不是待安装状态，拒绝此次安装
