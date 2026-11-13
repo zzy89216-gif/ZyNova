@@ -57,6 +57,21 @@
 
 **当前版本：28.1.3**（`launcher_version_code=281103`，预发行）
 
+### 28.1.3 的结构性变化
+
+- **数据根目录 = `/ZyNova/.Minecraft`**（`PathManager.DIR_GAME`）。根目录只留 `logs` 与 `.Minecraft`；
+  **实例根目录由 `GamePathManager` 决定**（默认 = `PathManager.DIR_GAME`），
+  所以「搬到公共目录」必须同时改 `PathManager` 与 `GamePathManager`，只改一个会出现
+  「迁移完成、实例还在私有目录」。旧的两个来源（`files/.minecraft` 实例、`files/games` 数据）
+  由 `GameDirMigration` 一次性合到公共目录，校验通过后删除旧目录。
+- **内置文件管理器根目录**用 `PathManager.userVisibleRoot()`（公共目录 `/ZyNova`），
+  不要再写死 `DIR_FILES_EXTERNAL`。
+- **整合包导入**走 `TaskSystem.appScope` + 全局任务队列（`ModpackImportViewModel.import()`），
+  与 AI 的 `install_modpack` 同一套做法：不弹阻塞进度窗、退出页面继续、取消走任务面板。
+- **联机页是「一个页面两种模式」**：`MultiplayerModeSwitcher`（屏幕中下方悬浮胶囊）切换
+  `MultiplayerMode.TERRACOTTA / FRP`，选择保存在 `AllSettings.multiplayerMode`；
+  樱花穿透内容被抽成 `FrpContent(isVisible)` 供两处复用。
+
 ### 28.1.1 / 28.1.2 的结构性变化
 
 - **条款正文模块化**：`onboarding/LegalDocuments.kt` 组装「该语言正文 + 该地区补充条款」，

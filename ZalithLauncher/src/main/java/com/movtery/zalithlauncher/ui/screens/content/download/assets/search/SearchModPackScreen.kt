@@ -104,15 +104,11 @@ fun SearchModPackScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let { uri ->
+            //⚠️ 不再「开始导入就常亮屏幕」：导入已经跑在应用级作用域（任务队列里能看进度），
+            //用户完全可以离开页面去干别的，还强制常亮只会白耗电。
             viewModel.import(
                 context = context,
-                uri = uri,
-                onStart = {
-                    eventViewModel.sendKeepScreen(true)
-                },
-                onStop = {
-                    eventViewModel.sendKeepScreen(false)
-                }
+                uri = uri
             )
         }
     }
