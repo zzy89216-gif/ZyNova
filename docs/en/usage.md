@@ -40,6 +40,8 @@
 
 - Tap ♥ on a search result card or project page to save it.
 - The favorites page has "online favorites" (links) and "local archive" (copies stored in private app storage).
+- A favorites card has a big download button on the right — one tap installs it (required dependencies included);
+  the small ♥ is the unfavorite button.
 - See `favorites.md`.
 
 ## Common entries
