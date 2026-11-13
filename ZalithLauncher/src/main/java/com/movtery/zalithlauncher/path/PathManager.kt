@@ -300,36 +300,30 @@ class PathManager {
          * 3. 全新安装 → 直接用公共目录（没权限就回退私有）。
          */
         private fun resolveGameDir(): File {
-            val public = publicGameDir()
-            val legacy = legacyGameDir()
-            //有权限就**始终**用公共目录：旧数据由 GameDirMigration 在进主界面前搬过去。
-            //⚠️ 这里以前写成「私有目录有数据就继续用私有」，结果 needsMigration 永远为 false，
-            //迁移界面根本不出现，老用户永远搬不过去。
-            if (canWritePublicStorage()) return public
-            //没权限时**不能无脑退回私有目录**（P0）：
-            //用户运行中途把「所有文件访问」关掉，如果这里直接把 DIR_GAME 改成私有目录，
-            //实例列表会瞬间变空、看板变空，看起来就像"数据丢了"；更糟的是此时
-            //GamePathManager 会跟着指向已被删掉的旧私有目录，重新授权后也回不来。
-            //所以：公共目录里已经有数据（迁移过 / 正常安装过）时，**继续指向公共目录**，
-            //让上层（存储权限门禁）拦住用户去重新授权；授权后路径本来就对，什么都不用修复。
-            if (hasContent(public)) return public
-            //只有「全新安装、还没授权过」这种公共目录还是空的情况，才用私有目录兜底
-            return legacy
+            //⚠️ **永远使用公共目录**（维护者要求：绝对不能再出现"退回私有目录"）。
+            //
+            //以前这里写「没有权限就回退私有目录」，出过 P0：
+            //运行中把「所有文件访问」关掉 → DIR_GAME 被改成私有目录，而迁移后私有目录已被删除，
+            //整个启动器指向一个空目录，实例列表全空、看起来像数据丢了；重新授权也回不来。
+            //
+            //现在的规则只有一条：游戏目录 = `/ZyNova/.Minecraft`，没有权限就由启动页拦住去授权。
+            //私有目录只在 `GameDirMigration` 里作为**迁移来源**出现，永远不作为运行目录。
+            return publicGameDir()
         }
 
         /**
-         * 迁移失败时回退到私有目录：改回路径并重建依赖它的文件常量。
-         * 宁可继续用私有目录，也不能让用户的实例"消失"。
+         * 迁移失败后的收尾：**仍然留在公共目录**。
+         *
+         * 旧做法是切回私有目录继续用，但那会让「游戏目录」在两种位置之间来回跳，
+         * 正是「目录又搞回私有目录」的来源。现在宁可让迁移页失败重试，也不换目录。
          */
-        fun useLegacyGameDir() {
+        fun resetGameDirToPublic() {
             runCatching {
-                DIR_GAME = legacyGameDir()
+                DIR_GAME = publicGameDir()
                 FILE_MINECRAFT_VERSIONS = File(DIR_GAME, "minecraft_versions.json")
                 DIR_ACCOUNT_SKIN = File(DIR_GAME, "account_skins")
                 DIR_ACCOUNT_CAPE = File(DIR_GAME, "account_capes")
                 DIR_GAME.mkdirs()
-                DIR_ACCOUNT_SKIN.mkdirs()
-                DIR_ACCOUNT_CAPE.mkdirs()
             }
         }
 

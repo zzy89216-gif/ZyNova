@@ -128,7 +128,7 @@ object GameDirMigration {
                 runCatching {
                     to.listFiles()?.forEach { FileUtils.deleteQuietly(it) }
                 }
-                PathManager.useLegacyGameDir()
+                PathManager.resetGameDirToPublic()
             }
             android.os.Handler(android.os.Looper.getMainLooper()).post { onDone(ok) }
         }, "game-dir-migration").start()
