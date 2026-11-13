@@ -2061,8 +2061,8 @@
     <string name="storage_gate_blocked_message">Using ZyNova requires the "All files access" permission. Without it the launcher cannot read or write game files, so it cannot run.</string>
     <string name="storage_gate_grant">Grant access</string>
     <string name="storage_gate_exit">Exit</string>
-    <string name="versions_overview_hide_cards">Hide home cards</string>
-    <string name="versions_overview_show_cards">Show home cards</string>
+    <string name="versions_overview_hide_this_card">Hide this instance on Home</string>
+    <string name="versions_overview_show_this_card">Show this instance on Home</string>
     <string name="multiplayer_mode_terracotta_title">Terracotta</string>
     <string name="multiplayer_mode_terracotta_summary">Both players install this launcher and join the same room; no port forwarding.</string>
     <string name="multiplayer_mode_current">Current</string>

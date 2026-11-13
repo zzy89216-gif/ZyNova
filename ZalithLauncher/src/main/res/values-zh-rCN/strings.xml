@@ -2032,8 +2032,8 @@
     <string name="storage_gate_blocked_message">使用本软件必须允许「所有文件访问」。没有这个权限，启动器无法读写游戏文件，也就无法使用。</string>
     <string name="storage_gate_grant">去授权</string>
     <string name="storage_gate_exit">退出</string>
-    <string name="versions_overview_hide_cards">隐藏主页卡片</string>
-    <string name="versions_overview_show_cards">显示主页卡片</string>
+    <string name="versions_overview_hide_this_card">在主页隐藏此实例</string>
+    <string name="versions_overview_show_this_card">在主页显示此实例</string>
     <string name="multiplayer_mode_terracotta_title">陶瓦联机</string>
     <string name="multiplayer_mode_terracotta_summary">双方都装本启动器，进同一个房间即可，不用开端口。</string>
     <string name="multiplayer_mode_current">当前方式</string>

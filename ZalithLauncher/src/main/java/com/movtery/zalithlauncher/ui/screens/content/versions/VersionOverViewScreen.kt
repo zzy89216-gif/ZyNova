@@ -175,6 +175,7 @@ fun VersionOverViewScreen(
             AnimatedItem(scope) { yOffset ->
                 VersionQuickActions(
                     modifier = Modifier.offset { IntOffset(x = 0, y = yOffset.roundToPx()) },
+                    versionName = version.getVersionName(),
                     accessFolder = { path ->
                         val folder = if (path.isEmpty()) {
                             version.getGameDir()
@@ -382,6 +383,7 @@ private fun VersionManagementLayout(
 @Composable
 private fun VersionQuickActions(
     modifier: Modifier = Modifier,
+    versionName: String,
     accessFolder: (folderName: String) -> Unit = {}
 ) {
     VersionChunkBackground(
@@ -410,16 +412,24 @@ private fun VersionQuickActions(
                         text = stringResource(R.string.versions_overview_version_folder)
                     )
                 }
-                //隐藏 / 显示主页卡片（成对切换）
-                val cardsHidden = AllSettings.homeCardsHidden.state
+                //隐藏 / 显示**这个实例**的主页卡片（成对切换）
+                val hiddenInstances = AllSettings.hiddenHomeInstances.state
+                val thisHidden = versionName in hiddenInstances
                 OutlinedButton(
                     modifier = Modifier.padding(end = 12.dp),
-                    onClick = { AllSettings.homeCardsHidden.save(!cardsHidden) }
+                    onClick = {
+                        val next = if (thisHidden) {
+                            hiddenInstances - versionName
+                        } else {
+                            hiddenInstances + versionName
+                        }
+                        AllSettings.hiddenHomeInstances.save(next)
+                    }
                 ) {
                     Text(
                         text = stringResource(
-                            if (cardsHidden) R.string.versions_overview_show_cards
-                            else R.string.versions_overview_hide_cards
+                            if (thisHidden) R.string.versions_overview_show_this_card
+                            else R.string.versions_overview_hide_this_card
                         )
                     )
                 }

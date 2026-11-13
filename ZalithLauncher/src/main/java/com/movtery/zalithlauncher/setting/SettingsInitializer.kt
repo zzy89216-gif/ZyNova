@@ -41,6 +41,8 @@ fun loadAllSettings(context: Context, reloadAll: Boolean = false) {
     //以后若再出现同名、不同类型的设置，读取时会直接抛类型异常（启动崩溃）。
     removeLegacyGlassKeys()
     migrateTaskMenuCollapsed()
+    //卡片圆角 36dp / 玻璃强度 2% 的新默认值（只在没改过旧默认值时生效）
+    AllSettings.migrateAppearanceDefaults()
 
     if (AllSettings.ramAllocation.getValue() == null) {
         val ram = findBestRAMAllocation(context)

@@ -51,6 +51,32 @@ import com.movtery.zalithlauncher.ui.theme.ColorThemeType
 import com.movtery.zalithlauncher.utils.animation.TransitionAnimationType
 
 object AllSettings : SettingsRegistry() {
+
+    /**
+     * 新默认外观的一次性迁移（只在用户没改过旧默认值时生效）。
+     *
+     * 卡片圆角 28 → 36dp，玻璃强度 8% → 2%。
+     * 只改 `intSetting` 的默认值对老用户无效（值已经存进 MMKV），
+     * 所以在启动时做一次：仍然等于旧默认值就覆盖，手动调过的保持原样。
+     */
+    fun migrateAppearanceDefaults() {
+        if (appearanceDefaultsMigrated.getValue()) return
+        runCatching {
+            if (launcherCornerRadius.getValue() == 28) launcherCornerRadius.save(36)
+            if (codexGlassStrength.getValue() == 8) codexGlassStrength.save(2)
+            appearanceDefaultsMigrated.save(true)
+        }
+    }
+
+    /**
+     * 新版默认外观的一次性迁移标记。
+     *
+     * 默认卡片圆角 28→36dp、玻璃强度 8%→2%。
+     * 只改默认值对**已经装过的用户无效**（值早就存进 MMKV 了），
+     * 这里做一次性迁移：只有当用户还停在**旧默认值**上（说明他没改过）才覆盖，
+     * 手动调过的人保持他自己的选择。
+     */
+    private val appearanceDefaultsMigrated = boolSetting("appearanceDefaultsMigrated", false)
     /**
      * 标题栏左上角显示的启动器名称（议题 #18）
      *
@@ -607,14 +633,14 @@ object AllSettings : SettingsRegistry() {
      * 这里控制叠在卡片/面板上的低透明度渐变的强度（8 = 8%）。
      * 调低更接近纯色，调高玻璃感更强；读取方是 `Modifier.backgroundGlass()`。
      */
-    val codexGlassStrength = intSetting("codexGlassStrength", 8, 2..16)
+    val codexGlassStrength = intSetting("codexGlassStrength", 2, 2..16)
 
     /**
      * 启动器卡片圆角（dp）
      *
      * 统一驱动 `MaterialTheme.shapes`，个性化页与设置页读写同一个值。
      */
-    val launcherCornerRadius = intSetting("launcherCornerRadius", 28, 12..36)
+    val launcherCornerRadius = intSetting("launcherCornerRadius", 36, 12..36)
 
     /**
      * 首页按钮材质（议题 #33）
@@ -674,7 +700,14 @@ object AllSettings : SettingsRegistry() {
     val gameDirMigrationAsked = boolSetting("gameDirMigrationAsked", false)
 
     /** 是否隐藏主页的实例卡片（版本概览的快捷操作里可切换） */
-    val homeCardsHidden = boolSetting("homeCardsHidden", false)
+    /**
+     * 主页上**被单独隐藏**的实例（存版本名）。
+     *
+     * 以前是一个全局开关 `homeCardsHidden`：在某个版本的「版本概览」里点一下，
+     * 会把**所有**实例卡片一起藏掉（维护者反馈的 bug）。
+     * 现在改成按实例记：只影响这一个版本，其它卡片照常显示。
+     */
+    val hiddenHomeInstances = stringListSetting("hiddenHomeInstances", emptyList())
 
 
     val homePageType = enumSetting("homePageType", HomePageType.Cards)

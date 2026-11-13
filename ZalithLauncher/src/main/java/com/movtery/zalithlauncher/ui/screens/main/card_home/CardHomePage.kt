@@ -169,14 +169,21 @@ fun cardHomePage(
     }
 
     //版本卡片之间的拖动排序
-    val cardReorder = rememberReorderState { dragged, target ->
-        val from = instances.indexOfFirst { it.orderKey() == dragged }
-        val to = instances.indexOfFirst { it.orderKey() == target }
-        if (from >= 0 && to >= 0) {
-            instances = HomeLayoutStore.move(instances, from, to)
+    //⚠️ 拖动过程中只改内存里的顺序，**不落盘**：
+    //  onMove 每帧都可能被调用，每帧写一次 MMKV + 整个列表重组，表现就是闪屏和别的卡片跟着抖。
+    //  真正保存放到拖动结束（onEnd）一次完成。
+    val cardReorder = rememberReorderState(
+        onMove = { dragged, target ->
+            val from = instances.indexOfFirst { it.orderKey() == dragged }
+            val to = instances.indexOfFirst { it.orderKey() == target }
+            if (from >= 0 && to >= 0 && from != to) {
+                instances = HomeLayoutStore.move(instances, from, to)
+            }
+        },
+        onEnd = {
             HomeLayoutStore.save(HomeLayoutStore.KEY_CARDS, instances.map { it.orderKey() })
         }
-    }
+    )
 
     if (!loaded) {
         Box(
@@ -190,10 +197,13 @@ fun cardHomePage(
         return
     }
 
-    //隐藏主页卡片：有实例时直接什么都不显示（不占位、不灰显）；
-    //一个实例都没有时仍然走下面的空状态，给「下载一个实例」的入口。
-    if (AllSettings.homeCardsHidden.state && instances.isNotEmpty()) {
-        return
+    //按实例隐藏：只过滤掉「被单独隐藏」的那些，其它卡片照常显示。
+    //（以前这里是一个全局开关，点一个版本会连带藏掉全部卡片。）
+    val hiddenInstances = AllSettings.hiddenHomeInstances.state.toSet()
+    val visibleInstances = if (hiddenInstances.isEmpty()) {
+        instances
+    } else {
+        instances.filterNot { it.orderKey() in hiddenInstances }
     }
 
     Column(
@@ -202,7 +212,7 @@ fun cardHomePage(
             .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp * cardScale)
     ) {
-        if (instances.isEmpty()) {
+        if (visibleInstances.isEmpty()) {
             //空状态：左边一大片空白很难看，也让人不知道下一步干什么。
             //直接给一个「下载一个实例」的入口，点了就进下载游戏本体页。
             Column(
@@ -225,7 +235,7 @@ fun cardHomePage(
                 }
             }
         } else {
-            instances.forEach { instance ->
+            visibleInstances.forEach { instance ->
                 val instanceKey = instance.orderKey()
                 key(instanceKey) {
                 InstanceModule(
@@ -234,23 +244,27 @@ fun cardHomePage(
                     material = material,
                     reorderState = cardReorder,
                     reorderKey = instanceKey,
-                    onWorldsReordered = { worlds ->
+                    onWorldsReordered = { worlds, save ->
                         instances = instances.map { current ->
                             if (current.orderKey() == instanceKey) current.copy(worlds = worlds) else current
                         }
-                        HomeLayoutStore.save(
-                            HomeLayoutStore.keyWorlds(instanceKey),
-                            worlds.map { it.orderKey() }
-                        )
+                        if (save) {
+                            HomeLayoutStore.save(
+                                HomeLayoutStore.keyWorlds(instanceKey),
+                                worlds.map { it.orderKey() }
+                            )
+                        }
                     },
-                    onServersReordered = { servers ->
+                    onServersReordered = { servers, save ->
                         instances = instances.map { current ->
                             if (current.orderKey() == instanceKey) current.copy(servers = servers) else current
                         }
-                        HomeLayoutStore.save(
-                            HomeLayoutStore.keyServers(instanceKey),
-                            servers.map { it.orderKey() }
-                        )
+                        if (save) {
+                            HomeLayoutStore.save(
+                                HomeLayoutStore.keyServers(instanceKey),
+                                servers.map { it.orderKey() }
+                            )
+                        }
                     },
                     onLaunch = { onLaunchVersion(instance.instance) },
                     onPlayWorld = onPlayWorld,
@@ -279,8 +293,8 @@ private fun InstanceModule(
     material: HomeButtonMaterial,
     reorderState: ReorderState,
     reorderKey: String,
-    onWorldsReordered: (List<HomeWorld>) -> Unit,
-    onServersReordered: (List<HomeServer>) -> Unit,
+    onWorldsReordered: (List<HomeWorld>, Boolean) -> Unit,
+    onServersReordered: (List<HomeServer>, Boolean) -> Unit,
     onLaunch: () -> Unit,
     onPlayWorld: (Version, String) -> Unit,
     onJoinServer: (Version, String) -> Unit,
@@ -288,20 +302,27 @@ private fun InstanceModule(
     onServerCreated: () -> Unit,
 ) {
     //该实例内部的世界 / 服务器各自的拖动排序
-    val worldReorder = rememberReorderState { dragged, target ->
-        val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
-        val to = instance.worlds.indexOfFirst { it.orderKey() == target }
-        if (from >= 0 && to >= 0) {
-            onWorldsReordered(HomeLayoutStore.move(instance.worlds, from, to))
-        }
-    }
-    val serverReorder = rememberReorderState { dragged, target ->
-        val from = instance.servers.indexOfFirst { it.orderKey() == dragged }
-        val to = instance.servers.indexOfFirst { it.orderKey() == target }
-        if (from >= 0 && to >= 0) {
-            onServersReordered(HomeLayoutStore.move(instance.servers, from, to))
-        }
-    }
+    //与实例卡片一致：拖动过程只改内存顺序，落盘放到拖动结束（避免每帧写存储导致闪屏）
+    val worldReorder = rememberReorderState(
+        onMove = { dragged, target ->
+            val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
+            val to = instance.worlds.indexOfFirst { it.orderKey() == target }
+            if (from >= 0 && to >= 0 && from != to) {
+                onWorldsReordered(HomeLayoutStore.move(instance.worlds, from, to), false)
+            }
+        },
+        onEnd = { onWorldsReordered(instance.worlds, true) }
+    )
+    val serverReorder = rememberReorderState(
+        onMove = { dragged, target ->
+            val from = instance.servers.indexOfFirst { it.orderKey() == dragged }
+            val to = instance.servers.indexOfFirst { it.orderKey() == target }
+            if (from >= 0 && to >= 0 && from != to) {
+                onServersReordered(HomeLayoutStore.move(instance.servers, from, to), false)
+            }
+        },
+        onEnd = { onServersReordered(instance.servers, true) }
+    )
 
     //⚠️ 卡片只有**一层**背景：圆角裁剪 + 卡片色，不叠加描边、不使用阴影。
     //之前用 Surface + shadowElevation + graphicsLayer 缩放时，

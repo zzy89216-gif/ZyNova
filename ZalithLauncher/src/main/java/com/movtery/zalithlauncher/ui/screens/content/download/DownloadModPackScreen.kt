@@ -83,6 +83,10 @@ import com.movtery.zalithlauncher.viewmodel.ModpackConfirmUseMobileDataOperation
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
 import io.ktor.client.plugins.HttpRequestTimeoutException
+import com.movtery.zalithlauncher.coroutine.Task
+import com.movtery.zalithlauncher.coroutine.TaskSystem
+import com.movtery.zalithlauncher.ui.androidText
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.SerializationException
 import java.net.ConnectException
@@ -172,6 +176,38 @@ private class ModPackViewModel: ViewModel() {
         onStop: () -> Unit = {},
     ) {
         installOperation = ModPackInstallOperation.Install
+
+        //把安装过程镜像到全局任务队列：这样任务面板里有进度、能取消，
+        //不需要一个挡住整个界面的进度弹窗（维护者要的是后台静默下载）。
+        val doneFlag = java.util.concurrent.atomic.AtomicBoolean(false)
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = "install_modpack_${System.currentTimeMillis()}",
+                task = { task ->
+                    task.updateProgress(-1f)
+                    task.updateTitle(androidText(R.string.download_modpack_install_title))
+                    while (!doneFlag.get()) {
+                        val list = installer?.tasksFlow?.value.orEmpty()
+                        if (list.isNotEmpty()) {
+                            val average = list
+                                .map { it.task.progress.value.coerceIn(0f, 1f) }
+                                .average()
+                                .toFloat()
+                            task.updateProgress(average)
+                            list.firstOrNull { it.task.stage.value.name == "RUNNING" }
+                                ?.let { task.updateMessage(it.title) }
+                        }
+                        delay(400)
+                    }
+                },
+                onCancel = {
+                    doneFlag.set(true)
+                    runCatching { installer?.cancelInstall() }
+                },
+                onFinally = { doneFlag.set(true) }
+            )
+        )
+
         installer = ModPackInstaller(
             context = context,
             version = version,
@@ -183,17 +219,20 @@ private class ModPackViewModel: ViewModel() {
         ).also {
             it.installModPack(
                 onInstalled = { version ->
+                    doneFlag.set(true)
                     installer = null
                     VersionsManager.refresh("[Modpack] ModPackInstaller.onInstalled", version)
                     installOperation = ModPackInstallOperation.Success
                     onStop()
                 },
                 onCancelled = {
+                    doneFlag.set(true)
                     installer = null
                     installOperation = ModPackInstallOperation.None
                     onStop()
                 },
                 onError = { th ->
+                    doneFlag.set(true)
                     installer = null
                     installOperation = ModPackInstallOperation.Error(th)
                     onStop()
@@ -405,20 +444,9 @@ private fun ModPackInstallOperation(
             )
         }
         is ModPackInstallOperation.Install -> {
-            if (installer != null) {
-                val tasks = installer.tasksFlow.collectAsStateWithLifecycle()
-                if (tasks.value.isNotEmpty()) {
-                    //安装整合包流程对话框
-                    TitleTaskFlowDialog(
-                        title = stringResource(R.string.download_modpack_install_title),
-                        tasks = tasks.value,
-                        onCancel = {
-                            onCancel()
-                            updateOperation(ModPackInstallOperation.None)
-                        }
-                    )
-                }
-            }
+            //⚠️ 这里**故意不再弹进度弹窗**（维护者要求「后台静默」）：
+            //安装已经提交到全局任务队列（见 `install()` 里的 TaskSystem.submitTask），
+            //用户可以在任务面板里看进度 / 取消，同时继续挑别的整合包或者去干别的。
         }
         is ModPackInstallOperation.Error -> {
             val th = operation.th

@@ -48,14 +48,14 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.1.5**（`launcher_version_code=281105`，**预发行**，版本名不带后缀；正式线仍是 28.1.0）；
+- 当前版本 **28.1.6**（`launcher_version_code=281106`，**预发行**，版本名不带后缀；正式线仍是 28.1.0）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.1.5**（`launcher_version_code=281105`，预发行）
+**当前版本：28.1.6**（`launcher_version_code=281106`，预发行）
 
 ### 28.1.3 的结构性变化
 

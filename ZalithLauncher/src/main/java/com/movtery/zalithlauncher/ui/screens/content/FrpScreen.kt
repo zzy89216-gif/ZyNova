@@ -180,15 +180,20 @@ fun FrpContent(
     }
 
     LaunchedEffect(isVisible, loggedIn, resumeTick) {
-            if (isVisible && loggedIn) {
-                runCatching {
-                    FrpManager.refresh()
-                    FrpManager.loadNodes()
-                }.onFailure {
-                    toast(context.getString(R.string.frp_error, it.message ?: ""))
-                }
+        if (isVisible && loggedIn) {
+            //⚠️ 自动刷新（进页面 / 回前台）失败时**不弹错误提示**：
+            //网络抖一下、令牌刚好过期都会走到这里，一进来就糊一个红字提示很吓人，
+            //而且用户什么都没点。失败只记日志，交给页面里的状态卡片体现。
+            runCatching {
+                FrpManager.refresh()
+                FrpManager.loadNodes()
+            }.onFailure {
+                com.movtery.zalithlauncher.utils.logging.Logger.warning(
+                    "FrpScreen", "Auto refresh failed: ${it.message}"
+                )
             }
         }
+    }
 
         AnimatedVisibility(
             visible = isVisible,

@@ -97,6 +97,15 @@ class ReorderState {
     /** 数据源重排回调：被拖动项的 key → 目标项的 key */
     var onMove: (Any, Any) -> Unit = { _, _ -> }
 
+    /**
+     * 拖动结束回调。
+     *
+     * ⚠️ 落盘（MMKV / 数据库）必须放在这里，**不能放在 [onMove] 里**：
+     * 拖动过程中每帧都可能触发 onMove，每帧写一次存储 + 让整个列表重组，
+     * 表现就是「闪屏」和「另一张卡片跟着抖」。
+     */
+    var onEnd: () -> Unit = {}
+
     fun isDragging(key: Any): Boolean = draggingKey == key
 
     /** 取走待播放的位移（只会被取到一次） */
@@ -183,6 +192,7 @@ class ReorderState {
         draggingKey = null
         dragOffset = Offset.Zero
         liftedKey = null
+        runCatching { onEnd() }
     }
 
     /**
@@ -204,9 +214,13 @@ class ReorderState {
  * @param onMove 被拖动项的 key → 目标项的 key
  */
 @Composable
-fun rememberReorderState(onMove: (Any, Any) -> Unit): ReorderState {
+fun rememberReorderState(
+    onMove: (Any, Any) -> Unit,
+    onEnd: () -> Unit = {}
+): ReorderState {
     val state = remember { ReorderState() }
     state.onMove = onMove
+    state.onEnd = onEnd
     return state
 }
 
