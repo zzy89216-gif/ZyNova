@@ -1100,8 +1100,8 @@
     <string name="onboarding_age_adult">만 18세 이상</string>
     <string name="onboarding_age_note">정확히 답해 주세요. 법이 요구하는 지역에서는 연령에 따라 플레이 가능 시간이 달라집니다.</string>
     <string name="onboarding_age_hint_global">거주 지역 법률이 미성년자에게 보호자 동의를 요구한다면, 동의를 받은 뒤에만 사용하세요.</string>
-    <string name="versions_overview_hide_cards">홈 카드 숨기기</string>
-    <string name="versions_overview_show_cards">홈 카드 표시</string>
+    <string name="versions_overview_hide_this_card">홈 카드 숨기기</string>
+    <string name="versions_overview_show_this_card">홈 카드 표시</string>
     <string name="ai_search_engine_duckduckgo">DuckDuckGo (키 불필요)</string>
     <string name="ai_search_engine_deepseek">DeepSeek Search (공식)</string>
     <string name="ai_search_engine_title">검색 엔진</string>

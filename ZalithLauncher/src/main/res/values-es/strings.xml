@@ -1113,8 +1113,8 @@
     <string name="onboarding_age_adult">18 o más</string>
     <string name="onboarding_age_note">Responde con sinceridad. Donde la ley lo exige, la edad afecta al tiempo de juego disponible.</string>
     <string name="onboarding_age_hint_global">Si la ley de tu región exige el consentimiento de un tutor para menores, usa este software solo con ese consentimiento.</string>
-    <string name="versions_overview_hide_cards">Ocultar tarjetas de inicio</string>
-    <string name="versions_overview_show_cards">Mostrar tarjetas de inicio</string>
+    <string name="versions_overview_hide_this_card">Ocultar tarjetas de inicio</string>
+    <string name="versions_overview_show_this_card">Mostrar tarjetas de inicio</string>
     <string name="ai_search_engine_duckduckgo">DuckDuckGo (sin clave)</string>
     <string name="ai_search_engine_deepseek">DeepSeek Search (oficial)</string>
     <string name="ai_search_engine_title">Motor de búsqueda</string>

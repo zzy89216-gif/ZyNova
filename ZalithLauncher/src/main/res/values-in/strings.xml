@@ -1330,8 +1330,8 @@ Pasang manual, jika tidak game bisa gagal saat dijalankan.</string>
     <string name="onboarding_age_adult">18 atau lebih</string>
     <string name="onboarding_age_note">Jawab dengan jujur. Di tempat hukum mewajibkan, usia memengaruhi waktu bermain.</string>
     <string name="onboarding_age_hint_global">Jika hukum di wilayah Anda mewajibkan izin wali untuk anak di bawah umur, gunakan perangkat lunak ini hanya dengan izin tersebut.</string>
-    <string name="versions_overview_hide_cards">Sembunyikan kartu beranda</string>
-    <string name="versions_overview_show_cards">Tampilkan kartu beranda</string>
+    <string name="versions_overview_hide_this_card">Sembunyikan kartu beranda</string>
+    <string name="versions_overview_show_this_card">Tampilkan kartu beranda</string>
     <string name="ai_search_engine_duckduckgo">DuckDuckGo (tanpa kunci)</string>
     <string name="ai_search_engine_deepseek">DeepSeek Search (resmi)</string>
     <string name="ai_search_engine_title">Mesin pencari</string>

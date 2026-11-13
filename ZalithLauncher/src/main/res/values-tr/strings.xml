@@ -1312,8 +1312,8 @@ Bunları elle kurun, aksi hâlde oyun açılırken çökebilir.</string>
     <string name="onboarding_age_adult">18 yaş ve üzeri</string>
     <string name="onboarding_age_note">Doğru yanıtlayın. Yasanın gerektirdiği yerlerde yaş, oynayabileceğiniz süreyi etkiler.</string>
     <string name="onboarding_age_hint_global">Bölgenizdeki yasa reşit olmayanlar için veli onayı gerektiriyorsa, bu yazılımı yalnızca o onayla kullanın.</string>
-    <string name="versions_overview_hide_cards">Ana sayfa kartlarını gizle</string>
-    <string name="versions_overview_show_cards">Ana sayfa kartlarını göster</string>
+    <string name="versions_overview_hide_this_card">Ana sayfa kartlarını gizle</string>
+    <string name="versions_overview_show_this_card">Ana sayfa kartlarını göster</string>
     <string name="ai_search_engine_duckduckgo">DuckDuckGo (anahtarsız)</string>
     <string name="ai_search_engine_deepseek">DeepSeek Search (resmî)</string>
     <string name="ai_search_engine_title">Arama motoru</string>

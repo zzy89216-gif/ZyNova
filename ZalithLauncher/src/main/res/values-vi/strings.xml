@@ -1325,8 +1325,8 @@ Hãy cài thủ công, nếu không trò chơi có thể bị treo khi khởi ch
     <string name="onboarding_age_adult">Từ 18 trở lên</string>
     <string name="onboarding_age_note">Hãy trả lời trung thực. Ở nơi luật yêu cầu, độ tuổi ảnh hưởng tới thời gian chơi.</string>
     <string name="onboarding_age_hint_global">Nếu luật khu vực yêu cầu người giám hộ đồng ý cho người chưa thành niên, chỉ dùng phần mềm khi có sự đồng ý đó.</string>
-    <string name="versions_overview_hide_cards">Ẩn thẻ trang chủ</string>
-    <string name="versions_overview_show_cards">Hiện thẻ trang chủ</string>
+    <string name="versions_overview_hide_this_card">Ẩn thẻ trang chủ</string>
+    <string name="versions_overview_show_this_card">Hiện thẻ trang chủ</string>
     <string name="ai_search_engine_duckduckgo">DuckDuckGo (không cần khoá)</string>
     <string name="ai_search_engine_deepseek">DeepSeek Search (chính thức)</string>
     <string name="ai_search_engine_title">Công cụ tìm kiếm</string>
