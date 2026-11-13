@@ -76,6 +76,9 @@ object GameDirMigration {
         val to = PathManager.publicGameDir()
         Thread({
             val sources = sources()
+            //记录「这次真正写出去的文件」：失败时只回滚这些，
+            //绝不能整目录清空——公共目录里可能还有上一次迁移（或旧平铺布局收纳）搬好的数据
+            val written = mutableListOf<File>()
             val ok = runCatching {
                 Logger.info(
                     TAG,
@@ -95,6 +98,7 @@ object GameDirMigration {
                     if (!target.exists() || target.length() != file.length()) {
                         target.parentFile?.mkdirs()
                         file.copyTo(target, overwrite = true)
+                        written.add(target)
                     }
                     if (index % 25 == 0 || index == files.lastIndex) {
                         _progress.value = (index + 1f) / total
@@ -123,11 +127,14 @@ object GameDirMigration {
             }.getOrDefault(false)
 
             if (!ok) {
-                //迁移失败：清掉这次复制出来的半成品（否则下次启动会以为公共目录已有数据），
-                //再回退私有目录，保证还能用
+                //迁移失败：**只**清掉这次写出去的文件（否则下次启动会以为公共目录已有数据）。
+                //旧代码是清空整个公共目录，会把之前已经迁移好的实例一起删掉——这是数据丢失级 bug。
                 runCatching {
-                    to.listFiles()?.forEach { FileUtils.deleteQuietly(it) }
+                    written.sortedByDescending { it.absolutePath.length }.forEach {
+                        runCatching { FileUtils.deleteQuietly(it) }
+                    }
                 }
+                //目录留在公共目录：绝不退回私有目录
                 PathManager.resetGameDirToPublic()
             }
             android.os.Handler(android.os.Looper.getMainLooper()).post { onDone(ok) }
