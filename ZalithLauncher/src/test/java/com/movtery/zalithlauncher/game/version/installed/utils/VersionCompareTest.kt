@@ -22,6 +22,13 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
+/*
+ * ⚠️ 这组测试依赖 `GameVersionNumber` 的静态初始化，而它要读 classpath 上的
+ * `/assets/game/versions.txt` 与 `/assets/game/version-alias.csv`（APK 的 assets）。
+ * 纯 JVM 单测拿不到 APK 的 assets，所以这两份文件**复制**在
+ * `ZalithLauncher/src/test/resources/assets/game/` 下。
+ * 主资源更新后（新增/删除游戏版本）请同步复制一次，否则这里的排序断言可能过时。
+ */
 class VersionCompareTest {
 
     @Test

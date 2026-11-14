@@ -143,15 +143,6 @@ android {
             isIncludeAndroidResources = true
             //让 android.util.Log 等框架方法在本地单测中返回默认值而非抛出异常
             isReturnDefaultValues = true
-            all { test ->
-                //单元测试跑在纯 JVM 上，默认拿不到 APK 里的 assets：
-                //org.jackhuang.hmcl.util.versioning.GameVersionNumber 的静态初始化会读
-                //classpath 上的 /assets/game/versions.txt 与 /assets/game/version-alias.csv，
-                //读不到就 NPE（VersionCompareTest 全红）。
-                //直接把 `src/main` 目录挂到测试 classpath：不复制文件，
-                //资源路径就是 /assets/game/...，runtimes/ 那几百 MB 也不会被碰。
-                test.classpath = test.classpath + files(layout.projectDirectory.dir("src/main"))
-            }
         }
     }
 
