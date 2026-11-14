@@ -152,7 +152,12 @@ android {
             //org.jackhuang.hmcl.util.versioning.GameVersionNumber 的静态初始化会读
             //classpath 上的 /assets/game/versions.txt 与 /assets/game/version-alias.csv，
             //没挂上就会 NPE / ExceptionInInitializerError（VersionCompareTest 曾因此全红）。
-            resources.srcDirs("src/main/assets")
+            //
+            //⚠️ 资源根必须指向 src/main（这样 classpath 里才是 `assets/game/...`）；
+            //再用 include 白名单只挂这两个文件所在目录，避免把 runtimes/ 这类上百 MB 的
+            //文件拖进单测的 classpath。
+            resources.srcDir("src/main")
+            resources.include("assets/game/**")
         }
     }
 }
