@@ -146,17 +146,18 @@ android {
         }
     }
 
-    //单元测试跑在纯 JVM 上，默认拿不到 APK 里的 assets：
-    //org.jackhuang.hmcl.util.versioning.GameVersionNumber 的静态初始化会读
-    //classpath 上的 /assets/game/versions.txt 与 /assets/game/version-alias.csv，
-    //没挂上就会 NPE / ExceptionInInitializerError（VersionCompareTest 曾因此全红）。
-    //
-    //⚠️ 不能把 src/main/assets 当资源根（那样 classpath 里是 /game/versions.txt）；
-    //直接把 `src/main` 目录加进测试 classpath，资源路径自然就是 /assets/game/...，
-    //且不需要复制任何文件（runtimes/ 那几百 MB 不会被碰）。
-    tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
-        classpath += files(layout.projectDirectory.dir("src/main"))
-    }
+}
+
+//单元测试跑在纯 JVM 上，默认拿不到 APK 里的 assets：
+//org.jackhuang.hmcl.util.versioning.GameVersionNumber 的静态初始化会读
+//classpath 上的 /assets/game/versions.txt 与 /assets/game/version-alias.csv，
+//没挂上就会 NPE / ExceptionInInitializerError（VersionCompareTest 曾因此全红）。
+//
+//⚠️ 不能把 src/main/assets 当资源根（那样 classpath 里是 /game/versions.txt）；
+//直接把 `src/main` 目录加进测试 classpath，资源路径自然就是 /assets/game/...，
+//且不需要复制任何文件（runtimes/ 那几百 MB 不会被碰）。
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    classpath += files(layout.projectDirectory.dir("src/main"))
 }
 
 androidComponents {
