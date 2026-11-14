@@ -44,6 +44,7 @@ import java.net.UnknownHostException
 import java.nio.ByteBuffer
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.FileChannel
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -78,6 +79,12 @@ class FileDownloader(
      * 用于失败归类与重试判定。
      */
     private val lastSourceFailure = AtomicReference<Throwable?>(null)
+
+    /**
+     * 已经上报过「换源」的候选源（按 URL 去重）。
+     * 单源失败是正常回退路径，同一文件内同一个源只报一次，避免一次下载刷出上百条日志。
+     */
+    private val reportedSourceFailures: MutableSet<String> = Collections.synchronizedSet(mutableSetOf())
 
     suspend fun download() {
         val target = request.targetFile
@@ -264,10 +271,22 @@ class FileDownloader(
             throw cancellationOf(e)
         } catch (e: Exception) {
             if (e.isInterruptedByCancellation()) throw cancellationOf(e)
-            Logger.warning(TAG, "Failed: ${source.url}")
+            //⚠️ 单个源失败是**正常的换源回退**，不是下载失败：
+            //真正失败时 [toDownloadFailure] 会带上归类原因（404/403/超时…）和各源状态抛出。
+            //所以这里不再用 WARNING（以前一次下载能刷出上百条「Failed: <url>」，
+            //把真正的故障全淹掉）；只记 DEBUG，且同一文件同一源只报一次，并带上一行原因。
+            if (reportedSourceFailures.add(source.url)) {
+                Logger.debug(TAG, "Source failed, falling back: ${source.url} (${e.describeForLog()})")
+            }
             lastSourceFailure.set(e)
             source.recordFailure(e)
         }
+    }
+
+    /** 异常的一行摘要，日志里不打印整段堆栈 */
+    private fun Throwable.describeForLog(): String {
+        val text = message ?: cause?.message ?: javaClass.simpleName
+        return text.lineSequence().firstOrNull()?.trim().orEmpty().ifBlank { javaClass.simpleName }
     }
 
     private fun cancellationOf(cause: Throwable): CancellationException =

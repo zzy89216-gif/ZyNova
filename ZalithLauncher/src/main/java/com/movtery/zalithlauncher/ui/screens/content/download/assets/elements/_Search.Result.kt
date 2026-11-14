@@ -141,61 +141,77 @@ fun ResultListLayout(
         is SearchAssetsState.Success -> {
             val page = searchState.page
 
-            val listState = rememberLazyListState()
-            val maxCollapsePx = with(LocalDensity.current) { controllerHeight.toPx() }
+            if (page.data.isEmpty()) {
+                //空结果也要有明确文案 + 重试入口，不能只留一片空白
+                Box(modifier.padding(all = 12.dp)) {
+                    ScalingLabel(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = {
+                            AndroidStringText(
+                                text = androidText(R.string.download_assets_search_empty)
+                            )
+                        },
+                        onClick = onReload
+                    )
+                }
+            } else {
 
-            //计算缩放比例，滑动偏移限制在0 ~ maxCollapsePx之间
-            val fraction by remember {
-                derivedStateOf {
-                    val index = listState.firstVisibleItemIndex
-                    val offset = listState.firstVisibleItemScrollOffset.toFloat()
+                val listState = rememberLazyListState()
+                val maxCollapsePx = with(LocalDensity.current) { controllerHeight.toPx() }
 
-                    when {
-                        index > 0 -> 1f
-                        else -> (offset.coerceIn(0f, maxCollapsePx) / maxCollapsePx)
+                //计算缩放比例，滑动偏移限制在0 ~ maxCollapsePx之间
+                val fraction by remember {
+                    derivedStateOf {
+                        val index = listState.firstVisibleItemIndex
+                        val offset = listState.firstVisibleItemScrollOffset.toFloat()
+
+                        when {
+                            index > 0 -> 1f
+                            else -> (offset.coerceIn(0f, maxCollapsePx) / maxCollapsePx)
+                        }
                     }
                 }
-            }
 
-            Box(modifier = modifier) {
-                ResultList(
-                    modifier = Modifier.fillMaxSize(),
-                    state = listState,
-                    contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 60.dp, bottom = 6.dp),
-                    classes = classes,
-                    data = page.data,
-                    onQuickInstall = onQuickInstall,
-        swapToDownload = swapToDownload
-                )
-
-                val targetScale = 1f - (1f - controllerMinScale) * fraction
-                val animatedScale by animateFloatAsState(targetScale)
-                val targetAlpha = 1f - (1f - controllerMinAlpha) * fraction
-                val animatedAlpha by animateFloatAsState(targetAlpha)
-
-                Row(
-                    modifier = Modifier
-                        .height(controllerHeight)
-                        .align(Alignment.TopEnd)
-                        .padding(top = 12.dp, end = 6.dp)
-                        .alpha(animatedAlpha)
-                        .graphicsLayer {
-                            scaleX = animatedScale
-                            scaleY = animatedScale
-                            transformOrigin = TransformOrigin(1f, 0f)
-                        }
-                ) {
-                    PageController(
-                        modifier = Modifier.padding(end = 6.dp),
-                        page = page,
-                        onPreviousPage = {
-                            onPreviousPage(page.pageNumber)
-                        },
-                        onNextPage = {
-                            onNextPage(page.pageNumber, page.isLastPage)
-                        },
-                        onNavigatePage = onNavigatePage,
+                Box(modifier = modifier) {
+                    ResultList(
+                        modifier = Modifier.fillMaxSize(),
+                        state = listState,
+                        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 60.dp, bottom = 6.dp),
+                        classes = classes,
+                        data = page.data,
+                        onQuickInstall = onQuickInstall,
+            swapToDownload = swapToDownload
                     )
+
+                    val targetScale = 1f - (1f - controllerMinScale) * fraction
+                    val animatedScale by animateFloatAsState(targetScale)
+                    val targetAlpha = 1f - (1f - controllerMinAlpha) * fraction
+                    val animatedAlpha by animateFloatAsState(targetAlpha)
+
+                    Row(
+                        modifier = Modifier
+                            .height(controllerHeight)
+                            .align(Alignment.TopEnd)
+                            .padding(top = 12.dp, end = 6.dp)
+                            .alpha(animatedAlpha)
+                            .graphicsLayer {
+                                scaleX = animatedScale
+                                scaleY = animatedScale
+                                transformOrigin = TransformOrigin(1f, 0f)
+                            }
+                    ) {
+                        PageController(
+                            modifier = Modifier.padding(end = 6.dp),
+                            page = page,
+                            onPreviousPage = {
+                                onPreviousPage(page.pageNumber)
+                            },
+                            onNextPage = {
+                                onNextPage(page.pageNumber, page.isLastPage)
+                            },
+                            onNavigatePage = onNavigatePage,
+                        )
+                    }
                 }
             }
         }
@@ -373,7 +389,11 @@ private fun ResultList(
         state = state,
         contentPadding = contentPadding
     ) {
-        items(data) { (item, mcmod) ->
+        items(
+            items = data,
+            //稳定 key：翻页 / 重组时复用卡片，减少大列表滚动时的重建
+            key = { (item, _) -> "${item.platform()}_${item.platformId()}" }
+        ) { (item, mcmod) ->
             val platform = remember(item) { item.platform() }
             val title = remember(item) { item.platformTitle() }
             val description = remember(item) { item.platformDescription() }

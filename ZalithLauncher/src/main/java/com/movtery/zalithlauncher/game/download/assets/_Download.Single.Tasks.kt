@@ -27,6 +27,7 @@ import com.movtery.zalithlauncher.game.download.engine.DownloadFailureReason
 import com.movtery.zalithlauncher.game.download.engine.downloadFailureReason
 import com.movtery.zalithlauncher.game.download.engine.findHttpCode
 import com.movtery.zalithlauncher.game.download.engine.isTimeoutError
+import com.movtery.zalithlauncher.game.download.engine.AllSourcesFailedException
 import com.movtery.zalithlauncher.game.download.resources.ResourceMatchException
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.path.PathManager
@@ -202,6 +203,9 @@ fun mapExceptionToMessage(e: Throwable): AndroidStringText {
 
         reason == DownloadFailureReason.CLIENT_ERROR && code != null ->
             androidText(R.string.error_bad_request, code.toString())
+
+        //所有下载源都失败：真实原因在日志与异常 message 里，界面用本地化文案，避免中文串到非中文界面
+        e is AllSourcesFailedException -> androidText(R.string.error_download_all_sources_failed)
 
         e is ResponseException -> e.toLocal()
         e is UnknownHostException || e is UnresolvedAddressException ->

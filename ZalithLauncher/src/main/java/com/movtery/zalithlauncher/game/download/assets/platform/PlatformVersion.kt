@@ -32,6 +32,16 @@ interface PlatformVersion {
     suspend fun initFile(currentProjectId: String): Boolean
 
     /**
+     * 该版本的完整文件信息是否已就绪（[initFile] 成功后为 true）。
+     *
+     * ⚠️ 版本列表里可能残留「被取消 / 网络失败 / 翻页丢弃」而没初始化完的项。
+     * 使用 [platformFileName] / [platformDownloadUrl] / [platformSha1] / [platformFileSize]
+     * 之前应确认本属性为 true；实现类在未就绪时也必须返回安全降级值，**不允许抛异常**
+     * （未捕获的 `UninitializedPropertyAccessException` 会直接把启动器打崩）。
+     */
+    val isFileInitialized: Boolean get() = true
+
+    /**
      * 所属平台
      */
     fun platform(): Platform

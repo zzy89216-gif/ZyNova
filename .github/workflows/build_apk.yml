@@ -43,6 +43,15 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      # 单测先于编译：ZalithLauncher/src/test 里是纯 JVM 单测（无 Android Runtime 依赖），
+      # 编译不过或断言失败就没必要再花十几分钟打包。
+      # 模块有 universal 产品风味，单测任务按变体拆（testUniversalDebugUnitTest / testUniversalReleaseUnitTest），
+      # 这里用模块级聚合任务 test，两种变体各跑一遍；测试量不大，暂不单独挑一个变体。
+      - name: Run unit tests
+        run: |
+          chmod +x gradlew
+          ./gradlew ZalithLauncher:test --console=plain
+
       - name: Build Release APK (universal only)
         run: |
           chmod +x gradlew

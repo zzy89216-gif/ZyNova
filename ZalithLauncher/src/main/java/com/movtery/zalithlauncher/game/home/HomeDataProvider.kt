@@ -168,6 +168,8 @@ object HomeDataProvider {
             allServers.loadServers(dataFile)
             allServers.serverList.take(limit).map { HomeServer(instance, it) }
         }.getOrElse { e ->
+            //⚠️ 协程被取消（离开页面 / 切换实例）不是「读取失败」，不能记 WARNING 也不能吞掉取消信号
+            if (e is kotlinx.coroutines.CancellationException) throw e
             Logger.warning(TAG, "Failed to read saved servers of ${instance.getVersionName()}.", e)
             emptyList()
         }
@@ -203,6 +205,8 @@ object HomeDataProvider {
                 )
                 worlds.add(HomeWorld(instance, data))
             }.onFailure { e ->
+                //协程取消不是「存档读不出来」，别把取消记成坏存档
+                if (e is kotlinx.coroutines.CancellationException) throw e
                 Logger.debug(TAG, "Skipped an unreadable world: ${dir.name} (${e.message})")
             }
         }

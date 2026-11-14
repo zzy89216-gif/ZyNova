@@ -98,6 +98,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersions
+import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.initAll
 import kotlinx.coroutines.launch
 
 /** 整合包安装状态操作 */
@@ -181,12 +182,25 @@ private class ModPackViewModel: ViewModel() {
     ) {
         if (installOperation != ModPackInstallOperation.None) return
         viewModelScope.launch {
-            runCatching { getVersions(projectID = projectId, platform = platform) }
+            runCatching {
+                //⚠️ getVersions() 返回的是**原始平台版本**，没有初始化主要文件；
+                //直接拿去安装会在 ModPackInstaller 里读 platformDisplayName()/platformFileName()
+                //时抛 `lateinit property thisPrimaryFile has not been initialized`，
+                //在后台协程里就是未捕获异常，整个启动器会崩（28.2.0 用户崩溃日志）。
+                //initAll 会在返回前逐项 initFile，并过滤掉没有可用下载文件的版本。
+                getVersions(projectID = projectId, platform = platform)
+                    .initAll(projectId)
+            }
                 .onSuccess { versions ->
+                    //initAll 已按发布时间倒序，第一个就是最新版本
                     val version = versions.firstOrNull()
                     if (version == null) {
+                        //不要给用户一句英文的 "No downloadable version"：
+                        //指引他换一个整合包 / 去详情页选版本
                         installOperation = ModPackInstallOperation.Error(
-                            IllegalStateException("No downloadable version")
+                            IllegalStateException(
+                                context.getString(R.string.download_modpack_no_version)
+                            )
                         )
                         return@onSuccess
                     }
@@ -197,6 +211,8 @@ private class ModPackViewModel: ViewModel() {
                     }
                 }
                 .onFailure { th ->
+                    //离开页面 / 切换整合包导致的协程取消不是「取版本失败」，不要弹错误框
+                    if (th is kotlinx.coroutines.CancellationException) throw th
                     Logger.warning("InstallModpack", "Failed to fetch modpack versions.", th)
                     installOperation = ModPackInstallOperation.Error(th)
                 }

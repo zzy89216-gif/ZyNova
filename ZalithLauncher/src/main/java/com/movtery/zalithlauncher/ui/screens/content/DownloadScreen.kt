@@ -258,7 +258,31 @@ private fun NavigationUI(
                         //带上进入资源页面时的实例上下文：从「版本设置 → 资源管理」进来时，
                         //收藏页可以直接把资源（含必需前置）下载进该实例
                         installTargetVersion = backScreenViewModel.resourceInstallTarget,
-                        submitError = submitError
+                        submitError = submitError,
+                        //收藏里点击「查看全部版本」时：切到对应类别的资源页并打开该项目的详情页，
+                        //实例上下文一并保留，用户选好版本就能直接装进同一个实例
+                        onBrowseVersions = { platform, projectId, classes, iconUrl ->
+                            val targetStack = when (classes) {
+                                PlatformClasses.MOD -> backScreenViewModel.downloadModScreen
+                                PlatformClasses.MOD_PACK -> backScreenViewModel.downloadModPackScreen
+                                PlatformClasses.RESOURCE_PACK -> backScreenViewModel.downloadResourcePackScreen
+                                PlatformClasses.SAVES -> backScreenViewModel.downloadSavesScreen
+                                PlatformClasses.SHADERS -> backScreenViewModel.downloadShadersScreen
+                            }
+                            backScreenViewModel.navigateToDownload(
+                                targetScreen = targetStack.apply {
+                                    navigateTo(
+                                        NormalNavKey.DownloadAssets(
+                                            platform = platform,
+                                            projectId = projectId,
+                                            classes = classes,
+                                            iconUrl = iconUrl
+                                        )
+                                    )
+                                },
+                                installTargetVersion = backScreenViewModel.resourceInstallTarget
+                            )
+                        }
                     )
                 }
                 entry<NestedNavKey.DownloadMod> { key ->

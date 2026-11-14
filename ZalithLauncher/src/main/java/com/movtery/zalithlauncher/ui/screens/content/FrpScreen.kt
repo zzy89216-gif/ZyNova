@@ -188,6 +188,8 @@ fun FrpContent(
                 FrpManager.refresh()
                 FrpManager.loadNodes()
             }.onFailure {
+                //离开页面导致的协程取消不是刷新失败，不记 WARNING（否则日志里全是假报错）
+                if (it is kotlinx.coroutines.CancellationException) throw it
                 com.movtery.zalithlauncher.utils.logging.Logger.warning(
                     "FrpScreen", "Auto refresh failed: ${it.message}"
                 )

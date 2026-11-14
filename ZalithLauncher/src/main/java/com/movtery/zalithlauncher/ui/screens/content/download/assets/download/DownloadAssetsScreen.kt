@@ -37,6 +37,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,7 +62,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformProject
@@ -101,6 +104,8 @@ import com.movtery.zalithlauncher.utils.animation.swapAnimateDpAsState
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import io.ktor.client.plugins.ClientRequestException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -312,13 +317,30 @@ fun DownloadAssetsScreen(
 
     //当前实例在该资源类别下已经安装的文件，用于显示「已安装」状态。
     //只有确实知道目标实例时才计算，纯浏览模式不做多余 IO。
-    val installedFileNames = remember(key.classes, installTargetVersion) {
-        val instance = installTargetVersion
-            ?.let { name -> VersionsManager.versions.value.firstOrNull { it.getVersionName() == name } }
-            ?: VersionsManager.currentVersion.value
-        instance?.let {
-            ResourceInstallManager.installedFileNames(it, ResourceType.of(key.classes))
-        }.orEmpty()
+    //
+    //⚠️ 这里原来是 remember 里同步读目录：一是主线程 IO，二是安装完成后不会刷新，
+    //导致「已安装」标记要退出页面再进来才更新。现在改为 IO 线程计算，
+    //并跟随任务队列长度变化重算（有安装任务结束就刷新一次）。
+    val versionsState by VersionsManager.versions.collectAsStateWithLifecycle()
+    val currentVersionState by VersionsManager.currentVersion.collectAsStateWithLifecycle()
+    val targetInstance = remember(versionsState, currentVersionState, installTargetVersion) {
+        installTargetVersion
+            ?.let { name -> versionsState.firstOrNull { it.getVersionName() == name } }
+            ?: currentVersionState
+    }
+    val taskCount = TaskSystem.tasksFlow.collectAsStateWithLifecycle().value.size
+    var installedFileNames by remember(key.classes, installTargetVersion) {
+        mutableStateOf<List<String>>(emptyList())
+    }
+    LaunchedEffect(targetInstance?.getVersionName(), key.classes, taskCount) {
+        val instance = targetInstance
+        installedFileNames = if (instance == null) {
+            emptyList()
+        } else {
+            withContext(Dispatchers.IO) {
+                ResourceInstallManager.installedFileNames(instance, ResourceType.of(key.classes))
+            }
+        }
     }
 
     BaseScreen(
@@ -491,23 +513,64 @@ private fun Versions(
                     }
                 }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    state = scrollState
-                ) {
-                    items(versions.result) { info ->
-                        AssetsVersionItemLayout(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
-                            infoMap = info,
-                            onItemClicked = onItemClicked,
-                            onQuickInstall = onQuickInstall,
-                            installedFileNames = installedFileNames
-                        )
+                if (versions.result.isEmpty()) {
+                    //筛选后没有版本：给一个「显示全部版本」的出口，而不是一片空白
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(all = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.download_assets_empty_versions),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+                            if (viewModel.showOnlyMCRelease || viewModel.searchMCVersion.isNotBlank()) {
+                                FilledTonalButton(
+                                    onClick = {
+                                        viewModel.filterWith(
+                                            showOnlyMCRelease = false,
+                                            searchMCVersion = ""
+                                        )
+                                    }
+                                ) {
+                                    Text(text = stringResource(R.string.download_assets_show_all_versions))
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        state = scrollState
+                    ) {
+                        items(
+                            items = versions.result,
+                            //稳定的 key：滚动时复用已有卡片，避免整列表重建
+                            key = { info ->
+                                "${info.gameVersion}#${info.loader?.getDisplayName().orEmpty()}"
+                            }
+                        ) { info ->
+                            AssetsVersionItemLayout(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp),
+                                infoMap = info,
+                                onItemClicked = onItemClicked,
+                                onQuickInstall = onQuickInstall,
+                                installedFileNames = installedFileNames
+                            )
+                        }
                     }
                 }
             }

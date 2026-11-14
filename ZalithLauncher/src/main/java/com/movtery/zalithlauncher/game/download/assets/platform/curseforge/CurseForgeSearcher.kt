@@ -144,7 +144,7 @@ class CurseForgeSearcher(
         sha1: String
     ): CurseForgeFile? {
         val hash = MurmurHash2Incremental.computeHash(file, byteToSkip = listOf(0x9, 0xa, 0xd, 0x20))
-        return withRetry<CurseForgeFingerprintsMatches>(logTag = "CurseForgeFingerprint", maxRetries = API_MAX_ATTEMPTS) {
+        val matched = withRetry<CurseForgeFingerprintsMatches>(logTag = "CurseForgeFingerprint", maxRetries = API_MAX_ATTEMPTS) {
             httpPostJson<CurseForgeFingerprintsMatches>(
                 url = "$api/fingerprints",
                 body = mapOf("fingerprints" to listOf(hash))
@@ -153,6 +153,13 @@ class CurseForgeSearcher(
             ?.takeIf { it.isNotEmpty() }
             ?.firstOrNull()
             ?.file
+            ?: return null
+
+        //⚠️ 按文件哈希反查回来的对象默认没有初始化主要文件，
+        //直接调用 platformFileName()/platformDependencies() 会抛
+        //`lateinit property thisPrimaryFile has not been initialized`。
+        //这里补一次初始化，失败就当作「认不出这个文件」处理（收藏安装 / 更新检查会走降级路径）。
+        return if (matched.initFile(matched.modId.toString())) matched else null
     }
 
     override suspend fun getVersionById(

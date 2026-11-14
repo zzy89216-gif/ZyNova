@@ -21,8 +21,14 @@ package com.movtery.zalithlauncher.crashlogs
 import com.movtery.zalithlauncher.crashlogs.platform.MCLogsAPI
 import com.movtery.zalithlauncher.crashlogs.platform.MirroredAPI
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 
+/*
+ * ⚠️ 这是**手动**集成测试：会真的把内容上传到 logshare.cn / mclo.gs。
+ * 放进 CI 会因为外网、限流、服务端抽风随机变红，所以默认忽略；要验证上传能力时本地去掉注解跑一次。
+ */
+@Ignore("手动运行：需要真实网络上传（logshare / mclo.gs），不进 CI")
 class TestAbstractAPI {
     @Test
     fun testMirroredAPI() {

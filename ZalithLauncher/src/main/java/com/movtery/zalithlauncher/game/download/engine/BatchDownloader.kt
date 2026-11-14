@@ -148,12 +148,19 @@ class BatchDownloader(
             )
         }
 
+        //⚠️ 计数口径：`requests` 只是「本次待下载」的文件；调用方（TaskBatch）
+        //会把「本地已复用、直接算完成」的文件在 run() 之前就登记进 stats。
+        //所以完成数必须和 stats.totalFiles（= 复用 + 待下载）比；
+        //拿 requests.size 去比，会把每一批带复用文件的下载都误报成计数不匹配
+        //（日志里就是 requests=0 finished=3669 这种自相矛盾的告警）。
         val finished = stats.downloadedFiles
-        if (finished != requests.size) {
+        val expected = stats.totalFiles
+        if (finished != expected) {
             val failedCount = failures.size
-            val outcome = if (failedCount == 0) "all" else "$failedCount failed"
-            Logger.warning(TAG, "Completed-count mismatch: requests=" + requests.size
-                    + " finished=" + finished + " failures=" + outcome)
+            val outcome = if (failedCount == 0) "none" else failedCount.toString()
+            Logger.warning(TAG, "Completed-count mismatch: expected=" + expected
+                    + " finished=" + finished + " pending=" + requests.size
+                    + " failures=" + outcome)
         }
 
         if (failures.isNotEmpty()) {

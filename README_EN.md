@@ -10,7 +10,7 @@
 **A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.0)
+[![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
 [![Docs](https://img.shields.io/badge/Docs-77%20articles-blue)](docs/en/README.md)
 
 One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
@@ -22,6 +22,20 @@ One rule: **fewer taps**. Decide for you first, ask only when it cannot; install
 3. Sign in (Microsoft / LittleSkin / offline) → pick a version, or let the AI install one → play.
 
 > Upgrading from an older build runs a one-time data migration: full-screen progress, tap Next when it finishes. Data stays in `/ZyNova/.Minecraft` and is never lost.
+
+## Verify the official APK
+
+APKs from official Releases are signed with the same certificate across versions, so the **certificate SHA-256 fingerprint never changes**. To check that your copy has not been swapped, compare the fingerprint:
+
+- With Android SDK build-tools (most reliable): `apksigner verify --print-certs ZyNova-<version>.apk` and read the `Signer #1 certificate SHA-256 digest` line;
+- With only a JDK: `keytool -printcert -jarfile ZyNova-<version>.apk` and read the `SHA256:` line; if it says the file is not a signed jar, the APK is v2/v3-only — use `apksigner` instead;
+- SHA-256 fingerprint of the official signing certificate (compare against this):
+
+  `8A:DA:D0:D5:A3:6A:B1:87:19:A2:33:18:46:A2:C3:37:31:23:CA:E8:B7:7C:86:B6:9F:55:6C:7A:34:2D:09:1D`
+
+If the fingerprint does not match, **do not install it** — download again from [Releases](https://github.com/zzy89216-gif/ZyNova/releases). Builds you compile yourself are signed with your own key, so their fingerprint differs by design.
+
+> ⚠️ This certificate is the upstream public default key (available in the repository), so a matching fingerprint only shows the APK was not re-signed with a different key; it does not prove provenance. Always download from this repository's [Releases](https://github.com/zzy89216-gif/ZyNova/releases).
 
 ## What it does
 
@@ -36,12 +50,14 @@ One rule: **fewer taps**. Decide for you first, ask only when it cannot; install
 
 Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-## What's new in 28.2.0
+## What's new in 28.2.1
 
-- **Simpler favorites**: no description, no download counts; the download button is big, the unfavorite button small, one tap installs with required dependencies.
-- **One-tap modpacks**: a download button next to the ♥ on search results, and one per version row.
-- **Smoother corners**: card radius is 1.2× the configured value, so the curve eases in instead of turning abruptly.
-- Includes the 28.1.x fixes: revoking storage permission no longer makes data look gone (P0), account page crash, silent background modpack installs, no SakuraFrp refresh errors, per-instance home card hiding, flicker-free dragging.
+- **Fixed a launcher crash when installing resources / modpacks**: versions whose file metadata had not finished loading were used directly and threw an uncaught exception in the background; installation now verifies the file info first and asks you to pick another version when there is no downloadable file.
+- **Fixed an error when opening Favorites from Settings → resource downloads and tapping a mod without a version for the current instance**: the app now names the target instance (Minecraft version + loader) and offers "View all versions"; favorite cards also show a hint such as "No 1.20.1 version".
+- **More accurate download page state**: the "installed" marker on resource details refreshes after an install (no need to leave and re-enter); empty filters show an empty state with "Show all versions".
+- **Quieter, honest logs**: reading saved servers, SakuraFrp auto refresh, world scanning and search paging no longer report normal cancellation as failure; mod read failures now include the real reason; batch download counters are fixed.
+- **Clearer message when every source fails**: each source's reason is listed, with advice to check the network or switch the mirror.
+- **No more false blocks across the new year**: when holiday data expires, the underage play-time gate falls back to ordinary weekend rules (still 20:00–21:00 daily); when the region cannot be determined at all, the app no longer blocks startup.
 
 ## Docs and feedback
 

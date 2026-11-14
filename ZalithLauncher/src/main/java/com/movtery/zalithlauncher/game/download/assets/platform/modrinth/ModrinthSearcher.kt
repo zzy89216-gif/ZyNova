@@ -96,8 +96,8 @@ class ModrinthSearcher(
         file: File,
         sha1: String
     ): ModrinthVersion? {
-        return try {
-            httpGetJson(
+        val version = try {
+            httpGetJson<ModrinthVersion>(
                 url = "$api/version_file/$sha1",
                 parameters = Parameters.build {
                     append("algorithm", "sha1")
@@ -105,16 +105,23 @@ class ModrinthSearcher(
             )
         } catch (_: ClientRequestException) {
             null
-        }
+        } ?: return null
+
+        //⚠️ 反查回来的对象默认没有初始化主要文件，直接读 platformFileName() 等会抛
+        //`lateinit property thisPrimaryFile has not been initialized`。这里补一次初始化，
+        //失败就当作「认不出这个文件」（收藏安装 / 更新检查会走降级路径）。
+        return if (version.initFile(version.projectId)) version else null
     }
 
     override suspend fun getVersionById(
         versionID: String
     ): ModrinthVersion? {
-        return try {
-            httpGetJson(url = "$api/version/$versionID")
+        val version = try {
+            httpGetJson<ModrinthVersion>(url = "$api/version/$versionID")
         } catch (_: ClientRequestException) {
             null
-        }
+        } ?: return null
+        //同上：给调用方一个「文件信息已就绪」的版本对象
+        return if (version.initFile(version.projectId)) version else null
     }
 }

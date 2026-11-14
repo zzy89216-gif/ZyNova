@@ -48,6 +48,12 @@ object ForgeNewModMetadataReader : ModMetadataReader {
     override suspend fun fromLocal(modFile: File): LocalMod = withContext(Dispatchers.IO) {
         try {
             JDKZipFile(modFile).use { zip ->
+                //⚠️ Forge / NeoForge 两次尝试的真实失败原因必须保留下来。
+                //以前直接 runCatching(...).onSuccess 把失败整个吞掉，最后只抛一句
+                //「is not a Forge 1.13+ or NeoForge mod」，上层日志里根本看不出是
+                //mods.toml 缺失，还是存在但内容解析失败（例如 kotlinforforge 这类 all.jar）。
+                val failures = mutableListOf<Throwable>()
+
                 //尝试 Forge
                 runCatching {
                     readFromToml(
@@ -57,7 +63,7 @@ object ForgeNewModMetadataReader : ModMetadataReader {
                         defaultLoader = ModLoader.FORGE,
                         modFile = modFile
                     )
-                }.onSuccess { return@withContext it }
+                }.onSuccess { return@withContext it }.onFailure { failures += it }
 
                 //尝试 NeoForge
                 runCatching {
@@ -68,9 +74,21 @@ object ForgeNewModMetadataReader : ModMetadataReader {
                         defaultLoader = ModLoader.NEOFORGE,
                         modFile = modFile
                     )
-                }.onSuccess { return@withContext it }
+                }.onSuccess { return@withContext it }.onFailure { failures += it }
 
-                throw UnpackZipException("File $modFile is not a Forge 1.13+ or NeoForge mod.")
+                //`xxx.toml not found` 只说明「不是本格式」，属正常探测；
+                //其余失败（元数据存在但解析不了）才是需要带出来的真因
+                val informative = failures.filterNot { it.message?.contains(" not found") == true }
+                throw UnpackZipException(
+                    buildString {
+                        append("File ").append(modFile).append(" is not a Forge 1.13+ or NeoForge mod.")
+                        if (informative.isNotEmpty()) {
+                            append(" Reasons: ")
+                            append(informative.joinToString("; ") { it.message ?: it.javaClass.simpleName })
+                        }
+                    },
+                    informative.firstOrNull()
+                )
             }
         } catch (e: Exception) {
             if (e !is UnpackZipException) return@withContext readWithApacheZip(modFile)

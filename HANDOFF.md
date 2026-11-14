@@ -48,14 +48,32 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.2.0**（`launcher_version_code=282000`，**正式版**，版本名不带后缀）；
+- 当前版本 **28.2.1**（`launcher_version_code=282001`，**正式版**，版本名不带后缀）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.2.0**（`launcher_version_code=282000`，正式版）
+**当前版本：28.2.1**（`launcher_version_code=282001`，正式版）
+
+### 28.2.1 的结构性变化
+
+- **`PlatformVersion` 不再用 lateinit 保存「主要文件」**：`CurseForgeFile` / `ModrinthVersion` 改为可空字段 +
+  安全降级，并新增 `isFileInitialized`。原因是版本列表里只要残留一个「翻页被取消 / 初始化失败」的项，
+  旧实现读到 `thisPrimaryFile` 就抛 `UninitializedPropertyAccessException`，在后台协程里属于**未捕获异常，
+  会直接把启动器打崩**（28.2.0 线上崩溃日志）。**新增平台实现必须保证未初始化时 `platformFile*` 返回安全值、绝不抛异常。**
+- **`getVersionByLocalFile` / `getVersionById` 返回前会补一次 `initFile`**（CurseForge / Modrinth）：
+  按文件哈希反查出来的对象默认没有主要文件。收藏安装、更新检查都依赖这个契约，改实现时别去掉。
+- **未成年人时段数据外置**到 `onboarding/MinorTimeGateData.kt`（`DATA_YEAR=2026`）。数据年份 < 当前年份时
+  **fail-open**（不因缺数据误拦），只保留与数据无关的 20:00–21:00 时段。跨年只需改这一个文件 + 年份常量。
+- **地区判定改三态**：`RegionGate.decision()` 返回 `Covered / Unsupported / Undetermined`；
+  只有「确定国家且不在 `LegalRegions.ALL`」才进阻断页，判定失败（国家码空 + 时区反查异常）默认放行并记一次 WARN。
+- **CI push 构建先跑单测**：`build_apk.yml` 在打包前执行 `./gradlew ZalithLauncher:test`。
+  真实网络上传（`TestAbstractAPI`）与 ping 公共服务器（`TestServers`）的测试已 `@Ignore`，
+  基准测试本来就是 `@Ignore`——**新增单测不要依赖外网**，否则 CI 会随机红。
+- **官方签名证书 SHA-256 指纹已公开**在 README / README_EN「校验官方安装包」：签名密钥不换（换 key 会让老用户无法覆盖安装），
+  改动签名配置前必须找维护者确认。
 
 ### 28.2.0 的结构性变化
 
@@ -93,7 +111,7 @@
 - **条款正文模块化**：`onboarding/LegalDocuments.kt` 组装「该语言正文 + 该地区补充条款」，
   正文本体在 `LegalBodies*.kt`，地区模板在 `LegalJuris*.kt`；新增语言只需补常量 + 一个分支。
 - **条款版本独立**：`OnboardingState.CURRENT_LEGAL_VERSION` 是常量，不再跟 `BuildConfig.VERSION_NAME`。
-- **地区表**：`LegalRegions.ALL` 共 58 个地区；判定用系统国家 + 时区反查（`android.icu.util.TimeZone.getRegion`）。
+- **地区表**：`LegalRegions.ALL` 共 59 个地区；判定用系统国家 + 时区反查（`android.icu.util.TimeZone.getRegion`）。
 - **渲染器可用性**：`RendererInterface.isAvailableOnDevice()`，注册时过滤，设置里不显示本机跑不了的渲染器。
 - **发布形态**：只有通用版 APK + mapping，`arm64` flavor 已删除。
 
@@ -1866,6 +1884,8 @@ HTTP 403
   口令取 `gradle.properties` 里的上游公开默认值（`default_store_password` / `default_key_password`）
 - 该证书 SHA-1：`0D:FD:FB:0D:DF:B4:D0:3F:73:1C:F4:7F:0F:40:FF:D7:7A:CB:02:DC`
   （CN=MovTery，有效期至 2050-05-17）
+- 该证书 SHA-256：`8A:DA:D0:D5:A3:6A:B1:87:19:A2:33:18:46:A2:C3:37:31:23:CA:E8:B7:7C:86:B6:9F:55:6C:7A:34:2D:09:1D`
+  （同一张证书；`README.md` / `README_EN.md` 的「校验官方安装包」公布的就是它，供用户核对）
 - `zalith_launcher.jks` 未被任何构建配置引用，但**维护者刻意保留**，不要删
 
 **四、修复下载资源页「类别」为空（Issue #6）**

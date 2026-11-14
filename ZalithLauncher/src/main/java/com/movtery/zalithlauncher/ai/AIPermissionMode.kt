@@ -34,9 +34,9 @@ enum class AIPermissionMode {
     /**
      * 操作确认：每次写操作（安装 / 删除 / 改配置 / 启动）前都需要用户确认。
      *
-     * 当前版本 UI 尚未接入逐项确认弹窗，[com.movtery.zalithlauncher.ai.agent.AIAgent]
-     * 会通过 [com.movtery.zalithlauncher.ai.agent.AIToolConfirmHandler] 挂起等待；
-     * 若上层未提供确认器，则安全地**拒绝**写操作（只读工具不受影响）。
+     * UI 已接入：`AIChatViewModel` 通过 `AIToolContext.confirm` 挂起等待，`AIChatScreen` 弹出确认框；
+     * `AIAgent` 只对非只读工具走确认。若上层没注入确认回调（`AIToolContext.confirm` 默认返回 false），
+     * 会安全地**拒绝**写操作（只读工具不受影响）。
      */
     CONFIRM;
 

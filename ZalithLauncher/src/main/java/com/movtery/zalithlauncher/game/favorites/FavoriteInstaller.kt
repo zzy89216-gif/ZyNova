@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.favorites
 
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformDependencyType
+import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.getVersionByLocalFile
 import com.movtery.zalithlauncher.game.download.resources.ResourceManager
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
@@ -39,6 +40,29 @@ data class FavoriteInstallResult(
     val missingDependencies: List<String> = emptyList(),
     /** true = 没能在平台上认出这个文件，只能直接放进目录（前置无法自动下载） */
     val fallbackCopy: Boolean = false,
+    /** true = 平台认出来了，但文件元数据不完整，前置列表读不到（文件本身已装好） */
+    val metadataIncomplete: Boolean = false,
+)
+
+/**
+ * 安装前的兼容性检查结果
+ *
+ * 收藏页用它回答「这个收藏文件能不能装进目标实例」：
+ * 平台没认出文件、或实例信息读不出来时，各字段保持 null / 空，
+ * 界面退回到「直接安装」的老行为，**绝不阻断**用户。
+ *
+ * @param recognized 平台是否认出了这个文件（哈希反查成功且文件信息已初始化）
+ * @param displayName 平台上的版本显示名
+ * @param gameVersions 该文件在平台上标注支持的 Minecraft 版本
+ * @param instanceMinecraftVersion 目标实例的 Minecraft 版本
+ * @param compatibleWithInstance 是否与目标实例兼容；null = 无法判断
+ */
+data class FavoriteInstallPrecheck(
+    val recognized: Boolean,
+    val displayName: String? = null,
+    val gameVersions: List<String> = emptyList(),
+    val instanceMinecraftVersion: String? = null,
+    val compatibleWithInstance: Boolean? = null,
 )
 
 /**
@@ -82,12 +106,7 @@ object FavoriteInstaller {
         }
 
         //1. 先认平台版本：顺便拿到它的依赖列表
-        val sha1 = sha1Of(source)
-        val platformVersion = runCatching {
-            getVersionByLocalFile(source, sha1)
-        }.onFailure {
-            Logger.warning(TAG, "Platform lookup failed for ${entry.name}", it)
-        }.getOrNull()
+        val platformVersion = lookupInitializedPlatformVersion(entry, source)
 
         //2. 主文件放进实例目录（用原始文件名）
         val targetFolder = File(instance.getGameDir(), type.classes.versionFolder.folderName)
@@ -109,7 +128,25 @@ object FavoriteInstaller {
         val installed = mutableListOf<String>()
         val missing = mutableListOf<String>()
 
-        platformVersion.platformDependencies()
+        //⚠️ 依赖列表来自平台版本对象：必须放在 runCatching 里。
+        //历史崩溃：CurseForge 按文件哈希反查回来的版本没有初始化主要文件，
+        //直接读 platformDependencies() 会抛 `lateinit property thisPrimaryFile has not been initialized`，
+        //异常一路冒到界面就是一条「安装失败：lateinit property ...」的未知错误。
+        val dependencies = runCatching { platformVersion.platformDependencies() }
+            .onFailure { th ->
+                //文件本身已经放进去了，只是读不到前置列表：明确降级，不影响主资源
+                Logger.warning(TAG, "Failed to read dependencies of ${entry.name}", th)
+            }
+            .getOrNull()
+
+        if (dependencies == null) {
+            return@withContext FavoriteInstallResult(
+                mainInstalled = true,
+                metadataIncomplete = true
+            )
+        }
+
+        dependencies
             .filter { it.type == PlatformDependencyType.REQUIRED }
             .forEach { dependency ->
                 val projectId = dependency.projectId
@@ -138,6 +175,85 @@ object FavoriteInstaller {
             installedDependencies = installed,
             missingDependencies = missing
         )
+    }
+
+    /**
+     * 安装前检查：这个收藏文件能不能装进目标实例
+     *
+     * 只做「读平台元数据 + 比对游戏版本」，不写任何文件，也不下载任何东西。
+     * 收藏页用它先给用户一句「该文件没有适用于 1.20.1 的版本」，
+     * 而不是等安装完了才在游戏里加载失败。
+     *
+     * @return 无法判断时 `compatibleWithInstance` 为 null，调用方应照常安装
+     */
+    suspend fun precheck(
+        entry: FavoriteEntry,
+        instance: Version,
+    ): FavoriteInstallPrecheck = withContext(Dispatchers.IO) {
+        val instanceMcVersion = instance.getVersionInfo()?.minecraftVersion
+        val source = FavoriteStore.fileOf(entry)
+        if (!source.isFile) {
+            return@withContext FavoriteInstallPrecheck(
+                recognized = false,
+                instanceMinecraftVersion = instanceMcVersion
+            )
+        }
+
+        val platformVersion = lookupInitializedPlatformVersion(entry, source)
+            ?: return@withContext FavoriteInstallPrecheck(
+                recognized = false,
+                instanceMinecraftVersion = instanceMcVersion
+            )
+
+        val gameVersions = runCatching { platformVersion.platformGameVersion().toList() }
+            .onFailure { Logger.warning(TAG, "Failed to read game versions of ${entry.name}", it) }
+            .getOrDefault(emptyList())
+        val displayName = runCatching { platformVersion.platformDisplayName() }
+            .getOrNull()
+        val compatible = if (gameVersions.isEmpty() || instanceMcVersion.isNullOrBlank()) {
+            null //平台没标游戏版本 / 实例信息读不出来：不阻断，交由安装流程判断
+        } else {
+            gameVersions.any { it.trim().equals(instanceMcVersion, ignoreCase = true) }
+        }
+
+        FavoriteInstallPrecheck(
+            recognized = true,
+            displayName = displayName,
+            gameVersions = gameVersions,
+            instanceMinecraftVersion = instanceMcVersion,
+            compatibleWithInstance = compatible
+        )
+    }
+
+    /**
+     * 把归档文件反查成平台版本，并**保证文件信息已初始化**。
+     *
+     * 为什么必须检查：`getVersionByLocalFile()` 返回的对象在旧实现里没有初始化
+     * `thisPrimaryFile`，直接读 `platformDependencies()` / `platformDisplayName()`
+     * 会抛 `UninitializedPropertyAccessException`（`lateinit property thisPrimaryFile
+     * has not been initialized`）。引擎层现在会先 initFile，但这里再兜一次：
+     * 初始化失败就当作「平台没认出这个文件」，让调用方走「直接复制」降级路径，
+     * 绝不让异常冒到界面上变成一条看不懂的未知错误。
+     */
+    private suspend fun lookupInitializedPlatformVersion(
+        entry: FavoriteEntry,
+        source: File,
+    ): PlatformVersion? {
+        val sha1 = runCatching { sha1Of(source) }
+            .onFailure { Logger.warning(TAG, "Failed to hash ${entry.name}", it) }
+            .getOrNull() ?: return null
+        val version = runCatching { getVersionByLocalFile(source, sha1) }
+            .onFailure { Logger.warning(TAG, "Platform lookup failed for ${entry.name}", it) }
+            .getOrNull() ?: return null
+
+        if (version.isFileInitialized) return version
+
+        val initialized = runCatching {
+            version.initFile(entry.onlineProjectId.orEmpty())
+        }.onFailure {
+            Logger.warning(TAG, "Failed to initialize platform file of ${entry.name}", it)
+        }.getOrDefault(false)
+        return version.takeIf { initialized }
     }
 
     /** 存档：解压到 saves/<名字>，并保证解压路径不会跑出目标目录 */

@@ -1535,6 +1535,7 @@
     <string name="crash_analysis_generic_detail">沒有匹配到單一常見原因，日誌末尾的異常棧是最有用的線索。</string>
     <string name="crash_analysis_generic_action">用上面的選單分享日誌，或移除最近新加的模組後再啟動。</string>
     <string name="error_download_source_unavailable">所有下載源暫時不可用，請檢查網路或稍後重試</string>
+    <string name="error_download_all_sources_failed">所有下載源都失敗了。請檢查網路後重試；如果你在用鏡像源，可到「設定 → 網路與下載」切換或關閉鏡像源。</string>
     <string name="download_game_addon_require_fabric_api">選擇 Fabric 後必須同時安裝 Fabric API。當前沒有可用的相容版本，下載已被拒絕。</string>
     <string name="download_game_addon_fabric_api_loading">Fabric API 正在載入中，請稍候…</string>
     <string name="download_assets_platform_all">所有</string>

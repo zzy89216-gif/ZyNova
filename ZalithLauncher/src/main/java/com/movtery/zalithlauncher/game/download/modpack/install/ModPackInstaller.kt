@@ -122,6 +122,14 @@ class ModPackInstaller(
     }
 
     private suspend fun getTaskPhase() = withContext(Dispatchers.IO) {
+        //⚠️ 兜底初始化：调用方（下载页 / 收藏 / AI 工具）理论上都该先 initFile，
+        //但只要漏一次，后面读 platformDisplayName() 就会抛
+        //`lateinit property thisPrimaryFile has not been initialized` 并把启动器打崩。
+        //这里再确认一次，失败按「拿不到可下载文件」报可读错误，让用户换一个版本。
+        if (!version.isFileInitialized && !version.initFile(version.platformId())) {
+            throw java.io.IOException(context.getString(R.string.download_modpack_no_version))
+        }
+
         //临时游戏环境目录
         val tempModPackDir = PathManager.DIR_CACHE_MODPACK_DOWNLOADER
         val tempVersionsDir = File(tempModPackDir, "fkVersion")

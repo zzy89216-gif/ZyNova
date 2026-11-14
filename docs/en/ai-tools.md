@@ -24,7 +24,7 @@ It never gains permissions that were not granted.
 
 | Tool | Purpose |
 |---|---|
-| `list_files` / `read_file` / `write_file` / `delete_file` / `copy_file` | Inside the app (game directory) |
+| `list_files` / `read_file` / `write_file` / `delete_file` / `copy_file` | Inside the app (game directory); `delete_file` **deletes permanently, no recycle bin** |
 | `public_list` / `public_read` / `public_write` / `public_mkdir` | Public storage such as Download (needs "All files access") |
 | `public_move_to_recycle_bin` | Cleanup by **moving to the recycle bin** (app-private `.recycle_bin/`), never a real delete |
 | `import_from_public` | Copy a jar / modpack from Download into the game directory |

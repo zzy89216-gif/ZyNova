@@ -125,8 +125,9 @@ suspend fun <T> withRetry(
         try {
             return block()
         } catch (e: CancellationException) {
-            //协程被取消时不重试，直接抛出
-            Logger.debug(TAG, "$logTag: Cancelled: ${e.message}")
+            //协程被取消时不重试，直接抛出。
+            //⚠️ 取消是正常控制流（翻页 / 离开页面 / 切换搜索条件都会触发），
+            //不要打日志：一次列表刷新能刷出上百行「Cancelled」，把真正的错误淹掉。
             throw e
         } catch (e: Exception) {
             // 部分异常（如 UnresolvedAddressException）message 为 null，需要输出异常类型以便诊断

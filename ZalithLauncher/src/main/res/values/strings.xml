@@ -176,6 +176,7 @@
     <string name="error_service_unavailable">(%s) The server is temporarily unable to handle the request</string>
     <string name="error_gateway_timeout">(%s) The server did not receive a timely response</string>
     <string name="error_download_source_unavailable">All download sources are temporarily unavailable. Please check your network or try again later.</string>
+    <string name="error_download_all_sources_failed">All download sources failed. Check your network and try again; if you are using a mirror, switch or disable it in Settings → Network &amp; Downloads.</string>
     <!-- Splash Screen -->
     <string name="splash_screen_unpack_desc">The launcher needs to install these files to ensure Minecraft runs properly. They are included in the app and must be extracted first. Click the button below to start extraction and update.</string>
     <string name="splash_screen_installing">The launcher is extracting these files. Once done, it will automatically enter the main screen. Please wait patiently.</string>
@@ -2072,4 +2073,22 @@
     <string name="ai_search_engine_deepseek_price">Billed per successful request (~$0.75 / 1000). Failed or empty searches are free.</string>
     <string name="ai_search_key_title">DeepSeek Search key</string>
     <string name="ai_search_key_summary">Leave empty to reuse the main DeepSeek key.</string>
+    <!-- 收藏页：目标实例提示 / 无兼容版本 / 取消收藏确认 -->
+    <string name="favorites_online_install_target">Downloads install into: %1$s</string>
+    <string name="favorites_online_no_version">No %1$s version</string>
+    <string name="favorites_online_remove_confirm">Remove this online favorite? Archived local files are kept.</string>
+    <string name="favorites_install_no_version_title">No compatible version</string>
+    <string name="favorites_install_no_version_message">This resource has no downloadable file for %1$s. Open the resource page to see all versions and pick one that fits.</string>
+    <string name="favorites_install_no_version_hint">Target instance: %1$s</string>
+    <string name="favorites_install_view_versions">View all versions</string>
+    <string name="favorites_install_local_mismatch">“%1$s” is tagged for %2$s, but the target instance runs %3$s. It may fail to load in game. Install anyway?</string>
+    <string name="favorites_install_anyway">Install anyway</string>
+    <string name="favorites_install_metadata_incomplete">The file is in place, but its platform metadata is incomplete, so required dependencies could not be checked automatically. Please verify them manually.</string>
+    <string name="favorites_install_target_hint">The install button puts files into: %1$s</string>
+    <!-- 资源下载页：空态与一键下载提示 -->
+    <string name="download_assets_empty_versions">No versions match the current filter.</string>
+    <string name="download_assets_show_all_versions">Show all versions</string>
+    <string name="download_assets_search_empty">No results. Try another keyword, or clear the filters.</string>
+    <string name="download_modpack_no_version">This project has no downloadable modpack version. Open its detail page to pick another one.</string>
+    <string name="favorites_online_modpack_open_downloads">Modpacks need a version picker. Open the resource download page, search this project and choose a version.</string>
 </resources>

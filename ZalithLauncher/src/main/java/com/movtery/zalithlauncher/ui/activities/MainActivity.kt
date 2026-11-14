@@ -348,7 +348,8 @@ class MainActivity : BaseAppCompatActivity() {
                 backgroundViewModel = backgroundViewModel,
                 festivals = festivals
             ) {
-                //地区检查：只放行中国/美国/韩国/日本/俄罗斯
+                //地区检查：放行 onboarding/LegalRegions.ALL 里的开放地区；
+                //判定失败（拿不到国家且时区反查异常）时默认放行，避免误拦（见 RegionGate.decision）
                 if (!com.movtery.zalithlauncher.onboarding.RegionGate.isAllowed()) {
                     com.movtery.zalithlauncher.onboarding.RegionBlockedScreen(
                         onExit = {

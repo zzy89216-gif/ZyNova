@@ -21,13 +21,18 @@ package com.movtery.zalithlauncher.ui.screens.content
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteEntry as OnlineFavoriteEntry
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.download.resources.ResourceManager
+import com.movtery.zalithlauncher.game.download.resources.ResourceMatchException
+import com.movtery.zalithlauncher.game.download.assets.mapExceptionToMessage
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
 import com.movtery.zalithlauncher.game.download.assets.platform.Platform
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProjectsRepository
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteInstallOutcome
+import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteQuickInstaller
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.clip
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Tab
 import android.content.Context
 import android.net.Uri
@@ -69,6 +74,7 @@ import com.movtery.zalithlauncher.game.favorites.FavoriteEntry
 import com.movtery.zalithlauncher.game.favorites.FavoriteImportException
 import com.movtery.zalithlauncher.game.favorites.FavoriteImporter
 import com.movtery.zalithlauncher.game.favorites.FavoriteInstaller
+import com.movtery.zalithlauncher.game.favorites.FavoriteInstallPrecheck
 import com.movtery.zalithlauncher.game.favorites.FavoriteStore
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
@@ -76,6 +82,8 @@ import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.TitleAndSummary
+import com.movtery.zalithlauncher.ui.androidText
+import com.movtery.zalithlauncher.ui.toAndroidString
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import kotlinx.coroutines.Dispatchers
@@ -89,7 +97,6 @@ import java.util.Locale
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
-import com.movtery.zalithlauncher.game.download.assets.quickInstallResource
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import androidx.compose.material3.Surface
 import androidx.compose.ui.text.style.TextOverflow
@@ -135,6 +142,8 @@ private fun LocalArchiveContent(
     var detailEntry by remember { mutableStateOf<FavoriteEntry?>(null) }
     var installEntry by remember { mutableStateOf<FavoriteEntry?>(null) }
     var exportEntry by remember { mutableStateOf<FavoriteEntry?>(null) }
+    /** 文件与目标实例版本不匹配时的待确认安装 */
+    var pendingMismatchInstall by remember { mutableStateOf<LocalMismatchInfo?>(null) }
 
     suspend fun refresh() {
         entries = FavoriteStore.list().sortedByDescending { it.importedAt }
@@ -163,6 +172,76 @@ private fun LocalArchiveContent(
                     }
                 }
             busy = false
+        }
+    }
+
+    /** 真正执行安装：把结果整理成一行可读提示 */
+    fun performInstall(entry: FavoriteEntry, version: Version) {
+        busy = true
+        message = null
+        scope.launch {
+            message = runCatching {
+                val result = FavoriteInstaller.install(entry, version)
+                buildString {
+                    append(
+                        context.getString(
+                            R.string.favorites_install_done,
+                            version.getVersionName()
+                        )
+                    )
+                    if (result.metadataIncomplete) {
+                        append("\n")
+                        append(context.getString(R.string.favorites_install_metadata_incomplete))
+                    }
+                    if (result.installedDependencies.isNotEmpty()) {
+                        append("\n")
+                        append(
+                            context.getString(
+                                R.string.favorites_install_dependencies,
+                                result.installedDependencies.joinToString(", ")
+                            )
+                        )
+                    }
+                    if (result.missingDependencies.isNotEmpty()) {
+                        append("\n")
+                        append(
+                            context.getString(
+                                R.string.favorites_install_missing,
+                                result.missingDependencies.joinToString(", ")
+                            )
+                        )
+                    }
+                }
+            }.getOrElse { th ->
+                //走到这里已经是真正的 IO / 目录错误；平台元数据的问题在安装器内部降级了
+                context.getString(
+                    R.string.favorites_import_failed,
+                    th.message ?: th.javaClass.simpleName
+                )
+            }
+            busy = false
+        }
+    }
+
+    /**
+     * 有安装上下文时的安装入口
+     *
+     * 先检查「这个文件标注支持的 Minecraft 版本」是否包含目标实例的版本：
+     * 不含时先问一句（可以从「安装」按钮换实例，或仍然安装），
+     * 而不是装完后在游戏里加载失败。
+     */
+    fun installIntoInstance(entry: FavoriteEntry, version: Version) {
+        if (busy) return
+        busy = true
+        message = null
+        scope.launch {
+            val precheck = runCatching { FavoriteInstaller.precheck(entry, version) }.getOrNull()
+            busy = false
+            if (precheck != null && precheck.compatibleWithInstance == false) {
+                pendingMismatchInstall = LocalMismatchInfo(entry, version, precheck)
+            } else {
+                performInstall(entry, version)
+            }
         }
     }
 
@@ -228,6 +307,19 @@ private fun LocalArchiveContent(
                             Formatter.formatShortFileSize(context, totalSize)
                         )
                     )
+
+                    //有安装上下文时，先说明「安装」会装到哪个实例
+                    targetVersion?.let { target ->
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(
+                                R.string.favorites_install_target_hint,
+                                target.getVersionName()
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -349,47 +441,11 @@ private fun LocalArchiveContent(
                             TextButton(
                                 enabled = !busy && entry.type.canInstall,
                                 onClick = {
-                                    //上下文优先：从实例的资源管理进来时，直接装进该实例（含必需前置），
-                                    //不再让用户重复选一次实例
-                                    if (targetVersion != null) {
-                                        busy = true
-                                        scope.launch {
-                                            message = runCatching {
-                                                val r = FavoriteInstaller.install(entry, targetVersion)
-                                                buildString {
-                                                    append(
-                                                        context.getString(
-                                                            R.string.favorites_install_done,
-                                                            targetVersion.getVersionName()
-                                                        )
-                                                    )
-                                                    if (r.installedDependencies.isNotEmpty()) {
-                                                        append("\n")
-                                                        append(
-                                                            context.getString(
-                                                                R.string.favorites_install_dependencies,
-                                                                r.installedDependencies.joinToString(", ")
-                                                            )
-                                                        )
-                                                    }
-                                                    if (r.missingDependencies.isNotEmpty()) {
-                                                        append("\n")
-                                                        append(
-                                                            context.getString(
-                                                                R.string.favorites_install_missing,
-                                                                r.missingDependencies.joinToString(", ")
-                                                            )
-                                                        )
-                                                    }
-                                                }
-                                            }.getOrElse { th ->
-                                                context.getString(
-                                                    R.string.favorites_import_failed,
-                                                    th.message ?: th.javaClass.simpleName
-                                                )
-                                            }
-                                            busy = false
-                                        }
+                                    //上下文优先：从实例的资源管理进来时，先检查版本是否匹配，
+                                    //匹配就直接装进该实例；不匹配先问一句，不再让用户重复选实例
+                                    val target = targetVersion
+                                    if (target != null) {
+                                        installIntoInstance(entry, target)
                                     } else {
                                         installEntry = entry
                                     }
@@ -457,6 +513,28 @@ private fun LocalArchiveContent(
         )
     }
 
+    //本地文件的标注版本与目标实例不匹配：先确认再装
+    pendingMismatchInstall?.let { info ->
+        val supported = info.precheck.gameVersions.joinToString(" / ").ifBlank { "?" }
+        SimpleAlertDialog(
+            title = stringResource(R.string.favorites_install_no_version_title),
+            text = stringResource(
+                R.string.favorites_install_local_mismatch,
+                info.precheck.displayName ?: info.entry.name,
+                supported,
+                info.precheck.instanceMinecraftVersion ?: info.instance.getVersionName()
+            ),
+            confirmText = stringResource(R.string.favorites_install_anyway),
+            onConfirm = {
+                val entry = info.entry
+                val instance = info.instance
+                pendingMismatchInstall = null
+                performInstall(entry, instance)
+            },
+            onDismiss = { pendingMismatchInstall = null }
+        )
+    }
+
     //详情 + 完整性校验
     detailEntry?.let { entry ->
         FavoriteDetailDialog(
@@ -495,6 +573,8 @@ fun FavoritesScreen(
     /** 资源安装上下文（目标实例名称）；为 null 表示资源中心里的纯浏览模式 */
     installTargetVersion: String? = null,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit = {},
+    /** 打开资源详情页（查看/切换全部版本）；为 null 时不提供该入口，改用可读提示 */
+    onBrowseVersions: ((Platform, String, PlatformClasses, String?) -> Unit)? = null,
 ) {
     var tab by remember { mutableStateOf(0) }
 
@@ -516,7 +596,8 @@ fun FavoritesScreen(
             when (tab) {
                 0 -> OnlineFavoritesContent(
                     installTargetVersion = installTargetVersion,
-                    submitError = submitError
+                    submitError = submitError,
+                    onBrowseVersions = onBrowseVersions
                 )
                 else -> LocalArchiveContent(installTargetVersion = installTargetVersion)
             }
@@ -529,6 +610,8 @@ fun FavoritesScreen(
 private fun OnlineFavoritesContent(
     installTargetVersion: String? = null,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit = {},
+    /** 打开资源详情页（可查看/切换全部版本）；为 null 时不提供该入口，改用可读提示 */
+    onBrowseVersions: ((Platform, String, PlatformClasses, String?) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -540,9 +623,122 @@ private fun OnlineFavoritesContent(
 
     val entries = FavoriteProjectsRepository.projects.values
         .sortedByDescending { it.project.followTime }
+    val versions by VersionsManager.versions.collectAsStateWithLifecycle()
+
+    //安装上下文提示：从「版本设置 → 资源管理」进来时，告诉用户这些下载会装到哪个实例
+    val installContext = remember(installTargetVersion, versions) {
+        if (installTargetVersion == null) {
+            null
+        } else {
+            val info = versions
+                .firstOrNull { it.getVersionName() == installTargetVersion }
+                ?.getVersionInfo()
+            listOfNotNull(
+                installTargetVersion,
+                info?.minecraftVersion,
+                info?.loaderInfo?.loader?.displayName
+            ).joinToString(" · ")
+        }
+    }
 
     var detail by remember { mutableStateOf<OnlineFavoriteEntry?>(null) }
     var installTarget by remember { mutableStateOf<OnlineFavoriteEntry?>(null) }
+    /** 正在安装的收藏键（防重复点击）；null = 空闲 */
+    var installingKey by remember { mutableStateOf<String?>(null) }
+    /** 操作结果提示（安装完成 / 已取消收藏等） */
+    var message by remember { mutableStateOf<String?>(null) }
+    /** 已知「没有当前实例版本」的资源：收藏键 → 目标实例的 Minecraft 版本 */
+    var missingVersions by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    /** 待确认取消的在线收藏 */
+    var pendingUnfavorite by remember { mutableStateOf<OnlineFavoriteEntry?>(null) }
+    /** 没有兼容版本时弹出的可操作提示 */
+    var noVersionDialog by remember { mutableStateOf<OnlineNoVersionInfo?>(null) }
+
+    //切换目标实例后，之前记下的「无 XX 版本」结论作废
+    LaunchedEffect(installTargetVersion) {
+        missingVersions = emptyMap()
+    }
+
+    //一键安装：失败时给出可操作的下一步，而不是只弹一个错误
+    fun startInstall(entry: OnlineFavoriteEntry) {
+        if (installingKey != null) return
+        //整合包有单独的安装流程（解压 + 输入版本名），直接去详情页选版本安装
+        if (entry.project.classes == PlatformClasses.MOD_PACK) {
+            val browse = onBrowseVersions
+            if (browse != null) {
+                browse(
+                    entry.platform,
+                    entry.project.projectId,
+                    entry.project.classes,
+                    entry.remote?.platformIconUrl() ?: entry.project.iconUrl
+                )
+            } else {
+                message = context.getString(R.string.favorites_online_modpack_open_downloads)
+            }
+            return
+        }
+
+        val key = onlineFavoriteKey(entry.platform, entry.project.projectId)
+        installingKey = key
+        message = null
+
+        val accepted = FavoriteQuickInstaller.install(
+            platform = entry.platform,
+            projectId = entry.project.projectId,
+            classes = entry.project.classes,
+            targetVersionName = installTargetVersion
+        ) { outcome ->
+            installingKey = null
+            when (outcome) {
+                is FavoriteInstallOutcome.Installed -> {
+                    missingVersions = missingVersions - key
+                    message = buildString {
+                        append(
+                            context.getString(
+                                R.string.favorites_install_done,
+                                outcome.instanceName
+                            )
+                        )
+                        outcome.missingDependencies?.takeIf { it.isNotBlank() }?.let { missing ->
+                            append("\n")
+                            append(context.getString(R.string.favorites_install_missing, missing))
+                        }
+                    }
+                }
+                is FavoriteInstallOutcome.NoCompatibleVersion -> {
+                    //记下结论：卡片上补一条「无 1.20.1 版本」的轻量提示
+                    missingVersions = missingVersions + (key to outcome.minecraftVersion)
+                    noVersionDialog = OnlineNoVersionInfo(entry, outcome)
+                }
+                is FavoriteInstallOutcome.NoInstance -> {
+                    val text = context.getString(R.string.download_assets_no_installed_versions)
+                    message = text
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.download_assets_install_failed),
+                            message = androidText(text)
+                        )
+                    )
+                }
+                is FavoriteInstallOutcome.Cancelled -> Unit
+                is FavoriteInstallOutcome.Failed -> {
+                    val text = installFailureText(
+                        context = context,
+                        error = outcome.error,
+                        instanceName = installTargetVersion
+                    )
+                    message = text
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.download_assets_install_failed),
+                            message = androidText(text)
+                        )
+                    )
+                }
+            }
+        }
+        if (!accepted) installingKey = null
+    }
 
     Column(
         modifier = Modifier
@@ -574,6 +770,25 @@ private fun OnlineFavoritesContent(
             ) {
                 Text(text = stringResource(R.string.favorites_online_refresh))
             }
+        }
+
+        //目标实例提示：让用户点下载之前就知道会装进哪个实例
+        installContext?.let { target ->
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.favorites_online_install_target, target),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        message?.let {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = it,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         if (entries.isEmpty()) {
@@ -639,17 +854,27 @@ private fun OnlineFavoritesContent(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        //已知这个资源没有目标实例的版本时，卡片上直接标出来，
+                        //省得用户点一遍下载才发现装不上
+                        missingVersions[onlineFavoriteKey(entry.platform, entry.project.projectId)]
+                            ?.let { missingVersion ->
+                                Text(
+                                    text = stringResource(
+                                        R.string.favorites_online_no_version,
+                                        missingVersion
+                                    ),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.error,
+                                    maxLines = 1
+                                )
+                            }
                     }
 
-                    //取消收藏：刻意做小，别抢标题和下载按钮的位置
+                    //取消收藏：刻意做小，别抢标题和下载按钮的位置；
+                    //和「删除归档」一样先确认一次，避免误触
                     IconButton(
                         modifier = Modifier.size(30.dp),
-                        onClick = {
-                            FavoriteProjectsRepository.unfavorite(
-                                entry.platform,
-                                entry.project.projectId
-                            )
-                        }
+                        onClick = { pendingUnfavorite = entry }
                     ) {
                         Icon(
                             modifier = Modifier.size(16.dp),
@@ -660,24 +885,26 @@ private fun OnlineFavoritesContent(
                     }
 
                     //下载：做大的那个——点一下直接装进实例（含必需前置）
+                    val favoriteKey = onlineFavoriteKey(entry.platform, entry.project.projectId)
+                    val installing = installingKey == favoriteKey
                     IconButton(
                         modifier = Modifier.size(46.dp),
-                        onClick = {
-                            quickInstallResource(
-                                platform = entry.platform,
-                                projectId = entry.project.projectId,
-                                classes = entry.project.classes,
-                                targetVersionName = installTargetVersion,
-                                submitError = submitError
+                        enabled = !installing && installingKey == null,
+                        onClick = { startInstall(entry) }
+                    ) {
+                        if (installing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                modifier = Modifier.size(28.dp),
+                                painter = painterResource(R.drawable.ic_download_2_filled),
+                                tint = MaterialTheme.colorScheme.primary,
+                                contentDescription = stringResource(R.string.download_assets_quick_install)
                             )
                         }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(28.dp),
-                            painter = painterResource(R.drawable.ic_download_2_filled),
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = stringResource(R.string.download_assets_quick_install)
-                        )
                     }
                 }
             }
@@ -695,7 +922,91 @@ private fun OnlineFavoritesContent(
         }
 
         installTarget?.let { entry ->
-            OnlineInstallDialog(entry = entry, onDismiss = { installTarget = null })
+            OnlineInstallDialog(
+                entry = entry,
+                installTargetVersion = installTargetVersion,
+                onDismiss = { installTarget = null },
+                onBrowseVersions = onBrowseVersions
+            )
+        }
+
+        //没有当前实例版本：给出「查看全部版本」的可操作入口
+        noVersionDialog?.let { info ->
+            val entry = info.entry
+            val outcome = info.outcome
+            val target = listOfNotNull(
+                outcome.minecraftVersion,
+                outcome.loaderName
+            ).joinToString(" · ")
+            AlertDialog(
+                onDismissRequest = { noVersionDialog = null },
+                title = { Text(stringResource(R.string.favorites_install_no_version_title)) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = stringResource(
+                                R.string.favorites_install_no_version_message,
+                                target.ifBlank { outcome.instanceName }
+                            )
+                        )
+                        Text(
+                            text = stringResource(
+                                R.string.favorites_install_no_version_hint,
+                                outcome.instanceName
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                confirmButton = {
+                    val browse = onBrowseVersions
+                    if (browse != null) {
+                        TextButton(
+                            onClick = {
+                                noVersionDialog = null
+                                browse(
+                                    entry.platform,
+                                    entry.project.projectId,
+                                    entry.project.classes,
+                                    entry.remote?.platformIconUrl() ?: entry.project.iconUrl
+                                )
+                            }
+                        ) {
+                            Text(stringResource(R.string.favorites_install_view_versions))
+                        }
+                    } else {
+                        TextButton(onClick = { noVersionDialog = null }) {
+                            Text(stringResource(R.string.generic_confirm))
+                        }
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { noVersionDialog = null }) {
+                        Text(stringResource(R.string.generic_cancel))
+                    }
+                }
+            )
+        }
+
+        //取消在线收藏确认：和「删除归档」保持一致的二次确认
+        pendingUnfavorite?.let { entry ->
+            SimpleAlertDialog(
+                title = stringResource(R.string.favorites_online_remove),
+                text = stringResource(R.string.favorites_online_remove_confirm),
+                onConfirm = {
+                    pendingUnfavorite = null
+                    FavoriteProjectsRepository.unfavorite(
+                        entry.platform,
+                        entry.project.projectId
+                    )
+                    message = context.getString(
+                        R.string.favorites_online_cancelled,
+                        entry.project.title
+                    )
+                },
+                onDismiss = { pendingUnfavorite = null }
+            )
         }
     }
 }
@@ -818,6 +1129,10 @@ private fun InstallToInstanceDialog(
                                                     append("\n")
                                                     append(context.getString(R.string.favorites_install_fallback))
                                                 }
+                                                if (r.metadataIncomplete) {
+                                                    append("\n")
+                                                    append(context.getString(R.string.favorites_install_metadata_incomplete))
+                                                }
                                                 if (r.installedDependencies.isNotEmpty()) {
                                                     append("\n")
                                                     append(
@@ -877,6 +1192,13 @@ private val com.movtery.zalithlauncher.game.favorites.FavoriteType.canInstall: B
         com.movtery.zalithlauncher.game.favorites.FavoriteType.DATAPACK -> true
         else -> false
     }
+
+/** 本地归档「文件版本与目标实例不匹配」的确认数据 */
+private data class LocalMismatchInfo(
+    val entry: FavoriteEntry,
+    val instance: Version,
+    val precheck: FavoriteInstallPrecheck,
+)
 
 private fun queryFileSize(context: Context, uri: Uri): Long? = runCatching {
     context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)
@@ -963,13 +1285,23 @@ private fun OnlineFavoriteDetailDialog(
 @Composable
 private fun OnlineInstallDialog(
     entry: OnlineFavoriteEntry,
+    installTargetVersion: String? = null,
     onDismiss: () -> Unit,
+    onBrowseVersions: ((Platform, String, PlatformClasses, String?) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val versions by VersionsManager.versions.collectAsStateWithLifecycle()
     var running by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf<String?>(null) }
+    /** 失败原因是「确实没有兼容版本」时才显示「查看全部版本」 */
+    var noCompatible by remember { mutableStateOf(false) }
+
+    //上下文优先：从「版本设置 → 资源管理」进来时，把目标实例排在第一个
+    val orderedVersions = remember(versions, installTargetVersion) {
+        val target = versions.firstOrNull { it.getVersionName() == installTargetVersion }
+        if (target == null) versions else listOf(target) + versions.filter { it != target }
+    }
 
     AlertDialog(
         onDismissRequest = { if (!running) onDismiss() },
@@ -984,13 +1316,13 @@ private fun OnlineInstallDialog(
                     if (versions.isEmpty()) {
                         Text(text = stringResource(R.string.favorites_install_no_instance))
                     }
-                    versions.forEach { version ->
+                    orderedVersions.forEach { version ->
                         TextButton(
                             enabled = !running,
                             onClick = {
                                 running = true
                                 scope.launch {
-                                    result = runCatching {
+                                    val outcome = runCatching {
                                         val type = ResourceType.of(entry.project.classes)
                                         val resolved = ResourceManager.matchVersion(
                                             platform = entry.platform,
@@ -1020,12 +1352,20 @@ private fun OnlineInstallDialog(
                                                 )
                                             }
                                         }
-                                    }.getOrElse { th ->
-                                        context.getString(
-                                            R.string.favorites_import_failed,
-                                            th.message ?: th.javaClass.simpleName
-                                        )
                                     }
+                                    outcome.fold(
+                                        onSuccess = { result = it },
+                                        onFailure = { th ->
+                                            //版本不匹配要给出「去看全部版本」的入口，
+                                            //而不是把内部异常原文丢给用户
+                                            noCompatible = th is ResourceMatchException.NoCompatibleVersion
+                                            result = installFailureText(
+                                                context = context,
+                                                error = th,
+                                                instanceName = version.getVersionName()
+                                            )
+                                        }
+                                    )
                                     running = false
                                 }
                             }
@@ -1037,9 +1377,82 @@ private fun OnlineInstallDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { if (result != null) onDismiss() else onDismiss() }) {
-                Text(stringResource(if (result == null) R.string.generic_cancel else R.string.generic_confirm))
+            val browse = onBrowseVersions
+            if (noCompatible && browse != null) {
+                TextButton(
+                    onClick = {
+                        onDismiss()
+                        browse(
+                            entry.platform,
+                            entry.project.projectId,
+                            entry.project.classes,
+                            entry.remote?.platformIconUrl() ?: entry.project.iconUrl
+                        )
+                    }
+                ) {
+                    Text(stringResource(R.string.favorites_install_view_versions))
+                }
+            } else if (noCompatible) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.generic_confirm))
+                }
+            } else {
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        stringResource(
+                            if (result == null) R.string.generic_cancel else R.string.generic_confirm
+                        )
+                    )
+                }
+            }
+        },
+        dismissButton = {
+            //仅在「没有兼容版本」且能跳详情页时提供「关闭」，其余情况保持单按钮布局
+            if (noCompatible && onBrowseVersions != null) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.generic_cancel))
+                }
             }
         }
     )
 }
+
+/**
+ * 安装 / 版本匹配失败 → 用户能读懂的说明
+ *
+ * 复用资源下载页已有的文案：实例信息读不出来 / 查询失败 / 确实没有兼容版本。
+ * 其它异常交给统一的网络错误映射，**绝不把 lateinit 之类的内部异常原文丢到界面上**。
+ */
+private fun installFailureText(
+    context: Context,
+    error: Throwable,
+    instanceName: String? = null,
+): String {
+    return when (error) {
+        is ResourceMatchException.NoCompatibleVersion -> context.getString(
+            R.string.download_assets_install_no_compatible_version,
+            listOfNotNull(error.minecraftVersion, error.loaderName).joinToString(" · ")
+        )
+        is ResourceMatchException.QueryFailed -> context.getString(
+            R.string.download_assets_install_query_failed,
+            error.cause?.localizedMessage ?: error.message.orEmpty()
+        )
+        is ResourceMatchException.InstanceInfoUnavailable -> context.getString(
+            R.string.download_assets_install_instance_unavailable,
+            instanceName ?: "?"
+        )
+        is ResourceMatchException.Blacklisted ->
+            context.getString(R.string.download_assets_install_fabric_api_blacklisted)
+        else -> mapExceptionToMessage(error).toAndroidString(context)
+    }
+}
+
+/** 「没有当前实例版本」提示携带的数据 */
+private data class OnlineNoVersionInfo(
+    val entry: OnlineFavoriteEntry,
+    val outcome: FavoriteInstallOutcome.NoCompatibleVersion,
+)
+
+/** 在线收藏的唯一键：平台 + 项目 ID（与卡片状态一一对应） */
+private fun onlineFavoriteKey(platform: Platform, projectId: String): String =
+    "${platform.name}_$projectId"

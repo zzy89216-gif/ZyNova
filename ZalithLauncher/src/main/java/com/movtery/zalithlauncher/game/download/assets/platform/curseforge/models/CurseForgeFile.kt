@@ -225,16 +225,30 @@ class CurseForgeFile(
     )
 
     /**
-     * 该版本的主要文件
+     * 该版本的主要文件（[initFile] 成功后才有值）。
+     *
+     * ⚠️ 不能用 lateinit：版本列表可能因为翻页 / 取消 / 网络失败留下未初始化的项，
+     * 读到 lateinit 会抛 `UninitializedPropertyAccessException`，在协程里就是未捕获异常，
+     * 会直接把启动器打崩（见 28.2.0 的 `thisPrimaryFile has not been initialized` 崩溃日志）。
      */
     @Transient
-    private lateinit var thisPrimaryFile: CurseForgeFile
+    private var thisPrimaryFile: CurseForgeFile? = null
 
     /**
-     * 主要文件下载链接
+     * 未初始化时的兜底：退回列表接口返回的这条记录本身
+     * （文件名 / 下载链接齐全时，它与初始化后的「主要文件」等价）
+     */
+    private val primary: CurseForgeFile
+        get() = thisPrimaryFile ?: this
+
+    override val isFileInitialized: Boolean
+        get() = thisPrimaryFile != null
+
+    /**
+     * 主要文件下载链接（[initFile] 成功后才有值）
      */
     @Transient
-    private lateinit var primaryDownloadUrl: String
+    private var primaryDownloadUrl: String? = null
 
     override suspend fun initFile(currentProjectId: String): Boolean {
         val file = this.takeIf { it.fileName != null && it.fixedFileUrl() != null }
@@ -272,28 +286,28 @@ class CurseForgeFile(
 
     override fun platformId(): String = id.toString()
 
-    override fun platformDisplayName(): String = thisPrimaryFile.displayName
+    override fun platformDisplayName(): String = primary.displayName
 
-    override fun platformFileName(): String = thisPrimaryFile.fileName!!
+    override fun platformFileName(): String = primary.fileName ?: ""
 
     override fun platformGameVersion(): Array<String> {
-        return thisPrimaryFile.gameVersions.filter { gameVersion ->
+        return primary.gameVersions.filter { gameVersion ->
             filterRelease(gameVersion)
         }.toTypedArray()
     }
 
     override fun platformLoaders(): List<PlatformDisplayLabel> {
-        return thisPrimaryFile.gameVersions.mapNotNull { loaderName ->
+        return primary.gameVersions.mapNotNull { loaderName ->
             CurseForgeModLoader.entries.find {
                 it.getDisplayName().equals(loaderName, true)
             }
         }
     }
 
-    override fun platformReleaseType(): PlatformReleaseType = thisPrimaryFile.releaseType
+    override fun platformReleaseType(): PlatformReleaseType = primary.releaseType
 
     override fun platformDependencies(): List<PlatformVersion.PlatformDependency> {
-        return thisPrimaryFile.dependencies.map { dependency ->
+        return primary.dependencies.map { dependency ->
             PlatformVersion.PlatformDependency(
                 platform = platform(),
                 projectId = dependency.modId.toString(),
@@ -302,15 +316,15 @@ class CurseForgeFile(
         }
     }
 
-    override fun platformDownloadCount(): Long = thisPrimaryFile.downloadCount
+    override fun platformDownloadCount(): Long = primary.downloadCount
 
-    override fun platformDownloadUrl(): String = primaryDownloadUrl
+    override fun platformDownloadUrl(): String = primaryDownloadUrl ?: fixedFileUrl() ?: ""
 
-    override fun platformDatePublished(): Instant = parseInstant(thisPrimaryFile.fileDate)
+    override fun platformDatePublished(): Instant = parseInstant(primary.fileDate)
 
-    override fun platformSha1(): String? = thisPrimaryFile.getSHA1()
+    override fun platformSha1(): String? = primary.getSHA1()
 
-    override fun platformFileSize(): Long = thisPrimaryFile.fileLength
+    override fun platformFileSize(): Long = primary.fileLength
 
     override fun platformVersion(): String = displayName
 }

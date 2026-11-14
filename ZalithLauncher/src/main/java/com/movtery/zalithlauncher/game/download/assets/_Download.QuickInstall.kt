@@ -76,8 +76,10 @@ fun quickInstallAsset(
     val type = ResourceType.of(classes)
     //任务 ID 带上实例名：同一个资源安装到不同实例时状态互相独立，
     //否则第二个实例的安装会被当成重复任务直接忽略
-    val taskId = "quick_install_${currentVersion.getVersionName()}_" +
-            "${version.platformSha1() ?: version.platformFileName()}"
+    //⚠️ 这里只能用 platformId()：platformSha1() / platformFileName() 需要 initFile 成功，
+    //而版本列表里可能残留「被取消 / 没来得及初始化」的项，直接读会把启动器打崩
+    //（28.2.0 的 `lateinit property thisPrimaryFile has not been initialized` 崩溃日志）。
+    val taskId = "quick_install_${currentVersion.getVersionName()}_${version.platformId()}"
 
     TaskSystem.submitTask(
         Task.runTask(
@@ -91,6 +93,23 @@ fun quickInstallAsset(
                     )
                 )
                 task.updateMessage(androidText(R.string.download_assets_quick_install_resolving))
+
+                //0. 兜底初始化：版本列表里的项可能是「被取消 / 没初始化完」的。
+                //   缺文件信息时给用户可操作的提示，不要让它变成后台未捕获异常把启动器打崩。
+                if (!version.isFileInitialized &&
+                    !version.initFile(projectId ?: version.platformId())
+                ) {
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.download_assets_install_failed),
+                            message = androidText(
+                                R.string.download_assets_install_query_failed,
+                                version.platformId()
+                            )
+                        )
+                    )
+                    return@runTask
+                }
 
                 //1. 统一模型转换
                 val resourceVersion = version.toResourceVersion(projectId ?: version.platformId())

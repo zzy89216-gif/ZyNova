@@ -21,8 +21,14 @@ package com.movtery.zalithlauncher.game.version.multiplayer
 import com.movtery.zalithlauncher.utils.network.ServerAddress
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 
+/*
+ * ⚠️ 手动联机测试：会真的去解析 / ping cn.mccisland.net。
+ * CI 里没必要联外网，也不该因为目标服务器不可达而变慢，默认忽略。
+ */
+@Ignore("手动运行：需要真实网络（ping 公共服务器），不进 CI")
 class TestServers {
 
     @Test

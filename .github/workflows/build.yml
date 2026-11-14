@@ -53,6 +53,8 @@ jobs:
         with:
           add-job-summary: "on-failure"
 
+      # 发版路径（本工作流）刻意不跑单测：push 构建会先跑（build_apk.yml），
+      # 发版前也要求人工确认绿构建；单测偶发失败不应该在发版这一步才卡住。取舍说明见 AGENTS.md 第四节。
       - name: Build universal APK
         run: |
           chmod +x gradlew

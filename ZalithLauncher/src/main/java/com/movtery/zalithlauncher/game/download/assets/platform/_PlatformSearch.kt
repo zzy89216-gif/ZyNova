@@ -28,6 +28,7 @@ import com.movtery.zalithlauncher.game.download.assets.platform.curseforge.MCIM_
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.MCIM_MODRINTH_API
 import com.movtery.zalithlauncher.game.download.assets.platform.modrinth.ModrinthSearcher
 import com.movtery.zalithlauncher.game.download.assets.utils.localizedModSearchKeywords
+import com.movtery.zalithlauncher.game.download.engine.AllSourcesFailedException
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.DownloadAssetsState
@@ -35,6 +36,7 @@ import com.movtery.zalithlauncher.ui.screens.content.download.assets.elements.Se
 import com.movtery.zalithlauncher.utils.isChinaMainland
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.isInterruptedIOException
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -61,6 +63,10 @@ private val mirrorCurseForgeSearcher = CurseForgeSearcher(
 
 /**
  * 对资源平台搜索启用镜像源机制进行操作
+ *
+ * 某个源失败会自动换下一个；**所有源都失败**时，把每个源各自的真实原因
+ * （HTTP 状态 / 超时 / DNS 等）聚合进异常 message，而不是只抛一句没有信息量的
+ * 「All sources have failed to attempt」——用户和开发者都要能一眼看出是哪个源、因为什么失败。
  */
 suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
     searchers: List<E>,
@@ -69,7 +75,8 @@ suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
 ): T {
     require(searchers.isNotEmpty()) { "Searcher list must not be empty." }
 
-    val errors = mutableListOf<Exception>()
+    /** 每个源的失败记录（源名称 → 异常），全部失败时用于聚合原因 */
+    val failures = mutableListOf<Pair<String, Exception>>()
     var lastException: Exception? = null
 
     for (searcher in searchers) {
@@ -78,32 +85,87 @@ suspend fun <E: AbstractPlatformSearcher, T> mirroredPlatformSearcher(
                 Logger.debug(TAG, "Starting to attempt to perform the operation on source: {${searcher.source}}")
             }
             return block(searcher)
+        } catch (e: CancellationException) {
+            //⚠️ 取消不是「镜像失败」：不能记 error、不能降级到下一个源、更不能报 WARNING。
+            //否则用户切页 / 换关键词 / 关页面时，日志里会堆满
+            //「All sources have failed + Mirror error #N: Job was cancelled」这种假故障。
+            throw e
         } catch (e: Exception) {
             Log.w("PlatformSearcher", "Failed to perform the operation on source: {${searcher.source}}", e)
             lastException = e
+            failures += searcher.source to e
 
             if (e.isInterruptedIOException()) {
+                //网络请求被中断（不是单源失败），继续换源没有意义
                 throw e
             } else if (e is FileNotFoundException) {
-                errors.add(e)
+                //源明确说「文件不存在」，别的源也找不到
                 break
-            } else {
-                errors.add(e)
             }
         }
     }
 
+    //所有源都失败：聚合每个源的真实原因（日志 + 异常 message 都带）
+    val failureSummary = buildAllSourcesFailureMessage(failures)
+    val aggregated = AllSourcesFailedException(failureSummary, lastException)
     if (printLog) {
-        Logger.warning(TAG, 
-            msg = "An error occurred during this search.",
-            t = IOException("All sources have failed to attempt", lastException).apply {
-                errors.forEachIndexed { i, e ->
-                    addSuppressed(Exception("Mirror error #${i + 1}: ${e.message}"))
-                }
-            }
-        )
+        Logger.warning(TAG, "All sources failed to perform the operation.", aggregated)
     }
-    throw lastException ?: IllegalStateException("Should not have executed to this stage.")
+
+    //404/403 这类「语义明确」的失败保持原异常类型抛出：
+    //上层会按状态码给出精确文案（例如依赖项目 404 时记住「该项目不存在」），
+    //包装成 IOException 反而会让这些判断失效。
+    val semanticFailure = lastException
+    if (semanticFailure != null && semanticFailure.isSemanticPlatformFailure()) {
+        throw semanticFailure
+    }
+    throw aggregated
+}
+
+/**
+ * 聚合每个源的失败原因：一句能看懂、能照着操作的话。
+ *
+ * 例：All platform sources failed (2):
+ * - Official Modrinth: timeout after 5000 ms
+ * - MCIM Modrinth: HTTP 503 Service Unavailable
+ *
+ * ⚠️ 这里只写**技术事实**（源名 + 失败原因），不写面向用户的操作指引：
+ * 用户可见文案由界面按资源字符串本地化，映射见 `mapExceptionToMessage()`。
+ */
+private fun buildAllSourcesFailureMessage(failures: List<Pair<String, Exception>>): String {
+    if (failures.isEmpty()) return "All platform sources failed, but no specific reason was recorded."
+    return buildString {
+        append("All platform sources failed (").append(failures.size).append("):\n")
+        failures.forEach { (source, error) ->
+            append("- ").append(source).append(": ").append(error.describePlatformFailure()).append('\n')
+        }
+    }
+}
+
+/** 单源失败的一行摘要：HTTP 状态优先，其次异常 message，最后退回类名 */
+private fun Throwable.describePlatformFailure(): String {
+    if (this is ResponseException) {
+        return "HTTP ${response.status.value} ${response.status.description}".trim()
+    }
+    val text = message ?: cause?.message ?: javaClass.simpleName
+    val firstLine = text.lineSequence().firstOrNull()?.trim().orEmpty()
+    return when {
+        firstLine.isEmpty() -> javaClass.simpleName
+        firstLine.length > 120 -> firstLine.take(117) + "..."
+        else -> firstLine
+    }
+}
+
+/**
+ * 4xx（404/403 等确定性错误）与「文件不存在」属于语义明确的失败。
+ *
+ * 这类失败上层会据此给出精确提示、或跳过该项目；不能包装成通用 IOException。
+ * 408/429 属于临时性错误，仍然走聚合提示。
+ */
+private fun Throwable.isSemanticPlatformFailure(): Boolean = when (this) {
+    is FileNotFoundException -> true
+    is ResponseException -> response.status.value.let { it in 400..499 && it != 408 && it != 429 }
+    else -> false
 }
 
 /**
@@ -202,6 +264,9 @@ suspend fun searchAssets(
                 }
                 lastResult = r
                 if (r.getAssetsPage(platformClasses).data.isNotEmpty()) break
+            } catch (e: CancellationException) {
+                //取消不是「这个词搜失败了」，不要继续往下搜
+                throw e
             } catch (e: Exception) {
                 //当前关键词搜索失败，记录异常并继续尝试下一个
                 lastException = e

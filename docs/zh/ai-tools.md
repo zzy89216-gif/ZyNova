@@ -22,7 +22,7 @@
 
 | 工具 | 作用 |
 |---|---|
-| `list_files` / `read_file` / `write_file` / `delete_file` / `copy_file` | App 内（游戏目录）读写 |
+| `list_files` / `read_file` / `write_file` / `delete_file` / `copy_file` | App 内（游戏目录）读写；`delete_file` **直接删除、不进回收站、不可恢复** |
 | `public_list` / `public_read` / `public_write` / `public_mkdir` | 公有存储（如 Download；需「所有文件访问权限」） |
 | `public_move_to_recycle_bin` | 清理文件，**移动到回收站**（App 私有 `.recycle_bin/`），不会真删 |
 | `import_from_public` | 把 Download 里的 jar/整合包**复制进游戏目录** |

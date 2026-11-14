@@ -124,10 +124,23 @@ class ModrinthVersion(
     )
 
     /**
-     * 该版本的主要文件
+     * 该版本的主要文件（[initFile] 成功后才有值）。
+     *
+     * ⚠️ 不能用 lateinit：版本列表可能因为翻页 / 取消 / 网络失败留下未初始化的项，
+     * 读到 lateinit 会抛 `UninitializedPropertyAccessException`，在协程里就是未捕获异常，
+     * 会直接把启动器打崩（见 28.2.0 的 `thisPrimaryFile has not been initialized` 崩溃日志）。
      */
     @Transient
-    private lateinit var thisPrimaryFile: ModrinthFile
+    private var thisPrimaryFile: ModrinthFile? = null
+
+    /**
+     * 未初始化时的兜底：直接从文件列表里挑主文件（与 [initFile] 的取法一致）
+     */
+    private val primary: ModrinthFile?
+        get() = thisPrimaryFile ?: files.getPrimary()
+
+    override val isFileInitialized: Boolean
+        get() = thisPrimaryFile != null
 
     override suspend fun initFile(currentProjectId: String): Boolean {
         val file = files.getPrimary() ?: return false
@@ -141,7 +154,7 @@ class ModrinthVersion(
 
     override fun platformDisplayName(): String = name
 
-    override fun platformFileName(): String = thisPrimaryFile.fileName
+    override fun platformFileName(): String = primary?.fileName ?: ""
 
     override fun platformGameVersion(): Array<String> = gameVersions
 
@@ -165,13 +178,13 @@ class ModrinthVersion(
 
     override fun platformDownloadCount(): Long = downloads
 
-    override fun platformDownloadUrl(): String = thisPrimaryFile.url
+    override fun platformDownloadUrl(): String = primary?.url ?: ""
 
     override fun platformDatePublished(): Instant = parseInstant(datePublished)
 
-    override fun platformSha1(): String? = thisPrimaryFile.hashes.sha1
+    override fun platformSha1(): String? = primary?.hashes?.sha1
 
-    override fun platformFileSize(): Long = thisPrimaryFile.size
+    override fun platformFileSize(): Long = primary?.size ?: 0L
 
     override fun platformVersion(): String = versionNumber
 }

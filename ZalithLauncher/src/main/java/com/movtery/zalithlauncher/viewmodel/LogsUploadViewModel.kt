@@ -94,6 +94,9 @@ class LogsUploadViewModel: ViewModel() {
                 }
 
                 return api.onUpload(content)
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                //取消上传（离开页面 / 用户取消）不是「镜像失败」，直接终止，不要伪装成 All sources failed
+                throw e
             } catch (e: Exception) {
                 lastException = e
 

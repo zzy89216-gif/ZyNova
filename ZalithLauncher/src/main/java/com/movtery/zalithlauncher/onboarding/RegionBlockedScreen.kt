@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 /**
  * 未覆盖地区时全屏阻断。
  *
+ * 只用于「**能确定国家、但不在开放列表**」这一种情况；地区判定失败（国家码为空 + 时区反查失败）
+ * 已经按 fail-open 放行，不会走到这里，见 [RegionGate.decision]。
+ *
  * 只有一个「退出」按钮：点击后由上层执行**安全退出**（finishAffinity + 结束进程），
  * 不做任何伪装成崩溃的行为。
  */
@@ -42,7 +45,7 @@ fun RegionBlockedScreen(onExit: () -> Unit) {
             )
             Text(
                 modifier = Modifier.padding(top = 12.dp),
-                text = "本产品目前仅在中国、美国、韩国、日本、俄罗斯提供。\n" +
+                text = "本产品目前仅在部分国家和地区提供。\n" +
                     "如果判断有误，请检查系统时区与语言设置后重新打开。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

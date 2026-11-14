@@ -27,11 +27,11 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.2.0`（**正式版**，APK 内不带后缀；发行名就是「28.2.0」，不勾 pre-release） |
-| versionCode | `282000` |
+| 版本名 | 当前 `28.2.1`（**正式版**，APK 内不带后缀；发行名就是「28.2.1」，不勾 pre-release） |
+| versionCode | `282001` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.2.0`（正式）+ `v28.1.0`（上一版正式，保留） |
-| main | 28.2.0 代码；只有 `main` 一个分支 |
+| Release | `v28.2.1`（正式）+ `v28.2.0`（上一版正式，保留） |
+| main | 28.2.1 代码；只有 `main` 一个分支 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
 | 下一轮待办 | 统一在 GitHub Issue 里跟踪（原先仓库根的清单文档已删除，不再维护第二份） |
@@ -51,7 +51,7 @@
   2. 《第三方开源合规声明 + 补充免责与风险告知》——直接渲染 APK 内 `assets/licenses/THIRD_PARTY_NOTICES.md`
   3. 《使用教程 + 适用地区与法律管辖》
 - 关键词标红：AGPL / LGPL / 不承担任何 / 免责 / 风险 / 无法使用 / 不允许 / 必须（`highlightLegal`）
-- **地区白名单**：与「已提供语言」对齐，共 **58 个国家/地区**（`LegalRegions.ALL`）。
+- **地区白名单**：与「已提供语言」对齐，共 **59 个国家/地区**（`LegalRegions.ALL`）。
   判定用「系统国家代码 + 系统时区反查国家」（`android.icu.util.TimeZone.getRegion`），
   **不再手写时区表**——手写既会漏（漏一个城市就误拦），也没法跟着开放范围维护。
 - 阻断页只有「退出」按钮，安全退出，不伪造崩溃。
@@ -91,6 +91,11 @@
 curl -s "https://api.github.com/repos/zzy89216-gif/ZyNova/actions/runs?per_page=3" -H "Authorization: Bearer $TOKEN"
 ```
 push 到 main 会触发 `build_apk.yml`，**约 19 分钟**。**红构建不许发版。**
+
+> 🧪 **push 构建先跑单测**：`build_apk.yml` 在打包前先执行 `./gradlew ZalithLauncher:test`，
+> 编译不过 / 断言失败直接红，不用等打完包才发现。**发布路径（`release_ci.yml` → `build.yml`）刻意不跑单测**：
+> 发版前已经要求人工确认过绿构建，单测偶发失败不应该卡住热修发版。
+> 模块有 `universal` 产品风味，单测任务按变体拆开，所以用模块级聚合任务 `test`（debug / release 各跑一遍，测试量小，暂不优化）。
 
 > 🕒 **只改文档不会触发编译**：`build_apk.yml` 加了 `paths-ignore`（`**.md`、`docs/**`、`LICENSE`、`ISSUE_TEMPLATE` 等）。
 > 整次 push 只碰这些路径时，工作流不会启动——以前改个错别字也要等 19 分钟，维护者嫌慢。
@@ -201,6 +206,14 @@ PY
   迁移必须先复制校验再删旧目录；中途被杀下次续传；**失败也不回退私有目录**（只在公共目录重试，
   且只回滚本次写入的文件）。
 - **离线 / 第三方登录入口按界面语言显示**：中文展示，其他语言隐藏；只收入口不删账号。
+- **CurseForge API Key 在构建期注入，不在应用内让用户填**：只经 CI Secret（`CURSEFORGE_API_KEY`）注入，
+  本地可放 `.curseforge_api.txt` 或 `ZalithLauncher/gradle.properties` 的 `curseforge_api_key`，
+  最终编进 `BuildConfig.CURSEFORGE_API`；**值绝不入库**。CurseForge 条款对「随包分发内置 Key」有风险，
+  维护者**已知并接受**；将来真被限流 / 封 Key，再改成引导用户自填（需要新增设置项），不要提前改架构。
+  Key 缺失时 CurseForge 请求走 MCIM 镜像兜底，不会崩。
+- **签名密钥不更换、证书指纹公开**：Release 与 Debug 共用 `ZalithLauncher/zalith_launcher_debug.jks`
+  （别名 `movtery_zalith_debug`，口令是上游公开默认值）；换密钥会让老用户无法覆盖安装，**不要动**。
+  官方证书 SHA-256 指纹公布在 `README.md` / `README_EN.md` 的「校验官方安装包」一节，跨版本稳定，不用每版重算。
 
 ## 八、给你的建议顺序
 

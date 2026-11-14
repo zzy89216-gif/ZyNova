@@ -145,8 +145,10 @@ internal fun fileTools(): List<AITool> = listOf(
     aiTool(
         name = "delete_file",
         description = """
-            删除一个文件或空目录（不可恢复）。
-            删除模组请优先用 delete_mod；这里主要用于清理损坏的配置文件、.part 残留等。
+            删除**游戏目录内**的文件或空目录。
+            **直接删除、不进回收站、不可恢复**：确认确实要删再调用，删前建议先 copy_file 备份。
+            清理公有存储（Download 等）请用 public_move_to_recycle_bin（移到 .recycle_bin/，可恢复）；
+            删除模组请优先用 delete_mod。这里主要用于清理损坏的配置文件、.part 残留等。
         """.trimIndent(),
         parameters = AIToolSchema.objectSchema(
             properties = mapOf(
