@@ -784,6 +784,9 @@ private fun NavigationUI(
                     FavoritesScreen(
                         screenKey = key,
                         currentKey = screenBackStackModel.mainScreen.currentKey,
+                        //主页进收藏是「纯浏览」入口：没有实例上下文（installTargetVersion=null），
+                        //但错误提示要接上，否则安装失败只会在页面里留一行字
+                        submitError = submitError,
                     )
                 }
                 entry<NormalNavKey.HomePageEditor> {
