@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 リリース（グローバルコンプライアンス版）。**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Android 向けの **Minecraft: Java Edition** ランチャー。ZalithLauncher2 
 
 方針は「**タップを減らす**」。設定を並べて選ばせるのではなく、まずこちらで判断し、判断できないときだけ一度聞く。ゲームの導入、MOD の依存解決、クラッシュログの読解までを AI に任せられます。
 
-## ✨ 28.1.0 の新機能
+## ✨ 最近の変更
 
-- **未成年の時間制限**：18 歳未満は金・土・日と法定祝日の **20:00–21:00** のみ起動可能。2026 年の祝日は中国国務院の通知（国办发明电〔2025〕7号）に沿って日付ごとに列挙され、振替出勤日は平日扱いです。
-- **初回起動のコンプライアンス手続き**：3 つの統合文書（①EULA + プライバシーポリシー、②第三者オープンソース告知 + 免責・リスク告知、③チュートリアル + 適用地域と法的管轄）。各文書は**最後までスクロールして個別にチェック**しないと進めず、完了後に年齢区分を選びます（既存ユーザーも更新後に一度だけ表示）。
-- **免責事項を明記**：セーブデータの消失、端末の発熱、第三者による BAN、サービスの終了などのリスクをはっきり告知します。
-- **あわせて**：ホームのカードが読み込みで止まらず、AI の Web 検索が利用可能に、インポートはインスタンスフォルダへ、クラッシュ時の自動修復は削除。
+すべての変更: [CHANGELOG.md](../../CHANGELOG.md)。
 
 ## 🛠️ 主な機能
 

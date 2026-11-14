@@ -8,3 +8,5 @@
   `/ZyNova` is kept.
 - Under 18, launching is limited to Friday / Saturday / Sunday and public holidays, 20:00-21:00
   (based on the age chosen on first launch).
+- Holiday data for the under-18 time window is updated per year. Once the system year passes the data year, the gate
+  falls back to ordinary weekend rules (the 20:00-21:00 window stays) and says the holiday data has expired.

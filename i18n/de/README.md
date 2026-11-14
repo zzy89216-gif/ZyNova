@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 veröffentlicht (global konforme Version).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Ein Launcher für **Minecraft: Java Edition** unter Android, unabhängig gepfleg
 
 Das Prinzip: **weniger tippen**. Erst entscheiden, dann fragen — und nur dort fragen, wo sich nichts entscheiden lässt. Installation, Mod-Abhängigkeiten und Absturz-Logs übernimmt der KI-Agent.
 
-## ✨ Neu in 28.1.0
+## ✨ Aktuelle Änderungen
 
-- **Compliance-Ablauf beim ersten Start**: drei zusammengefasste Dokumente (① EULA + Datenschutzerklärung, ② Open-Source-Hinweise Dritter + Haftungsausschlüsse und Risiken, ③ Anleitung + Geltungsbereich und Gerichtsstand). Jedes muss **bis zum Ende gescrollt und einzeln bestätigt** werden; danach die Altersgruppe wählen (Bestandsnutzer sehen das nach dem Update einmal).
-- **Zeitfenster für Minderjährige**: unter 18 nur freitags, samstags, sonntags und an gesetzlichen Feiertagen, **20:00–21:00**. Die Feiertage 2026 folgen dem Kalender des chinesischen Staatsrats (国办发明电〔2025〕7号); Nachholarbeitstage zählen als Arbeitstage.
-- **Haftungsausschlüsse ausformuliert**: Spielstandverlust, Hitzeentwicklung, Sperren durch Drittanbieter, Einstellung von Diensten — ausdrücklich benannt.
-- **Außerdem**: Startseite lädt nicht mehr endlos, KI-Websuche funktioniert, Importe landen im Instanzordner, automatische Crash-Reparatur entfernt.
+Vollständige Änderungen: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Funktionen
 

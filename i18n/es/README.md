@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 ya está disponible (versión con cumplimiento global).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Un lanzador de **Minecraft: Java Edition** para Android, mantenido de forma inde
 
 La idea: **menos toques**. En lugar de soltarte veinte ajustes, el lanzador decide primero y solo pregunta cuando de verdad no puede decidir.
 
-## ✨ Novedades de la 28.1.0
+## ✨ Cambios recientes
 
-- **Flujo de cumplimiento en el primer arranque**: tres documentos unificados (① EULA + política de privacidad, ② avisos de código abierto de terceros + descargos y riesgos, ③ tutorial + regiones admitidas y jurisdicción). Cada uno hay que **desplazarlo hasta el final y aceptarlo por separado**; después se elige el grupo de edad (quien ya tenía la app lo ve una vez tras actualizar).
-- **Franja horaria para menores**: menos de 18 años, solo viernes, sábados, domingos y festivos legales, de **20:00 a 21:00**. Los festivos de 2026 siguen el calendario del Consejo de Estado chino; los días de recuperación cuentan como laborables.
-- **Descargos bien explícitos**: pérdida de partidas, calentamiento del dispositivo, bloqueos de terceros, cierre de servicios: todo avisado.
-- **También**: la pantalla de inicio ya no se queda cargando, la búsqueda web de la IA funciona, las importaciones van a la carpeta de la instancia y se quitó la reparación automática de fallos.
+Cambios completos: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Funciones
 

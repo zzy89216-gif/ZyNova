@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 telah dirilis (versi kepatuhan global).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Peluncur **Minecraft: Java Edition** untuk Android, dikelola sendiri dari kode Z
 
 Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengaturan, peluncur memutuskan dulu dan hanya bertanya kalau memang tidak bisa.
 
-## ✨ Yang baru di 28.1.0
+## ✨ Perubahan terbaru
 
-- **Alur kepatuhan saat pertama dibuka**: tiga dokumen gabungan (① EULA + kebijakan privasi, ② pemberitahuan sumber terbuka pihak ketiga + penafian dan risiko, ③ panduan + wilayah dan yurisdiksi). Masing-masing harus **digulir sampai habis dan dicentang sendiri**; setelah itu pilih kelompok usia (pengguna lama juga lewat sekali setelah pembaruan).
-- **Jendela waktu untuk anak di bawah umur**: di bawah 18 tahun hanya bisa menjalankan game pada Jumat, Sabtu, Minggu, dan hari libur resmi pukul **20.00–21.00**. Libur 2026 mengikuti kalender Dewan Negara Tiongkok; hari kerja pengganti dihitung sebagai hari kerja.
-- **Penafian ditulis tuntas**: kehilangan save, perangkat panas, diblokir pihak ketiga, layanan berhenti — semuanya dinyatakan.
-- **Selain itu**: kartu beranda tidak macet memuat, pencarian web AI berfungsi, impor masuk ke folder instance, perbaikan otomatis setelah crash dihapus.
+Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Kemampuan
 

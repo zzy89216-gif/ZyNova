@@ -15,3 +15,6 @@ Entered from the home screen's resource center there is no instance context, so 
 - With an instance context, "Install" copies straight into that instance (also filling in recognizable dependencies) without asking for an instance.
 - Without a context, the instance list is still shown.
 - Files that cannot be identified online are copied directly and dependencies must be added manually.
+- A version pre-check runs before installing: when the file's tagged Minecraft version clearly disagrees with the target
+  instance you are asked first (you can still install anyway); incomplete platform metadata falls back to a direct copy
+  with a "check dependencies manually" note instead of an unknown error.

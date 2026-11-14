@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 — wydanie gotowe (wersja zgodna z wymogami globalnymi).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Launcher **Minecraft: Java Edition** na Androida, rozwijany niezależnie na bazi
 
 Pomysł jest jeden: **mniej kliknięć**. Zamiast wyrzucać na ekran dwadzieścia ustawień, launcher najpierw decyduje sam, a pyta dopiero wtedy, gdy naprawdę nie może.
 
-## ✨ Nowości w 28.1.0
+## ✨ Najnowsze zmiany
 
-- **Procedura zgodności przy pierwszym uruchomieniu**: trzy połączone dokumenty (① EULA + polityka prywatności, ② informacja o otwartym kodzie stron trzecich + wyłączenia i ryzyka, ③ samouczek + regiony i jurysdykcja). Każdy trzeba **przewinąć do końca i osobno zaznaczyć**; potem wybiera się grupę wiekową (dotychczasowi użytkownicy przechodzą to raz po aktualizacji).
-- **Okno czasowe dla nieletnich**: osoby poniżej 18 lat mogą uruchomić grę tylko w piątek, sobotę, niedzielę i w dni ustawowo wolne, w godz. **20:00–21:00**. Święta 2026 są wymienione dzień po dniu według kalendarza Rady Państwowej ChRL; dni odrabiania liczą się jako robocze.
-- **Wyłączenia odpowiedzialności bez owijania w bawełnę**: utrata zapisów, nagrzewanie urządzenia, bany od stron trzecich, wyłączenie usługi — wszystko wprost.
-- **Poza tym**: karty na stronie głównej nie wiszą na ładowaniu, wyszukiwanie internetowe AI działa, import trafia do katalogu instancji, usunięto automatyczną naprawę po awarii.
+Pełna lista zmian: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Co potrafi
 

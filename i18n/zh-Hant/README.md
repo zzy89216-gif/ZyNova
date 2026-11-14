@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 正式發佈（全球化商業合規版）。**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -30,12 +27,9 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 - **模組地獄有人幫扛**：整合包幾十個模組、依賴一長串，交給流程去解
 - **當機不用猜**：把日誌交給 AI 讀，比在論壇翻十頁快
 
-## ✨ 28.1.0 更新重點
+## ✨ 最近變更
 
-- **首次啟動合規流程**：3 份合併文件（①EULA + 隱私政策、②第三方開源合規聲明 + 補充免責與風險告知、③使用教學 + 適用地區與法律管轄），每份都**必須滑到最底部並單獨勾選**，全部完成後再選年齡層（舊用戶升級後同樣會走一次）。
-- **未成年人時段限制**：未滿 18 歲僅能在週五、週六、週日與法定假日 **20:00–21:00** 啟動遊戲；2026 年假日依中國國務院通知逐日列出，補班日以工作日處理。
-- **免責聲明寫完整**：存檔遺失、裝置發熱、第三方封鎖帳號、服務停止等風險都明確告知。
-- **同時包含**：首頁卡片不再卡在載入、AI 聯網搜尋可用、匯入改走實例目錄、已移除當機自動修復。
+完整變更：[CHANGELOG.md](../../CHANGELOG.md)。
 
 ## 🛠️ 主要功能
 

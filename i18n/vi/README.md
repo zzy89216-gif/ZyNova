@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 đã phát hành (bản tuân thủ toàn cầu).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Trình khởi chạy **Minecraft: Java Edition** trên Android, phát triển đ
 
 Ý tưởng gọn lại một câu: **ít chạm hơn**. Thay vì bày ra hai chục cài đặt, trình khởi chạy tự quyết trước và chỉ hỏi khi thật sự không quyết được.
 
-## ✨ Có gì mới trong 28.1.0
+## ✨ Thay đổi gần đây
 
-- **Quy trình tuân thủ khi mở lần đầu**: ba tài liệu gộp (① EULA + chính sách quyền riêng tư, ② thông báo mã nguồn mở bên thứ ba + miễn trừ và rủi ro, ③ hướng dẫn + khu vực và thẩm quyền pháp lý). Mỗi tài liệu phải **cuộn hết xuống và tích riêng**; sau đó chọn nhóm tuổi (người dùng cũ cũng gặp lại một lần sau khi cập nhật).
-- **Khung giờ cho người chưa thành niên**: dưới 18 tuổi chỉ được khởi chạy vào thứ Sáu, thứ Bảy, Chủ nhật và ngày lễ theo quy định, từ **20:00 đến 21:00**. Ngày lễ 2026 liệt kê theo lịch Quốc vụ viện Trung Quốc; ngày đi làm bù tính như ngày làm việc.
-- **Miễn trừ trách nhiệm nói rõ**: mất dữ liệu lưu, máy nóng, bị bên thứ ba khoá, dịch vụ ngừng — đều được nêu minh bạch.
-- **Ngoài ra**: trang chủ không còn treo khi tải, tìm kiếm web của AI chạy được, dữ liệu nhập vào đúng thư mục instance, đã bỏ tự sửa lỗi sau crash.
+Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Tính năng
 

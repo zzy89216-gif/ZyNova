@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 est disponible (version conforme à l'international).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -30,12 +27,9 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 - Les joueurs de modpacks : des dizaines de mods, des dépendances en cascade
 - Ceux qui savent seulement dire « ça plante » : donner le log à l'IA va plus vite que fouiller un forum
 
-## ✨ Nouveautés de la 28.1.0
+## ✨ Changements récents
 
-- **Parcours de conformité au premier lancement** : trois documents regroupés (① CLUF + politique de confidentialité, ② mentions open source de tiers + avertissements et risques, ③ tutoriel + zones couvertes et juridiction). Chacun doit être **fait défiler jusqu'en bas et validé séparément**, puis on choisit sa tranche d'âge (les utilisateurs existants repassent par là une fois).
-- **Créneau pour les mineurs** : moins de 18 ans, lancement uniquement vendredi, samedi, dimanche et jours fériés légaux, de **20 h à 21 h**. Les jours fériés 2026 suivent le calendrier du Conseil des affaires d'État chinois ; les journées de rattrapage comptent comme travaillées.
-- **Avertissements explicites** : perte de sauvegarde, chauffe de l'appareil, bannissement par un tiers, arrêt d'un service — tout est annoncé.
-- **Également** : la page d'accueil ne reste plus bloquée en chargement, la recherche web de l'IA fonctionne, les imports vont dans le dossier de l'instance, la réparation automatique après crash a été retirée.
+Changements complets : [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Fonctionnalités
 

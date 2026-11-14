@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 a fost lansat (versiune conformă la nivel global).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Un launcher **Minecraft: Java Edition** pentru Android, întreținut independent
 
 Ideea: **mai puține atingeri**. În loc să-ți arunce în față douăzeci de setări, launcherul decide întâi și întreabă doar când chiar nu se poate decide.
 
-## ✨ Noutăți în 28.1.0
+## ✨ Modificări recente
 
-- **Fluxul de conformitate la prima pornire**: trei documente unite (① EULA + politica de confidențialitate, ② notificare open source pentru terți + limitări de răspundere și riscuri, ③ tutorial + regiuni și jurisdicție). Fiecare trebuie **derulat până la capăt și bifat separat**; apoi alegi grupa de vârstă (utilizatorii existenți trec și ei o dată după actualizare).
-- **Interval orar pentru minori**: sub 18 ani, jocul poate fi pornit doar vineri, sâmbătă, duminică și în zilele de sărbătoare legală, între **20:00 și 21:00**. Sărbătorile din 2026 urmează calendarul Consiliului de Stat al Chinei; zilele de recuperare se consideră lucrătoare.
-- **Limitările de răspundere scrise**: pierderea salvarilor, încălzirea dispozitivului, blocările aplicate de terți, oprirea serviciului — toate anunțate clar.
-- **De asemenea**: cardurile din pagina principală nu mai rămân blocate, căutarea web a AI funcționează, importurile merg în folderul instanței, repararea automată după crash a fost eliminată.
+Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Ce poate face
 

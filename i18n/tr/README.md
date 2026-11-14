@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 yayımlandı (küresel uyum sürümü).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Android için **Minecraft: Java Edition** başlatıcısı. ZalithLauncher2 kayna
 
 Fikir tek: **daha az dokunuş**. Yirmi ayarı önüne dökmek yerine önce kendisi karar veriyor, gerçekten karar veremediğinde soruyor.
 
-## ✨ 28.1.0 yenilikleri
+## ✨ Son değişiklikler
 
-- **İlk açılışta uyum akışı**: üç birleşik belge (① EULA + gizlilik politikası, ② üçüncü taraf açık kaynak bildirimi + sorumluluk reddi ve riskler, ③ kullanım kılavuzu + bölgeler ve yargı yetkisi). Her biri **sonuna kadar kaydırılıp ayrı ayrı işaretlenmeli**; ardından yaş grubu seçilir (mevcut kullanıcılar da güncellemeden sonra bir kez görür).
-- **Reşit olmayanlar için saat aralığı**: 18 yaş altı yalnızca cuma, cumartesi, pazar ve resmî tatillerde **20:00–21:00** arasında başlatabilir. 2026 tatilleri Çin Devlet Konseyi takvimine göre gün gün listelenir; telafi çalışma günleri iş günü sayılır.
-- **Sorumluluk reddi açıkça yazıldı**: kayıt kaybı, cihazın ısınması, üçüncü taraf yasakları, hizmetin kapanması — hepsi açıkça bildiriliyor.
-- **Ayrıca**: ana sayfa kartları yüklemede takılmıyor, yapay zekâ web araması çalışıyor, içe aktarma örnek klasörüne gidiyor, otomatik çökme onarımı kaldırıldı.
+Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Neler yapabilir
 

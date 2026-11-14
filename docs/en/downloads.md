@@ -14,3 +14,7 @@
 - **One-tap download on favorites and modpack search results needs no instance context**: the big button on a favorites
   card and the button next to the ♥ on a modpack result work straight from the home screen (installing into the current
   instance), without visiting an instance's resource manager first.
+- The "installed" marker on resource details **refreshes after an install** — no need to leave and re-enter. When filters
+  match no version you get an empty state with "Show all versions"; an empty search can be retried directly.
+- When every download source fails, the app lists what went wrong for each source and suggests checking the network or
+  switching the mirror on/off.

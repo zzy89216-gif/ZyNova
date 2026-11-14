@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 출시(글로벌 규정 준수 버전).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -30,12 +27,9 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 2. 첫 실행에서 약관 3종을 끝까지 읽고 각각 체크한 뒤 연령대 선택
 3. Microsoft 계정 로그인 → 버전 선택(또는 AI에게 설치 요청) → 실행
 
-## ✨ 28.1.0 업데이트
+## ✨ 최근 변경 사항
 
-- **첫 실행 규정 준수 절차**: 3개의 통합 문서(①EULA + 개인정보 처리방침, ②제3자 오픈소스 고지 + 면책·위험 고지, ③사용 안내 + 적용 지역 및 법적 관할). 각 문서를 **끝까지 스크롤하고 개별 체크**해야 다음으로 넘어가며, 완료 후 연령대를 고릅니다(기존 사용자도 업데이트 후 한 번).
-- **미성년자 시간 제한**: 만 18세 미만은 금·토·일 및 법정 공휴일 **20:00–21:00**에만 실행할 수 있습니다. 2026년 공휴일은 중국 국무원 통지에 따라 날짜별로 열거되며, 대체 근무일은 평일로 처리됩니다.
-- **면책 조항 명시**: 세이브 손실, 기기 발열, 제3자 계정 제재, 서비스 종료 같은 위험을 분명히 알립니다.
-- **함께**: 홈 카드가 로딩에서 멈추지 않고, AI 웹 검색이 동작하며, 가져오기는 인스턴스 폴더로, 크래시 자동 복구는 제거되었습니다.
+전체 변경 사항: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ 주요 기능
 

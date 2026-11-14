@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 lançado (versão em conformidade global).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -30,12 +27,9 @@ A ideia é simples: **menos toques**. Em vez de despejar vinte configurações n
 2. No primeiro uso, leia os três documentos até o fim, marque cada um e escolha a faixa etária
 3. Entre com a conta Microsoft, escolha ou instale uma versão, aperte jogar
 
-## ✨ Novidades da 28.1.0
+## ✨ Mudanças recentes
 
-- **Fluxo de conformidade no primeiro uso**: três documentos unificados (① EULA + política de privacidade, ② avisos de código aberto de terceiros + isenções e riscos, ③ tutorial + regiões atendidas e foro). Cada um precisa ser **rolado até o fim e marcado separadamente**; depois você escolhe a faixa etária (quem já usa o app passa por isso uma vez).
-- **Janela de horário para menores**: menores de 18 anos só podem iniciar o jogo às sextas, sábados, domingos e feriados nacionais, das **20h às 21h**. Os feriados de 2026 seguem o calendário do Conselho de Estado chinês; dias de compensação contam como úteis.
-- **Isenções escritas sem rodeios**: perda de save, aquecimento do aparelho, banimento por terceiros, encerramento de serviço — tudo avisado.
-- **Também**: os cards da tela inicial não travam mais no carregamento, a busca na web da IA funciona, a importação vai para a pasta da instância e a correção automática de crash foi removida.
+Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ O que faz
 

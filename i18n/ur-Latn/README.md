@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 jari ho gaya (global compliance build).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -24,12 +21,9 @@ Android ke liye **Minecraft: Java Edition** launcher. ZalithLauncher2 ke code se
 
 Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pehle khud faisla karta hai, aur sirf tab poochta hai jab waqai faisla na ho sake.
 
-## ✨ 28.1.0 mein naya
+## ✨ Haal ki tabdeeliyan
 
-- **Pehli baar chalane par compliance flow**: teen documents (① EULA + privacy policy, ② third-party open source notice + disclaimers aur risks, ③ tutorial + regions aur legal jurisdiction). Har ek ko **aakhir tak scroll karke alag se tick** karna hoga; phir age group chuniye (purane users bhi update ke baad ek baar ye dekhenge).
-- **Na-baalighon ke liye waqt**: 18 se kam umar wale sirf Juma, Hafta, Itwaar aur sarkari chhuttiyon mein **20:00–21:00** game chala sakte hain. 2026 ki chhutiyan Chinese State Council calendar ke mutabiq din-ba-din di gayi hain; make-up working days ko working day mana jayega.
-- **Disclaimers poori tarah likhe gaye**: save ka nuqsan, device garam hona, third-party ban, service band hona — sab wazeh.
-- **Iske ilawa**: home cards loading par atakte nahi, AI web search chalta hai, import instance folder mein jata hai, crash ke baad auto-fix hata diya gaya.
+Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Kya kar sakta hai
 

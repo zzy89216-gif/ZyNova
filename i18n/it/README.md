@@ -10,10 +10,7 @@
 
 # ZyNova
 
-> ⭐ **ZyNova 28.1.0 è disponibile (versione conforme a livello globale).**
->
 > 📌 **Current release: 28.2.1** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
-
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
@@ -30,12 +27,9 @@ L'idea è una sola: **meno tocchi**. Invece di mostrare venti impostazioni, il l
 2. Al primo avvio leggi i tre documenti fino in fondo, spunta ognuno e scegli la fascia d'età
 3. Accedi con l'account Microsoft, scegli o installa una versione, avvia
 
-## ✨ Novità della 28.1.0
+## ✨ Modifiche recenti
 
-- **Procedura di conformità al primo avvio**: tre documenti uniti (① EULA + informativa privacy, ② avvisi open source di terzi + esoneri e rischi, ③ guida + aree supportate e giurisdizione). Ognuno va **scorso fino in fondo e spuntato singolarmente**; poi si sceglie la fascia d'età (anche chi ha già l'app la rivede una volta).
-- **Fascia oraria per i minori**: sotto i 18 anni l'avvio è consentito solo venerdì, sabato, domenica e nei festivi, dalle **20:00 alle 21:00**. Le festività 2026 seguono il calendario del Consiglio di Stato cinese; i giorni di recupero valgono come lavorativi.
-- **Esoneri espliciti**: perdita dei salvataggi, surriscaldamento, ban da terzi, chiusura di un servizio — tutto dichiarato.
-- **Inoltre**: la home non resta più bloccata sul caricamento, la ricerca web dell'IA funziona, le importazioni finiscono nella cartella dell'istanza, rimossa la riparazione automatica dei crash.
+Modifiche complete: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Funzioni
 
