@@ -145,6 +145,16 @@ android {
             isReturnDefaultValues = true
         }
     }
+
+    sourceSets {
+        getByName("test") {
+            //单元测试跑在纯 JVM 上，默认拿不到 APK 里的 assets：
+            //org.jackhuang.hmcl.util.versioning.GameVersionNumber 的静态初始化会读
+            //classpath 上的 /assets/game/versions.txt 与 /assets/game/version-alias.csv，
+            //没挂上就会 NPE / ExceptionInInitializerError（VersionCompareTest 曾因此全红）。
+            resources.srcDirs("src/main/assets")
+        }
+    }
 }
 
 androidComponents {

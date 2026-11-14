@@ -21,19 +21,30 @@ package com.movtery.zalithlauncher.utils.file
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jackhuang.hmcl.util.DigestUtils
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
 class FileTest {
 
+    /**
+     * ⚠️ 以前这里写死了一个开发者本机的 Windows 路径（`F:\Download\...`），
+     * 在 CI / 任何别的机器上必然抛 IllegalArgumentException，等于没有测试。
+     * 现在用临时文件，断言两条 SHA-1 实现结果一致。
+     */
     @Test
     fun testCalculateFileSha1() {
-        val file = File("F:\\Download\\geckolib-forge-1.21.8-5.2.2.jar")
+        val file = File.createTempFile("sha1-test", ".bin").apply {
+            deleteOnExit()
+            writeBytes(ByteArray(64 * 1024) { index -> (index * 31 + 7).toByte() })
+        }
+
         runBlocking(Dispatchers.IO) {
-            val sha11 = calculateFileSha1(file)
-            println("sha1 1 = $sha11")
-            val sha12 = DigestUtils.digestToString("SHA-1", file.toPath())
-            println("sha1 2 = $sha12")
+            val expected = DigestUtils.digestToString("SHA-1", file.toPath())
+            val actual = calculateFileSha1(file)
+            println("sha1 (DigestUtils) = $expected")
+            println("sha1 (FileUtils)   = $actual")
+            assertTrue("SHA-1 should match, expected=$expected actual=$actual", expected.equals(actual, ignoreCase = true))
         }
     }
 }

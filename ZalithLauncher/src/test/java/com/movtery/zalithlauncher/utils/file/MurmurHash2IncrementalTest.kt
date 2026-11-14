@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.utils.file
 
 import org.apache.commons.codec.digest.MurmurHash2
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -26,13 +27,22 @@ import java.nio.file.Files
 
 class MurmurHash2IncrementalTest {
 
+    /**
+     * ⚠️ 以前写死开发者本机路径（`F:\Download\...`），CI 上必然 NoSuchFileException。
+     * 现在用临时文件，断言「增量计算」与「整块计算」结果一致。
+     */
     @Test
     fun testTwoWay() {
-        val file = File("F:\\Download\\geckolib-forge-1.21.8-5.2.2.jar")
+        val file = File.createTempFile("murmur-test", ".bin").apply {
+            deleteOnExit()
+            writeBytes(ByteArray(200_000) { index -> (index * 7 + 3).toByte() })
+        }
+
         val hash1 = way1(file)
-        println("Way 1 hash = $hash1")
         val hash2 = way2(file)
+        println("Way 1 hash = $hash1")
         println("Way 2 hash = $hash2")
+        assertEquals("incremental hash should match whole-buffer hash", hash1, hash2)
     }
 
     //Old
