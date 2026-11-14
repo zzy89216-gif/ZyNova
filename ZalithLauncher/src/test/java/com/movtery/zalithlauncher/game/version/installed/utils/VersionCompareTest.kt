@@ -39,7 +39,7 @@ class VersionCompareTest {
         assertTrue("1.16".isLowerVer("1.17"))
     }
 
-    @Ignore("原断言用占位版本名 "someRelease"（解析不出真实版本），期望值无意义；待人工核对后改成真实断言")
+    @Ignore("原断言用占位版本名 someRelease（解析不出真实版本），期望值无意义；待人工核对后改成真实断言")
     @Test
     fun testCompareLegacySnapshots() {
         assertTrue("20w14b".isBiggerVer("someRelease"))
