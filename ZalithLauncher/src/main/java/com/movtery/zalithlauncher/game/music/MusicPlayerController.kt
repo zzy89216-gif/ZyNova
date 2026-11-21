@@ -76,9 +76,17 @@ private const val DUCK_VOLUME = 0.2f
 object MusicPlayerController {
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    /** 当前曲库（由界面扫描后同步进来，播放器的上一首/下一首以它为准） */
-    var playlist: List<MusicTrack> by mutableStateOf(emptyList())
-        private set
+    /**
+     * 当前曲库（由界面扫描后同步进来，播放器的上一首/下一首以它为准）。
+     *
+     * ⚠️ 对外只暴露只读的 [playlist]，写入走 [setPlaylist] 或内部 `_playlist`：
+     * 如果写成 `var playlist ... private set`，Kotlin 仍会生成 JVM setter `setPlaylist(List)`，
+     * 和下面的 `fun setPlaylist(tracks)` 签名撞车（Platform declaration clash）。
+     */
+    private var _playlist: List<MusicTrack> by mutableStateOf(emptyList())
+
+    /** 当前曲库（只读） */
+    val playlist: List<MusicTrack> get() = _playlist
 
     /** 当前选中的曲目（可能还没开始播） */
     var currentTrack: MusicTrack? by mutableStateOf(null)
@@ -296,7 +304,7 @@ object MusicPlayerController {
      * 否则按「上次播放 → 第一首」的顺序重新选中，并把上次的进度恢复出来。
      */
     fun setPlaylist(tracks: List<MusicTrack>) {
-        playlist = tracks
+        _playlist = tracks
 
         val current = currentTrack
         if (current != null) {
@@ -420,7 +428,7 @@ object MusicPlayerController {
             positionMs = 0L
             MusicPreferences.clearLastPlayed()
         }
-        playlist = playlist.filterNot { it.fileName == track.fileName }
+        _playlist = _playlist.filterNot { it.fileName == track.fileName }
         if (playlist.isEmpty()) {
             player?.stop()
             isPrepared = false
