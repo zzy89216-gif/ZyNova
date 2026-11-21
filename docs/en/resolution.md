@@ -6,3 +6,7 @@ Settings → Renderer:
 - Fullscreen changes IME and back-key behavior on some devices.
 
 The launcher setting takes priority over in-game window size.
+
+When you drag the in-game **resolution** slider, touch / click coordinates follow the resolution that is actually
+applied: before, during and after the change, taps land where the on-screen items are, and the hotbar / virtual
+buttons stay clickable.
