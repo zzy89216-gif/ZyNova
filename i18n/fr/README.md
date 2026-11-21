@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -29,7 +29,9 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 
 ## ✨ Changements récents
 
-Les points clés de la version **28.2.4** (pré-version / build de test) :
+Les points clés de la version **28.3.0** (version stable) :
+
+Cette version stable regroupe tout le contenu des pré-versions précédentes (ces versions ont été retirées).
 
 - **Plusieurs téléchargements et installations en parallèle** : versions du jeu, modpacks et ressources peuvent être lancés en même temps ; progression, vitesse et annulation sont indépendantes pour chaque tâche. Un second clic sur la même cible affiche désormais un message au lieu de rester sans effet.
 - **Réorganisation des cartes d'accueil plus stable** : le glisser-déposer par appui long ne clignote plus et ne plante plus ; un glissement rapide échange les cartes une par une, et le glissement horizontal est pris en charge.

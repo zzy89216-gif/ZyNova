@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Pomysł jest jeden: **mniej kliknięć**. Zamiast wyrzucać na ekran dwadzieści
 
 ## ✨ Najnowsze zmiany
 
-**28.2.4** (wersja przedpremierowa / build testowy): najważniejsze zmiany.
+**28.3.0** (wersja stabilna): najważniejsze zmiany.
+
+Ta stabilna wersja zbiera całą zawartość poprzednich wersji przedpremierowych (zostały one usunięte).
 
 - **Kilka pobrań i instalacji naraz**: wersje gry, modpacki i zasoby można uruchamiać równolegle; każda z nich ma własny postęp, prędkość i anulowanie. Ponowne kliknięcie tego samego elementu pokazuje teraz komunikat zamiast nic nie robić.
 - **Stabilniejsze przeciąganie kart na stronie głównej**: przeciąganie po długim przytrzymaniu nie migocze i nie wysypuje aplikacji; przy szybkim przeciąganiu karty zamieniają się po jednej, a przeciąganie w poziomie też działa.

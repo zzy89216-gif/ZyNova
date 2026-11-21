@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -29,7 +29,9 @@ A ideia é simples: **menos toques**. Em vez de despejar vinte configurações n
 
 ## ✨ Mudanças recentes
 
-**28.2.4** (pré-lançamento / build de teste): os principais destaques.
+**28.3.0** (versão estável): os principais destaques.
+
+Esta versão estável reúne todo o conteúdo das versões de pré-lançamento anteriores (elas foram removidas).
 
 - **Vários downloads e instalações ao mesmo tempo**: versões do jogo, modpacks e recursos podem começar juntos; cada tarefa tem seu próprio progresso, velocidade e botão de cancelar. Tocar de novo no mesmo item agora mostra um aviso, em vez de não fazer nada.
 - **Reordenar os cartões da tela inicial ficou mais estável**: arrastar com toque longo não pisca mais nem fecha o app; ao arrastar rápido os cartões trocam de lugar um a um, e o arrasto na horizontal também funciona.

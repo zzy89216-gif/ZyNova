@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Ideea: **mai puține atingeri**. În loc să-ți arunce în față douăzeci de 
 
 ## ✨ Modificări recente
 
-**28.2.4** (pre-lansare / build de test): principalele noutăți.
+**28.3.0** (versiune stabilă): principalele noutăți.
+
+Această versiune stabilă reunește tot conținutul versiunilor preliminare anterioare (acestea au fost eliminate).
 
 - **Mai multe descărcări și instalări simultane**: versiunile jocului, modpack-urile și resursele pot porni în paralel; fiecare sarcină are propriul progres, viteză și buton de anulare. Dacă apeși din nou același element, apare acum un mesaj, nu mai rămâne fără reacție.
 - **Reordonarea cardurilor din ecranul principal e mai stabilă**: tragerea cu apăsare lungă nu mai pâlpâie și nu mai produce închideri; la tragere rapidă cardurile se schimbă unul câte unul, iar tragerea pe orizontală este și ea acceptată.

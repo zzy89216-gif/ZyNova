@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 
 ## ✨ സമീപകാല മാറ്റങ്ങൾ
 
-**28.2.4** (പ്രീ-റിലീസ് / ടെസ്റ്റ് ബിൽഡ്): പ്രധാന മാറ്റങ്ങൾ.
+**28.3.0** (സ്ഥിരമായ പതിപ്പ്): പ്രധാന മാറ്റങ്ങൾ.
+
+ഈ സ്ഥിരമായ പതിപ്പ് മുൻ പ്രീ-റിലീസുകളുടെ മുഴുവൻ ഉള്ളടക്കവും ഉൾപ്പെടുത്തുന്നു (ആ പതിപ്പുകൾ നീക്കം ചെയ്തു).
 
 - **ഒരേസമയം ഒന്നിലധികം ഡൗൺലോഡും ഇൻസ്റ്റാളും**: ഗെയിം പതിപ്പുകൾ, മോഡ്പാക്കുകൾ, റിസോഴ്സുകൾ ഒരുമിച്ച് തുടങ്ങാം; ഓരോ ജോലിക്കും സ്വന്തം പ്രോഗ്രസ്, വേഗത, റദ്ദാക്കൽ ഉണ്ട്. അതേ ഇനത്തിൽ വീണ്ടും അമർത്തിയാൽ ഇപ്പോൾ ഒരു അറിയിപ്പ് വരും, ഒന്നും സംഭവിക്കാതെ പോകില്ല.
 - **ഹോം സ്ക്രീനിലെ കാർഡുകൾ പുനഃക്രമീകരിക്കൽ കൂടുതൽ സ്ഥിരതയുള്ളത്**: ദീർഘനേരം അമർത്തി വലിച്ചിടുമ്പോൾ ഇനി വെട്ടിത്തിളങ്ങുന്നില്ല, ആപ്പ് അടയുന്നുമില്ല; വേഗത്തിൽ വലിച്ചിട്ടാലും ഓരോ കാർഡായി മാറും, തിരശ്ചീനമായി വലിക്കാനും കഴിയും.

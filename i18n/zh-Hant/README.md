@@ -10,10 +10,12 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+
+本版彙整先前全部預發行的內容；預發行 Release 已移除，僅保留正式版。
 
 ---
 
@@ -29,7 +31,7 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 
 ## ✨ 最近變更
 
-本版為 **28.2.4**（預發行版／測試版），重點如下：
+本版為 **28.3.0** 正式版（由 28.2.4 預發行版轉正），重點如下：
 
 - **可同時下載、安裝多個項目**：遊戲本體、整合包與資源能一次排進多個，各自有進度、速度與取消；重複點同一個目標會直接提示，不再默默沒反應。
 - **主頁卡片拖曳更穩**：長按拖曳換位不再閃爍、不再閃退；快速拖曳也能逐張換位，橫向拖曳同樣支援。

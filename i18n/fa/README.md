@@ -12,10 +12,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -25,7 +25,9 @@
 
 ## ✨ آخرین تغییرها
 
-**28.2.4** (نسخهٔ پیش‌انتشار / بیلد آزمایشی): تغییرهای اصلی.
+**28.3.0** (نسخهٔ پایدار): تغییرهای اصلی.
+
+این نسخهٔ پایدار همهٔ محتوای نسخه‌های پیش‌انتشار قبلی را در بر دارد (آن نسخه‌ها حذف شده‌اند).
 
 - **دانلود و نصب چند مورد به‌طور هم‌زمان**: نسخه‌های بازی، مادپک‌ها و منابع می‌توانند هم‌زمان شروع شوند؛ هر کار پیشرفت، سرعت و لغو خودش را دارد. اگر دوباره روی همان مورد بزنید، به‌جای بی‌واکنش ماندن، پیامی نمایش داده می‌شود.
 - **جابه‌جایی کارت‌های صفحهٔ اصلی پایدارتر شد**: کشیدن با نگه‌داشتن دیگر سوسو نمی‌زند و برنامه را نمی‌بندد؛ با کشیدن سریع کارت‌ها یکی‌یکی جابه‌جا می‌شوند و کشیدن افقی هم پشتیبانی می‌شود.

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Fikir tek: **daha az dokunuş**. Yirmi ayarı önüne dökmek yerine önce kendi
 
 ## ✨ Son değişiklikler
 
-**28.2.4** (ön sürüm / test yapısı): öne çıkan değişiklikler.
+**28.3.0** (kararlı sürüm): öne çıkan değişiklikler.
+
+Bu kararlı sürüm, önceki ön sürümlerin tüm içeriğini bir araya getirir (o sürümler kaldırıldı).
 
 - **Birden çok indirme ve kurulum aynı anda**: oyun sürümleri, mod paketleri ve kaynaklar paralel başlatılabilir; her görevin ilerlemesi, hızı ve iptali bağımsızdır. Aynı öğeye yeniden basıldığında artık sessiz kalmak yerine bir uyarı gösterilir.
 - **Ana sayfadaki kartları sıralama daha kararlı**: uzun basıp sürüklerken ekran titremiyor ve uygulama kapanmıyor; hızlı sürüklemede kartlar tek tek yer değiştirir, yatay sürükleme de desteklenir.

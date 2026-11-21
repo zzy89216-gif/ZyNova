@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -29,7 +29,9 @@
 
 ## ✨ Останні зміни
 
-**28.2.4** (попередня версія / тестова збірка): головні зміни.
+**28.3.0** (стабільна версія): головні зміни.
+
+Цей стабільний випуск об'єднує весь вміст попередніх попередніх версій (їх видалено).
 
 - **Кілька завантажень і встановлень одночасно**: версії гри, модпаки й ресурси можна запускати паралельно; у кожного завдання свій прогрес, швидкість і скасування. Повторне натискання на ту саму ціль тепер показує підказку, а не тишу.
 - **Перетягування карток на головній стало стабільнішим**: довге натискання з перетягуванням більше не мерехтить і не спричиняє вильотів; під час швидкого перетягування картки міняються по одній, підтримується й горизонтальне перетягування.

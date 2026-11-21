@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -29,7 +29,9 @@ L'idea è una sola: **meno tocchi**. Invece di mostrare venti impostazioni, il l
 
 ## ✨ Modifiche recenti
 
-**28.2.4** (pre-release / build di test): le novità principali.
+**28.3.0** (versione stabile): le novità principali.
+
+Questa versione stabile raccoglie tutti i contenuti delle versioni preliminari precedenti (che sono state rimosse).
 
 - **Più download e installazioni insieme**: versioni del gioco, modpack e risorse possono partire in parallelo; avanzamento, velocità e annullamento sono indipendenti per ogni attività. Toccando di nuovo lo stesso elemento ora compare un avviso, invece di non succedere nulla.
 - **Riordino delle schede della home più stabile**: il trascinamento con pressione lunga non sfarfalla più e non manda in crash; anche trascinando velocemente le schede si scambiano una alla volta, e il trascinamento orizzontale è supportato.

@@ -10,7 +10,7 @@
 **A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 [![Docs](https://img.shields.io/badge/Docs-78%20articles-blue)](docs/en/README.md)
 
 One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
@@ -51,20 +51,79 @@ If the fingerprint does not match, **do not install it** — download again from
 
 Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-## What's new in 28.2.4
+## What's new in 28.3.0
 
-**Pre-release (test build)** — for testing, not the stable line yet.
+**Stable release.** This version rolls up everything from the 28.2.2 / 28.2.3 / 28.2.4 pre-releases
+(those pre-release Releases have been removed) and ships it on the stable line: the built-in music player,
+device-aware renderer selection, 51 → 53 AI tools, and fixes for 19 issues.
 
-- **Download several things at once**: game versions, modpacks and resources can now be queued together,
-  each with its own progress / speed / cancel; the task panel shows them all. Several bugs where downloads
-  overwrote each other's task state are fixed too.
-- **Card reordering on the home page is stable**: long-press drag no longer flickers or crashes; the same feel as before.
-- **No stale "Return to game"**: the entry disappears as soon as the game exits, and tapping it in the brief
-  window before refresh no longer launches an empty shell that crashes.
-- **Music player improvements**: the progress bar and time labels are accurate and keep working while paused;
-  a compact now-playing bar in the top bar (title + play/pause + skip); same-name `.lrc` lyrics with auto-scroll
-  and highlighting, plus the current line in the notification; a denser library list where one tap switches tracks.
-- User docs updated: [Music player](docs/en/music-player.md), [Downloads & tasks](docs/en/downloads.md).
+### Fixes and improvements (#65–#83)
+
+- **Download / install several things at once** (#78): game versions, modpacks and resources can run in parallel,
+  each with its own progress / speed / cancel; tapping the same target again gives a clear notice. Forge / NeoForge
+  JVM phases run one at a time, shared-file writes are locked, cross-entry duplicate names are reported, and exports
+  use their own temp directory.
+- **Card reordering on the home page is stable** (#79): no flicker, no crash, fast drags swap one card at a time,
+  horizontal dragging supported.
+- **Music progress no longer freezes** (#82): pausing / buffering no longer stops position and duration forever;
+  the position stays visible while paused and unknown durations show `--:--`.
+- **No stale "Return to game"** (#83): the entry disappears as soon as the game exits; tapping it validates first
+  and never launches an empty `VMActivity` that crashes.
+- **Deleting a version no longer looks stuck** (#74): full-screen determinate progress (files / size / percentage /
+  current file), cancellable, and cancelling restores the original path when possible.
+- **Download / install prompts are global** (#72): success, modpack naming and permission prompts appear on any screen;
+  leaving the download page no longer cancels or suspends an install.
+- **Interrupted installs recover** (#73): a recovery record is written so the next start cleans up or rolls back
+  safely — no half-written jars and no permanent "installing" state.
+- **"About & Support" → "About & Plugins"** (#71), **multiplayer page title fixed** (#68), **about-page buttons
+  aligned** (#69 #70), **favorites top bar rework** (#76), **in-game notice card no longer full-width** (#66),
+  **extra mailbox removed** (#67), **no duplicate "follow global" renderer entry** (#65).
+- Task / cancel chain: "cancel all tasks" no longer breaks the whole background task system; cancelling is no longer
+  recorded as a failure; the "update loader" button mis-detection is fixed.
+
+### 🎵 Music player (new + improved)
+
+- Import local music (MP3 / AAC(M4A) / FLAC / OGG / Opus / WAV), list playback, previous / next, seek, remember last track and position.
+- Background playback: foreground service + notification controls; yields when another app takes audio focus, pauses on
+  headphone unplug; the in-game panel can control playback across processes.
+- **Lyrics**: same-name `.lrc` loaded automatically (UTF-8 / UTF-16 / GBK), with an in-page "Import lyrics"; current line
+  highlighted and auto-scrolled; the notification shows "previous line + current line"; lyrics are stored per full audio
+  file name (`Sunny.mp3.lrc`), so same-name different-extension tracks no longer overwrite each other.
+- **Top-bar mini player**: on non-music pages with a current track, a compact bar below the top bar (title + play/pause +
+  skip, tap to open the music page).
+- **Denser UI**: tighter library rows, highlighted current track, auto-scroll on track change; position and duration always
+  visible; landscape / short screens no longer overflow.
+
+### 🤖 AI
+
+- **AI web search**: the official DeepSeek search path is fixed; when unavailable it no longer fails silently — the result
+  states the reason and falls back to DuckDuckGo; the AI can also switch search engines and configure a key.
+- **Installs**: `install_game` can start several game installs at once and `install_status` lists all running installs plus
+  the latest result.
+- **Music tools**: new `music_status` / `music_control` (status, play / pause / skip / seek / play by title);
+  total tools **51 → 53**.
+
+### 🎨 Renderers
+
+- **Ironized Zink is back in full** (4 official presets + 12 advanced switches, OpenGL version independently selectable
+  3.3–4.6).
+- **Auto selection is device-aware**: checks whether the device can run it (MobileGlues needs GLES 3.2+, Ironized Zink needs
+  Vulkan), then picks the first version-compatible one in MobileGlues → GL4ES → Ironized Zink order; manual fallback uses
+  the same logic.
+- Renderer plugin docs completed (source, duplicate same-name entries are normal, identifier conflicts are hidden).
+
+### 🧩 In-game entry
+
+- A new **Multiplayer** shortcut in the in-game menu: collapses the menu, returns to the launcher and opens the Multiplayer
+  page directly (Terracotta and Sakura both live there) — **the game keeps running**.
+
+### ⬆️ Upstream sync
+
+- Android 8.x clipboard crash from a game thread, and the auto-JRE-selection crash.
+
+### 📄 Docs
+
+- User docs 78+78 articles and 25-language intro pages (Classical Chinese added) are all synced to 28.3.0 stable.
 
 ## Docs and feedback
 

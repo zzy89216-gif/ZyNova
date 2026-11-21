@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Trình khởi chạy **Minecraft: Java Edition** trên Android, phát triển đ
 
 ## ✨ Thay đổi gần đây
 
-**28.2.4** (bản phát hành trước / bản thử nghiệm): các thay đổi chính.
+**28.3.0** (bản chính thức): các thay đổi chính.
+
+Bản chính thức này tổng hợp toàn bộ nội dung của các bản phát hành trước (các bản đó đã được gỡ bỏ).
 
 - **Tải và cài nhiều thứ cùng lúc**: phiên bản game, modpack và tài nguyên có thể chạy song song; mỗi tác vụ có tiến độ, tốc độ và nút hủy riêng. Nhấn lại cùng một mục giờ sẽ hiện thông báo thay vì không phản ứng gì.
 - **Kéo thả thẻ ở trang chính ổn định hơn**: nhấn giữ rồi kéo không còn nhấp nháy hay thoát ứng dụng; kéo nhanh vẫn đổi từng thẻ một, và kéo ngang cũng được hỗ trợ.

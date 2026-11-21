@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ La idea: **menos toques**. En lugar de soltarte veinte ajustes, el lanzador deci
 
 ## ✨ Cambios recientes
 
-Novedades principales de la versión **28.2.4** (prelanzamiento / compilación de prueba):
+Novedades principales de la versión **28.3.0** (versión estable):
+
+Esta versión estable reúne todo el contenido de las versiones preliminares anteriores (esas versiones se han retirado).
 
 - **Varias descargas e instalaciones a la vez**: las versiones del juego, los modpacks y los recursos pueden iniciarse en paralelo; cada tarea tiene su propio progreso, velocidad y cancelación. Si vuelve a pulsar el mismo objetivo, ahora aparece un aviso en lugar de no hacer nada.
 - **Reordenar las tarjetas de inicio con más estabilidad**: arrastrar con pulsación larga ya no parpadea ni provoca cierres; al arrastrar rápido las tarjetas se intercambian una a una y también se admite el arrastre horizontal.

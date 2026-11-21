@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@
 
 ## ✨ Последни промени
 
-**28.2.4** (предварителна версия / тестова сборка): основните промени.
+**28.3.0** (стабилна версия): основните промени.
+
+Тази стабилна версия обединява цялото съдържание на предишните предварителни версии (те са премахнати).
 
 - **Няколко изтегляния и инсталации едновременно**: версии на играта, модпакове и ресурси могат да вървят паралелно; всяка задача има свой напредък, скорост и отказ. При повторно натискане на същата цел вече излиза съобщение, вместо да не се случва нищо.
 - **Подреждането на картите на началния екран е по-стабилно**: плъзгането със задържане вече не примигва и не срива приложението; при бързо плъзгане картите се разменят една по една, поддържа се и хоризонтално плъзгане.

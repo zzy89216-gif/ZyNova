@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **今本：28.2.4** · [沿革](../../CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **今本：28.3.0** · [沿革](../../CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -29,7 +29,9 @@
 
 ## ✨ 近事
 
-本版二十八點二點四，預行之本也，非正式之版。其要如左：
+本版二十八點三點零，正式之版也。其要如左：
+
+此本總前預行諸本之所有；預行諸本已刪，惟存正式之版。
 
 - **可並下數事**：本體、整合包、資源，一時並排，各具其程與其止；復點同物，則有告焉，不復默然。
 - **首頁卡片之遷，安而不搖**：向者拖之則閃，或至傾覆；今逐卡而移，縱橫皆可，閃與潰俱去。

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@
 
 ## ✨ Πρόσφατες αλλαγές
 
-**28.2.4** (προέκδοση / δοκιμαστική έκδοση): οι βασικές αλλαγές.
+**28.3.0** (σταθερή έκδοση): οι βασικές αλλαγές.
+
+Αυτή η σταθερή έκδοση συγκεντρώνει όλο το περιεχόμενο των προηγούμενων προεκδόσεων (αυτές αφαιρέθηκαν).
 
 - **Πολλαπλές λήψεις και εγκαταστάσεις ταυτόχρονα**: εκδόσεις του παιχνιδιού, modpacks και πόροι μπορούν να ξεκινούν παράλληλα· κάθε εργασία έχει δική της πρόοδο, ταχύτητα και ακύρωση. Αν πατήσετε ξανά το ίδιο στοιχείο, εμφανίζεται πλέον ειδοποίηση αντί να μη γίνεται τίποτα.
 - **Πιο σταθερή αναδιάταξη καρτών στην αρχική**: το σύρσιμο με παρατεταμένο πάτημα δεν τρεμοπαίζει πια και δεν κλείνει την εφαρμογή· με γρήγορο σύρσιμο οι κάρτες αλλάζουν θέση μία-μία, και υποστηρίζεται και οριζόντιο σύρσιμο.

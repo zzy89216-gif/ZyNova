@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengatura
 
 ## ✨ Perubahan terbaru
 
-**28.2.4** (pra-rilis / build uji): perubahan utama.
+**28.3.0** (versi stabil): perubahan utama.
+
+Versi stabil ini menggabungkan seluruh isi dari versi prarilis sebelumnya (versi tersebut telah dihapus).
 
 - **Beberapa unduhan dan pemasangan sekaligus**: versi game, modpack, dan sumber daya bisa dijalankan bersamaan; tiap tugas punya progres, kecepatan, dan pembatalan sendiri. Menekan item yang sama lagi kini menampilkan pemberitahuan, bukan diam saja.
 - **Menyusun ulang kartu di beranda lebih stabil**: tekan lama lalu seret tidak lagi berkedip atau membuat aplikasi tertutup; saat diseret cepat kartu bertukar satu per satu, dan seret horizontal juga didukung.

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -29,7 +29,9 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 
 ## ✨ 최근 변경 사항
 
-**28.2.4** (프리릴리스/테스트 빌드)의 주요 변경 사항입니다:
+**28.3.0** (정식 버전)의 주요 변경 사항입니다:
+
+이 버전은 이전 프리릴리스의 모든 내용을 통합한 정식 버전입니다(프리릴리스 릴리스는 삭제됨).
 
 - **여러 다운로드·설치를 동시에 진행**: 게임 본체, 모드팩, 리소스를 한꺼번에 시작할 수 있고 각 작업의 진행률·속도·취소가 독립적으로 동작합니다. 같은 대상을 다시 누르면 안내가 표시되어 조용히 무시되지 않습니다.
 - **홈 화면 카드 정렬 안정화**: 길게 눌러 끌어 옮길 때 화면 깜빡임과 앱 종료가 사라졌습니다. 빠르게 끌어도 한 장씩 자리를 바꾸며 가로 방향 끌기도 지원합니다.

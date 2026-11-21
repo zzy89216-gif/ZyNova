@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@
 
 ## ✨ การเปลี่ยนแปลงล่าสุด
 
-**28.2.4** (เวอร์ชันพรีรีลีส / บิลด์ทดสอบ): การเปลี่ยนแปลงสำคัญ
+**28.3.0** (เวอร์ชันเสถียร): การเปลี่ยนแปลงสำคัญ
+
+เวอร์ชันเสถียรนี้รวมเนื้อหาทั้งหมดของเวอร์ชันพรีรีลีสก่อนหน้า (เวอร์ชันเหล่านั้นถูกลบแล้ว)
 
 - **ดาวน์โหลดและติดตั้งหลายอย่างพร้อมกัน**: เวอร์ชันเกม ม็อดแพ็ก และทรัพยากรเริ่มพร้อมกันได้ แต่ละงานมีโปรเกรส ความเร็ว และปุ่มยกเลิกของตัวเอง กดซ้ำที่รายการเดิมจะมีการแจ้งเตือน ไม่เงียบหายอีกแล้ว
 - **ลากการ์ดบนหน้าหลักได้เสถียรขึ้น**: กดค้างแล้วลากไม่กระพริบและแอปไม่ปิดตัวเองอีก ลากเร็วก็สลับทีละใบ และรองรับการลากแนวนอนด้วย

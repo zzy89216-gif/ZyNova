@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Android 向けの **Minecraft: Java Edition** ランチャー。ZalithLauncher2 
 
 ## ✨ 最近の変更
 
-**28.2.4**（プレリリース版／テストビルド）の主な変更点です：
+**28.3.0**（正式版）の主な変更点です：
+
+本版はこれまでのプレリリースの内容をすべて統合した正式版です（プレリリース版は削除済み）。
 
 - **複数のダウンロードとインストールを同時に実行可能**：ゲーム本体、MODパック、リソースをまとめて開始でき、進捗・速度・キャンセルはタスクごとに独立します。同じ対象をもう一度押した場合はメッセージが出て、何も起きずに終わることはありません。
 - **ホーム画面のカード並べ替えを安定化**：長押ししてドラッグしても画面がちらつかず、クラッシュもしません。素早くドラッグしても 1 枚ずつ入れ替わり、横向きのドラッグにも対応します。

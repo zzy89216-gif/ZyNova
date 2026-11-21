@@ -12,10 +12,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -25,7 +25,9 @@
 
 ## ✨ أحدث التغييرات
 
-**28.2.4** (إصدار تجريبي / نسخة اختبار): أبرز التغييرات.
+**28.3.0** (إصدار مستقر): أبرز التغييرات.
+
+يجمع هذا الإصدار المستقر كل محتوى الإصدارات التجريبية السابقة (تمت إزالة تلك الإصدارات).
 
 - **تنزيل وتثبيت عدة عناصر في وقت واحد**: يمكن بدء إصدارات اللعبة وحزم المودات والموارد معًا، ولكل مهمة تقدّمها وسرعتها وخيار إلغائها. وإذا ضغطت على العنصر نفسه مرة أخرى فسيظهر تنبيه بدلًا من ألّا يحدث شيء.
 - **ترتيب بطاقات الشاشة الرئيسية أصبح أكثر استقرارًا**: السحب بالضغط المطوّل لم يعد يومض أو يُغلق التطبيق؛ وعند السحب السريع تتبادل البطاقات واحدة تلو الأخرى، ويدعم السحب الأفقي أيضًا.

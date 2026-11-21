@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Das Prinzip: **weniger tippen**. Erst entscheiden, dann fragen — und nur dort 
 
 ## ✨ Aktuelle Änderungen
 
-Die wichtigsten Neuerungen in **28.2.4** (Vorabversion / Testbuild):
+Die wichtigsten Neuerungen in **28.3.0** (stabile Version):
+
+Diese stabile Version bündelt alle Inhalte der bisherigen Vorabversionen (die Vorabversionen wurden entfernt).
 
 - **Mehrere Downloads und Installationen gleichzeitig**: Spielversionen, Modpacks und Ressourcen lassen sich parallel starten; Fortschritt, Geschwindigkeit und Abbrechen gelten für jede Aufgabe separat. Ein erneuter Klick auf dasselbe Ziel zeigt jetzt einen Hinweis, statt still nichts zu tun.
 - **Stabileres Umsortieren der Startseiten-Karten**: Langes Drücken und Ziehen flackert nicht mehr und stürzt nicht ab; auch schnelles Ziehen tauscht die Karten einzeln, waagerechtes Ziehen wird ebenfalls unterstützt.

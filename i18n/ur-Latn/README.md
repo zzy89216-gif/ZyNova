@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.4** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
+[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
 
 ---
 
@@ -23,7 +23,9 @@ Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pe
 
 ## ✨ Haal ki tabdeeliyan
 
-**28.2.4** (pre-release / test build): aham tabdeeliyan.
+**28.3.0** (stable version): aham tabdeeliyan.
+
+Yeh stable version pichhle pre-releases ka poora content ek saath laati hai (woh releases hata di gayi hain).
 
 - **Ek saath kai downloads aur installs**: game versions, modpacks aur resources ek saath shuru ho sakte hain; har task ka apna progress, speed aur cancel hota hai. Usi item par dobara dabane se ab paigham dikhta hai, khamoshi nahi.
 - **Home screen ke cards ki tarteeb zyada mustahkam**: long-press karke kheenchnay se screen ab jhapki nahi maarti aur app band nahi hota; tez kheenchnay par cards ek ek karke badalte hain, aur horizontal kheenchna bhi kaam karta hai.
