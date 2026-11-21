@@ -198,11 +198,20 @@ private fun VersionConfigs(
         //⚠️ 必须显式提供一个「跟随全局」条目（id 为空字符串）：配置里 `renderer = ""`
         //的含义就是「用全局设置」，但此前列表里没有这一项，用户一旦给某个实例指定过渲染器
         //就再也切不回跟随全局了。
+        //
+        //⚠️ 这里**不能**再用 getIDList() 包一层：那个辅助函数自己会往 0 号位塞一条
+        //「跟随全局」，外面再手动 add 一条就变成了两条重复项（议题 #65）。
         val renderers = Renderers.getRenderersForSelection()
         val followGlobalName = stringResource(R.string.versions_config_renderer_follow_global)
         val renderersIdList = buildList {
             add(IDItem("", followGlobalName))
-            addAll(getIDList(renderers) { IDItem(it.getUniqueIdentifier(), it.getRendererName()) })
+            renderers.forEach { renderer ->
+                val id = renderer.getUniqueIdentifier()
+                //防御：第三方渲染器插件若返回空标识符，会和「跟随全局」撞成同一项
+                if (id.isNotEmpty()) {
+                    add(IDItem(id, renderer.getRendererName()))
+                }
+            }
         }
         ListSettingsCard(
             modifier = Modifier.fillMaxWidth(),

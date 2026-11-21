@@ -63,7 +63,7 @@ Networks in China: mirrors are used on demand and fall back to the official sour
 
 User docs: [English](docs/en/README.md) · [中文](docs/zh/README.md) ｜ [Changelog](CHANGELOG.md) ｜ [Third-party notices](THIRD_PARTY_NOTICES.md) ｜ [Licenses](docs/en/licenses.md) ｜ Development and releases: [AGENTS.md](AGENTS.md) · [HANDOFF.md](HANDOFF.md)
 
-Feedback: [Issues](https://github.com/zzy89216-gif/ZyNova/issues) · [Discord](https://discord.gg/QwPpZQHrTa) · [X](https://x.com/ZyNovaProject) ｜ Mail: <ZyNovaLauncher@163.com> · <ZyNovaLauncher@outlook.com> ｜ Sponsor: <https://afdian.com/a/hizzy>
+Feedback: [Issues](https://github.com/zzy89216-gif/ZyNova/issues) · [Discord](https://discord.gg/QwPpZQHrTa) · [X](https://x.com/ZyNovaProject) ｜ Mail: <ZyNovaLauncher@outlook.com> ｜ Sponsor: <https://afdian.com/a/hizzy>
 
 ## License
 

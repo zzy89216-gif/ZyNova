@@ -50,12 +50,11 @@ A：玻璃只有一层背景模糊、没有任何常驻动画。仍卡的话到
 A：GitHub Issues 选对应模板；不确定选「其他 / 不确定」，或先来 Discord。
 
 **Q：除了 GitHub 和 Discord，怎么联系你们？**
-A：两个邮箱，按你所在的生态挑一个发：
+A：项目邮箱只有一个，国内、海外都用它：
 
 | 邮箱 | 面向 |
 |---|---|
-| <ZyNovaLauncher@163.com> | 国内生态（国内邮箱、QQ 邮箱都能发到这里） |
-| <ZyNovaLauncher@outlook.com> | 全球生态（海外用户、英文沟通） |
+| <ZyNovaLauncher@outlook.com> | 项目公开邮箱（国内邮箱、QQ 邮箱、海外邮箱都能发） |
 | <https://x.com/ZyNovaProject> | 官方 X 主账号（公告、版本动态） |
 
 写邮件时请附上：启动器版本（设置 → 关于）、游戏版本 + 加载器、复现步骤、日志链接。

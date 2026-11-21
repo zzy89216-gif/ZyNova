@@ -839,8 +839,12 @@ private fun GameInfoBox(
         modifier = modifier
     ) {
         BackgroundCard(
-            modifier = modifier,
+            //⚠️ 外层 modifier（align + padding）只能用在 AnimatedVisibility 上：
+            //以前同一个 modifier 又传给了卡片，padding 被叠加两次；
+            //并且卡片内层玻璃层默认 fillMaxWidth，会被撑到可用宽度——
+            //这张居中悬浮的提示卡看起来就像「异常拉伸」（议题 #66）。
             influencedByBackground = false,
+            fillContentWidth = false,
             shape = MaterialTheme.shapes.extraLarge
         ) {
             Row {

@@ -50,6 +50,12 @@ import com.movtery.zalithlauncher.ui.theme.onCardColor
 /**
  * 背景卡片组件，
  * 使用方式与原本的[Card]无异，但[BackgroundCard]配置了更舒适的背景颜色
+ *
+ * @param fillContentWidth 玻璃内容层是否铺满卡片宽度（默认 `true`）。
+ * 卡片本身被外部约束成定宽（设置页 / 列表项）时必须保持 `true`，否则短内容的卡片会出现
+ * 「玻璃层只铺了一半、右半边露出卡片底色」的接缝。
+ * **按内容收缩、居中悬浮的卡片要传 `false`**：内层的 `fillMaxWidth` 会把卡片顶到可用宽度，
+ * 看起来就像被异常拉伸（游戏内「游戏正在运行」提示卡，议题 #66）。
  */
 @Composable
 fun BackgroundCard(
@@ -63,6 +69,7 @@ fun BackgroundCard(
     elevation: CardElevation = CardDefaults.cardElevation(),
     blur: Int = AllSettings.backgroundBlur.state,
     border: BorderStroke? = null,
+    fillContentWidth: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
@@ -75,11 +82,12 @@ fun BackgroundCard(
         Column(
             //显式裁到卡片形状：模糊与动态高光都画在这一层上，
             //不能依赖 Card 的裁剪（阴影/elevation 下会出现方角溢出）
-            //⚠️ 必须 fillMaxWidth：这一层默认按**内容**宽度收缩，
+            //⚠️ 默认必须 fillMaxWidth：这一层默认按**内容**宽度收缩，
             //「操作审计」这种只有一个短句的卡片会出现「玻璃层只铺了一半、右半边露出卡片底色」的接缝，
             //看起来像卡片宽度不一致 / 文字跑出卡片。铺满后所有卡片宽度一致。
+            //只有「卡片本身就该按内容收缩」的场景（居中悬浮的提示卡）才关掉，见参数说明。
             modifier = Modifier
-                .fillMaxWidth()
+                .then(if (fillContentWidth) Modifier.fillMaxWidth() else Modifier)
                 .clip(shape)
                 .backgroundGlass(blur, colors.containerColor, influencedByBackground),
             content = content
@@ -90,6 +98,9 @@ fun BackgroundCard(
 /**
  * 背景卡片组件，
  * 使用方式与原本的[Card]无异，但[BackgroundCard]配置了更舒适的背景颜色
+ *
+ * @param fillContentWidth 同另一个重载：玻璃内容层是否铺满卡片宽度（默认 `true`）；
+ * 居中悬浮、按内容收缩的卡片要传 `false`。
  */
 @Composable
 fun BackgroundCard(
@@ -104,6 +115,7 @@ fun BackgroundCard(
     elevation: CardElevation = CardDefaults.cardElevation(),
     blur: Int = AllSettings.backgroundBlur.state,
     border: BorderStroke? = null,
+    fillContentWidth: Boolean = true,
     onClick: () -> Unit,
     enabled: Boolean = true,
     content: @Composable @UiComposable ColumnScope.() -> Unit
@@ -134,9 +146,10 @@ fun BackgroundCard(
         interactionSource = interactionSource,
     ) {
         Column(
-            //同上：玻璃层要铺满整张卡片，否则短内容的卡片会出现半宽接缝
+            //同上：玻璃层要铺满整张卡片，否则短内容的卡片会出现半宽接缝；
+            //居中悬浮、按内容收缩的卡片才传 fillContentWidth = false。
             modifier = Modifier
-                .fillMaxWidth()
+                .then(if (fillContentWidth) Modifier.fillMaxWidth() else Modifier)
                 .clip(shape)
                 .backgroundGlass(blur, colors.containerColor, influencedByBackground),
             content = content

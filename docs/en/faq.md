@@ -24,12 +24,11 @@ turn "background blur" down or set "background opacity" to 100% (blur is skipped
 **Logs private?** They may contain IDs and paths; review before sharing.
 
 **How can I reach you outside GitHub and Discord?**
-Two mailboxes — pick the one that matches your ecosystem:
+There is only one project mailbox, and it works everywhere:
 
 | Mailbox | For |
 |---|---|
-| <ZyNovaLauncher@163.com> | China ecosystem (Chinese mailboxes incl. QQ Mail) |
-| <ZyNovaLauncher@outlook.com> | Global ecosystem (overseas users, English) |
+| <ZyNovaLauncher@outlook.com> | The single public project mailbox (Chinese mailboxes, QQ Mail and overseas mailboxes all work) |
 | <https://x.com/ZyNovaProject> | Official X account (announcements, release news) |
 
 Please include the launcher version (Settings → About), game version + loader, reproduction steps and a log link.

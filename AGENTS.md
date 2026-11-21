@@ -21,7 +21,7 @@
 | 构建 | JDK 17 + Android SDK/NDK，`./gradlew ZalithLauncher:assembleRelease` |
 | 核心原则 | **Context First. Less Steps.** 能自动判断就不让用户选；能一步就别拆两步 |
 | 官方渠道 | GitHub <https://github.com/zzy89216-gif/ZyNova> · Discord <https://discord.gg/QwPpZQHrTa> · X（主账号）<https://x.com/ZyNovaProject> |
-| 联系邮箱 | 国内生态 <ZyNovaLauncher@163.com> · 全球生态 <ZyNovaLauncher@outlook.com> |
+| 联系邮箱 | <ZyNovaLauncher@outlook.com>（唯一公开项目邮箱） |
 
 ## 二、当前状态（写这份文档时的事实）
 

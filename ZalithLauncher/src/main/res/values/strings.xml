@@ -1376,8 +1376,7 @@
     <string name="about_launcher_title">About Launcher</string>
     <string name="about_contact_title">Contact &amp; Follow</string>
     <string name="about_contact_x">Official X (main account)</string>
-    <string name="about_contact_email_cn">China ecosystem email</string>
-    <string name="about_contact_email_global">Global ecosystem email</string>
+    <string name="about_contact_email">Project email</string>
     <string name="about_contact_copied">Copied to clipboard</string>
     <string name="about_mascot_title">无聊的克林</string>
     <string name="about_mascot_tag">Mascot</string>

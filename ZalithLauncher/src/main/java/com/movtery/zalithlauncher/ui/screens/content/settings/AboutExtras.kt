@@ -111,11 +111,14 @@ fun MascotRow(modifier: Modifier = Modifier) {
 }
 
 /**
- * 「联系与关注」分组：官方 X + 两个生态邮箱。
+ * 「联系与关注」分组：官方 X + 项目公开邮箱。
  *
  * 交互约定（议题 #50）：
  * - 点按：X 打开浏览器；邮箱调起邮件 App，没有邮件 App 时退回复制；
- * - 长按：复制到剪贴板并 Toast 提示（三项都支持）。
+ * - 长按：复制到剪贴板并 Toast 提示（每一项都支持）。
+ *
+ * ⚠️ 项目公开邮箱只保留一个（议题 #67：移除国内特供的 163 邮箱，统一到唯一项目邮箱），
+ * 不要再加回「按生态分邮箱」的双入口。
  */
 @Composable
 fun ContactSection(
@@ -124,8 +127,7 @@ fun ContactSection(
 ) {
     val context = LocalContext.current
     val xUrl = "https://x.com/ZyNovaProject"
-    val mailCn = "ZyNovaLauncher@163.com"
-    val mailGlobal = "ZyNovaLauncher@outlook.com"
+    val mailProject = "ZyNovaLauncher@outlook.com"
 
     SettingsCard(
         modifier = modifier,
@@ -155,17 +157,10 @@ fun ContactSection(
                 )
                 ContactItem(
                     icon = painterResource(R.drawable.ic_link),
-                    title = stringResource(R.string.about_contact_email_cn),
-                    value = mailCn,
-                    onClick = { openMail(context, mailCn) },
-                    onLongClick = { copyToClipboard(context, mailCn) }
-                )
-                ContactItem(
-                    icon = painterResource(R.drawable.ic_link),
-                    title = stringResource(R.string.about_contact_email_global),
-                    value = mailGlobal,
-                    onClick = { openMail(context, mailGlobal) },
-                    onLongClick = { copyToClipboard(context, mailGlobal) }
+                    title = stringResource(R.string.about_contact_email),
+                    value = mailProject,
+                    onClick = { openMail(context, mailProject) },
+                    onLongClick = { copyToClipboard(context, mailProject) }
                 )
             }
         }

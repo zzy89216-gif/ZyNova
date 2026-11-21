@@ -10,7 +10,7 @@ Simplified Chinese and English live at the repository root ([README.md](../READM
 
 | 语言 / Language | 目录 / Folder | 说明 / Notes |
 |---|---|---|
-| 简体中文 | [README.md](../README.md) | 主页面，含国内生态说明 |
+| 简体中文 | [README.md](../README.md) | 主页面（项目总览） |
 | English | [README_EN.md](../README_EN.md) | — |
 | 繁體中文 | [zh-Hant](zh-Hant/README.md) | 台灣／香港用語 |
 | 日本語 | [ja](ja/README.md) | — |

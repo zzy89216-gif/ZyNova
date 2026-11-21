@@ -1531,8 +1531,7 @@
     <string name="home_card_empty">Ainda não há nada aqui</string>
     <string name="about_contact_title">Contato e redes</string>
     <string name="about_contact_x">X oficial (conta principal)</string>
-    <string name="about_contact_email_cn">E-mail do ecossistema chinês</string>
-    <string name="about_contact_email_global">E-mail do ecossistema global</string>
+    <string name="about_contact_email">E-mail do projeto</string>
     <string name="about_contact_copied">Copiado para a área de transferência</string>
     <string name="about_mascot_tag">Mascote</string>
     <string name="about_mascot_text">Mascote do ZyNova</string>

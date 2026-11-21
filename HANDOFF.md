@@ -15,7 +15,7 @@
 - **GitHub 仓库**：<https://github.com/zzy89216-gif/ZyNova>（分支 `main`）
 - **Discord**：<https://discord.gg/QwPpZQHrTa>（**永久邀请**，Discord API 校验 `expires_at = null`）
 - **官方 X（主账号）**：<https://x.com/ZyNovaProject>
-- **邮箱**：国内生态 <ZyNovaLauncher@163.com>；全球生态 <ZyNovaLauncher@outlook.com>
+- **邮箱**：<ZyNovaLauncher@outlook.com>（唯一公开项目邮箱）
 - **包名**：`com.zynova.launcher`
 - **namespace**：仍为 `com.movtery.zalithlauncher`，**不要改 namespace**，否则要改几百个文件的 package 声明
 - **核心原则**：**Context First. Less Steps.**
@@ -3336,4 +3336,4 @@ surface 重建后渲染状态未恢复、窗口引用计数多算）；
 
 ### 下次发版要做的
 已转到 Issue 跟踪，不在文档里维护清单：<https://github.com/zzy89216-gif/ZyNova/issues/50>。
-一句话：**下次打 APK 时，把官方 X 和两个邮箱写进「关于页」**。
+一句话：**下次打 APK 时，把官方 X 和项目邮箱写进「关于页」**。

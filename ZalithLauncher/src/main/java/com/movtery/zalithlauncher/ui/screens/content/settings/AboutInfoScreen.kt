@@ -255,7 +255,7 @@ fun AboutInfoScreen(
                 }
             }
 
-            //联系与关注（议题 #50）：官方 X + 国内/全球生态邮箱
+            //联系与关注（议题 #50）：官方 X + 项目公开邮箱（议题 #67 起只保留一个邮箱）
             animatedItem(scope) { yOffset ->
                 ContactSection(
                     modifier = Modifier.offset { IntOffset(x = 0, y = yOffset.roundToPx()) },

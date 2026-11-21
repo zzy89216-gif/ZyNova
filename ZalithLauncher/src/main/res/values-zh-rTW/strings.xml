@@ -1644,8 +1644,7 @@
     <string name="control_editor_menu_new_widget_joystick">新增搖桿</string>
     <string name="about_contact_title">聯絡與關注</string>
     <string name="about_contact_x">官方 X（主賬號）</string>
-    <string name="about_contact_email_cn">國內生態郵箱</string>
-    <string name="about_contact_email_global">全球生態郵箱</string>
+    <string name="about_contact_email">專案郵箱</string>
     <string name="about_contact_copied">已複製到剪貼簿</string>
     <string name="about_mascot_title">無聊的克林</string>
     <string name="about_mascot_tag">吉祥物</string>
