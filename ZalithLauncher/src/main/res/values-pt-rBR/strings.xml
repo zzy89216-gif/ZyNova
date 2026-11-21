@@ -1632,7 +1632,7 @@
     <string name="settings_renderer_version_label">Versão</string>
     <string name="settings_renderer_version_unknown">Desconhecida</string>
     <string name="settings_renderer_priority_title">Ordem de seleção automática</string>
-    <string name="settings_renderer_priority_summary">No modo Automático, o launcher usa o primeiro renderizador que suporta esta versão do jogo, na ordem MobileGlues, GL4ES.</string>
+    <string name="settings_renderer_priority_summary">No modo Automático, o launcher primeiro verifica o que o dispositivo consegue rodar e usa o primeiro renderizador que suporta esta versão do jogo, na ordem MobileGlues, GL4ES, Ironized Zink.</string>
     <string name="settings_renderer_advanced_title">Opções avançadas</string>
     <string name="settings_renderer_advanced_summary">São para quem sabe o que está fazendo. Valores errados causam artefatos, falhas ou pior desempenho. Na dúvida, não mexa.</string>
     <string name="settings_renderer_advanced_show">Mostrar opções avançadas</string>
