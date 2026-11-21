@@ -773,7 +773,7 @@
     <string name="settings_renderer_auto_title">自動</string>
     <string name="settings_renderer_auto_summary">依實例自動挑選合適的渲染器，不需要自己選。</string>
     <string name="settings_renderer_global_renderer_title">全域渲染器</string>
-    <string name="settings_renderer_global_renderer_summary">預設使用的渲染器。「自動」會依實例的 Minecraft 版本自動挑選（MobileGlues → Ironized Zink → GL4ES）；手動指定則一律優先採用你的選擇</string>
+    <string name="settings_renderer_global_renderer_summary">預設使用的渲染器。「自動」會依實例的 Minecraft 版本自動挑選（MobileGlues → GL4ES → Ironized Zink）；手動指定則一律優先採用你的選擇</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驅動程式</string>
     <string name="settings_renderer_env_title">環境變數：%s</string>
     <string name="settings_renderer_config_title">渲染器設定</string>
@@ -1669,7 +1669,7 @@
     <string name="settings_renderer_version_label">當前版本</string>
     <string name="settings_renderer_version_unknown">未知</string>
     <string name="settings_renderer_priority_title">自動選擇的順序</string>
-    <string name="settings_renderer_priority_summary">選「自動」時，會按 MobileGlues、Ironized Zink、GL4ES 的順序，挑第一個能跑你這個遊戲版本的渲染器。</string>
+    <string name="settings_renderer_priority_summary">選「自動」時，會先看裝置能不能跑（OpenGL ES 版本 / Vulkan），再按 MobileGlues、GL4ES、Ironized Zink 的順序，挑第一個能跑你這個遊戲版本的渲染器。</string>
     <string name="settings_renderer_advanced_title">高階引數</string>
     <string name="settings_renderer_advanced_summary">下面這些是給懂行的人調的。改錯可能破圖、閃退或者更卡，不確定就保持預設。</string>
     <string name="settings_renderer_advanced_show">展開高階引數</string>

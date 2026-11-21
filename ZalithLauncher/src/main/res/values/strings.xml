@@ -944,7 +944,7 @@
     <string name="settings_tab_control_manage">Key Layouts</string>
     <string name="settings_tab_info_about">About &amp; Support</string>
     <string name="settings_renderer_global_renderer_title">Global Renderer</string>
-    <string name="settings_renderer_global_renderer_summary">Renderer used by default. Auto picks one that supports each instance\'s Minecraft version (MobileGlues → Ironized Zink → GL4ES); choosing a specific renderer always takes priority</string>
+    <string name="settings_renderer_global_renderer_summary">Renderer used by default. Auto checks what the device can run and picks one that supports each instance\'s Minecraft version (MobileGlues → GL4ES → Ironized Zink); choosing a specific renderer always takes priority</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan Driver</string>
     <string name="settings_renderer_env_title">Environment Variable: %s</string>
     <string name="settings_renderer_config_title">Renderer Configuration</string>
@@ -1722,7 +1722,7 @@
     <string name="settings_renderer_version_label">Version</string>
     <string name="settings_renderer_version_unknown">Unknown</string>
     <string name="settings_renderer_priority_title">Auto selection order</string>
-    <string name="settings_renderer_priority_summary">With Auto, the launcher picks the first renderer that supports this game version, in the order MobileGlues, Ironized Zink, GL4ES.</string>
+    <string name="settings_renderer_priority_summary">With Auto, the launcher first checks device capability (OpenGL ES version / Vulkan), then picks the first renderer that supports this game version, in the order MobileGlues, GL4ES, Ironized Zink.</string>
     <string name="settings_renderer_advanced_title">Advanced options</string>
     <string name="settings_renderer_advanced_summary">These are for people who know what they are doing. Wrong values can cause glitches, crashes or worse performance. Leave them alone if unsure.</string>
     <string name="settings_renderer_advanced_show">Show advanced options</string>
