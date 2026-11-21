@@ -42,6 +42,12 @@ import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 private const val TAG = "MusicPlayer"
@@ -112,6 +118,34 @@ object MusicPlayerController {
     var durationMs: Long by mutableStateOf(0L)
         private set
 
+    /**
+     * 当前曲目的歌词（空列表 = 没有歌词 / 刚切歌还没加载完）（议题 #80）。
+     *
+     * 解析在 IO 线程、赋值回主线程，所以界面直接读这个 Compose state 是安全的。
+     */
+    var lyrics: List<LyricLine> by mutableStateOf(emptyList())
+        private set
+
+    /** 当前唱到的歌词行下标；-1 = 没有歌词 / 还没到第一句 */
+    var currentLyricIndex: Int by mutableStateOf(-1)
+        private set
+
+    /** 当前曲目是否有可显示的歌词（异步加载，切歌后短时间内可能仍为 false） */
+    val hasLyrics: Boolean get() = lyrics.isNotEmpty()
+
+    /**
+     * 是否正在异步解析当前曲目的歌词（议题 #80 补丁）。
+     *
+     * 界面用它区分「加载中」和「确定没有歌词」，避免切歌瞬间闪一下「无歌词」的提示。
+     * 切歌 / reloadLyrics 时立即为 true，解析完成（无论有没有歌词）、失败或取消后回到 false。
+     */
+    var lyricsLoading: Boolean by mutableStateOf(false)
+        private set
+
+    /** 当前歌词行文本；null = 前奏中 / 没有歌词（通知栏复用） */
+    val currentLyricText: String?
+        get() = lyrics.getOrNull(currentLyricIndex)?.text?.takeIf { it.isNotBlank() }
+
     /** 需要展示给用户的错误（已本地化）；null 表示没有错误 */
     var lastError: String? by mutableStateOf(null)
         private set
@@ -130,6 +164,28 @@ object MusicPlayerController {
 
     private var appContext: Context? = null
     private var player: ExoPlayer? = null
+
+    /**
+     * 歌词异步加载作用域。
+     *
+     * 用 Main.immediate 而不是在 IO 上直接写 Compose state：`mutableStateOf` 的写入必须在主线程，
+     * 解析本身走 `withContext(Dispatchers.IO)`，解析完自动切回主线程再赋值。
+     *
+     * 作用域跟着单例活到进程结束（不是 Activity 作用域），所以 Activity 重建 / 页面销毁都不会取消
+     * 正在进行的加载；协程里只持有 application context，不存在泄漏。
+     */
+    private val lyricsScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    /** 正在进行的歌词加载；切歌时取消，避免旧文件的结果被写到新曲目上 */
+    private var lyricsLoadJob: Job? = null
+
+    /**
+     * 歌词加载代次：每次重置 / 重新加载自增。
+     *
+     * 协程回到主线程后先比对代次，再决定要不要写 state（含 [lyricsLoading]）：
+     * 快速连续切歌时，被取消的旧任务即使已经从 IO 返回，也不会把「加载完成」写到新曲目上。
+     */
+    private var lyricsLoadToken = 0
 
     /** 上次播放的曲目/进度：第一次拿到曲库时用来恢复，恢复成功后清空 */
     private var pendingRestoreFileName: String? = null
@@ -194,16 +250,31 @@ object MusicPlayerController {
         }
     }
 
+    /**
+     * 进度轮询（议题 #82）。
+     *
+     * 旧实现在 `!exo.isPlaying` 分支里更新完 position 就 `return`，**没有重新 postDelayed**：
+     * 只要第一次 tick 落在「还在缓冲 / 刚被暂停」上，这条轮询就永久停摆，
+     * 直到用户再触发一次 startPlayback —— 表现就是进度条不动、时间不走、看不到时长。
+     *
+     * 现在：
+     * - 每一 tick 都刷新 position / duration（position 不超过已知 duration）；
+     * - 只要「用户要播放」（playRequested，含缓冲中）或播放器真的在出声，就排下一 tick；
+     * - 真正暂停 / 停止时由 [pauseInternal] / [stop] 取消轮询并刷新一次快照，不会在后台空转；
+     * - 只有歌词行变化才刷新通知，不跟着 500ms 节拍无条件刷（避免通知栏闪烁 / 耗电）。
+     */
     private val progressRunnable = object : Runnable {
         override fun run() {
+            //player 为 null 只可能出现在初始化之前，而轮询只会在 startPlayback 之后才被排期；
+            //这里直接结束，不会留下空转的 tick（没有任何地方会再 post 它）
             val exo = player ?: return
-            if (!exo.isPlaying) {
-                positionMs = exo.currentPosition.coerceAtLeast(0L)
-                return
-            }
-            positionMs = exo.currentPosition.coerceAtLeast(0L)
-            val duration = exo.duration
-            if (duration > 0L) durationMs = duration
+            val previousLyricIndex = currentLyricIndex
+
+            applyPositionAndDuration(exo)
+            updateCurrentLyricIndex()
+
+            val active = exo.isPlaying || playRequested
+            if (!active) return
 
             positionSaveTick++
             if (positionSaveTick >= PROGRESS_SAVE_TICK) {
@@ -212,6 +283,11 @@ object MusicPlayerController {
             }
             //游戏内远程面板（:game 进程）靠这个快照显示进度，每 500ms 同步一次
             savePlaybackSnapshot()
+
+            //歌词行切换才刷通知；内部还会写一次快照，重复一写换来「按行刷新」的实现简单可靠
+            if (currentLyricIndex != previousLyricIndex && playRequested) {
+                notifyPlaybackChanged()
+            }
             mainHandler.postDelayed(this, PROGRESS_UPDATE_INTERVAL_MS)
         }
     }
@@ -219,17 +295,30 @@ object MusicPlayerController {
     private val playerListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             this@MusicPlayerController.isPlaying = isPlaying
-            if (!isPlaying) {
-                positionMs = player?.currentPosition?.coerceAtLeast(0L) ?: positionMs
+            //暂停 / 缓冲开始 / 缓冲结束都刷新一次位置与时长，界面时间标签才不会停在旧值上（#82）
+            player?.let { exo ->
+                applyPositionAndDuration(exo)
+                updateCurrentLyricIndex()
             }
+            //真正开播时补排一次：轮询万一被某个边界情况取消，这里把它恢复回来
+            if (isPlaying) scheduleProgressUpdates()
             notifyPlaybackChanged()
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
             when (playbackState) {
                 Player.STATE_READY -> {
-                    val duration = player?.duration ?: 0L
-                    if (duration > 0L) durationMs = duration
+                    //READY 才拿得到可靠时长：刷新 position + duration，并确保进度轮询在跑
+                    player?.let { exo ->
+                        applyPositionAndDuration(exo)
+                        updateCurrentLyricIndex()
+                    }
+                    if (playRequested) scheduleProgressUpdates()
+                }
+                Player.STATE_BUFFERING -> {
+                    //缓冲中 isPlaying 可能已经是 false，轮询靠 playRequested 续着；这里再补一次刷新
+                    player?.let { exo -> applyPositionAndDuration(exo) }
+                    if (playRequested) scheduleProgressUpdates()
                 }
                 Player.STATE_ENDED -> {
                     //列表循环：一首放完自动下一首（单曲循环类似行为，只是会从第一首重新开始）
@@ -246,8 +335,13 @@ object MusicPlayerController {
             ) ?: error.message
             lastError = message
             Logger.warning(TAG, "Music playback failed", error)
+            //播放已失败，先撤掉进度轮询，避免残留 tick 再拿旧位置覆盖 state
+            mainHandler.removeCallbacks(progressRunnable)
+            positionSaveTick = 0
             playRequested = false
             isPlaying = false
+            //播放器已进入错误态，下次按播放需要重新 prepare（否则 play() 不会恢复声音）
+            isPrepared = false
             abandonAudioFocus()
             //播放失败后没有声音了，前台服务没有继续存在的理由：停掉服务，
             //错误信息留给界面展示（通知栏里挂一条「播放失败」没有意义）
@@ -317,6 +411,7 @@ object MusicPlayerController {
                 return
             }
             //当前曲目已经不在曲库里（被删了）：停掉播放与前台服务，下面重新选中
+            mainHandler.removeCallbacks(progressRunnable)
             player?.stop()
             isPrepared = false
             playRequested = false
@@ -335,6 +430,9 @@ object MusicPlayerController {
         } else {
             0L
         }
+        if (durationMs > 0L) positionMs = positionMs.coerceAtMost(durationMs)
+        //切歌（或从「无曲目」恢复）后重置并异步加载新曲目的边车歌词
+        loadLyricsFor(restored)
         pendingRestoreFileName = null
         pendingRestorePositionMs = 0L
         notifyPlaybackChanged()
@@ -394,6 +492,8 @@ object MusicPlayerController {
         isPlaying = false
         isPrepared = false
         positionMs = 0L
+        positionSaveTick = 0
+        updateCurrentLyricIndex()
         abandonAudioFocus()
         currentTrack?.let { MusicPreferences.saveLastPlayed(it.fileName, 0L) }
         if (context != null) {
@@ -402,15 +502,37 @@ object MusicPlayerController {
         notifyPlaybackChanged()
     }
 
-    /** 进度条拖动：装载前也能记住目标进度，等真正 prepare 时生效 */
+    /**
+     * 进度条拖动 / 远程面板 seek。
+     *
+     * 除了把目标位置写给播放器，还要：
+     * - 用已知时长夹紧目标（position 永远不超过 duration，UI 的 Slider 不会因为越界出问题）；
+     * - 立刻重算当前歌词行（暂停中拖动也要换行）；
+     * - 同步快照给游戏内远程面板；播放请求有效时刷新通知（暂停时不刷）。
+     */
     fun seekTo(targetPositionMs: Long) {
-        val target = targetPositionMs.coerceAtLeast(0L)
         val exo = player
+        //播放器里的 duration 只代表「已经装载的媒体项」：还没 prepare（isPrepared=false）时它可能是
+        //上一首的时长，拿来夹紧目标会把当前曲目的 duration 改错（自审修复）。
+        //此时沿用曲目元数据 / 上次已知值兜底。
+        val playerDuration = if (isPrepared) exo?.duration?.takeIf { it > 0L } else null
+        val knownDuration = playerDuration ?: durationMs
+        if (knownDuration > 0L) durationMs = knownDuration
+
+        val target = targetPositionMs.coerceAtLeast(0L).let { position ->
+            if (knownDuration > 0L) position.coerceAtMost(knownDuration) else position
+        }
         if (exo != null && exo.mediaItemCount > 0) {
             runCatching { exo.seekTo(target) }
+            //seek 后轮询若已停（暂停中 seek 再恢复播放的旧路径），补排一次保证位置会被读回来
+            if (playRequested) scheduleProgressUpdates()
         }
         positionMs = target
+        positionSaveTick = 0
+        updateCurrentLyricIndex()
         saveLastPlayed()
+        savePlaybackSnapshot()
+        if (playRequested) notifyPlaybackChanged()
     }
 
     /**
@@ -426,16 +548,20 @@ object MusicPlayerController {
             isPrepared = false
             durationMs = 0L
             positionMs = 0L
+            resetLyrics()
             MusicPreferences.clearLastPlayed()
         }
         _playlist = _playlist.filterNot { it.fileName == track.fileName }
         if (playlist.isEmpty()) {
+            mainHandler.removeCallbacks(progressRunnable)
             player?.stop()
             isPrepared = false
             playRequested = false
             isPlaying = false
             durationMs = 0L
             positionMs = 0L
+            positionSaveTick = 0
+            resetLyrics()
         }
         notifyPlaybackChanged()
     }
@@ -470,11 +596,16 @@ object MusicPlayerController {
     }
 
     private fun pauseInternal(abandonFocus: Boolean) {
+        //先按暂停前的位置刷新一次，再取消轮询：暂停后界面仍要显示「停在哪」（#82）
+        player?.let { exo ->
+            applyPositionAndDuration(exo)
+            updateCurrentLyricIndex()
+        }
         mainHandler.removeCallbacks(progressRunnable)
         playRequested = false
         player?.pause()
-        positionMs = player?.currentPosition?.coerceAtLeast(0L) ?: positionMs
         isPlaying = false
+        positionSaveTick = 0
         if (abandonFocus) {
             abandonAudioFocus()
         }
@@ -485,20 +616,35 @@ object MusicPlayerController {
     /** 装载曲目；成功返回 true。装载失败会把错误写进 [lastError] 并让界面显示 */
     private fun prepareTrack(track: MusicTrack, startPositionMs: Long): Boolean {
         val exo = player ?: return false
+        val previousFileName = currentTrack?.fileName
         currentTrack = track
         durationMs = track.durationMs
-        val startPosition = startPositionMs.coerceAtLeast(0L)
-        positionMs = startPosition
+        positionMs = startPositionMs.coerceAtLeast(0L)
+        if (durationMs > 0L) positionMs = positionMs.coerceAtMost(durationMs)
+        positionSaveTick = 0
+        //真正换歌时才重置 / 重新加载歌词：点同一首歌重播不能把歌词清空（幂等）
+        if (previousFileName != track.fileName) {
+            loadLyricsFor(track)
+        } else {
+            updateCurrentLyricIndex()
+        }
 
         try {
             exo.setMediaItem(MediaItem.fromUri(Uri.fromFile(File(track.path))))
-            if (startPosition > 0L) {
-                exo.seekTo(startPosition)
+            if (positionMs > 0L) {
+                exo.seekTo(positionMs)
             }
             exo.prepare()
         } catch (throwable: Throwable) {
             lastError = throwable.message ?: throwable.javaClass.simpleName
             Logger.warning(TAG, "Failed to prepare ${track.fileName}", throwable)
+            //装载失败：播放器里可能还是上一首/空媒体项，不能再把它当成「当前曲目已就绪」去同步进度；
+            //同时清掉「要播放」的假状态，否则进度轮询会一直空转、界面也停在暂停按钮上（自审修复）
+            isPrepared = false
+            playRequested = false
+            isPlaying = false
+            mainHandler.removeCallbacks(progressRunnable)
+            notifyPlaybackChanged()
             return false
         }
 
@@ -528,9 +674,117 @@ object MusicPlayerController {
         notifyPlaybackChanged()
     }
 
+    /**
+     * 重新排一次进度轮询。
+     *
+     * 固定先 removeCallbacks 再 post：全程只有 [progressRunnable] 这**一个** Runnable 实例，
+     * 任何调用点（startPlayback / READY / onIsPlayingChanged / seek / BUFFERING）都不会叠加出多条轮询。
+     */
     private fun scheduleProgressUpdates() {
         mainHandler.removeCallbacks(progressRunnable)
         mainHandler.post(progressRunnable)
+    }
+
+    /**
+     * 把播放器里的当前位置 / 时长同步到 Compose state（议题 #82）。
+     *
+     * 只在「媒体项确实是当前曲目」时同步（[isPrepared]）：停止 / 切歌后播放器回调可能还带着
+     * 上一首的位置，用它覆盖 state 会把恢复的进度清成 0（自审修复）。
+     * - duration 只在播放器给出已知值时覆盖（`C.TIME_UNSET` / 0 时保留曲目元数据里的时长兜底）；
+     * - 位置永远不超过已知时长，UI 的进度条 value 不会越界。
+     */
+    private fun applyPositionAndDuration(exo: ExoPlayer) {
+        if (!isPrepared) return
+        val duration = exo.duration
+        if (duration > 0L) durationMs = duration
+        val position = exo.currentPosition.coerceAtLeast(0L)
+        positionMs = if (durationMs > 0L) position.coerceAtMost(durationMs) else position
+    }
+
+    /** 按 positionMs 二分出当前歌词行；只在行变化时写 state，避免无意义的重组 */
+    private fun updateCurrentLyricIndex() {
+        val lines = lyrics
+        if (lines.isEmpty()) {
+            if (currentLyricIndex != -1) currentLyricIndex = -1
+            return
+        }
+
+        var low = 0
+        var high = lines.size - 1
+        var found = -1
+        while (low <= high) {
+            val middle = (low + high) ushr 1
+            if (lines[middle].timeMs <= positionMs) {
+                found = middle
+                low = middle + 1
+            } else {
+                high = middle - 1
+            }
+        }
+        if (found != currentLyricIndex) currentLyricIndex = found
+    }
+
+    /** 当前曲目重新加载歌词（导入歌词成功后由界面调用，主线程） */
+    fun reloadLyrics() {
+        val track = currentTrack ?: return
+        loadLyricsFor(track)
+    }
+
+    /**
+     * 重置歌词并异步加载曲目的边车歌词（IO 线程解析）。
+     *
+     * 文件名策略见 [MusicLibrary.findLyricsFile]：优先 `<完整音频文件名>.lrc`，回退旧 `<basename>.lrc`。
+     *
+     * 竞态保护用代次 [lyricsLoadToken]：每次重置 / 重新加载自增，协程回到主线程后先比对代次，
+     * 旧任务不会把歌词或 [lyricsLoading] 写到新曲目上。加载失败只记日志、保持空列表，
+     * 界面按「没有歌词」处理，绝不影响播放。
+     */
+    private fun loadLyricsFor(track: MusicTrack?) {
+        resetLyrics()
+
+        val context = appContext ?: return
+        if (track == null) return
+
+        val token = lyricsLoadToken
+        val fileName = track.fileName
+        lyricsLoading = true
+        lyricsLoadJob = lyricsScope.launch {
+            try {
+                val lines = withContext(Dispatchers.IO) {
+                    runCatching {
+                        MusicLibrary.findLyricsFile(context, track)?.let { Lyrics.parseFile(it) }
+                            ?: emptyList()
+                    }.onFailure { Logger.warning(TAG, "Failed to load the lyrics of $fileName", it) }
+                        .getOrDefault(emptyList())
+                }
+                //加载期间换了歌 / 又发起了一次加载：丢弃旧结果，也不要改新任务的 loading 状态
+                if (!isCurrentLyricsLoad(token, fileName)) return@launch
+                lyrics = lines
+                updateCurrentLyricIndex()
+                //歌词「有 / 无」是用户可见状态：刷新一次通知（行切换的刷新在进度轮询里做）
+                if (lines.isNotEmpty()) notifyPlaybackChanged()
+            } finally {
+                if (isCurrentLyricsLoad(token, fileName)) {
+                    lyricsLoading = false
+                    //加载结束后释放 Job 引用，单例里不长期持有已完成的协程
+                    lyricsLoadJob = null
+                }
+            }
+        }
+    }
+
+    /** 这次歌词加载是否仍然是「当前曲目 + 最新一次」的；用于丢弃过期的异步结果 */
+    private fun isCurrentLyricsLoad(token: Int, fileName: String): Boolean =
+        token == lyricsLoadToken && currentTrack?.fileName == fileName
+
+    /** 清空歌词状态（切歌 / 删除当前曲目 / 曲库清空时）；同时把加载中标记落回 false */
+    private fun resetLyrics() {
+        lyricsLoadJob?.cancel()
+        lyricsLoadJob = null
+        lyricsLoadToken++
+        lyrics = emptyList()
+        currentLyricIndex = -1
+        lyricsLoading = false
     }
 
     private fun saveLastPlayed() {

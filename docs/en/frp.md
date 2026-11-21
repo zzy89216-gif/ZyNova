@@ -9,6 +9,8 @@ ZyNova offers two ways to play with friends. Pick one — they do not interfere 
 
 Entry: **Multiplayer** in the top bar, then pick **SakuraFrp** in the floating switcher at the bottom of the
 screen. Both multiplayer modes live on one page, so there is no page jump; the last choice is remembered.
+You can also open it from inside the game: launcher menu → **Multiplayer** — the menu collapses, the launcher opens
+this page, and **the game keeps running in the background**.
 
 ## Prerequisites
 

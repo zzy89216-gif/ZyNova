@@ -68,6 +68,37 @@ suspend fun runJvmRetryRuntimes(
     postProgress: NoticeProgress? = null,
     start: () -> Unit = {}
 ): Unit = withContext(Dispatchers.Default) {
+    //议题 #78：JvmService / JVMSocketServer 是进程级单例（固定端口的服务），
+    //同一时间只允许一个安装阶段使用。其它安装的 JVM 阶段在这里排队等待，
+    //而且 Mutex 等待本身可取消 —— 取消一个排队中的安装不会碰正在用 JVM 的另一个。
+    InstallerJvmGate.withJvm {
+        runJvmRetryRuntimesSerial(
+            logId = logId,
+            jvmArgs = jvmArgs,
+            prefixArgs = prefixArgs,
+            jre = jre,
+            userHome = userHome,
+            postSummary = postSummary,
+            postProgress = postProgress,
+            start = start
+        )
+    }
+}
+
+/**
+ * [runJvmRetryRuntimes] 加锁后的主体。
+ * 递归重试 JRE 时必须调用这个私有版本，不能再走加锁入口（Mutex 不可重入，会死锁）。
+ */
+private suspend fun runJvmRetryRuntimesSerial(
+    logId: String,
+    jvmArgs: String,
+    prefixArgs: (Jre) -> String?,
+    jre: Jre,
+    userHome: String,
+    postSummary: String?,
+    postProgress: NoticeProgress?,
+    start: () -> Unit
+) {
     waitForJvmExclusiveProcessesStopped(logId)
 
     start()
@@ -93,14 +124,15 @@ suspend fun runJvmRetryRuntimes(
 
         nextJava?.let { jre ->
             Logger.info(TAG, "Retry with jre ${jre.name}...")
-            runJvmRetryRuntimes(
+            runJvmRetryRuntimesSerial(
                 logId = logId,
                 jvmArgs = jvmArgs,
                 prefixArgs = prefixArgs,
                 jre = jre,
                 userHome = userHome,
                 postSummary = postSummary,
-                postProgress = postProgress
+                postProgress = postProgress,
+                start = start
             )
         } ?: throw JvmCrashException(exitCode)
     }
@@ -212,9 +244,15 @@ suspend fun startJvmServiceAndWaitExit(
             throw IOException("Timed out waiting for the JVM process to exit.")
         }
     } finally {
-        // 无论成败、取消还是超时都收掉接收端
-        // 单例状态跨轮残留会毒化下一次运行
+        // 无论成败、取消还是超时都收掉「接收端 + 服务」：
+        // ① 单例状态跨轮残留会毒化下一次运行；
+        // ② 以前取消安装要由 GameInstaller.cancelInstall() 全局 stopService，
+        //    并行安装时会把另一个正在用 JVM 的安装一起打断；
+        //    现在服务生命周期收在本阶段内部，出 InstallerJvmGate 前一定已停掉，取消互不影响。
         JVMSocketServer.stop()
+        runCatching {
+            GlobalContext.stopService(Intent(GlobalContext, JvmService::class.java))
+        }
     }
 
     val code = JVMSocketServer.receiveMsg?.toIntOrNull()

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZyNova Launcher · 28.2.4 遊戲內選單新增「多人連線」快速入口 -->
+<resources>
+    <string name="game_menu_option_multiplayer">多人連線</string>
+</resources>

@@ -25,6 +25,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -76,6 +77,9 @@ import com.movtery.zalithlauncher.utils.festival.LocalFestivals
  *
  * 与旧版的区别：不再把功能入口排在右侧，也不再使用「…」溢出菜单——
  * 八个入口全部平铺在居中胶囊里（第 8 个「音乐」由议题 #77 加入，与下载并列）。
+ *
+ * 议题 #81：顶栏下方还会挂一条 [MusicMiniPlayer]（「正在听的歌 + 播放/暂停 + 切歌」），
+ * 只在**不是音乐页**且**有当前曲目**（播放中 / 暂停）时出现。它单独占一行，不挤占上面这条 64dp 顶栏。
  */
 @Composable
 fun LauncherTopBar(
@@ -95,6 +99,8 @@ fun LauncherTopBar(
     openFileManager: () -> Unit,
     toAIChat: () -> Unit,
     changeExpandedState: () -> Unit,
+    //议题 #81：带默认值，调用方（MainScreen）保持原样即可；将来要全局关掉迷你条也只传一个 false
+    showMusicMiniPlayer: Boolean = true,
 ) {
     val festivals = LocalFestivals.current
 
@@ -106,148 +112,158 @@ fun LauncherTopBar(
     val inMusicScreen = mainScreenKey is NormalNavKey.Music
 
     CompositionLocalProvider(LocalContentColor provides contentColor) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            // ── 左侧：返回 + 标题 ───────────────────────────────────────
-            Row(
+        Column(modifier = modifier.fillMaxWidth()) {
+            Box(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .widthIn(max = 180.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                if (!inLauncherScreen) {
-                    IconButton(
-                        modifier = Modifier.size(36.dp),
-                        onClick = onScreenBack
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(22.dp),
-                            painter = painterResource(R.drawable.ic_arrow_back),
-                            contentDescription = stringResource(R.string.generic_back)
-                        )
-                    }
-                }
-
-                val parentRes = mainScreenKey?.title
-                val childRes = (mainScreenKey as? BackStackNavKey<*>)?.currentKey?.title
-
-                Crossfade(
-                    targetState = parentRes to childRes
-                ) { (parent, child) ->
-                    val style = MaterialTheme.typography.titleMedium
-
-                    if (parent == null) {
-                        if (festivals.isEmpty()) {
-                            Text(
-                                text = AllSettings.launcherDisplayTitle,
-                                style = style,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                // ── 左侧：返回 + 标题 ───────────────────────────────────────
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .widthIn(max = 180.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (!inLauncherScreen) {
+                        IconButton(
+                            modifier = Modifier.size(36.dp),
+                            onClick = onScreenBack
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(22.dp),
+                                painter = painterResource(R.drawable.ic_arrow_back),
+                                contentDescription = stringResource(R.string.generic_back)
                             )
+                        }
+                    }
+
+                    val parentRes = mainScreenKey?.title
+                    val childRes = (mainScreenKey as? BackStackNavKey<*>)?.currentKey?.title
+
+                    Crossfade(
+                        targetState = parentRes to childRes
+                    ) { (parent, child) ->
+                        val style = MaterialTheme.typography.titleMedium
+
+                        if (parent == null) {
+                            if (festivals.isEmpty()) {
+                                Text(
+                                    text = AllSettings.launcherDisplayTitle,
+                                    style = style,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            } else {
+                                FestivalTitleText(
+                                    festivals = festivals,
+                                    style = style,
+                                    maxLines = 1
+                                )
+                            }
                         } else {
-                            FestivalTitleText(
-                                festivals = festivals,
+                            AndroidStringText(
+                                text = if (child != null) {
+                                    androidText(parent, androidText(" - "), child)
+                                } else {
+                                    parent
+                                },
                                 style = style,
+                                softWrap = false,
                                 maxLines = 1
                             )
                         }
-                    } else {
-                        AndroidStringText(
-                            text = if (child != null) {
-                                androidText(parent, androidText(" - "), child)
-                            } else {
-                                parent
-                            },
-                            style = style,
-                            softWrap = false,
-                            maxLines = 1
-                        )
+                    }
+                }
+
+                // ── 正中：玻璃胶囊 ─────────────────────────────────────────
+                Row(
+                    modifier = Modifier
+                        .codexGlass(shape = RoundedCornerShape(26.dp))
+                        .height(48.dp)
+                        .padding(horizontal = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 顺序：主菜单 → AI → 多人 → 下载 → 音乐 → 文件 → 个性化 → 设置
+                    // 主菜单放最左（选中态最稳定），AI 是核心入口放第二，
+                    // 高频的联机/下载/音乐居中，文件与两个「配置类」入口靠右。
+                    CapsuleItem(
+                        selected = inLauncherScreen,
+                        painter = painterResource(R.drawable.ic_home_filled),
+                        label = stringResource(R.string.generic_main_menu),
+                        onClick = { if (!inLauncherScreen) toMainScreen() }
+                    )
+                    CapsuleItem(
+                        selected = inAIChatScreen,
+                        painter = painterResource(R.drawable.ic_ai_filled),
+                        label = stringResource(R.string.ai_title),
+                        onClick = { if (!inAIChatScreen) toAIChat() }
+                    )
+                    CapsuleItem(
+                        selected = inMultiplayerScreen,
+                        painter = painterResource(R.drawable.ic_group_filled),
+                        label = stringResource(R.string.terracotta),
+                        onClick = { if (!inMultiplayerScreen) toMultiplayerScreen() }
+                    )
+                    CapsuleItem(
+                        selected = inDownloadScreen,
+                        painter = painterResource(R.drawable.ic_download_2_filled),
+                        label = stringResource(R.string.generic_download),
+                        onClick = { if (!inDownloadScreen) toDownloadScreen() }
+                    )
+                    //议题 #77：内置音乐播放器，与下载并列的常用入口
+                    CapsuleItem(
+                        selected = inMusicScreen,
+                        painter = painterResource(R.drawable.ic_music_filled),
+                        label = stringResource(R.string.music_title),
+                        onClick = { if (!inMusicScreen) toMusic() }
+                    )
+                    CapsuleItem(
+                        selected = false,
+                        painter = painterResource(R.drawable.ic_folder_filled),
+                        label = stringResource(R.string.fm_activity_name),
+                        onClick = openFileManager
+                    )
+                    CapsuleItem(
+                        selected = inPersonalizationScreen,
+                        painter = painterResource(R.drawable.ic_palette_filled),
+                        label = stringResource(R.string.personalization_title),
+                        onClick = { if (!inPersonalizationScreen) toPersonalization() }
+                    )
+                    CapsuleItem(
+                        selected = inSettingsScreen,
+                        painter = painterResource(R.drawable.ic_settings_filled),
+                        label = stringResource(R.string.generic_setting),
+                        onClick = { if (!inSettingsScreen) toSettingsScreen() }
+                    )
+
+                    // 任务小圆环：有任务且面板收起时出现
+                    AnimatedVisibility(visible = !(isTasksExpanded || taskRunning)) {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable(onClick = changeExpandedState)
+                                .padding(8.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
                     }
                 }
             }
 
-            // ── 正中：玻璃胶囊 ─────────────────────────────────────────
-            Row(
-                modifier = Modifier
-                    .codexGlass(shape = RoundedCornerShape(26.dp))
-                    .height(48.dp)
-                    .padding(horizontal = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 顺序：主菜单 → AI → 多人 → 下载 → 音乐 → 文件 → 个性化 → 设置
-                // 主菜单放最左（选中态最稳定），AI 是核心入口放第二，
-                // 高频的联机/下载/音乐居中，文件与两个「配置类」入口靠右。
-                CapsuleItem(
-                    selected = inLauncherScreen,
-                    painter = painterResource(R.drawable.ic_home_filled),
-                    label = stringResource(R.string.generic_main_menu),
-                    onClick = { if (!inLauncherScreen) toMainScreen() }
-                )
-                CapsuleItem(
-                    selected = inAIChatScreen,
-                    painter = painterResource(R.drawable.ic_ai_filled),
-                    label = stringResource(R.string.ai_title),
-                    onClick = { if (!inAIChatScreen) toAIChat() }
-                )
-                CapsuleItem(
-                    selected = inMultiplayerScreen,
-                    painter = painterResource(R.drawable.ic_group_filled),
-                    label = stringResource(R.string.terracotta),
-                    onClick = { if (!inMultiplayerScreen) toMultiplayerScreen() }
-                )
-                CapsuleItem(
-                    selected = inDownloadScreen,
-                    painter = painterResource(R.drawable.ic_download_2_filled),
-                    label = stringResource(R.string.generic_download),
-                    onClick = { if (!inDownloadScreen) toDownloadScreen() }
-                )
-                //议题 #77：内置音乐播放器，与下载并列的常用入口
-                CapsuleItem(
-                    selected = inMusicScreen,
-                    painter = painterResource(R.drawable.ic_music_filled),
-                    label = stringResource(R.string.music_title),
-                    onClick = { if (!inMusicScreen) toMusic() }
-                )
-                CapsuleItem(
-                    selected = false,
-                    painter = painterResource(R.drawable.ic_folder_filled),
-                    label = stringResource(R.string.fm_activity_name),
-                    onClick = openFileManager
-                )
-                CapsuleItem(
-                    selected = inPersonalizationScreen,
-                    painter = painterResource(R.drawable.ic_palette_filled),
-                    label = stringResource(R.string.personalization_title),
-                    onClick = { if (!inPersonalizationScreen) toPersonalization() }
-                )
-                CapsuleItem(
-                    selected = inSettingsScreen,
-                    painter = painterResource(R.drawable.ic_settings_filled),
-                    label = stringResource(R.string.generic_setting),
-                    onClick = { if (!inSettingsScreen) toSettingsScreen() }
-                )
-
-                // 任务小圆环：有任务且面板收起时出现
-                AnimatedVisibility(visible = !(isTasksExpanded || taskRunning)) {
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .clickable(onClick = changeExpandedState)
-                            .padding(8.dp)
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp
-                        )
-                    }
-                }
-            }
+            //议题 #81：顶栏下方一条「正在播放」（歌名 + 播放/暂停 + 切歌）。
+            //条件判断放在这个组件内部（是否音乐页由顶栏自己知道），调用方 MainScreen 不用改。
+            MusicMiniPlayer(
+                visible = showMusicMiniPlayer && !inMusicScreen,
+                onOpenMusic = toMusic,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

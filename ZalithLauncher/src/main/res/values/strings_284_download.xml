@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 28.2.4 下载并发：多个安装同时进行时，重复目标不再被静默丢弃，要给出可读原因 -->
+<resources>
+    <string name="download_install_duplicate_game">This version is already being downloaded or installed: %1$s. Wait for it to finish, or cancel it in the task list first.</string>
+    <string name="download_install_duplicate_modpack">This modpack version is already being downloaded or installed: %1$s. Wait for it to finish, or cancel it in the task list first.</string>
+    <string name="download_install_already_installed">This version is already installed: %1$s.</string>
+        <string name="download_install_target_busy">The version name "%1$s" is being used by another installation. Wait for it to finish, or cancel it in the task list first.</string>
+</resources>

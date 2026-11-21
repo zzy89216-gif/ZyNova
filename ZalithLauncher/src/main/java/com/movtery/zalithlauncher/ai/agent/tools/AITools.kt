@@ -38,6 +38,7 @@ import com.movtery.zalithlauncher.ai.agent.AITool
  * | 游戏本体安装 | `GameInstaller`（与「下载 → 游戏」页面同一条安装流程） |
  * | 整合包安装 | `ModPackInstaller`（与「下载 → 整合包」页面同一条链路） |
  * | 实例配置 | `VersionConfig` / `options.txt`（结构化读写，改动可回读校验） |
+ * | 音乐播放 | `MusicPlayerController` / `MusicLibrary`（状态查询与播放控制） |
  */
 internal fun builtinTools(): List<AITool> = buildList {
     addAll(instanceTools())
@@ -56,4 +57,5 @@ internal fun builtinTools(): List<AITool> = buildList {
     addAll(documentTools())
     addAll(instanceConfigTools())
     addAll(frpTools())
+    addAll(musicTools())
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 28.2.4 下載並行：多個安裝同時進行時，重複目標不再被靜默丟棄，要給出可讀原因 -->
+<resources>
+    <string name="download_install_duplicate_game">該版本正在下載或安裝中：%1$s。請等它完成，或先在任務列表裡取消它。</string>
+    <string name="download_install_duplicate_modpack">該整合包版本正在下載或安裝中：%1$s。請等它完成，或先在任務列表裡取消它。</string>
+    <string name="download_install_already_installed">該版本已經安裝：%1$s。</string>
+        <string name="download_install_target_busy">版本名「%1$s」正在被另一個安裝使用。請等它完成，或先在任務列表裡取消它。</string>
+</resources>

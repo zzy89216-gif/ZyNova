@@ -19,10 +19,10 @@
 package com.movtery.zalithlauncher.game.download.game
 
 import android.content.Context
-import android.content.Intent
 import com.movtery.zalithlauncher.R
-import com.movtery.zalithlauncher.context.GlobalContext
 import com.movtery.zalithlauncher.game.download.InstallJournal
+import com.movtery.zalithlauncher.game.download.InstallTargetRegistry
+import com.movtery.zalithlauncher.game.download.engine.PathWriteLock
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
 import com.movtery.zalithlauncher.coroutine.TitledTask
@@ -49,8 +49,6 @@ import com.movtery.zalithlauncher.game.download.game.optifine.getOptiFineDownloa
 import com.movtery.zalithlauncher.game.download.game.optifine.getOptiFineInstallTask
 import com.movtery.zalithlauncher.game.download.game.optifine.getOptiFineModsDownloadTask
 import com.movtery.zalithlauncher.game.download.game.optifine.targetTempOptiFineInstaller
-import com.movtery.zalithlauncher.game.download.jvm_server.JVMSocketServer
-import com.movtery.zalithlauncher.game.download.jvm_server.JvmService
 import com.movtery.zalithlauncher.game.path.getGameHome
 import com.movtery.zalithlauncher.game.version.download.BaseMinecraftDownloader
 import com.movtery.zalithlauncher.game.version.download.MinecraftDownloader
@@ -101,6 +99,31 @@ class GameInstaller(
     /** 安装失败/取消的收尾只做一次（cancelInstall 与任务流取消可能都会触发） */
     private val interruptedInstallHandled = java.util.concurrent.atomic.AtomicBoolean(false)
 
+    /** 是否已占用目标版本名（议题 #78：跨入口同名安装互斥，所有收尾路径都要释放） */
+    private val targetReserved = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    /**
+     * 占用目标版本名。
+     * UI 游戏安装 / 整合包安装 / AI install_game 共用 [InstallTargetRegistry]，
+     * 同名已有一个安装在进行时返回 false，由调用方给出可读错误，绝不静默继续。
+     */
+    private fun reserveTarget(): Boolean {
+        if (targetReserved.get()) return true
+        val ok = InstallTargetRegistry.reserve(
+            targetVersionName = info.customVersionName,
+            owner = "game:${info.gameVersion}:${info.customVersionName}"
+        )
+        if (ok) targetReserved.set(true)
+        return ok
+    }
+
+    /** 释放目标版本名（幂等；成功/失败/取消/中断都必须走到） */
+    private fun releaseTarget() {
+        if (targetReserved.compareAndSet(true, false)) {
+            InstallTargetRegistry.release(info.customVersionName)
+        }
+    }
+
     /**
      * 目标游戏客户端目录（缓存）
      * versions/<client-name>/...
@@ -113,6 +136,30 @@ class GameInstaller(
      * 目标游戏目录
      */
     private val targetGameFolder: File = File(getGameHome())
+
+    /**
+     * 本次安装独占的临时游戏目录（议题 #78）
+     *
+     * 以前所有安装共用 [PathManager.DIR_CACHE_GAME_DOWNLOADER] 一个目录，
+     * 每次安装开头的清理会把另一个**并行安装**正在用的临时文件一起删掉，
+     * 表现就是同时装两个本体时其中一个总是失败/文件校验不过。
+     * 现在每个安装实例在 root 下用独立子目录，清理时只动自己的。
+     */
+    private val tempGameRoot: File = File(
+        PathManager.DIR_CACHE_GAME_DOWNLOADER,
+        buildTempDirName()
+    )
+
+    private fun buildTempDirName(): String {
+        //⚠️ 不能只用随机名：议题 #35 的「失败重试保留 libraries 不重下」依赖同一个安装每次用同一目录。
+        //版本名本身就会作为目标版本目录名使用，所以可以直接当目录名；再拼 hash 兜底同名碰撞。
+        //并行安装不同版本 → 版本名不同 → 目录不同，仍然互不影响。
+        val safeName = info.customVersionName
+            .replace(Regex("[\\\\/:*?\"<>|\\s]"), "_")
+            .take(32)
+            .ifBlank { "install" }
+        return "${safeName}_${Integer.toHexString(info.customVersionName.hashCode())}"
+    }
 
     /**
      * 安装 Minecraft 游戏
@@ -138,6 +185,14 @@ class GameInstaller(
             return
         }
 
+        //议题 #78：先占目标版本名，再检查「是否已安装」。
+        //顺序不能反：两个入口同时装同一个新版本时，若都先通过「未安装」检查再各自开始，
+        //就会一起写 versions/<同名>/。占用失败要给可读错误，不能静默丢弃。
+        if (!reserveTarget()) {
+            onError(IllegalStateException(context.getString(R.string.download_install_target_busy, info.customVersionName)))
+            return
+        }
+
         //目标版本已经存在：安装不会真正发生，绝不能继续走 onComplete（否则会误报安装成功）
         val alreadyInstalled = java.util.concurrent.atomic.AtomicBoolean(false)
         taskExecutor.executePhasesAsync(
@@ -152,20 +207,24 @@ class GameInstaller(
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
+                //先释放目标版本名：成功路径也不能一直占着，否则同名词后续安装永远被拒
+                releaseTarget()
                 if (alreadyInstalled.get()) return@executePhasesAsync
                 if (info.overwrite) {
                     clearBackupFiles()
                 }
-                InstallJournal.clearGameInstall()
+                InstallJournal.clearGameInstall(info.customVersionName)
                 onInstalled(info.customVersionName)
             },
             onError = {
+                releaseTarget()
                 //安装失败也要把半成品收拾掉：新装删掉半成品版本目录，
                 //覆盖/更新则尽量把旧 json/jar 放回去（议题 #73）
                 finishInterruptedInstall(clearTarget = true)
                 onError(it)
             },
             onCancel = {
+                releaseTarget()
                 //「取消全部任务」这类整体取消不会经过 cancelInstall()：这里也要做同样的清理
                 finishInterruptedInstall(clearTarget = true)
                 onCancelled()
@@ -189,6 +248,11 @@ class GameInstaller(
             isRunning()
             return
         }
+        //议题 #78：更新加载器同样写 versions/<同名>，必须和别的入口互斥
+        if (!reserveTarget()) {
+            onError(IllegalStateException(context.getString(R.string.download_install_target_busy, info.customVersionName)))
+            return
+        }
 
         taskExecutor.executePhasesAsync(
             onStart = {
@@ -196,18 +260,21 @@ class GameInstaller(
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
+                releaseTarget()
                 if (info.overwrite) {
                     clearBackupFiles()
                 }
-                InstallJournal.clearGameInstall()
+                InstallJournal.clearGameInstall(info.customVersionName)
                 onInstalled()
             },
             onError = {
+                releaseTarget()
                 //更新加载器失败：把旧 json/jar 恢复回去，避免出现读不出来的版本
                 finishInterruptedInstall(clearTarget = false)
                 onError(it)
             },
             onCancel = {
+                releaseTarget()
                 finishInterruptedInstall(clearTarget = false)
             }
         )
@@ -291,7 +358,8 @@ class GameInstaller(
             }
         }
 
-        val tempGameDir = PathManager.DIR_CACHE_GAME_DOWNLOADER
+        //议题 #78：用本次安装独占的临时目录，避免并行安装互相清理
+        val tempGameDir = tempGameRoot
         val tempMinecraftDir = File(tempGameDir, ".minecraft")
         val tempGameVersionsDir = File(tempMinecraftDir, "versions")
         val tempClientDir = File(tempGameVersionsDir, info.gameVersion)
@@ -407,7 +475,7 @@ class GameInstaller(
                             onComplete = {
                                 onInstalled(pathConfig.targetClientDir)
                                 //全部文件已经落到目标版本目录：本次安装成功，清掉落盘记录
-                                InstallJournal.clearGameInstall()
+                                InstallJournal.clearGameInstall(info.customVersionName)
                                 targetClientDir = null
                             }
                         )
@@ -417,7 +485,7 @@ class GameInstaller(
                             tempMinecraftDir = pathConfig.tempMinecraftDir,
                             onComplete = {
                                 onInstalled(pathConfig.targetClientDir)
-                                InstallJournal.clearGameInstall()
+                                InstallJournal.clearGameInstall(info.customVersionName)
                                 targetClientDir = null
                             }
                         )
@@ -546,7 +614,7 @@ class GameInstaller(
                         cleanroomFolder = pathConfig.cleanroomDir,
                         onComplete = {
                             onInstalled()
-                            InstallJournal.clearGameInstall()
+                            InstallJournal.clearGameInstall(info.customVersionName)
                             targetClientDir = null
                         }
                     )
@@ -759,12 +827,11 @@ class GameInstaller(
             finishInterruptedInstall(clearTarget)
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            //停止Jvm服务
-            val intent = Intent(GlobalContext.applicationContext, JvmService::class.java)
-            GlobalContext.applicationContext.stopService(intent)
-            JVMSocketServer.stop()
-        }
+        //⚠️ 这里不再全局 stopService / 停 JVMSocketServer（议题 #78）：
+        //JvmService / JVMSocketServer 是进程级单例，并行安装时一个取消会把另一个正在跑的
+        //JVM 安装阶段一起打断。现在 JVM 服务生命周期收在 `runJvmRetryRuntimes` 的
+        //InstallerJvmGate 临界区里（见 GameJVMRunner.startJvmServiceAndWaitExit 的 finally），
+        //取消本安装会通过协程取消传播到该阶段，只收掉自己手里的服务。
     }
 
     /**
@@ -780,14 +847,14 @@ class GameInstaller(
         if (!interruptedInstallHandled.compareAndSet(false, true)) return
         if (!info.overwrite) {
             //新装：rollback 会删掉半成品目录；更新加载器：只会恢复备份
-            val result = InstallJournal.rollbackInterruptedGameInstall()
+            val result = InstallJournal.rollbackInterruptedGameInstall(info.customVersionName)
             if (clearTarget && result == null) {
                 //没有落盘记录（例如记录写入失败）时按目标目录兜底删除
                 clearTargetClient()
             }
         } else {
             //覆盖安装：先按持久备份恢复，revertClientDir 再用 cache 备份兜底
-            InstallJournal.rollbackInterruptedGameInstall()
+            InstallJournal.rollbackInterruptedGameInstall(info.customVersionName)
             revertClientDir()
         }
     }
@@ -796,7 +863,8 @@ class GameInstaller(
      * 清除临时游戏目录
      */
     private suspend fun clearTempGameDir() = withContext(Dispatchers.IO) {
-        val folder = PathManager.DIR_CACHE_GAME_DOWNLOADER.takeIf { it.exists() } ?: return@withContext
+        //议题 #78：只清理本次安装自己的临时目录，不能碰其它并行安装的
+        val folder = tempGameRoot.takeIf { it.exists() } ?: return@withContext
         //议题 #35：开始安装时不再把整目录删掉。
         //NeoForge / Forge 的支持库就下在 temp_game/.minecraft/libraries，
         //以前一失败重试就全部重下；现在保留 libraries（下次会先做 sha1 校验再复用），
@@ -833,7 +901,7 @@ class GameInstaller(
                 Logger.info(TAG, "Successfully deleted version directory: ${it.name} at path: ${it.absolutePath}")
             }
             //目录已经删掉，记录可以安全清除
-            InstallJournal.clearGameInstall()
+            InstallJournal.clearGameInstall(info.customVersionName)
         }
     }
 
@@ -864,7 +932,7 @@ class GameInstaller(
                 Logger.error(TAG, "Failed to revert client files: ${e.message}", e)
             }
             //旧文件已经放回（或确认放不回去），记录可以清除
-            InstallJournal.clearGameInstall()
+            InstallJournal.clearGameInstall(info.customVersionName)
         }
     }
 
@@ -1113,13 +1181,17 @@ class GameInstaller(
             )
 
             //迁移游戏文件
-            copyDirectoryContents(
-                File(tempMinecraftDir, "libraries"),
-                File(targetMinecraftDir, "libraries"),
-                onProgress = { percentage ->
-                    task.updateProgress(percentage)
-                }
-            )
+            //议题 #78：并行安装同一个 MC 版本时两个安装会同时写目标 libraries，
+            //按目标目录加路径锁串行（内容相同，但要避免一边写一边被另一边截断）
+            PathWriteLock.withWrite(File(targetMinecraftDir, "libraries")) {
+                copyDirectoryContents(
+                    File(tempMinecraftDir, "libraries"),
+                    File(targetMinecraftDir, "libraries"),
+                    onProgress = { percentage ->
+                        task.updateProgress(percentage)
+                    }
+                )
+            }
 
             //复制客户端文件
             copyVanillaFiles(

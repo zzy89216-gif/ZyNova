@@ -56,13 +56,16 @@ object MusicNotification {
         val playing = MusicPlayerController.playRequested
         val track = MusicPlayerController.currentTrack
         val title = track?.title ?: context.getString(R.string.music_title)
+        //有歌词且要播放时优先显示歌词行（暂停时保持「已暂停」，避免让用户以为还在唱）
+        val lyricLine = if (playing) buildLyricContentText() else null
         val text = when {
             MusicPlayerController.lastError != null -> MusicPlayerController.lastError!!
+            lyricLine != null -> lyricLine
             playing -> context.getString(R.string.music_notification_playing)
             else -> context.getString(R.string.music_notification_paused)
         }
 
-        return NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_monochrome)
             .setContentTitle(title)
             .setContentText(text)
@@ -74,6 +77,13 @@ object MusicNotification {
             .setOngoing(playing)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+        if (lyricLine != null) {
+            //歌词可能是「上一行 + 当前行」两行：用 BigTextStyle 让展开后的通知能显示两行
+            builder.setStyle(NotificationCompat.BigTextStyle().bigText(lyricLine))
+        }
+
+        builder
             .addAction(
                 NotificationCompat.Action.Builder(
                     R.drawable.ic_skip_previous_filled,
@@ -95,7 +105,25 @@ object MusicNotification {
                     serviceIntent(context, MusicService.ACTION_NEXT, REQUEST_CODE_NEXT)
                 ).build()
             )
-            .build()
+        return builder.build()
+    }
+
+    /**
+     * 通知栏歌词文本（议题 #80）：有歌词且正在播放时显示「上一行 + 当前行」。
+     *
+     * 只在当前曲目 / 歌词行发生变化时才会被调用（由 [MusicPlayerController.onPlaybackStateChanged]
+     * 这条现有链路驱动），不参与 500ms 进度刷新，所以不会每半秒重建一次通知。
+     */
+    private fun buildLyricContentText(): String? {
+        val lines = MusicPlayerController.lyrics
+        val index = MusicPlayerController.currentLyricIndex
+        if (index < 0) return null
+
+        val current = lines.getOrNull(index)?.text?.trim().orEmpty()
+        if (current.isEmpty()) return null
+        //index = 0 时 getOrNull(-1) 返回 null（Kotlin 不越界），只显示当前行——自审已核对
+        val previous = lines.getOrNull(index - 1)?.text?.trim().orEmpty()
+        return if (previous.isEmpty()) current else "$previous\n$current"
     }
 
     /** 播放通知渠道，只需要创建一次（服务每次刷新通知前调用，内部已做存在判断） */

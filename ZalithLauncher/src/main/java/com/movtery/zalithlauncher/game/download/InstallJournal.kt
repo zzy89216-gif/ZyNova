@@ -101,8 +101,20 @@ enum class InstallRecoveryResult {
  */
 object InstallJournal {
     private const val MMKV_ID = "DownloadInstallJournal"
+    /**
+     * 旧版单条记录：一个进程同时只允许一个游戏/整合包安装时够用，升级后仍需能恢复旧记录。
+     * 新代码不再写这两个 key，只在读取/清理时兼容。
+     */
     private const val KEY_GAME = "game_install_journal"
     private const val KEY_MODPACK = "modpack_install_journal"
+    /**
+     * 新版按安装实例分条记录（议题 #78）：
+     * 允许同时安装多个游戏本体 / 整合包，每个安装只清自己的记录，不能覆盖别人的。
+     * - 游戏版本：key 后缀 = 目标版本名（targetVersionName）
+     * - 整合包：key 后缀 = 本次安装独占的临时目录路径
+     */
+    private const val KEY_GAME_PREFIX = "game_install_journal@"
+    private const val KEY_MODPACK_PREFIX = "modpack_install_journal@"
     private const val BACKUP_DIR_NAME = "download_install_backup"
 
     private val gson = Gson()
@@ -154,11 +166,20 @@ object InstallJournal {
 
     /**
      * 只接受 launcher 自己的整合包临时目录。
+     *
+     * 新版每个整合包安装使用 root 下的独立子目录（并行安装时互不清理），
+     * 旧版直接把 root 当临时目录，所以两种情况都要认。
      */
     private fun safeTempModpackDir(path: String?): File? {
         val dir = path?.let { File(it) }?.canonicalOrNull() ?: return null
         val allowed = PathManager.DIR_CACHE_MODPACK_DOWNLOADER.canonicalOrNull() ?: return null
-        return dir.takeIf { it.path == allowed.path }
+        return dir.takeIf { it.path == allowed.path || it.parentFile?.path == allowed.path }
+    }
+
+    /** 是否是整合包临时目录的根目录（root 本身不能递归删除，只清它的子项） */
+    private fun isTempModpackRoot(dir: File): Boolean {
+        val allowed = PathManager.DIR_CACHE_MODPACK_DOWNLOADER.canonicalOrNull() ?: return false
+        return dir.canonicalOrNull()?.path == allowed.path
     }
 
     private fun File.isInside(parent: File?): Boolean {
@@ -182,8 +203,10 @@ object InstallJournal {
         backupJarPath: String? = null
     ) {
         runCatching {
-            //上一次的记录如果还留着（理论上不该出现），先把它引用的备份清掉，避免越积越多
-            readGameInstall()?.let { deleteBackupFiles(it) }
+            val key = gameKey(targetVersionName)
+            //⚠️ 这里不清理「同 key 的旧记录备份」：备份文件名是确定的（<版本名>.json.bak），
+            //如果先删再备份/备份再删的时序搞错，会把刚做好、回滚真正需要的备份删掉。
+            //旧备份下次覆盖安装会被同名文件直接覆盖，不会越积越多。
             val journal = GameInstallJournal(
                 targetVersionName = targetVersionName,
                 overwrite = overwrite,
@@ -191,7 +214,7 @@ object InstallJournal {
                 backupJsonPath = backupJsonPath,
                 backupJarPath = backupJarPath
             )
-            mmkv().putString(KEY_GAME, gson.toJson(journal))
+            mmkv().putString(key, gson.toJson(journal))
             Logger.info(TAG, "Game install journal written: $targetVersionName, overwrite=$overwrite")
         }.onFailure {
             //记录失败不能影响正常安装
@@ -201,14 +224,45 @@ object InstallJournal {
 
     /**
      * 游戏版本安装成功/已回滚，清掉记录与备份
+     *
+     * @param targetVersionName 只清这个目标版本的记录（并行安装时不能动别人）；
+     *                          为 null 时清掉全部记录（仅启动恢复这类「一切已结束」的场景用）
      */
-    fun clearGameInstall() {
+    fun clearGameInstall(targetVersionName: String? = null) {
         runCatching {
-            readGameInstall()?.let { deleteBackupFiles(it) }
-            mmkv().removeValueForKey(KEY_GAME)
+            if (targetVersionName != null) {
+                val key = gameKey(targetVersionName)
+                readGameInstallByKey(key)?.let { deleteBackupFiles(it) }
+                mmkv().removeValueForKey(key)
+            } else {
+                readGameInstallKeys().forEach { (key, journal) ->
+                    deleteBackupFiles(journal)
+                    mmkv().removeValueForKey(key)
+                }
+            }
         }.onFailure {
             Logger.warning(TAG, "Failed to clear the game install journal", it)
         }
+    }
+
+    private fun gameKey(targetVersionName: String): String = KEY_GAME_PREFIX + targetVersionName
+
+    /**
+     * 读取全部游戏安装记录（新版分条 + 旧版单条），按 key 返回。
+     * 旧版单条记录继续参与恢复，升级后不会把上次没装完的东西晾在那里。
+     */
+    private fun readGameInstallKeys(): List<Pair<String, GameInstallJournal>> {
+        val result = mutableListOf<Pair<String, GameInstallJournal>>()
+        runCatching {
+            mmkv().allKeys()?.forEach { key ->
+                if (key == KEY_GAME || key.startsWith(KEY_GAME_PREFIX)) {
+                    readGameInstallByKey(key)?.let { result.add(key to it) }
+                }
+            }
+        }.onFailure {
+            Logger.warning(TAG, "Failed to read the game install journals", it)
+        }
+        return result
     }
 
     /**
@@ -217,13 +271,44 @@ object InstallJournal {
      * - 覆盖/更新：只有旧 json/jar 备份**都在且非空**时才放回去，否则不动目标目录
      *
      * 与启动恢复共用同一套判断，保证「进程内失败」和「进程被杀」结果一致。
+     *
+     * @param targetVersionName 只回滚这个目标版本的记录（并行安装时不能动别人的半成品）；
+     *                          为 null 时回滚全部记录（启动恢复用）。
      */
-    fun rollbackInterruptedGameInstall(): InstallRecoveryResult? {
-        val journal = readGameInstall() ?: return null
+    fun rollbackInterruptedGameInstall(targetVersionName: String? = null): InstallRecoveryResult? {
+        if (targetVersionName == null) {
+            return rollbackInterruptedGameInstalls().firstOrNull()
+        }
+        val keys = readGameInstallKeys()
+        //新版按版本名分条；旧版单条记录也认，按记录里的版本名匹配
+        val entry = keys.firstOrNull { (key, journal) ->
+            key == gameKey(targetVersionName) || journal.targetVersionName == targetVersionName
+        } ?: return null
+        return rollbackGameJournal(entry.first, entry.second)
+    }
+
+    /** 回滚全部游戏安装记录（启动恢复用），返回每条记录的处理结果 */
+    fun rollbackInterruptedGameInstalls(): List<InstallRecoveryResult> {
+        val results = mutableListOf<InstallRecoveryResult>()
+        val rolledBack = mutableSetOf<String>()
+        readGameInstallKeys().forEach { (key, journal) ->
+            //同一目标版本理论上只有一条记录；旧版单条 + 新版分条同时存在时优先已处理的
+            if (!rolledBack.add(journal.targetVersionName)) {
+                mmkv().removeValueForKey(key)
+                return@forEach
+            }
+            rollbackGameJournal(key, journal)?.let { results.add(it) }
+        }
+        return results
+    }
+
+    private fun rollbackGameJournal(key: String, journal: GameInstallJournal): InstallRecoveryResult? {
         val result = runCatching { applyGameRollback(journal) }.onFailure {
             Logger.warning(TAG, "Failed to roll back the interrupted game install", it)
         }.getOrNull()
-        clearGameInstall()
+        //只清这一条记录（旧版 key 也走这里清）
+        deleteBackupFiles(journal)
+        mmkv().removeValueForKey(key)
         return result
     }
 
@@ -295,8 +380,8 @@ object InstallJournal {
         safeBackupFile(journal.backupJarPath)?.let { FileUtils.deleteQuietly(it) }
     }
 
-    private fun readGameInstall(): GameInstallJournal? = runCatching {
-        mmkv().getString(KEY_GAME, null)?.let { text ->
+    private fun readGameInstallByKey(key: String): GameInstallJournal? = runCatching {
+        mmkv().getString(key, null)?.let { text ->
             gson.fromJson(text, GameInstallJournal::class.java)
         }
     }.onFailure {
@@ -307,26 +392,32 @@ object InstallJournal {
 
     /**
      * 整合包安装开始（此时还没拿到目标版本名）
+     *
+     * @param tempModpackDirPath 本次安装独占的临时目录；同一个路径同时也是这条记录的 key，
+     *                           并行安装多个整合包时互不覆盖。
      */
     fun beginModpackInstall(tempModpackDirPath: String) {
         runCatching {
             val journal = ModpackInstallJournal(tempModpackDirPath = tempModpackDirPath)
-            mmkv().putString(KEY_MODPACK, gson.toJson(journal))
+            mmkv().putString(modpackKey(tempModpackDirPath), gson.toJson(journal))
             Logger.info(TAG, "Modpack install journal written.")
         }.onFailure {
             Logger.warning(TAG, "Failed to write the modpack install journal", it)
         }
     }
 
+    private fun modpackKey(tempModpackDirPath: String): String = KEY_MODPACK_PREFIX + tempModpackDirPath
+
     /**
      * 用户确认了预安装版本名：补写目标版本名，恢复时才能定位半成品版本
      */
-    fun updateModpackTargetVersion(targetVersionName: String) {
+    fun updateModpackTargetVersion(tempModpackDirPath: String, targetVersionName: String) {
         runCatching {
-            val journal = readModpackInstall() ?: return
+            val key = modpackKey(tempModpackDirPath)
+            val journal = readModpackInstallByKey(key) ?: return
             if (journal.targetVersionName == targetVersionName) return
             mmkv().putString(
-                KEY_MODPACK,
+                key,
                 gson.toJson(journal.copy(targetVersionName = targetVersionName))
             )
         }.onFailure {
@@ -334,12 +425,38 @@ object InstallJournal {
         }
     }
 
-    fun clearModpackInstall() {
+    /**
+     * 清掉整合包安装记录
+     *
+     * @param tempModpackDirPath 只清这个临时目录的记录（并行安装时不能动别人）；
+     *                           为 null 时清掉全部（启动恢复用）
+     */
+    fun clearModpackInstall(tempModpackDirPath: String? = null) {
         runCatching {
-            mmkv().removeValueForKey(KEY_MODPACK)
+            if (tempModpackDirPath != null) {
+                mmkv().removeValueForKey(modpackKey(tempModpackDirPath))
+            } else {
+                readModpackInstallKeys().forEach { (key, _) ->
+                    mmkv().removeValueForKey(key)
+                }
+            }
         }.onFailure {
             Logger.warning(TAG, "Failed to clear the modpack install journal", it)
         }
+    }
+
+    private fun readModpackInstallKeys(): List<Pair<String, ModpackInstallJournal>> {
+        val result = mutableListOf<Pair<String, ModpackInstallJournal>>()
+        runCatching {
+            mmkv().allKeys()?.forEach { key ->
+                if (key == KEY_MODPACK || key.startsWith(KEY_MODPACK_PREFIX)) {
+                    readModpackInstallByKey(key)?.let { result.add(key to it) }
+                }
+            }
+        }.onFailure {
+            Logger.warning(TAG, "Failed to read the modpack install journals", it)
+        }
+        return result
     }
 
     /**
@@ -347,15 +464,39 @@ object InstallJournal {
      *
      * 不做「续传」：不同整合包格式的最终配置字段（jvm 参数 / 服务器 / 内存 / 图标）各不相同，
      * 续传要按格式重建配置，风险高、收益低；宁可干净清掉、提示用户重装，也不留下半吊子的整合包。
+     *
+     * @param tempModpackDirPath 只回滚这个临时目录对应的安装；为 null 时回滚全部（启动恢复用）
      */
-    fun rollbackInterruptedModpackInstall(): InstallRecoveryResult? {
-        val journal = readModpackInstall() ?: return null
+    fun rollbackInterruptedModpackInstall(tempModpackDirPath: String? = null): InstallRecoveryResult? {
+        if (tempModpackDirPath == null) {
+            return rollbackInterruptedModpackInstalls().firstOrNull()
+        }
+        val key = modpackKey(tempModpackDirPath)
+        val journal = readModpackInstallByKey(key)
+            ?: readModpackInstallKeys().firstOrNull { (_, entry) ->
+                entry.tempModpackDirPath == tempModpackDirPath
+            }?.second
+            ?: return null
+        return rollbackModpackJournal(key, journal)
+    }
+
+    /** 回滚全部整合包安装记录（启动恢复用），返回每条记录的处理结果 */
+    fun rollbackInterruptedModpackInstalls(): List<InstallRecoveryResult> {
+        val results = mutableListOf<InstallRecoveryResult>()
+        readModpackInstallKeys().forEach { (key, journal) ->
+            rollbackModpackJournal(key, journal)?.let { results.add(it) }
+        }
+        return results
+    }
+
+    private fun rollbackModpackJournal(key: String, journal: ModpackInstallJournal): InstallRecoveryResult? {
         val result = runCatching { applyModpackRollback(journal) }.onFailure {
             Logger.warning(TAG, "Failed to roll back the interrupted modpack install", it)
         }.getOrNull()
-        clearModpackInstall()
-        //整合包安装过程中嵌套的游戏安装也可能留下了记录
-        clearGameInstall()
+        mmkv().removeValueForKey(key)
+        //整合包安装过程中嵌套的游戏安装也可能留下了记录：
+        //只清这个整合包目标版本的那一条，不能把并行安装的其他游戏记录一起清掉
+        journal.targetVersionName?.let { clearGameInstall(it) }
         return result
     }
 
@@ -385,13 +526,18 @@ object InstallJournal {
             }
         }
 
-        FileUtils.deleteQuietly(tempDir)
+        //临时目录是 root 本身（旧版记录）时不能递归删根，只清它的子项
+        if (isTempModpackRoot(tempDir)) {
+            tempDir.listFiles()?.forEach { FileUtils.deleteQuietly(it) }
+        } else {
+            FileUtils.deleteQuietly(tempDir)
+        }
         Logger.info(TAG, "Removed the unfinished modpack temp directory: ${tempDir.absolutePath}")
         return InstallRecoveryResult.MODPACK_CLEANED
     }
 
-    private fun readModpackInstall(): ModpackInstallJournal? = runCatching {
-        mmkv().getString(KEY_MODPACK, null)?.let { text ->
+    private fun readModpackInstallByKey(key: String): ModpackInstallJournal? = runCatching {
+        mmkv().getString(key, null)?.let { text ->
             gson.fromJson(text, ModpackInstallJournal::class.java)
         }
     }.onFailure {
@@ -416,19 +562,22 @@ object InstallJournal {
 
         return runCatching {
             Logger.info(TAG, "Checking for interrupted downloads/installs…")
+            //议题 #78：进程刚启动时不可能还有安装在进行，清空同名注册表兜底（内存表本来也是空的）
+            InstallTargetRegistry.clearAll()
             val results = Collections.synchronizedList(mutableListOf<InstallRecoveryResult>())
 
             //① 游戏版本安装：先处理，因为它可能已经写出了一个假版本
-            runCatching { rollbackInterruptedGameInstall() }
+            //   议题 #78：可能有多条记录（并行安装），逐条回滚
+            runCatching { rollbackInterruptedGameInstalls() }
                 .onFailure { Logger.warning(TAG, "Game install recovery failed", it) }
-                .getOrNull()
-                ?.let { results.add(it) }
+                .getOrDefault(emptyList())
+                .let { results.addAll(it) }
 
-            //② 整合包安装：清理临时目录与半成品版本
-            runCatching { rollbackInterruptedModpackInstall() }
+            //② 整合包安装：清理临时目录与半成品版本（同样可能有多条）
+            runCatching { rollbackInterruptedModpackInstalls() }
                 .onFailure { Logger.warning(TAG, "Modpack install recovery failed", it) }
-                .getOrNull()
-                ?.let { results.add(it) }
+                .getOrDefault(emptyList())
+                .let { results.addAll(it) }
 
             //③ launcher 自己的临时目录与 cache 里的下载半成品
             cleanStaleTempFiles()
@@ -453,14 +602,26 @@ object InstallJournal {
             if (cacheRoot != null && resourcesCache.isInside(cacheRoot)) {
                 ResourceDownloadManager.cleanupTempFiles(resourcesCache)
             }
+            //⚠️ 议题 #78：新版每个安装使用 root 下的独占子目录。
+            //启动时确实没有安装在跑，但也不递归删 root 本身：只清 root 下的子项，
+            //避免把「根目录当成缓存目录」这种约定写死（以后根目录里可能还有别的东西）。
             PathManager.DIR_CACHE_GAME_DOWNLOADER
                 .takeIf { cacheRoot != null && it.isInside(cacheRoot) }
-                ?.let { FileUtils.deleteQuietly(it) }
+                ?.let { clearChildren(it) }
             PathManager.DIR_CACHE_MODPACK_DOWNLOADER
                 .takeIf { cacheRoot != null && it.isInside(cacheRoot) }
-                ?.let { FileUtils.deleteQuietly(it) }
+                ?.let { clearChildren(it) }
+            //导出临时目录：进程启动时不可能有导出在进行，清掉上次崩溃留下的 export_* 子目录
+            //（只清子项，不删根目录；见 PackExporter 的每导出独占子目录改动）
+            PathManager.DIR_CACHE_MODPACK_EXPORTER
+                .takeIf { cacheRoot != null && it.isInside(cacheRoot) }
+                ?.let { clearChildren(it) }
         }.onFailure {
             Logger.warning(TAG, "Failed to clean the stale temporary files", it)
         }
+    }
+
+    private fun clearChildren(folder: File) {
+        folder.listFiles()?.forEach { FileUtils.deleteQuietly(it) }
     }
 }

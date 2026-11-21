@@ -28,7 +28,6 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.movtery.zalithlauncher.notification.NotificationManager
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -37,7 +36,6 @@ import com.movtery.zalithlauncher.ui.screens.content.download.game.SelectGameVer
 import com.movtery.zalithlauncher.ui.screens.navigateTo
 import com.movtery.zalithlauncher.ui.screens.onBack
 import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
-import com.movtery.zalithlauncher.utils.network.isUsingMobileData
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
 
@@ -99,30 +97,19 @@ fun DownloadGameScreen(
                         key = key,
                         refreshErrorCheck = viewModel.versionNameErrorCheck
                     ) { info ->
-                        if (viewModel.installOperation !is GameInstallOperation.None) {
-                            //不是待安装状态，拒绝此次安装
-                            return@DownloadGameWithAddonScreen
-                        }
-                        if (!NotificationManager.checkNotificationEnabled(context)) {
-                            //警告通知权限
-                            viewModel.installOperation = GameInstallOperation.WarningForNotification(info)
-                        } else {
-                            if (isUsingMobileData(context)) {
-                                //警告正在使用流量
-                                viewModel.installOperation = GameInstallOperation.WarningForMobileData(info)
-                            } else {
-                                viewModel.install(
-                                    context = context,
-                                    info = info,
-                                    onStart = {
-                                        eventViewModel.sendKeepScreen(true)
-                                    },
-                                    onStop = {
-                                        eventViewModel.sendKeepScreen(false)
-                                    }
-                                )
+                        //议题 #78：这里不再用「有未处理的操作就拒绝」当并发门闩。
+                        //不同游戏版本可以同时下载/安装，通知权限/移动网络的提醒由 ViewModel 排队；
+                        //只有同一个目标版本重复提交时才会给出可读提示，不会静默丢掉第二次点击。
+                        viewModel.requestInstall(
+                            context = context,
+                            info = info,
+                            onStart = {
+                                eventViewModel.sendKeepScreen(true)
+                            },
+                            onStop = {
+                                eventViewModel.sendKeepScreen(false)
                             }
-                        }
+                        )
                     }
                 }
             }

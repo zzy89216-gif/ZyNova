@@ -49,14 +49,58 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.2.3**（`launcher_version_code=282003`，**预发行版**，版本名不带后缀）；
+- 当前版本 **28.2.4**（`launcher_version_code=282004`，**预发行版**，版本名不带后缀）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.2.3**（`launcher_version_code=282003`，预发行版）
+**当前版本：28.2.4**（`launcher_version_code=282004`，预发行版）
+
+### 28.2.4 预发行版（本轮修复）
+
+- 议题 #78：**多任务并行下载 / 安装**。`GameDownloadViewModel` / `ModPackViewModel` 由单槽（一个 `installer` +
+  一个 `installOperation`）改为按任务 id 的会话 Map，安装提示改为对话框队列（Success / Error 逐个弹、不互相覆盖）；
+  `GameInstaller` / `ModPackInstaller` 改为每次安装独占临时子目录（只清自己的）；`InstallJournal` 按目标版本名 /
+  临时目录分条写记录（兼容旧版单条 key，启动恢复两条都读）；下载页门闩改为「同一目标正在装才拒绝」；
+  UI 镜像任务 id 前缀改为 `install_game_ui_`，与 AI 工具分开。重复点同一目标会给「正在下载 / 已安装」提示。
+- 议题 #79：主页卡片拖动闪屏 / 闪退。`Reorder.kt` 只在「压住的 liftedKey 发生变化」时才 onMove（不再每帧整表重排），
+  去掉脆弱的小范围 delta 补偿，改为「视觉位移 = 手指累计位移 - 布局位移」，让位动画 pending==0 时用 animateTo 平滑归位
+  （不再 snapTo 硬归零）；`CardHomePage` 的世界 / 服务器条目补稳定 `key(orderKey())`，避免拖动中 pointerInput 重启。
+- 议题 #82：`MusicPlayerController.progressRunnable` 旧实现在 `!isPlaying` 时直接 return 且不再 `postDelayed`，
+  进度 / 时长从此永久停住；现在每 tick 刷新 position / duration（position 夹紧到 duration），
+  播放 / 缓冲 / READY / pause / seek 边界都会刷新并保证轮询在跑；暂停时取消轮询但保留正确位置。
+- 议题 #83：「返回游戏」胶囊残留 + 点击崩溃。主界面 ON_RESUME 立即刷新一次；点胶囊时当场 `isGameProcessAlive`
+  校验，失效则收起并提示；`resumeGame` 返回 Boolean，进程不活直接不启动；`VMActivity.onCreate` 在初始化前校验
+  启动 extras，缺失就安全 `finish()`（不再 `throw IllegalStateException("Unknown VM launch state!")`）。
+- 议题 #80：新增 `game/music/Lyrics.kt`（LRC 解析：多标签 / offset / UTF-8 UTF-16 GBK / 1MiB 上限）；
+  `MusicPlayerController` 暴露 `lyrics` / `currentLyricIndex` / `hasLyrics` / `reloadLyrics()`，切歌异步加载同名 `.lrc`；
+  `MusicLibrary.saveLyrics()` 导入歌词（`.part` + 改名 + 解析校验）；通知栏播放中显示「上一行 + 当前行」（BigTextStyle）。
+- 议题 #81：新增 `ui/screens/main/MusicMiniPlayer.kt`（顶栏下方 40dp 玻璃条：歌名 + 上一首 / 播放暂停 / 下一首，
+  点条身进音乐页；非音乐页且有当前曲目才显示）；`LauncherTopBar` 加 `showMusicMiniPlayer: Boolean = true` 默认参数，
+  `MainScreen` 调用点不变。
+- 游戏内入口：`GameMenuSubscreen` 右侧菜单新增「多人联机」item（`game_menu_option_multiplayer`）→
+  `GameScreen` 收起菜单后带 `MainActivity.EXTRA_OPEN_MULTIPLAYER` 回启动器，`MainActivity` 在 composition 的
+  LaunchedEffect 里消费 extra：`clearWith(LauncherMain)` + `navigateTo(NormalNavKey.Multiplayer)`（游戏继续后台运行）。
+- AI：`GameInstallTools` 由单槽 `active` 改为多会话 Map（并行安装 + `install_status` 列出全部），镜像任务 id 用
+  `install_game_ai_` 前缀；新增 `ai/agent/tools/MusicTools.kt`（`music_status` / `music_control`），工具总数 51 → 53。
+- 并行安装加固（#78 补丁）：`game/download/jvm_server/InstallerJvmGate.kt` 用进程级 Mutex 串行 JVM 安装阶段
+  （`GameJVMRunner.runJvmRetryRuntimes`；`startJvmServiceAndWaitExit` 的 finally 收自己的服务，`cancelInstall` 不再全局停服务）；
+  `engine/PathWriteLock.kt` 抽成共享「按目标路径分条锁」，下载 / 复制 / 合并共用；`InstallTargetRegistry.kt` 做跨入口同名租约
+  （GameInstaller / ModPackInstaller / ModpackImporter 的 reserve/release，启动恢复 clearAll）；PackExporter 改独占
+  `temp_modpack_exporter/export_<uuid>` 子目录、只清自己。
+- #83 心跳判活：`VMActivity` 主线程 Handler 每 25s 刷新 `game_session.running`（`SystemClock.elapsedRealtime()`），
+  `isGameProcessAlive()` = 文件存在 + 心跳 ≤90s + `:game` 进程存活，不再依赖 OEM 不可靠的 `IMPORTANCE_CACHED`。
+- #79 逐张换位：`moveToAdjacent()` 每次只向目标方向挪一个可见项；`Reorder` 支持 2D（Row/FlowRow 横向拖动），
+  移出组合项 `forget` 坐标。
+- 音乐修尾：歌词文件改 `<完整音频文件名>.lrc`（旧 `<basename>.lrc` 只读兼容）；新增 `lyricsLoading`；
+  修 `applyPositionAndDuration` 未 prepare 覆盖位置、seek 夹紧、prepareTrack 失败假状态、onPlayerError 后不重 prepare、
+  删除曲目先删音频后删歌词等；音乐页横屏/矮屏布局重构。
+- AI 修尾：`MusicTools` 位置 0 显示 `00:00`（时长未知才 `--:--`）、seek 回真实位置、曲库与播放器同步、
+  play 失败如实报错；`GameInstallRunner` 加 onFinally 兜底结算（修「取消全部任务后永远显示安装中」）。
+- 字符串：新增 `res/values*/strings_284_download.xml`、`strings_284_home.xml`、`strings_284_musicui.xml`。
+- 文档：`music-player.md` / `downloads.md` / `task-panel.md` / `usage.md` / `ai-tools.md` 中英同步（篇数 78+78 不变）。
 
 ### 28.2.3 预发行版（本轮修复）
 

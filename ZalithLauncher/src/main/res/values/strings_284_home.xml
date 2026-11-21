@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 28.2.4 主页：「返回游戏」入口在会话结束时点击的提示（修 #83 胶囊残留 / 点击闪退） -->
+<resources>
+    <string name="home_return_to_game_expired">The game has exited, so “Back to game” was closed.</string>
+</resources>

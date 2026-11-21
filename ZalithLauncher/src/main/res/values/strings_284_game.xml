@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ZyNova Launcher · 28.2.4 游戏内菜单新增「多人联机」快捷入口（默认英文）
+  ⚠️ 新 key 集中放在这个文件里，避免和别的议题同时改 res/values/strings.xml 冲突。
+-->
+<resources>
+    <string name="game_menu_option_multiplayer">Multiplayer</string>
+</resources>

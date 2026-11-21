@@ -121,6 +121,12 @@ fun MusicRemotePanel(modifier: Modifier = Modifier) {
         }
     }
 
+    //快照里的文件名变了（主进程切歌 / 播完自动下一首）就丢掉拖动状态：
+    //否则拖到一半换歌，松手会把新歌 seek 到上一首的位置。
+    LaunchedEffect(snapshot.fileName) {
+        draggingPosition = null
+    }
+
     LaunchedEffect(message) {
         if (message != null) {
             delay(MESSAGE_VISIBLE_DURATION_MS)
@@ -159,6 +165,8 @@ fun MusicRemotePanel(modifier: Modifier = Modifier) {
     val durationMs = snapshot.durationMs
     val sliderMax = durationMs.coerceAtLeast(1L).toFloat()
     val sliderValue = (draggingPosition ?: snapshot.positionMs.toFloat()).coerceIn(0f, sliderMax)
+    //拖动时时间标签跟着显示目标位置（与启动器页面一致）；位置 0 显示 0:00，不是 --:--
+    val displayedPosition = draggingPosition?.toLong() ?: snapshot.positionMs
 
     Column(
         modifier = modifier
@@ -374,7 +382,7 @@ fun MusicRemotePanel(modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = formatMusicDuration(snapshot.positionMs),
+                        text = formatMusicPosition(displayedPosition),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

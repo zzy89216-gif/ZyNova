@@ -1,9 +1,10 @@
 # What the AI can do
 
-- Install the game itself / modpacks / mods / resource packs / shaders / worlds
+- Install the game itself / modpacks / mods / resource packs / shaders / worlds (several game installs can run **at the same time**, see "Installs and music" below)
 - Change instance settings (renderer, Java, memory, JVM arguments)
 - Read and write `options.txt`
 - List or remove favourites
+- Control the music player (what is playing, play / pause, switch tracks, play by title)
 - Read logs and launch the game (subject to the tool permissions)
 
 It can also **bring up multiplayer end to end**:
@@ -72,7 +73,24 @@ These are not plain strings in `options.txt`; the tools map them for you:
 - If parsing fails the AI falls back to `fetch_webpage`
 
 
-## All 51 tools
+## Installs and music
+
+- `install_game` can **start several game installations at the same time**: installing a few versions in a row does
+  not need to wait for the previous one, and every install is an independent background task with its own row in
+  the top task bar. The only limit is that **instance names must be unique**: an instance that is already being
+  installed or already exists is rejected with a clear reason, so to install several copies of the same game
+  version, give each one a different name;
+- `install_status` lists **every installation in progress** (target, progress, current step, elapsed time), plus the
+  result of the latest one and the instances you already have (no longer a single task);
+- `music_status` (read-only): the current track, playing / buffering / paused state, position and total duration
+  (`--:--` when unknown), library size, and whether the current track has lyrics (the current lyric line is
+  included when it does);
+- `music_control`: `play` / `pause` / `toggle` / `next` / `previous` / `stop` / `seek`; `play` can start a
+  specific track by title or file name, and `seek` takes a target in seconds. It only controls **the local
+  library you imported yourself** — it never searches for or downloads music; when the library is empty it
+  tells you to import audio on the Music page first.
+
+## All 53 tools
 
 | Category | Tools |
 |---|---|
@@ -85,5 +103,6 @@ These are not plain strings in `options.txt`; the tools map them for you:
 | Logs and crashes | `list_logs` `read_log` `summarize_log` `read_crash_report` `read_crash_report_legacy` |
 | Web | `web_search` `fetch_webpage` `search_mcmod` |
 | Multiplayer | `multiplayer_status` `frp_status` `frp_create_tunnel` `frp_start_tunnel` `frp_stop_tunnel` |
+| Music | `music_status` `music_control` |
 | Favorites | `list_favorites` `remove_favorite` |
 | Settings | `list_settings` `get_setting` `set_setting` `update_ai_setting` |

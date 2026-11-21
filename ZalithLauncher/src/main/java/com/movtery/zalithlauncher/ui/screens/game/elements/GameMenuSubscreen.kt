@@ -99,6 +99,7 @@ fun GameMenuSubscreen(
     closeScreen: () -> Unit,
     onForceClose: () -> Unit,
     onBackToLauncher: () -> Unit,
+    onOpenMultiplayer: () -> Unit,
     onSendEscape: () -> Unit,
     onSwitchLog: () -> Unit,
     enableTerracotta: Boolean,
@@ -191,6 +192,7 @@ fun GameMenuSubscreen(
                 modifier = Modifier.weight(1f),
                 onForceClose = onForceClose,
                 onBackToLauncher = onBackToLauncher,
+                onOpenMultiplayer = onOpenMultiplayer,
                 onSendEscape = onSendEscape,
                 onSwitchLog = onSwitchLog,
                 enableTerracotta = enableTerracotta,
@@ -215,6 +217,7 @@ fun GameMenuSubscreen(
 private fun GameActionContent(
     onForceClose: () -> Unit,
     onBackToLauncher: () -> Unit,
+    onOpenMultiplayer: () -> Unit,
     onSendEscape: () -> Unit,
     onSwitchLog: () -> Unit,
     enableTerracotta: Boolean,
@@ -265,6 +268,18 @@ private fun GameActionContent(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.game_menu_option_music),
                 onClick = onOpenMusic,
+                color = color,
+                contentColor = contentColor,
+            )
+        }
+        //28.2.4 新需求：一键回启动器并直接打开「多人联机」页（陶瓦 / 樱花内网穿透都在那一页）。
+        //游戏不退出：VMActivity 留在后台继续跑，从启动器的「返回游戏」还能回来，
+        //所以这里**不**走强制关闭，只是把启动器排到前台并带上「要打开哪个页面」的 extra。
+        item {
+            MenuTextButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.game_menu_option_multiplayer),
+                onClick = onOpenMultiplayer,
                 color = color,
                 contentColor = contentColor,
             )

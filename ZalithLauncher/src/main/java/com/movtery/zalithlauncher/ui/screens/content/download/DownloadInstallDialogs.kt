@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.JsonSyntaxException
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
+import com.movtery.zalithlauncher.game.download.game.GameDownloadInfo
 import com.movtery.zalithlauncher.game.download.game.optifine.CantFetchingOptiFineUrlException
 import com.movtery.zalithlauncher.game.download.jvm_server.JvmCrashException
 import com.movtery.zalithlauncher.game.download.jvm_server.isProcessStartRefused
@@ -70,6 +72,10 @@ import java.util.concurrent.TimeoutException
  * 安装成功的提示要回到下载页才弹，整合包「输入版本名」在主界面时永远等不到答案。
  * 现在统一由 MainActivity 在顶层渲染（与整合包导入弹窗同一套做法），
  * 状态则放在 Activity 级的 ViewModel 里，任何界面都不影响下载与弹窗。
+ *
+ * 议题 #78：多个安装可以同时进行，所以 ViewModel 里是一个**对话框队列**。
+ * 这里每次只渲染队首那一个操作，处理完（关闭 / 确认）再从队列里移除，
+ * 两个安装同时完成时提示会逐个出现，不会互相覆盖。
  */
 
 // ------------------------------------------------------------------ 游戏版本安装
@@ -81,8 +87,8 @@ fun GameDownloadInstallDialogs(
 ) {
     val context = LocalContext.current
 
-    fun startInstall(info: com.movtery.zalithlauncher.game.download.game.GameDownloadInfo) {
-        viewModel.install(
+    fun startInstall(info: GameDownloadInfo) {
+        viewModel.startInstall(
             context = context,
             info = info,
             onStart = {
@@ -101,14 +107,16 @@ fun GameDownloadInstallDialogs(
                 text = stringResource(R.string.notification_data_jvm_service_message),
                 onGranted = {
                     //权限被授予，开始安装
+                    viewModel.dismissOperation(operation)
                     startInstall(operation.info)
                 },
                 onIgnore = {
                     //用户不想授权，但是支持继续进行安装
+                    viewModel.dismissOperation(operation)
                     startInstall(operation.info)
                 },
                 onDismiss = {
-                    viewModel.installOperation = GameInstallOperation.None
+                    viewModel.dismissOperation(operation)
                 }
             )
         }
@@ -118,10 +126,11 @@ fun GameDownloadInstallDialogs(
                 text = stringResource(R.string.download_install_warning_mobile_data),
                 confirmText = stringResource(R.string.generic_anyway),
                 onDismiss = {
-                    viewModel.installOperation = GameInstallOperation.None
+                    viewModel.dismissOperation(operation)
                 },
                 onConfirm = {
                     //用户坚持使用移动网络
+                    viewModel.dismissOperation(operation)
                     startInstall(operation.info)
                 }
             )
@@ -146,7 +155,7 @@ fun GameDownloadInstallDialogs(
                 }
             }
             val dismiss = {
-                viewModel.installOperation = GameInstallOperation.None
+                viewModel.dismissOperation(operation)
             }
             AlertDialog(
                 onDismissRequest = dismiss,
@@ -177,7 +186,7 @@ fun GameDownloadInstallDialogs(
                 title = stringResource(R.string.download_install_success_title),
                 text = stringResource(R.string.download_install_success_message)
             ) {
-                viewModel.installOperation = GameInstallOperation.None
+                viewModel.dismissOperation(operation)
             }
         }
     }
@@ -194,10 +203,10 @@ fun ModPackDownloadInstallDialogs(
 
     ModPackInstallOperation(
         operation = viewModel.installOperation,
-        updateOperation = { viewModel.installOperation = it },
-        installer = viewModel.installer,
+        dismissOperation = { viewModel.dismissOperation(it) },
+        onWarn = { version, iconUrl -> viewModel.requestCompatibilityWarning(version, iconUrl) },
         onInstall = { version, iconUrl ->
-            viewModel.install(
+            viewModel.startInstall(
                 context = context,
                 version = version,
                 iconUrl = iconUrl,
@@ -208,10 +217,6 @@ fun ModPackDownloadInstallDialogs(
                     eventViewModel.sendKeepScreen(false)
                 }
             )
-        },
-        onCancel = {
-            viewModel.cancel()
-            eventViewModel.sendKeepScreen(false)
         }
     )
 
@@ -222,7 +227,8 @@ fun ModPackDownloadInstallDialogs(
             viewModel.confirmVersionName(name)
         },
         onCancel = {
-            viewModel.cancel()
+            //只取消正在等名字的那个整合包安装，不影响其它并行安装
+            viewModel.cancelVersionName()
         }
     )
 
@@ -238,10 +244,9 @@ fun ModPackDownloadInstallDialogs(
 @Composable
 private fun ModPackInstallOperation(
     operation: ModPackInstallOperation,
-    updateOperation: (ModPackInstallOperation) -> Unit,
-    installer: com.movtery.zalithlauncher.game.download.modpack.install.ModPackInstaller?,
-    onInstall: (com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion, iconUrl: String?) -> Unit,
-    onCancel: () -> Unit
+    dismissOperation: (ModPackInstallOperation) -> Unit,
+    onWarn: (PlatformVersion, iconUrl: String?) -> Unit,
+    onInstall: (PlatformVersion, iconUrl: String?) -> Unit
 ) {
     when (operation) {
         is ModPackInstallOperation.None -> {}
@@ -249,15 +254,17 @@ private fun ModPackInstallOperation(
             NotificationCheck(
                 text = stringResource(R.string.notification_data_jvm_service_message),
                 onGranted = {
-                    //权限被授予，开始安装
-                    updateOperation(ModPackInstallOperation.Warning(operation.version, operation.iconUrl))
+                    //权限被授予：把这条通知权限提醒处理掉，接着排入兼容性确认
+                    dismissOperation(operation)
+                    onWarn(operation.version, operation.iconUrl)
                 },
                 onIgnore = {
                     //用户不想授权，但是支持继续进行安装
-                    updateOperation(ModPackInstallOperation.Warning(operation.version, operation.iconUrl))
+                    dismissOperation(operation)
+                    onWarn(operation.version, operation.iconUrl)
                 },
                 onDismiss = {
-                    updateOperation(ModPackInstallOperation.None)
+                    dismissOperation(operation)
                 }
             )
         }
@@ -277,9 +284,10 @@ private fun ModPackInstallOperation(
                 },
                 confirmText = stringResource(R.string.download_install),
                 onCancel = {
-                    updateOperation(ModPackInstallOperation.None)
+                    dismissOperation(operation)
                 },
                 onConfirm = {
+                    dismissOperation(operation)
                     onInstall(operation.version, operation.iconUrl)
                 }
             )
@@ -304,7 +312,7 @@ private fun ModPackInstallOperation(
                 }
             }
             val dismiss = {
-                updateOperation(ModPackInstallOperation.None)
+                dismissOperation(operation)
             }
             AlertDialog(
                 onDismissRequest = dismiss,
@@ -335,7 +343,7 @@ private fun ModPackInstallOperation(
                 title = stringResource(R.string.download_install_success_title),
                 text = stringResource(R.string.download_install_success_message)
             ) {
-                updateOperation(ModPackInstallOperation.None)
+                dismissOperation(operation)
             }
         }
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ZyNova Launcher · 28.2.4 音乐播放器界面（议题 #80 / #81）的字符串（默认英文）
+  ⚠️ 新 key 集中放在这个文件里，避免和别的议题同时改 res/values/strings.xml 冲突。
+-->
+<resources>
+    <string name="music_lyrics_loading">Loading lyrics…</string>
+    <string name="music_lyrics_empty">No lyrics for this track</string>
+    <string name="music_lyrics_hint">Tap “Import lyrics” and pick a .lrc file; it will be used for the current song.</string>
+    <string name="music_lyrics_import">Import lyrics</string>
+    <string name="music_lyrics_importing">Importing…</string>
+    <string name="music_lyrics_import_success">Lyrics imported</string>
+    <string name="music_lyrics_import_failed">Couldn\'t read any lyrics from that file</string>
+    <string name="music_lyrics_not_lrc">Please choose a .lrc lyrics file</string>
+    <string name="music_lyrics_cancelled">No lyrics file selected</string>
+</resources>

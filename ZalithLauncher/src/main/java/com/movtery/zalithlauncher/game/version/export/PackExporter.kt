@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.util.UUID
 
 private const val TAG = "PackExporter"
 
@@ -52,6 +53,18 @@ class PackExporter(
     private val scope: CoroutineScope,
 ) {
     private val taskExecutor = TaskFlowExecutor(scope)
+
+    /**
+     * 本次导出独占的临时目录（议题 #78）
+     *
+     * 以前所有导出共用 [PathManager.DIR_CACHE_MODPACK_EXPORTER] 根目录，清理时整个根目录删掉：
+     * 两个导出（不同实例同时导出 / 导出过程中又点导出）会互删临时文件，
+     * 生成出缺文件的压缩包。现在每次导出在根目录下用独立子目录，只清自己的。
+     */
+    private val exportCachePath: File = File(
+        PathManager.DIR_CACHE_MODPACK_EXPORTER,
+        "export_${UUID.randomUUID().toString().take(8)}"
+    )
     val taskFlow: StateFlow<List<TitledTask>> = taskExecutor.tasksFlow
 
     //目前只保留 Modrinth 一种导出格式
@@ -90,7 +103,6 @@ class PackExporter(
         outputUri: Uri,
         version: Version
     ) = withContext(Dispatchers.IO) {
-        val exportCachePath = PathManager.DIR_CACHE_MODPACK_EXPORTER
         val tempPath = File(exportCachePath, "temp")
         val pack = File(exportCachePath, "${exportInfo.name}.${exporter.fileSuffix}")
 
@@ -148,7 +160,8 @@ class PackExporter(
      * 清理临时整合包导出目录
      */
     private suspend fun clearTempModPackDir() = withContext(Dispatchers.IO) {
-        PathManager.DIR_CACHE_MODPACK_EXPORTER.takeIf { it.exists() }?.let { folder ->
+        //议题 #78：只清本次导出的子目录，绝不删 DIR_CACHE_MODPACK_EXPORTER 根目录
+        exportCachePath.takeIf { it.exists() }?.let { folder ->
             FileUtils.deleteQuietly(folder)
             Logger.info(TAG, "Temporary modpack export directory cleared.")
         }

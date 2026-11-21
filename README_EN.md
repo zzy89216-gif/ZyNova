@@ -10,7 +10,7 @@
 **A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.3)
+[![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
 [![Docs](https://img.shields.io/badge/Docs-78%20articles-blue)](docs/en/README.md)
 
 One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
@@ -41,7 +41,7 @@ If the fingerprint does not match, **do not install it** — download again from
 
 | | |
 |---|---|
-| **AI agent** | DeepSeek by default: installs games / modpacks / mods, changes settings, reads logs, launches — 51 tools |
+| **AI agent** | DeepSeek by default: installs games / modpacks / mods, changes settings, reads logs, launches, controls music — 53 tools |
 | **One-tap install** | Resources and modpacks install in one step from the list, required dependencies included |
 | **Renderers** | Auto / MobileGlues / Ironized Zink / GL4ES / LTW (experimental, arm64 only) |
 | **Favorites** | Online favorites + local archive (SHA-256 dedupe), one-tap download right on the card |
@@ -51,29 +51,20 @@ If the fingerprint does not match, **do not install it** — download again from
 
 Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-## What's new in 28.2.3
+## What's new in 28.2.4
 
 **Pre-release (test build)** — for testing, not the stable line yet.
 
-- **Built-in music player**: a Music entry in the top bar; import local tracks, play them as a list, and switch
-  tracks from the in-game launcher menu. Background playback with notification controls
-  ([how to use](docs/en/music-player.md)).
-- **Deleting a version no longer looks stuck**: full-screen determinate progress (files / size / percentage /
-  current file), cancellable, and cancelling restores the version when possible.
-- **Downloads work from any screen**: install-success, modpack-name and permission prompts no longer appear only
-  on the Downloads page, and leaving the page does not cancel or suspend an install.
-- **An interrupted install recovers**: after the process is killed, the next start cleans up or rolls back safely —
-  no half-written jars and no permanent "installing" state.
-- **"About & Support" is now "About & Plugins"**: the page already lists loaded plugins, so the name now matches.
-- **Multiplayer page title fixed**: it says Multiplayer instead of "Terracotta | ..." — both Terracotta and
-  SakuraFrp live on that page.
-- **Favorites top bar rework**: the online-favorites / local-archive switcher and the refresh button now use the
-  app-wide glass/pill styling.
-- **About-page buttons aligned**: check-update / sponsor / project / Discord buttons are now equal width and
-  height with a shared right edge.
-- **AI web search**: the official DeepSeek search path is fixed; when it is unavailable the result states the
-  reason and falls back to DuckDuckGo instead of failing silently. The AI can also switch the search engine and
-  configure the key itself.
+- **Download several things at once**: game versions, modpacks and resources can now be queued together,
+  each with its own progress / speed / cancel; the task panel shows them all. Several bugs where downloads
+  overwrote each other's task state are fixed too.
+- **Card reordering on the home page is stable**: long-press drag no longer flickers or crashes; the same feel as before.
+- **No stale "Return to game"**: the entry disappears as soon as the game exits, and tapping it in the brief
+  window before refresh no longer launches an empty shell that crashes.
+- **Music player improvements**: the progress bar and time labels are accurate and keep working while paused;
+  a compact now-playing bar in the top bar (title + play/pause + skip); same-name `.lrc` lyrics with auto-scroll
+  and highlighting, plus the current line in the notification; a denser library list where one tap switches tracks.
+- User docs updated: [Music player](docs/en/music-player.md), [Downloads & tasks](docs/en/downloads.md).
 
 ## Docs and feedback
 

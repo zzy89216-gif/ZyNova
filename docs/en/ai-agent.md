@@ -27,6 +27,7 @@ installing the game itself / modpacks / resources, editing instance settings, re
 - Change an instance's renderer, Java, memory, JVM arguments and so on;
 - Read instance config and `options.txt`;
 - Query favorites and remove them;
+- Check the current song and play / pause / switch tracks / start a track by title;
 - Launch the game and read logs (within tool limits).
 
 ## Safety boundaries

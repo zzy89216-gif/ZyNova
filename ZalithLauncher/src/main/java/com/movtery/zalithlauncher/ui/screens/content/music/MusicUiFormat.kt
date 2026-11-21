@@ -44,6 +44,16 @@ internal fun formatMusicDuration(durationMs: Long): String {
     }
 }
 
+/**
+ * 当前播放位置（#82）。
+ *
+ * 与 [formatMusicDuration] 的区别：位置的 0 是「刚开头」而不是「未知」，
+ * 所以 0 显示 `0:00`；只有总时长未知时才用 `--:--`。
+ */
+internal fun formatMusicPosition(positionMs: Long): String {
+    return if (positionMs <= 0L) "0:00" else formatMusicDuration(positionMs)
+}
+
 /** 把一次导入的结果整理成给用户看的几行提示 */
 internal fun buildMusicImportMessage(context: Context, result: MusicLibrary.ImportResult): String {
     val lines = mutableListOf<String>()

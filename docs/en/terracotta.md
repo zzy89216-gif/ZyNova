@@ -2,6 +2,8 @@
 
 No port forwarding, no server, and **both sides install ZyNova**. Entry: **Multiplayer** in the top bar
 (pick "Terracotta" in the floating switcher at the bottom of the screen).
+You can also open it from inside the game: launcher menu → **Multiplayer** — the menu collapses, the launcher opens
+this page, and **the game keeps running in the background**.
 
 ## Preparation (both host and guest)
 

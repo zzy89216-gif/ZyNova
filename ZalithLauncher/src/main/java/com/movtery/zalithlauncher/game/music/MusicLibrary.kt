@@ -84,10 +84,19 @@ object MusicLibrary {
             return@withContext emptyList()
         }
         dir.listFiles()
-            ?.filter { it.isFile && it.length() > 0L }
+            ?.filter { it.isFile && it.length() > 0L && !isAuxiliaryFile(it) }
             ?.map { toTrack(it) }
             ?.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { track: MusicTrack -> track.title })
             ?: emptyList()
+    }
+
+    /**
+     * 边车歌词 `.lrc` 与导入临时文件 `.part` 和音频放在同一个曲库目录里，
+     * 但它们不是曲目：扫描时必须排除，否则会作为「时长为 0 的歌」出现在列表里（#80）。
+     */
+    private fun isAuxiliaryFile(file: File): Boolean {
+        val name = file.name.lowercase(Locale.ROOT)
+        return name.endsWith(".lrc") || name.endsWith(".part")
     }
 
     /**
@@ -138,8 +147,107 @@ object MusicLibrary {
 
     /** 删除一首曲目（IO 线程）。文件已经不在了也按「删掉了」处理，避免界面卡在失败提示上 */
     suspend fun delete(track: MusicTrack): Boolean = withContext(Dispatchers.IO) {
-        runCatching { !track.file.exists() || track.file.delete() }.getOrDefault(false)
+        val deleted = runCatching { !track.file.exists() || track.file.delete() }.getOrDefault(false)
+        //音频确实删掉了才清歌词，避免音频删除失败却先把歌词弄丢；新旧两种命名都清
+        if (deleted) {
+            runCatching {
+                lyricsFiles(track).forEach { lyrics ->
+                    if (lyrics.exists()) lyrics.delete()
+                }
+            }
+        }
+        deleted
     }
+
+    /**
+     * 边车歌词文件名（议题 #80）。
+     *
+     * 新命名 = `<完整音频文件名>.lrc`（如 `a.mp3.lrc`）：同一目录里的 `a.mp3` 与 `a.m4a`
+     * 各自有独立歌词，不会再互相覆盖。旧版本用的是 `<去掉扩展名的文件名>.lrc`（`a.lrc`），
+     * [legacyLyricsFile] 只用于向后兼容读取已经导入的歌词；新建 / 覆盖一律走新命名。
+     */
+    fun lyricsFile(context: Context, track: MusicTrack): File =
+        File(musicDir(context), "${track.file.name}.lrc")
+
+    /** 旧版歌词命名（`<去掉扩展名的文件名>.lrc`），仅用于兼容已导入的歌词；同 basename 的音频共享它 */
+    fun legacyLyricsFile(context: Context, track: MusicTrack): File =
+        File(musicDir(context), "${track.file.nameWithoutExtension}.lrc")
+
+    /** 当前曲目该读哪个歌词文件：优先新命名，找不到再回退旧命名；都没有返回 null */
+    fun findLyricsFile(context: Context, track: MusicTrack): File? {
+        val primary = lyricsFile(context, track)
+        if (primary.isFile) return primary
+        val legacy = legacyLyricsFile(context, track)
+        return legacy.takeIf { it.isFile }
+    }
+
+    /** 一首曲目可能挂着的全部歌词文件（删除时新命名和旧命名一起清） */
+    private fun lyricsFiles(track: MusicTrack): List<File> {
+        val parent = track.file.parentFile ?: return emptyList()
+        return listOf(
+            File(parent, "${track.file.name}.lrc"),
+            File(parent, "${track.file.nameWithoutExtension}.lrc")
+        )
+    }
+
+    /**
+     * 把用户选中的 `.lrc` 保存为当前曲目的边车歌词（IO 线程）。
+     *
+     * 写入 `files/music/<完整音频文件名>.lrc`（如 `a.mp3.lrc`），不同扩展名的同名音频互不覆盖。
+     * 返回 false 的三种情况：打不开选择器给的 URI / 文件为空或超过上限 / 一个带时间标签的歌词行都没有。
+     * 最后一条是刻意校验的：用户选错文件时，不能留下一个「导入成功但界面什么都不显示」的 `.lrc`。
+     * 写盘策略与音频导入一致：先写 `*.part`，成功后再改名，中途失败不会污染曲库。
+     */
+    suspend fun saveLyrics(context: Context, track: MusicTrack, uri: Uri): Boolean =
+        withContext(Dispatchers.IO) {
+            val dir = musicDir(context)
+            if (!dir.isDirectory && !dir.mkdirs() && !dir.isDirectory) {
+                Logger.warning(TAG, "Cannot create music directory: ${dir.absolutePath}")
+                return@withContext false
+            }
+
+            val target = lyricsFile(context, track)
+            val temporary = File(dir, "${target.name}.part")
+            try {
+                val input = context.contentResolver.openInputStream(uri)
+                    ?: throw IllegalStateException("Cannot open the selected lyrics file")
+                input.use { source ->
+                    temporary.outputStream().use { sink ->
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        var total = 0L
+                        while (true) {
+                            val read = source.read(buffer)
+                            if (read < 0) break
+                            total += read
+                            if (total > LYRICS_MAX_FILE_BYTES) {
+                                throw IllegalStateException("The selected lyrics file is too large")
+                            }
+                            sink.write(buffer, 0, read)
+                        }
+                    }
+                }
+                if (temporary.length() <= 0L) {
+                    throw IllegalStateException("The selected lyrics file is empty")
+                }
+                //先按真实解析器验一遍：保存下来的一定是播放器能读出来的歌词
+                if (Lyrics.parseFile(temporary).isEmpty()) {
+                    Logger.warning(TAG, "No timed lyric line found in ${target.name}")
+                    return@withContext false
+                }
+                if (target.exists()) {
+                    target.delete()
+                }
+                if (!temporary.renameTo(target)) {
+                    temporary.copyTo(target, overwrite = true)
+                }
+                true
+            } catch (throwable: Throwable) {
+                Logger.warning(TAG, "Failed to save the lyrics of ${track.fileName}", throwable)
+                false
+            } finally {
+                runCatching { if (temporary.exists()) temporary.delete() }
+            }
+        }
 
     private fun toTrack(file: File): MusicTrack {
         return MusicTrack(

@@ -26,6 +26,8 @@ import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
 import com.movtery.zalithlauncher.game.download.InstallJournal
+import com.movtery.zalithlauncher.game.download.InstallTargetRegistry
+import com.movtery.zalithlauncher.game.download.engine.PathWriteLock
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.mcim.mapMCIMMirrorUrls
 import com.movtery.zalithlauncher.game.download.game.GameDownloadInfo
@@ -47,6 +49,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.util.UUID
 
 private const val TAG = "ModPackInstaller"
 
@@ -85,6 +88,27 @@ class ModPackInstaller(
     private lateinit var gameDownloadInfo: GameDownloadInfo
 
     /**
+     * 本次安装独占的临时整合包目录（议题 #78）
+     *
+     * 以前所有整合包安装共用 [PathManager.DIR_CACHE_MODPACK_DOWNLOADER] 一个目录，
+     * 安装开头的清理会删掉另一个**并行安装**正在用的整合包文件，
+     * 两个整合包同时装必然互相破坏。现在每个安装实例用独立子目录，只清自己的。
+     */
+    private val tempModPackRoot: File = File(
+        PathManager.DIR_CACHE_MODPACK_DOWNLOADER,
+        "install_${Integer.toHexString(version.platformId().hashCode())}_${UUID.randomUUID().toString().take(8)}"
+    )
+
+    /** 已占用的目标版本名（议题 #78：UI 游戏安装 / AI / 整合包 / 本地导入 跨入口互斥） */
+    private val targetReserved = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    private fun releaseTarget() {
+        if (targetReserved.compareAndSet(true, false)) {
+            InstallTargetRegistry.release(targetVersionName)
+        }
+    }
+
+    /**
      * 开始安装整合包
      * @param isRunning 正在运行中，拒绝这次安装时
      * @param onInstalled 完成安装时
@@ -109,15 +133,19 @@ class ModPackInstaller(
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
-                //安装成功：落盘记录已经没有用了，清掉（嵌套的游戏安装记录也一并清）
-                InstallJournal.clearModpackInstall()
-                InstallJournal.clearGameInstall()
+                //先释放目标版本名（成功也不能一直占着），再做收尾
+                releaseTarget()
+                //安装成功：只清本次安装的落盘记录。
+                //⚠️ 不能 clearGameInstall() 清全部：并行安装时会把别人正在进行的游戏安装记录一起清掉。
+                //嵌套的游戏安装成功时已经清掉了自己那条记录。
+                InstallJournal.clearModpackInstall(tempModPackRoot.absolutePath)
                 onInstalled(targetVersionName)
             },
             onError = { e ->
+                releaseTarget()
                 //议题 #73：失败/取消时干净回滚，避免留下「能启动但缺模组」的假版本，
                 //也避免半成品目录挡住下一次同名词安装
-                InstallJournal.rollbackInterruptedModpackInstall()
+                InstallJournal.rollbackInterruptedModpackInstall(tempModPackRoot.absolutePath)
                 if (e is UsingMobileDataException) {
                     //用户不希望使用移动网络
                     onCancelled()
@@ -126,8 +154,9 @@ class ModPackInstaller(
                 onError(e)
             },
             onCancel = {
+                releaseTarget()
                 //任务被取消时以前什么都不回调，界面会永远停在「安装中」（议题 #72/#73）
-                InstallJournal.rollbackInterruptedModpackInstall()
+                InstallJournal.rollbackInterruptedModpackInstall(tempModPackRoot.absolutePath)
                 onCancelled()
             }
         )
@@ -142,8 +171,8 @@ class ModPackInstaller(
             throw java.io.IOException(context.getString(R.string.download_modpack_no_version))
         }
 
-        //临时游戏环境目录
-        val tempModPackDir = PathManager.DIR_CACHE_MODPACK_DOWNLOADER
+        //临时游戏环境目录（本次安装独占，见 [tempModPackRoot]）
+        val tempModPackDir = tempModPackRoot
         //议题 #73：整合包安装从开始就落盘记录，进程被杀后下次启动才能判断「没装完」
         InstallJournal.beginModpackInstall(tempModPackDir.absolutePath)
         val tempVersionsDir = File(tempModPackDir, "fkVersion")
@@ -239,9 +268,18 @@ class ModPackInstaller(
                     icon = R.drawable.ic_edit_outlined
                 ) { task ->
                     task.updateProgress(-1f)
-                    targetVersionName = waitForVersionName(modpackInfo)
+                    val name = waitForVersionName(modpackInfo)
+                    //议题 #78：名字一确定就全局占用，避免与 UI 游戏安装 / AI 安装 / 另一个整合包
+                    //撞同一个 versions/<同名> 目标目录。占用失败给可读错误，不静默继续。
+                    if (!InstallTargetRegistry.reserve(name, "modpack:${version.platformId()}")) {
+                        throw IllegalStateException(
+                            context.getString(R.string.download_install_target_busy, name)
+                        )
+                    }
+                    targetReserved.set(true)
+                    targetVersionName = name
                     //目标版本名确定了：补写记录，恢复时才能定位半成品版本
-                    InstallJournal.updateModpackTargetVersion(targetVersionName)
+                    InstallJournal.updateModpackTargetVersion(tempModPackDir.absolutePath, targetVersionName)
                 }
 
                 //下载整合包模组文件
@@ -305,7 +343,8 @@ class ModPackInstaller(
      * 清理临时整合包版本目录
      */
     private suspend fun clearTempModPackDir() = withContext(Dispatchers.IO) {
-        PathManager.DIR_CACHE_MODPACK_DOWNLOADER.takeIf { it.exists() }?.let { folder ->
+        //议题 #78：只清本次安装自己的临时目录，不能碰其它并行安装的
+        tempModPackRoot.takeIf { it.exists() }?.let { folder ->
             FileUtils.deleteQuietly(folder)
             Logger.info(TAG, "Temporary modpack directory cleared.")
         }
@@ -323,12 +362,14 @@ class ModPackInstaller(
         dispatcher = Dispatchers.IO,
         task = { task ->
             task.updateProgress(-1f)
-            //复制文件
-            copyDirectoryContents(
-                tempVersionsDir,
-                targetClientDir
-            ) { percentage ->
-                task.updateProgress(percentage = percentage)
+            //复制文件（议题 #78：与同目标目录的其它写入按路径锁串行，避免写出截断文件）
+            PathWriteLock.withWrite(targetClientDir) {
+                copyDirectoryContents(
+                    tempVersionsDir,
+                    targetClientDir
+                ) { percentage ->
+                    task.updateProgress(percentage = percentage)
+                }
             }
 
             //复制整合包icon

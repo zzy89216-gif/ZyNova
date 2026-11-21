@@ -50,6 +50,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "GameInstallTools"
 
@@ -67,6 +69,9 @@ private const val LOADER_FETCH_TIMEOUT_MS = 90_000L
  *
  * 安装一旦开始就不再阻塞模型 —— 模型可以立刻回复「已在后台开始」，
  * 之后用 [GameInstallRunner.describeStatus]（`install_status` 工具）查询真实进度与结果。
+ *
+ * 议题 #78 起安装会话是**多份**的：可以同时发起多个本体安装（各用独立实例名 / 独立临时目录），
+ * 不再有「已经有一个安装任务在进行中」这种全局单槽门闩。
  */
 internal fun gameInstallTools(): List<AITool> = listOf(
     installGameTool(),
@@ -95,6 +100,9 @@ private fun installGameTool() = aiTool(
         ⚠️ 安装是**静默后台任务**：调用后立即返回「已开始」，不要谎称「已经装好」。
         需要汇报真实进度或结果时用 install_status；装完用 list_instances 确认。
         ⚠️ Fabric / Quilt / Legacy Fabric 会**自动**把对应的 API 模组装上，不要另外再装一遍。
+        ⚠️ 可以**同时并行安装多个**：每次调用都是一个独立的后台任务（顶部任务条各占一条）。
+        唯一限制是**实例名不能重复**：同名实例已经在装 / 已经存在时会明确拒绝，
+        想同时装同一个游戏版本的多个实例，用 name 参数给它们不同的名字。
     """.trimIndent(),
     parameters = AIToolSchema.objectSchema(
         properties = mapOf(
@@ -314,8 +322,10 @@ private suspend fun downloadableVersions(): List<MinecraftVersion> = withContext
 private fun installStatusTool() = aiTool(
     name = "install_status",
     description = """
-        查询游戏安装任务的**真实**状态：正在安装哪个实例、总进度、当前步骤，以及最近一次安装的结果。
+        查询游戏安装任务的**真实**状态：列出**所有**正在进行的安装（每个的目标、总进度、当前步骤、已用时），
+        以及最近一次安装的结果、当前已有的实例。
         用 install_game 之后，用户问「装好了没」、或者你要确认能不能 launch_game 时调用它。
+        同时装了多个时，这里会一条条列出来。
         它不会启动任何新的下载。
     """.trimIndent(),
     parameters = AIToolSchema.noArgs(),
@@ -366,11 +376,17 @@ private fun listDownloadableVersionsTool() = aiTool(
  * 与 `GameDownloadScreen` 里的做法保持一致：
  * - 安装本身跑在 [TaskSystem.appScope]，离开 AI 页面也会继续；
  * - 另外提交一个「镜像任务」，把 `GameInstaller` 的各子任务进度平均后写进全局任务队列，
- *   顶部那条细进度条就是用户能看到的唯一反馈；
+ *   顶部那条细进度条就是用户能看到的唯一反馈（多条并行安装各占一条）；
  * - 结果（成功 / 失败原因）记在这里，供 `install_status` 回答模型。
+ *
+ * 议题 #78：这里原来是 `private var active: Active?` **单槽**，第二个 install_game 会被
+ * 「已经有一个安装任务在进行中」挡掉。现在改成**按任务 id 索引的多会话表**：
+ * 每个安装有自己的 [GameInstaller]（#78 已让它用独占临时目录）、自己的镜像任务、自己的取消链路；
+ * 只有「同一个实例名」才拒绝 —— 那是真的会写同一个目标目录，不能并行。
  */
 internal object GameInstallRunner {
 
+    /** 一次进行中的安装（一个实例一个会话；在 [actives] 里的 key 就是镜像任务 id） */
     private class Active(
         val versionName: String,
         val gameVersion: String,
@@ -379,8 +395,23 @@ internal object GameInstallRunner {
         val startedAt: Long = System.currentTimeMillis(),
     )
 
-    @Volatile
-    private var active: Active? = null
+    /**
+     * 并行安装会话表。
+     *
+     * 用 [ConcurrentHashMap] 是因为写入来自两个地方：`install_game` 工具（主线程）与
+     * 安装器的完成回调（TaskSystem 的后台线程）；读取也在工具线程上。
+     * 用并发容器而不是 `synchronized(LinkedHashMap)`，避免回调线程拿锁时卡住工具。
+     */
+    private val actives = ConcurrentHashMap<String, Active>()
+
+    /**
+     * 镜像任务 id 的序号。
+     *
+     * id 用「前缀 + 序号 + 时间戳」：UI 的安装用 `install_game_ui_`，AI 用 `install_game_ai_`，
+     * 两边前缀不同；同一进程内连续的 AI 安装也靠序号保证 id 唯一，
+     * 否则 TaskSystem 的 `containsTask` 会**静默丢弃**同 id 的第二个任务。
+     */
+    private val sequence = AtomicInteger(0)
 
     @Volatile
     private var lastReport: String? = null
@@ -390,141 +421,191 @@ internal object GameInstallRunner {
 
     class Outcome(val ok: Boolean, val message: String)
 
-    fun isRunning(): Boolean = active != null
+    fun isRunning(): Boolean = actives.isNotEmpty()
 
     /**
      * 发起安装。返回给模型看的文本（已经开始的会说明「在后台继续」）。
+     *
+     * 可以同时发起多个：只有「同一个实例名」会被拒绝（会写同一个目标目录），
+     * 其它情况（不同游戏版本 / 不同加载器 / 不同 name）都各自并行。
      */
     fun start(info: GameDownloadInfo, gameVersion: String, loader: String): Outcome {
         val name = info.customVersionName
 
-        synchronized(this) {
-            active?.let { running ->
-                return Outcome(
-                    ok = false,
-                    message = "已经有一个安装任务在进行中（${running.versionName}），" +
-                        "等它结束再发起新的。当前状态：\n" + describeStatus(),
-                )
-            }
-
-            if (VersionsManager.isVersionExists(name) && !info.overwrite) {
-                return Outcome(
-                    ok = false,
-                    message = "实例「$name」已经存在了。如果确实要覆盖重装，请再调用一次 install_game 并带上 overwrite=true；" +
-                        "否则换一个 name。",
-                )
-            }
-
-            val installer = GameInstaller(GlobalContext, info, TaskSystem.appScope)
-            val item = Active(
-                versionName = name,
-                gameVersion = gameVersion,
-                loader = loader,
-                installer = installer,
+        //同名实例已经在装：明确拒绝，不静默丢请求（模型可以换 name 再发起）
+        actives.values.firstOrNull { it.versionName == name }?.let { running ->
+            return Outcome(
+                ok = false,
+                message = "实例「$name」已经在安装中了（已用时 ${elapsedSeconds(running)} 秒），" +
+                    "同一个实例不能同时装两遍。\n" +
+                    "想同时装同一个游戏版本的多个实例，请用 name 参数给它们不同的名字。" +
+                    "当前状态：\n" + describeStatus(),
             )
-            active = item
-            lastReport = null
-            lastSuccess = null
+        }
 
-            val mirrorId = "install_game_${gameVersion}_$name"
-            TaskSystem.submitTask(
-                Task.runTask(
-                    id = mirrorId,
-                    task = { task ->
-                        task.updateProgress(0f)
-                        task.updateTitle(androidText(R.string.main_task_install_game, name))
-                        while (true) {
-                            val current = active ?: break
-                            val list = current.installer.tasksFlow.value
-                            if (list.isNotEmpty()) {
-                                val average = list
-                                    .map { it.task.progress.value.coerceIn(0f, 1f) }
-                                    .average()
-                                    .toFloat()
-                                task.updateProgress(average)
-                                list.firstOrNull { it.task.stage.value.name == "RUNNING" }
-                                    ?.let { task.updateMessage(it.title) }
-                            }
-                            delay(400)
+        if (VersionsManager.isVersionExists(name) && !info.overwrite) {
+            return Outcome(
+                ok = false,
+                message = "实例「$name」已经存在了。如果确实要覆盖重装，请再调用一次 install_game 并带上 overwrite=true；" +
+                    "否则换一个 name。",
+            )
+        }
+
+        val taskId = "install_game_ai_${sequence.incrementAndGet()}_${System.currentTimeMillis()}"
+        val installer = GameInstaller(GlobalContext, info, TaskSystem.appScope)
+        val item = Active(
+            versionName = name,
+            gameVersion = gameVersion,
+            loader = loader,
+            installer = installer,
+        )
+        actives[taskId] = item
+        //⚠️ 这里**不要**清 lastReport / lastSuccess：多任务并行时，清掉会让「最近一次结果」
+        //在发起另一个安装的瞬间凭空消失（用户刚装完 A 又让装 B，A 的结果还想查）。
+        //新会话结束时 finish() 会把它覆盖成最新的那条。
+
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = taskId,
+                task = { task ->
+                    task.updateProgress(0f)
+                    task.updateTitle(androidText(R.string.main_task_install_game, name))
+                    //镜像「本会话」自己的安装器进度；会话结束时（完成/失败/取消）退出循环
+                    while (true) {
+                        val current = actives[taskId] ?: break
+                        val list = current.installer.tasksFlow.value
+                        if (list.isNotEmpty()) {
+                            val average = list
+                                .map { it.task.progress.value.coerceIn(0f, 1f) }
+                                .average()
+                                .toFloat()
+                            task.updateProgress(average)
+                            list.firstOrNull { it.task.stage.value.name == "RUNNING" }
+                                ?.let { task.updateMessage(it.title) }
                         }
-                        task.updateProgress(1f)
-                    },
-                    onCancel = {
-                        //用户从顶部进度条上取消：必须把真正的安装也停掉，
-                        //否则「界面说取消了、后台还在下」。取消会清掉半成品目录。
-                        runCatching { item.installer.cancelInstall() }
-                        if (active === item) {
-                            active = null
-                            lastSuccess = false
-                            lastReport = "安装「$name」被取消了（半成品目录已清理）。"
-                        }
+                        delay(400)
                     }
-                )
+                    task.updateProgress(1f)
+                },
+                onCancel = {
+                    //用户从顶部进度条上取消：必须把真正的安装也停掉，
+                    //否则「界面说取消了、后台还在下」。取消会清掉半成品目录。
+                    runCatching { item.installer.cancelInstall() }
+                    finish(taskId, "安装「$name」被取消了（半成品目录已清理）。", false)
+                },
+                onFinally = {
+                    //兜底：镜像任务结束但会话还没结算时必须收掉。
+                    //「取消全部任务」走的是 TaskSystem.cancelChildren()，**不会**调用任务的 onCancel
+                    //（只有单条 cancelTask 才会走）；安装器自己的 onCancelled 也不保证一定先到。
+                    //漏掉就会让 install_status 永远列出「进行中」、isRunning() 永远 true。
+                    //
+                    //⚠️ 这里只结算会话，**不**再调 cancelInstall()：真实的取消链路
+                    //（onCancel / 安装器 onCancelled）已经负责清理半成品；在这里补一刀反而可能
+                    //在「安装刚成功、会话刚结算」的竞态里把装好的版本目录当成半成品删掉。
+                    if (actives.containsKey(taskId)) {
+                        finish(
+                            taskId,
+                            "安装「$name」的后台任务已结束（没收到完成回调，可能已被取消）。",
+                            false,
+                        )
+                    }
+                }
             )
+        )
 
+        try {
             installer.installGame(
                 isRunning = {
-                    //安装器自己已经在跑了（极少见：说明有另一条路径抢先启动了一模一样的安装）
-                    active = null
-                    lastReport = "上一次安装还没结束，这次的安装请求被忽略了。"
-                    lastSuccess = false
+                    //安装器自己已经在跑了（极少见：同一个 GameInstaller 被启动了两次）
+                    finish(taskId, "实例「$name」的安装请求没有开始：这个安装器已经在跑别的任务了。", false)
                 },
                 onInstalled = { version ->
-                    active = null
-                    lastSuccess = true
-                    lastReport = "实例「$version」安装完成，已经可以直接启动。"
+                    finish(taskId, "实例「$version」安装完成，已经可以直接启动。", true)
                     VersionsManager.refresh("[GameInstallRunner] onInstalled", version)
                 },
                 onError = { th ->
-                    active = null
-                    lastSuccess = false
-                    lastReport = "实例「$name」安装失败：" + describeError(th)
+                    finish(taskId, "实例「$name」安装失败：" + describeError(th), false)
                 },
                 onGameAlreadyInstalled = {
-                    active = null
-                    lastSuccess = false
-                    lastReport = "实例「$name」已经存在，安装被跳过（不是出错，是本来就有）。"
+                    finish(taskId, "实例「$name」已经存在，安装被跳过（不是出错，是本来就有）。", false)
+                },
+                onCancelled = {
+                    //「取消全部任务」这类整体取消不会走镜像任务的 onCancel，
+                    //这里必须把会话收干净，否则 install_status 会永远显示「正在安装」
+                    finish(taskId, "安装「$name」被取消了（半成品目录已清理）。", false)
                 }
             )
-
-            return Outcome(
-                ok = true,
-                message = "已在后台开始安装「$name」（Minecraft $gameVersion / $loader）。\n" +
-                    "下载和安装是静默的，进度只显示在启动器顶部的那条细进度条上，不需要用户操作。\n" +
-                    "装完会自动出现在实例列表里。要查真实进度或结果，调用 install_status。",
-            )
+        } catch (th: Throwable) {
+            //安装器在「启动阶段」直接抛异常（极端情况）：会话也必须结算，
+            //否则镜像任务会一直挂着、这个实例名再也发不起新安装
+            finish(taskId, "实例「$name」安装启动失败：" + describeError(th), false)
+            throw th
         }
+
+        val parallel = actives.size
+        val message = buildString {
+            append("已在后台开始安装「").append(name).append("」（Minecraft ")
+                .append(gameVersion).append(" / ").append(loader).append("）。")
+            if (parallel > 1) append("现在共有 ").append(parallel).append(" 个安装同时进行。")
+            append("\n下载和安装是静默的，进度只显示在启动器顶部的那条细进度条上，不需要用户操作。\n")
+            append("装完会自动出现在实例列表里。要查真实进度或结果，调用 install_status。")
+            if (parallel > 1) {
+                append("\n（若还要同时装别的版本，直接再调用 install_game、用不同的 name 即可。）")
+            }
+        }
+        return Outcome(ok = true, message = message)
     }
 
-    /** 给模型看的状态文本 */
+    /**
+     * 结束一个安装会话；同一个会话只结算一次。
+     *
+     * 完成 / 失败 / 取消（含「取消全部任务」）都可能触发，先到的那条生效；
+     * 后到的调用直接返回，不会把已经写好的成功结果覆盖成「取消」。
+     */
+    private fun finish(taskId: String, report: String, success: Boolean) {
+        if (actives.remove(taskId) == null) return
+        lastReport = report
+        lastSuccess = success
+    }
+
+    /** 给模型看的瘦状态文本 */
     fun describeStatus(): String = buildString {
-        val running = active
-        if (running != null) {
-            val list = running.installer.tasksFlow.value
-            val progress = if (list.isEmpty()) 0f
-            else list.map { it.task.progress.value.coerceIn(0f, 1f) }.average().toFloat()
-            val current = list.firstOrNull { it.task.stage.value.name == "RUNNING" }
-            append("正在安装：").append(running.versionName)
-            append("（Minecraft ").append(running.gameVersion).append(" / ").append(running.loader).append("）\n")
-            append("总进度：").append((progress * 100).toInt()).append("%\n")
-            if (current != null) {
-                append("当前步骤：")
-                append(runCatching { current.title.toAndroidString(GlobalContext) }.getOrElse { "（未知）" })
-                append('\n')
-            }
-            append("已用时：").append((System.currentTimeMillis() - running.startedAt) / 1000).append(" 秒")
-        } else {
+        //按开始时间排序：先发起的排在前面，模型转述时顺序稳定
+        val running = actives.values.sortedBy { it.startedAt }
+        if (running.isEmpty()) {
             append(lastReport ?: "当前没有进行中的安装任务，也没有最近一次安装的记录。")
             when (lastSuccess) {
                 true -> append("\n（这次安装是成功的）")
                 false -> append("\n（这次安装没有成功）")
                 null -> Unit
             }
+        } else {
+            append("进行中的安装共 ").append(running.size).append(" 个：\n")
+            running.forEachIndexed { index, runningItem ->
+                val list = runningItem.installer.tasksFlow.value
+                val progress = if (list.isEmpty()) 0f
+                else list.map { it.task.progress.value.coerceIn(0f, 1f) }.average().toFloat()
+                val current = list.firstOrNull { it.task.stage.value.name == "RUNNING" }
+                append(index + 1).append(") 「").append(runningItem.versionName)
+                append("」（Minecraft ").append(runningItem.gameVersion)
+                append(" / ").append(runningItem.loader).append("）")
+                append(" 总进度 ").append((progress * 100).toInt()).append("%")
+                if (current != null) {
+                    append("，当前步骤：")
+                    append(runCatching { current.title.toAndroidString(GlobalContext) }.getOrElse { "（未知）" })
+                }
+                append("，已用时 ").append(elapsedSeconds(runningItem)).append(" 秒\n")
+            }
+            lastReport?.let { append("最近一次结果：").append(it).append('\n') }
         }
 
         val installed = VersionsManager.versions.value.map { it.getVersionName() }
-        append("\n\n当前已有实例：").append(if (installed.isEmpty()) "（无）" else installed.joinToString("、"))
+        append("\n当前已有实例：").append(if (installed.isEmpty()) "（无）" else installed.joinToString("、"))
     }
+
+    /** 安装会话已用时（秒）*/
+    private fun elapsedSeconds(item: Active): Long =
+        (System.currentTimeMillis() - item.startedAt) / 1000
 
     private fun describeError(th: Throwable): String =
         th.message ?: th::class.simpleName ?: "未知错误"

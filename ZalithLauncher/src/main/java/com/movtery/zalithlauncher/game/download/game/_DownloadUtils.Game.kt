@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.download.game
 
 import com.google.gson.JsonObject
+import com.movtery.zalithlauncher.game.download.engine.PathWriteLock
 import com.movtery.zalithlauncher.game.download.game.models.LibraryComponents
 import com.movtery.zalithlauncher.game.versioninfo.models.GameManifest
 import com.movtery.zalithlauncher.utils.file.ensureDirectory
@@ -56,7 +57,7 @@ fun String?.getJsonOrNull(tag: String): JsonObject? {
  * @param targetVersion 要复制为的版本名称
  * @param filesToCopy 指定要复制的文件的后缀名
  */
-fun copyVanillaFiles(
+suspend fun copyVanillaFiles(
     sourceGameFolder: File,
     sourceVersion: String,
     destinationGameFolder: File,
@@ -70,8 +71,12 @@ fun copyVanillaFiles(
         val sourceFile = File(sourceDir, "$sourceVersion$extension")
         val destinationFile = File(destinationDir, "$targetVersion$extension")
 
-        if (!destinationFile.exists() && sourceFile.exists()) {
-            sourceFile.copyTo(destinationFile)
+        //议题 #78：并行安装同一个 MC 版本时，两个安装会同时写同一个目标 json/jar。
+        //「判断不存在再复制」必须整体在路径锁内，否则两个任务会同时判定不存在并互相截断。
+        PathWriteLock.withWrite(destinationFile) {
+            if (!destinationFile.exists() && sourceFile.exists()) {
+                sourceFile.copyTo(destinationFile)
+            }
         }
     }
 }

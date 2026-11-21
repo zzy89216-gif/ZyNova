@@ -21,10 +21,12 @@ package com.movtery.zalithlauncher.ui.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -70,7 +72,7 @@ class ReorderState {
     var draggingKey: Any? by mutableStateOf(null)
         private set
 
-    /** 拖动位移（相对该项当前布局位置） */
+    /** 手指累计拖动位移（root 坐标；[visualOffset] 负责换算成相对当前布局位置的实际视觉位移） */
     var dragOffset: Offset by mutableStateOf(Offset.Zero)
         private set
 
@@ -91,8 +93,11 @@ class ReorderState {
     /** 项的屏幕范围（root 坐标） */
     private val bounds = mutableStateMapOf<Any, Rect>()
 
-    /** 尚未播放的「布局位移」，播放后由 [takeShift] 取走 */
-    private val shifts = mutableStateMapOf<Any, Float>()
+    /** 尚未播放的「布局位移」，播放后由 [takeShift] 取走（横向 / 纵向都支持） */
+    private val shifts = mutableStateMapOf<Any, Offset>()
+
+    /** 拖动开始时被拖项的 root 坐标：视觉位置 = 这个位置 + 手指累计位移；null = 还没拿到布局坐标 */
+    private var dragStartPosition: Offset? = null
 
     /** 数据源重排回调：被拖动项的 key → 目标项的 key */
     var onMove: (Any, Any) -> Unit = { _, _ -> }
@@ -109,14 +114,31 @@ class ReorderState {
     fun isDragging(key: Any): Boolean = draggingKey == key
 
     /** 取走待播放的位移（只会被取到一次） */
-    fun takeShift(key: Any): Float = shifts.remove(key) ?: 0f
+    fun takeShift(key: Any): Offset = shifts.remove(key) ?: Offset.Zero
+
+    /**
+     * 被拖项相对**当前布局位置**的视觉位移。
+     *
+     * 视觉位置 = 当前布局位置 + 这个位移 = 拖动开始时的布局位置 + 手指累计位移。
+     *
+     * 拖动过程中数据顺序会变，被拖项在列表里的布局位置会跟着跳一格；
+     * 以前用「布局坐标变化」去补 `dragOffset`（方向还写反了、外加 <64px 的特判），
+     * 结果每换一次位卡片就闪一下/跳一格。这里直接用「开始位置 + 手指位移」换算，
+     * 无论重排、父层滚动都不会从手指下面滑走，也不需要每帧写状态。
+     */
+    fun visualOffset(key: Any): Offset {
+        //拿不到开始坐标时不做换算（宁可少补偿，也不能算出离谱的位移）
+        val start = dragStartPosition ?: return dragOffset
+        val current = bounds[key]?.topLeft ?: return dragOffset
+        return dragOffset - (current - start)
+    }
 
     /**
      * 记录某项的屏幕范围
      *
      * 只有在**拖动过程中**才需要处理位置变化：
-     * - 它是被拖动项 → 抵消位移，保证卡片继续跟手
-     * - 其它项 → 记录位移，由 [reorderItem] 播放成一次平滑的让位动画
+     * 其它项 → 记录位移，由 [reorderItem] 播放成一次平滑的让位动画；
+     * 被拖项 → 交给 [visualOffset] 换算视觉位置，这里不需要补偿。
      *
      * 没有在拖动时必须直接忽略：页面滚动会让所有项的 root 坐标一起变化，
      * 若继续按「布局位移」处理，每一项都会被记上一笔让位动画，
@@ -130,26 +152,28 @@ class ReorderState {
         old ?: return
 
         val dragging = draggingKey ?: return
+        //被拖项的视觉位置由 visualOffset() 按「开始位置 + 手指位移」换算，不需要补偿
+        if (dragging == key) return
 
-        val delta = old.top - rect.top
-        if (delta == 0f) return
+        //横向 / 纵向列表都按完整坐标差处理：Row 里是横向让位，Column 里是纵向让位
+        val delta = old.topLeft - rect.topLeft
+        if (delta.x == 0f && delta.y == 0f) return
 
-        if (dragging == key) {
-            //拖动过程中被拖项的 root 坐标也会变：小范围是「让位/重排」造成的，需要补偿，
-            //否则卡片会从手指下面滑走；大范围通常是页面在滚动，**不能再补偿**，
-            //否则会和手势 delta 叠加成双倍，表现就是「往下滑着拖，卡片被甩出去、暂时消失」。
-            if (kotlin.math.abs(delta) < 64f) {
-                dragOffset += Offset(0f, -delta)
-            }
-            return
-        }
-        shifts[key] = (shifts[key] ?: 0f) + delta
+        shifts[key] = (shifts[key] ?: Offset.Zero) + delta
         layoutVersion++
+    }
+
+    /** 项被移出组合（隐藏 / 删除）时清掉它的范围记录，避免残留数据继续参与落点判定 */
+    fun forget(key: Any) {
+        bounds.remove(key)
+        shifts.remove(key)
+        if (draggingKey == key) end()
     }
 
     fun start(key: Any) {
         draggingKey = key
         dragOffset = Offset.Zero
+        dragStartPosition = bounds[key]?.topLeft
     }
 
     /**
@@ -158,6 +182,10 @@ class ReorderState {
      * 判定口径从「指针进入目标范围」改成「拖动项压住目标**一半以上**」：
      * - 轻轻碰到就换位会让整页卡片抖个不停，手感很糟；
      * - 压住一半才换位，同时让目标卡片弹起来，用户能确定松手会落到哪。
+     *
+     * ⚠️ 只有「压住的目标发生变化」时才回调 [onMove]：以前每个指针事件都会回调一次，
+     * 等于每帧把整个实例列表重建 + 重排一遍，整页重组、让位动画反复重启，
+     * 表现就是拖动时闪屏，甚至一路连环换位。
      */
     fun drag(delta: Offset) {
         val key = draggingKey ?: return
@@ -170,7 +198,7 @@ class ReorderState {
         )
 
         val self = bounds[key] ?: return
-        val selfRect = self.translate(dragOffset)
+        val selfRect = self.translate(visualOffset(key))
 
         val lifted = bounds.entries
             .asSequence()
@@ -181,16 +209,20 @@ class ReorderState {
             ?.takeIf { it.second >= LIFT_THRESHOLD }
             ?.first
 
+        //目标没变就不重复换位：否则压住同一张卡片的每个指针事件都会重排一次
+        if (lifted == liftedKey) return
         liftedKey = lifted
 
         if (lifted != null) {
-            onMove(key, lifted)
+            //回调异常不应该把拖动/界面拖崩（数据源落盘在 onEnd 里已有兜底）
+            runCatching { onMove(key, lifted) }
         }
     }
 
     fun end() {
         draggingKey = null
         dragOffset = Offset.Zero
+        dragStartPosition = null
         liftedKey = null
         runCatching { onEnd() }
     }
@@ -240,34 +272,50 @@ fun Modifier.reorderItem(
     state: ReorderState,
     enabled: Boolean = true
 ): Modifier {
-    //让位动画：布局变化时先瞬时位移到旧位置，再弹回新位置
-    val shift = remember { Animatable(0f) }
+    //让位动画：布局变化时先瞬时位移到旧位置，再弹回新位置。
+    //用 Offset 而不是 Float：横向列表（Row / LazyRow）里让位是沿 x 轴发生的
+    val shift = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val version = state.layoutVersion
 
     LaunchedEffect(version, key) {
         val pending = state.takeShift(key)
-        if (pending == 0f) {
-            //没有新的位移就确保归零：
-            //动画被新的布局变化打断时，Animatable 会停在中间值上，
-            //不归零的话卡片会「卡」在错位的位置（内容被顶下去）
-            shift.snapTo(0f)
+        if (pending.x == 0f && pending.y == 0f) {
+            //没有新的位移：上一次让位动画可能被这次布局变化打断，停在中值上。
+            //这里**平滑地**回到 0，不能 snapTo(0) —— 硬归零等于让卡片瞬间跳位，
+            //多次重排叠加起来就是肉眼可见的闪屏。
+            if (shift.value.x != 0f || shift.value.y != 0f) {
+                //先把可能残留的动画停在当前值（等价于重置速度），再平滑收尾，避免跳变
+                shift.snapTo(shift.value)
+                shift.animateTo(
+                    targetValue = Offset.Zero,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessMediumLow
+                    )
+                )
+            }
             return@LaunchedEffect
         }
         shift.snapTo(shift.value + pending)
         shift.animateTo(
-            targetValue = 0f,
+            targetValue = Offset.Zero,
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioLowBouncy,
                 stiffness = Spring.StiffnessMediumLow
             )
         )
         //收尾再归零一次，保证任何情况下都不会残留偏移
-        shift.snapTo(0f)
+        shift.snapTo(Offset.Zero)
     }
 
-    //拖动结束时同样归零
+    //拖动结束时同样归零：这时列表已经落位，不需要再播让位动画
     LaunchedEffect(state.draggingKey) {
-        if (state.draggingKey == null) shift.snapTo(0f)
+        if (state.draggingKey == null) shift.snapTo(Offset.Zero)
+    }
+
+    //项被隐藏 / 删除时要清掉范围记录，否则残留的旧坐标还会参与落点判定
+    DisposableEffect(key, state) {
+        onDispose { state.forget(key) }
     }
 
     val dragging = state.isDragging(key)
@@ -306,7 +354,11 @@ fun Modifier.reorderItem(
     }
 
     return modifier.offset {
-        val y = shift.value + if (dragging) state.dragOffset.y else 0f
-        IntOffset(0, y.roundToInt())
+        //被拖项用「布局位置 + 视觉位移」（visualOffset 已扣掉重排造成的布局跳动），
+        //其它项叠加一次性的让位动画位移。x / y 两个轴都处理，
+        //纵向列表（卡片）与横向列表（例如以后的 Row 排序）共用同一套逻辑。
+        val drag = if (dragging) state.visualOffset(key) else Offset.Zero
+        val total = shift.value + drag
+        IntOffset(total.x.roundToInt(), total.y.roundToInt())
     }
 }

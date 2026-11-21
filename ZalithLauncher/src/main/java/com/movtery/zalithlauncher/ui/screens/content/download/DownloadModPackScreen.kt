@@ -29,7 +29,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformClasses
-import com.movtery.zalithlauncher.notification.NotificationManager
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
@@ -114,26 +113,20 @@ fun DownloadModPackScreen(
                         //一键安装（列表每行一个按钮，与模组页同款 UI）：
                         //点一下直接装这一版，不先进详情页。
                         onQuickInstall = { _, version ->
-                            if (viewModel.installOperation is ModPackInstallOperation.None) {
-                                viewModel.installOperation =
-                                    if (!NotificationManager.checkNotificationEnabled(context)) {
-                                        ModPackInstallOperation.WarningForNotification(version, null)
-                                    } else {
-                                        ModPackInstallOperation.Warning(version, null)
-                                    }
-                            }
+                            //议题 #78：不再用「有对话框就拒绝」当并发门闩，不同整合包版本可以同时下载；
+                            //同一个整合包版本重复提交会给出可读提示
+                            viewModel.requestInstall(
+                                context = context,
+                                version = version,
+                                iconUrl = null
+                            )
                         },
                         onItemClicked = { _, version, iconUrl, _ ->
-                            if (viewModel.installOperation !is ModPackInstallOperation.None) {
-                                //不是待安装状态，拒绝此次安装
-                                return@DownloadAssetsScreen
-                            }
-                            viewModel.installOperation = if (!NotificationManager.checkNotificationEnabled(context)) {
-                                //警告通知权限
-                                ModPackInstallOperation.WarningForNotification(version, iconUrl)
-                            } else {
-                                ModPackInstallOperation.Warning(version, iconUrl)
-                            }
+                            viewModel.requestInstall(
+                                context = context,
+                                version = version,
+                                iconUrl = iconUrl
+                            )
                         }
                     )
                 }

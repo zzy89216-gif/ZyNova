@@ -6,6 +6,9 @@
   **Home / AI / Multiplayer / Downloads / Music / Files / Personalization / Settings**.
 - The title stays in the top-left corner; a back button appears on sub-pages.
 - While a task is running, a small ring appears at the right end of the capsule — tap it to open the task panel.
+- Outside the music page, a compact "now playing" mini bar sits right below the top bar: song title on the left,
+  play / pause and previous / next on the right; tap the bar to open the music page. It also shows while paused,
+  and hides itself while nothing has been played yet or when there is no current track.
 - All appearance options live in **Settings → General**; the top-bar **Personalization** entry is only a shortcut.
 
 ## Downloading and installing the game
@@ -15,7 +18,9 @@
 3. Tap install; progress shows in the thin top bar, tap it for the task panel (title / step / progress / speed / cancel).
 4. When it finishes the instance shows up on the home screen.
 
-> Modpacks, mods, resource packs, shaders and worlds are all under the same **Downloads** entry, switch with the left categories.
+> You can **run several downloads / installs at once**: start the next one without waiting for the previous,
+> each with its own row in the task panel and its own progress, speed and cancel. Modpacks, mods, resource packs,
+> shaders and worlds are all under the same **Downloads** entry, switch with the left categories.
 
 ## Instances
 
@@ -71,4 +76,6 @@
   (mouse / gamepad / gestures / gyroscope, logs, exit) and never jumps around inside the game;
 - **To reach Minecraft's own pause menu**: open the launcher menu → tap "Send ESC (game pause menu)";
 - The menu also has "Back to the launcher", which **does not stop the game** — you return to the same session;
+- The menu's **Multiplayer** entry collapses the menu, returns to the launcher and **opens the Multiplayer page
+  directly** (both Terracotta and SakuraFrp live there) — **the game does not quit; it keeps running in the background**;
 - Changing controls, checking logs or switching input methods all happen in this menu — no need to quit the game.

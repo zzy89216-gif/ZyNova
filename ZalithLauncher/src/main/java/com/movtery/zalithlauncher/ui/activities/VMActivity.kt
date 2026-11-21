@@ -25,6 +25,9 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.SurfaceTexture
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.Surface
@@ -343,6 +346,22 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     private var applySizeToSurface: ((width: Int, height: Int) -> Unit)? = null
 
+    /**
+     * 会话心跳：`:game` 进程存活期间每 [GAME_SESSION_HEARTBEAT_MS] 刷一次标记文件的时间戳。
+     *
+     * 只靠「标记文件 + 进程存活」判断不够稳：游戏退出后 `:game` 进程会以 cached 状态
+     * 在后台停留很久，胶囊会残留、点进去是空壳（闪退）。心跳是「VMActivity 实例还活着」的
+     * 直接证据：Activity 结束 / 进程被杀后心跳停止，启动器最多 [GAME_SESSION_TIMEOUT_MS] 后收起入口。
+     * 游戏切后台时 Activity 仍在、主线程 Handler 继续跑，所以不会误隐藏。
+     */
+    private val gameSessionHandler = Handler(Looper.getMainLooper())
+    private val gameSessionHeartbeat = object : Runnable {
+        override fun run() {
+            markGameSession(this@VMActivity)
+            gameSessionHandler.postDelayed(this, GAME_SESSION_HEARTBEAT_MS)
+        }
+    }
+
     private inline fun <T> withHandler(block: AbstractHandler.() -> T): T {
         return vmViewModel.session.handler.block()
     }
@@ -353,8 +372,37 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //进入对局就记一笔：启动器靠它判断「返回游戏」这个入口要不要显示
-        if (intent.getBooleanExtra(INTENT_RUN_GAME, false)) markGameSession(this)
+
+        //⚠️ 兜底：只有带齐启动参数的 Intent 才能拉起游戏界面。
+        //游戏结束后如果还有残留的「返回游戏」入口被点到，系统会用**不带任何 extras** 的 Intent
+        //新建本 Activity（旧实例已经销毁时，REORDER_TO_FRONT 会退化成一次普通启动）。
+        //以前这里会直接抛 "Unknown VM launch state!"，或走到 initSession 再抛
+        //"No launch config has been set."，表现就是点一下直接闪退。
+        //所以先校验启动参数：缺了就安静收尾，**不初始化游戏、也不写会话标记**（否则会留下僵尸标记）。
+        //校验本身也全程兜异常：Intent 里的 extras 反序列化失败同样不能把进程崩掉。
+        val launchExtras = runCatching { intent.extras }.getOrNull()
+        val hasLaunchParam = launchExtras != null &&
+            (
+                (launchExtras.getBoolean(INTENT_RUN_GAME, false) &&
+                    runCatching {
+                        launchExtras.getParcelableSafely(INTENT_GAME_CONFIG, LaunchConfig::class.java)
+                    }.getOrNull() != null) ||
+                (launchExtras.getBoolean(INTENT_RUN_JAR, false) &&
+                    runCatching {
+                        launchExtras.getParcelableSafely(INTENT_JAR_INFO, JvmLaunchInfo::class.java)
+                    }.getOrNull() != null)
+            )
+        if (!hasLaunchParam) {
+            finish()
+            return
+        }
+
+        //进入对局就记一笔：启动器靠它判断「返回游戏」这个入口要不要显示。
+        //之后用心跳定时刷新，游戏结束 / 进程被杀后心跳停止，入口会自动消失
+        if (intent.getBooleanExtra(INTENT_RUN_GAME, false)) {
+            markGameSession(this)
+            gameSessionHandler.post(gameSessionHeartbeat)
+        }
         //加载渲染器
         Renderers.init()
         //加载插件
@@ -367,7 +415,11 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
         //启动前台服务，防止后台网络中断
         startForegroundService(Intent(this, GameService::class.java))
 
-        val bundle = intent.extras ?: throw IllegalStateException("Unknown VM launch state!")
+        //上面的启动参数校验已经拦住空壳；这里只做防御性兜底，绝不再抛异常闪退
+        val bundle = intent.extras ?: run {
+            finish()
+            return
+        }
 
         vmViewModel.initSession(
             activity = this,
@@ -521,6 +573,9 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
 
     override fun onResume() {
         super.onResume()
+        //回到游戏时顺手刷一次心跳：避免从后台切回来时刚好卡在心跳间隔里，
+        //让启动器误判会话即将过期（游戏仍在跑时必须继续显示「返回游戏」）
+        if (intent.getBooleanExtra(INTENT_RUN_GAME, false)) markGameSession(this)
         withHandler { onResume() }
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, 1)
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1)
@@ -605,6 +660,8 @@ class VMActivity : BaseAppCompatActivity(), SurfaceTextureListener, SurfaceHolde
     }
 
     override fun onDestroy() {
+        //先停心跳再清标记：否则 Handler 可能在清掉之后又写回来，留下僵尸标记
+        gameSessionHandler.removeCallbacks(gameSessionHeartbeat)
         clearGameSession(this)
         stopAllService()
         withHandler { onDestroy() }
@@ -912,19 +969,33 @@ fun runJar(
     }
     context.startActivity(intent)
 }
+/** 会话心跳间隔：`:game` 进程每 25s 刷一次标记（20–30s 之间，兼顾及时性与 IO 次数） */
+private const val GAME_SESSION_HEARTBEAT_MS = 25_000L
+
+/** 心跳有效期：超过 90s 没刷新就认为会话已经结束（约 3 个心跳周期，容忍系统调度抖动） */
+private const val GAME_SESSION_TIMEOUT_MS = 90_000L
+
 /**
- * 本次「对局」的标记文件。
+ * 本次「对局」的心跳标记文件。
  *
- * 只用 `:game` 进程是否存活判断是不够的：用户正常退出游戏后，Android 会把这个进程
- * 留在 cached 状态一段时间，界面就会一直显示「返回游戏」，点进去却是一个空壳。
- * 所以再加一个会话标记 —— 进入对局时写、[VMActivity.onDestroy] 时删，
- * 两者同时成立才认为「游戏还在跑」。
+ * 只用 `:game` 进程是否存活判断是不够的：游戏退出后 Android 会把这个进程留在 cached 状态
+ * 一段时间（个别 OEM 甚至上报不准确的 importance），界面就会一直显示「返回游戏」，
+ * 点进去却是一个空壳（闪退）。所以这里改成**心跳**：
+ * [VMActivity] 进入对局后用主线程 Handler 每 [GAME_SESSION_HEARTBEAT_MS] 刷新一次时间戳，
+ * [VMActivity.onDestroy] 时停止并删除；主进程据此判断「游戏界面实例是否还活着」。
  */
 private fun gameSessionFlag(context: Context): File = File(context.filesDir, "game_session.running")
 
-/** 进入对局时打标记（由 `:game` 进程写入，主进程读同一个目录）*/
+/**
+ * 刷新一次会话心跳（由 `:game` 进程写入，主进程读同一个目录）。
+ *
+ * 内容用 [SystemClock.elapsedRealtime]（开机后的毫秒数，跨进程一致、单调递增）：
+ * 系统时间被改动不会影响判活；设备重启后新值一定小于旧值，旧标记会被当作过期心跳自愈清理。
+ */
 fun markGameSession(context: Context) {
-    runCatching { gameSessionFlag(context).writeText("running") }
+    runCatching {
+        gameSessionFlag(context).writeText(SystemClock.elapsedRealtime().toString())
+    }
 }
 
 /** 对局结束 / 界面销毁时清掉标记 */
@@ -935,18 +1006,41 @@ fun clearGameSession(context: Context) {
 /**
  * 游戏是否还在后台跑（决定启动器要不要显示「返回游戏」）。
  *
- * 判据：**会话标记存在** 且 `:game` 进程仍存活。进程已经没了就顺手把标记删掉（自愈），
- * 否则上一次异常退出留下的残标会让这个入口永远不消失。
+ * 判据：**心跳新鲜** 且 `:game` 进程仍存活：
+ * - 标记文件由 [VMActivity] 持续刷新时间戳；Activity 结束 / 进程被杀后心跳停止；
+ * - 超过 [GAME_SESSION_TIMEOUT_MS] 没刷新 = 会话已经结束，残留标记直接删掉（自愈）；
+ * - 进程检查作为更快的兜底：进程都没了就不用等心跳过期。
+ *
+ * ⚠️ 不再用 `RunningAppProcessInfo.importance` 判断：cached 进程能停留很久，个别 OEM
+ * 对该值的上报也不可靠。心跳时间戳是「VMActivity 实例还活着」的直接证据，
+ * 游戏切后台（Activity 仍在、Handler 继续跑）时心跳正常，不会误隐藏。
  */
 fun isGameProcessAlive(context: Context): Boolean {
-    if (!gameSessionFlag(context).isFile) return false
-    val alive = runCatching {
-        val manager = context.getSystemService(Context.ACTIVITY_SERVICE)
-            as? android.app.ActivityManager ?: return@runCatching false
-        val gameProcess = context.packageName + ":game"
-        manager.runningAppProcesses?.any { it.processName == gameProcess } == true
-    }.getOrDefault(false)
-    if (!alive) clearGameSession(context)
+    val flag = gameSessionFlag(context)
+    if (!flag.isFile) return false
+
+    //心跳时间戳解析失败 / 过期：上一次会话留下的残标，删掉（自愈）
+    val heartbeat = runCatching { flag.readText().trim().toLong() }.getOrNull() ?: run {
+        clearGameSession(context)
+        return false
+    }
+    val age = SystemClock.elapsedRealtime() - heartbeat
+    if (age !in 0..GAME_SESSION_TIMEOUT_MS) {
+        clearGameSession(context)
+        return false
+    }
+
+    //读不到进程列表（权限 / 系统限制）时以心跳为准，避免把还在跑的游戏误隐藏
+    val processes = runCatching {
+        (context.getSystemService(Context.ACTIVITY_SERVICE) as? android.app.ActivityManager)
+            ?.runningAppProcesses
+    }.getOrNull() ?: return true
+
+    val alive = processes.any { it.processName == context.packageName + ":game" }
+    if (!alive) {
+        //进程已经没了：标记是残留，删掉（自愈）
+        clearGameSession(context)
+    }
     return alive
 }
 
@@ -969,12 +1063,19 @@ fun backToLauncher(context: Context) {
  * 启动器 → 正在运行的游戏，**不重新启动**。
  *
  * 与 [backToLauncher] 对称：只把已有的 [VMActivity] 实例排到最前面。
- * 调用前请先用 [isGameProcessAlive] 确认游戏还在，否则会拉起一个空壳界面。
+ *
+ * ⚠️ 这里必须**先校验会话还在**再拉起：游戏已经退出、旧实例已经销毁时，
+ * `REORDER_TO_FRONT` 会退化成一次普通启动，系统会新建一个**不带启动参数的 VMActivity 空壳**，
+ * 以前点「返回游戏」直接闪退就是这么来的。
+ *
+ * @return 是否已把游戏切回前台；false = 会话已经结束，调用方应立即收起入口并提示用户
  */
-fun resumeGame(context: Context) {
+fun resumeGame(context: Context): Boolean {
+    //轮询有 2s 间隔，点击的这一刻可能刚好游戏已经退出，所以这里当场再校验一次
+    if (!isGameProcessAlive(context)) return false
     val intent = Intent(context, VMActivity::class.java).apply {
         addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         if (context !is android.app.Activity) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
-    runCatching { context.startActivity(intent) }
+    return runCatching { context.startActivity(intent) }.isSuccess
 }

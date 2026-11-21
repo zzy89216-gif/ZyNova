@@ -87,6 +87,14 @@ class FileDownloader(
     private val reportedSourceFailures: MutableSet<String> = Collections.synchronizedSet(mutableSetOf())
 
     suspend fun download() {
+        //议题 #78：同一目标文件的下载在进程内串行，避免并行安装共用 assets / libraries 时互相写坏 `.part`。
+        //锁实现抽到共享的 [PathWriteLock]，复制/合并阶段也复用它，保证所有「按目标路径写入」共用同一套锁。
+        PathWriteLock.withWrite(request.targetFile) {
+            downloadFile()
+        }
+    }
+
+    private suspend fun downloadFile() {
         val target = request.targetFile
         target.ensureParentDirectory()
         val partFile = File(target.parentFile, "${target.name}.part")

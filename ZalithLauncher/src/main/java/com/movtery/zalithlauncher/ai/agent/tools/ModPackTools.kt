@@ -39,8 +39,17 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "AIModPackTools"
+
+/**
+ * 镜像任务 id 序号（议题 #78）。
+ *
+ * 安装器本身已经支持并行（[ModPackInstaller] 用独占临时目录），工具这边也要保证
+ * 每次提交给 [TaskSystem] 的 id 唯一：同 id 的第二个任务会被 `containsTask` **静默丢弃**。
+ */
+private val MODPACK_TASK_SEQUENCE = AtomicInteger(0)
 
 /**
  * 整合包安装工具。
@@ -193,7 +202,8 @@ private suspend fun installModPackWithProgress(
     requestedName: String?
 ): String = coroutineScope {
     val result = CompletableDeferred<Result<String>>()
-    val taskId = "ai_install_modpack_${version.platformId()}_${System.currentTimeMillis()}"
+    val taskId =
+        "ai_install_modpack_${version.platformId()}_${MODPACK_TASK_SEQUENCE.incrementAndGet()}_${System.currentTimeMillis()}"
 
     //用户从顶部进度条上取消时，必须把真正的安装器也一起停掉，
     //否则「AI 说取消了、后台还在下」——比不让取消更糟

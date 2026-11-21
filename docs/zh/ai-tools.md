@@ -1,9 +1,10 @@
 # AI 能做什么
 
-- 装游戏本体 / 整合包 / 模组 / 资源包 / 光影 / 存档
+- 装游戏本体 / 整合包 / 模组 / 资源包 / 光影 / 存档（游戏本体可以**同时装多个**，见下面的「安装与音乐」）
 - 改实例配置（渲染器、Java、内存、JVM 参数）
 - 读写 `options.txt`
 - 查收藏 / 取消收藏
+- 控制音乐（看正在播的歌、播放 / 暂停 / 切歌 / 按曲名点播）
 - 读日志、启动游戏（受工具能力限制）
 - **联机全自动**：
   - `multiplayer_status` 查陶瓦联机开关、自定义节点、樱花登录状态
@@ -67,7 +68,20 @@
 - 搜索解析失败时，AI 会自动改用 `fetch_webpage` 抓结果页
 
 
-## 全部工具（51 个）
+## 安装与音乐
+
+- `install_game` 可以**同时发起多个游戏本体安装**：连续装几个版本时不用等前一个装完，
+  每个安装都是独立后台任务、在顶部任务条里各占一条；唯一限制是**实例名不能重复**——
+  同名实例已经在装或已经存在时会明确拒绝，想同时装同一版本的多个实例，就在每次安装时给不同的实例名；
+- `install_status` 会列出**所有正在进行的安装**（各自的目标、进度、当前步骤、已用时），
+  也能报最近一次安装的结果和当前已有的实例（不再只报一个任务）；
+- `music_status`（只读）：当前曲目、播放 / 缓冲 / 暂停状态、进度与总时长（未知显示 `--:--`）、
+  曲库数量、当前曲目有没有歌词（有就顺带给出当前歌词行）；
+- `music_control`：`play` / `pause` / `toggle` / `next` / `previous` / `stop` / `seek`；
+  `play` 可以按曲名或文件名点播，`seek` 传目标秒数。它只能控制**你自己导入的本地曲库**，
+  不会替你搜歌、下载歌；曲库为空时会提示你先去「音乐」页导入。
+
+## 全部工具（53 个）
 
 | 分类 | 工具 |
 |---|---|
@@ -80,5 +94,6 @@
 | 日志与崩溃 | `list_logs` `read_log` `summarize_log` `read_crash_report` `read_crash_report_legacy` |
 | 联网 | `web_search` `fetch_webpage` `search_mcmod` |
 | 联机 | `multiplayer_status` `frp_status` `frp_create_tunnel` `frp_start_tunnel` `frp_stop_tunnel` |
+| 音乐 | `music_status` `music_control` |
 | 收藏 | `list_favorites` `remove_favorite` |
 | 设置 | `list_settings` `get_setting` `set_setting` `update_ai_setting` |

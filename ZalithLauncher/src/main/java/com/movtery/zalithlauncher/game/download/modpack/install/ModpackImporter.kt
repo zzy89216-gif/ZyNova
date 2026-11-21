@@ -27,6 +27,7 @@ import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
 import com.movtery.zalithlauncher.game.download.InstallJournal
+import com.movtery.zalithlauncher.game.download.InstallTargetRegistry
 import com.movtery.zalithlauncher.game.download.modpack.platform.ALL_PACK_PARSER
 import com.movtery.zalithlauncher.game.download.modpack.platform.AbstractPack
 import com.movtery.zalithlauncher.game.path.GamePathManager
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.apache.commons.io.FileUtils
 import java.io.File
+import java.util.UUID
 import org.apache.commons.compress.archivers.zip.ZipFile as ApacheZipFile
 import java.util.zip.ZipFile as JDKZipFile
 
@@ -73,6 +75,25 @@ class ModpackImporter(
     private lateinit var modpack: AbstractPack
 
     /**
+     * 本次导入独占的临时整合包目录（议题 #78）
+     * 本地导入和在线下载可能同时进行，共用一个目录会互相清理。
+     */
+    private val tempModPackRoot: File = File(
+        PathManager.DIR_CACHE_MODPACK_DOWNLOADER,
+        "import_${UUID.randomUUID().toString().take(8)}"
+    )
+
+    /** 已占用的目标版本名（议题 #78：本地导入同样与 UI/AI/整合包跨入口互斥） */
+    private val targetReserved = java.util.concurrent.atomic.AtomicBoolean(false)
+    private var reservedTargetName: String? = null
+
+    private fun releaseTarget() {
+        if (targetReserved.compareAndSet(true, false)) {
+            reservedTargetName?.let { InstallTargetRegistry.release(it) }
+        }
+    }
+
+    /**
      * 开始导入整合包
      * @param isRunning 正在运行中，被拒绝导入时
      * @param onFinished 导入完成时
@@ -96,14 +117,16 @@ class ModpackImporter(
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
-                //导入成功：清掉落盘记录（嵌套的游戏安装记录一并清）
-                InstallJournal.clearModpackInstall()
-                InstallJournal.clearGameInstall()
+                releaseTarget()
+                //导入成功：只清本次导入的落盘记录（嵌套的游戏安装记录由嵌套安装器自己清）
+                //⚠️ 不能 clearGameInstall() 清全部：会把并行安装的其它游戏记录一起清掉
+                InstallJournal.clearModpackInstall(tempModPackRoot.absolutePath)
                 onFinished(modpack.getFinalClientName())
             },
             onError = { e ->
+                releaseTarget()
                 //议题 #73：整合包导入失败/取消时干净回滚，避免留下半成品实例
-                InstallJournal.rollbackInterruptedModpackInstall()
+                InstallJournal.rollbackInterruptedModpackInstall(tempModPackRoot.absolutePath)
                 if (e is UsingMobileDataException) {
                     //用户不希望使用移动网络
                     onCancelled()
@@ -112,15 +135,16 @@ class ModpackImporter(
                 onError(e)
             },
             onCancel = {
-                InstallJournal.rollbackInterruptedModpackInstall()
+                releaseTarget()
+                InstallJournal.rollbackInterruptedModpackInstall(tempModPackRoot.absolutePath)
                 onCancelled()
             }
         )
     }
 
     private suspend fun getTaskPhases() = withContext(Dispatchers.IO) {
-        //临时游戏环境目录
-        val tempModPackDir = PathManager.DIR_CACHE_MODPACK_DOWNLOADER
+        //临时游戏环境目录（本次导入独占，见 [tempModPackRoot]）
+        val tempModPackDir = tempModPackRoot
         //议题 #73：整合包导入同样从开始就落盘记录，进程被杀后下次启动才能判断「没装完」
         InstallJournal.beginModpackInstall(tempModPackDir.absolutePath)
         val tempVersionsDir = File(tempModPackDir, "fkVersion")
@@ -230,9 +254,17 @@ class ModpackImporter(
                             versionFolder = tempVersionsDir,
                             //记录用户确认的目标版本名：进程被杀后恢复时才能定位半成品版本
                             waitForVersionName = { suggested ->
-                                waitForVersionName(suggested).also { name ->
-                                    InstallJournal.updateModpackTargetVersion(name)
+                                val name = waitForVersionName(suggested)
+                                //议题 #78：名字确定后全局占用，避免与 UI/AI/其它整合包撞同名目标目录
+                                if (!InstallTargetRegistry.reserve(name, "import:${uri}")) {
+                                    throw IllegalStateException(
+                                        context.getString(R.string.download_install_target_busy, name)
+                                    )
                                 }
+                                reservedTargetName = name
+                                targetReserved.set(true)
+                                InstallJournal.updateModpackTargetVersion(tempModPackDir.absolutePath, name)
+                                name
                             },
                             addPhases = { phases ->
                                 taskExecutor.addPhases(phases)
@@ -251,7 +283,8 @@ class ModpackImporter(
      * 清理临时整合包版本目录
      */
     private suspend fun clearTempModPackDir() = withContext(Dispatchers.IO) {
-        PathManager.DIR_CACHE_MODPACK_DOWNLOADER.takeIf { it.exists() }?.let { folder ->
+        //议题 #78：只清本次导入自己的临时目录
+        tempModPackRoot.takeIf { it.exists() }?.let { folder ->
             FileUtils.deleteQuietly(folder)
             Logger.info(TAG, "Temporary modpack directory cleared.")
         }

@@ -80,9 +80,42 @@ private fun HomeInstance.orderKey(): String = instance.getVersionName()
 /** 世界条目在排序中的稳定标识（同一个实例内唯一） */
 private fun HomeWorld.orderKey(): String = name
 
+/**
+ * 世界里用于「组件状态 / 拖动落点」的标识。
+ *
+ * 用存档目录名而不是显示名：两个存档可能都叫「新的世界」，用显示名会让它们的
+ * 拖动状态互相串位（key 冲突）。落盘顺序仍按 [orderKey] 保存，不影响已记录的排序。
+ */
+private fun HomeWorld.reorderIdentity(): String = save.saveFile.name
+
 /** 服务器条目在排序中的稳定标识 */
 private fun HomeServer.orderKey(): String =
     "${server.name}#${server.originIp}"
+
+/**
+ * 拖动换位只与「相邻的一项」交换。
+ *
+ * [com.movtery.zalithlauncher.ui.components.ReorderState] 的落点按「压住过半」挑出目标，
+ * 拖动很快时目标可能离当前位置好几项；如果直接 `move(from, to)` 会一次跨过中间项，
+ * 顺序看起来是「跳变」的。这里把落点收敛到相邻一格：
+ * 手指连续经过多项时，会随着每次目标变化逐项换位。
+ *
+ * @param isVisibleItem 该项当前是否真的显示着。被隐藏的实例不算「一步」，
+ *   否则拖动会被夹在隐藏项前后，表现成「拖了没反应」。
+ */
+private fun <T> List<T>.moveToAdjacent(
+    from: Int,
+    to: Int,
+    isVisibleItem: (T) -> Boolean = { true }
+): List<T> {
+    if (from !in indices || to !in indices || from == to) return this
+    val step = if (to > from) {
+        (from + 1..to).firstOrNull { isVisibleItem(this[it]) }
+    } else {
+        (to until from).lastOrNull { isVisibleItem(this[it]) }
+    } ?: return this
+    return HomeLayoutStore.move(this, from, step)
+}
 
 /**
  * 卡片式主页
@@ -170,14 +203,21 @@ fun cardHomePage(
 
     //版本卡片之间的拖动排序
     //⚠️ 拖动过程中只改内存里的顺序，**不落盘**：
-    //  onMove 每帧都可能被调用，每帧写一次 MMKV + 整个列表重组，表现就是闪屏和别的卡片跟着抖。
+    //  每帧写一次 MMKV + 整个列表重组，表现就是闪屏和别的卡片跟着抖，
     //  真正保存放到拖动结束（onEnd）一次完成。
+    //⚠️ [ReorderState] 只在「压住的目标卡片变化」时才会回调 onMove（换一张卡才换一次位），
+    //  这里每次回调只重建一次列表，不做其它多余状态写入。
     val cardReorder = rememberReorderState(
         onMove = { dragged, target ->
             val from = instances.indexOfFirst { it.orderKey() == dragged }
             val to = instances.indexOfFirst { it.orderKey() == target }
             if (from >= 0 && to >= 0 && from != to) {
-                instances = HomeLayoutStore.move(instances, from, to)
+                //只与相邻卡片交换：快速拖动时逐张换位，不会一次跨过好几张。
+                //被隐藏的卡片不算一步（它不参与渲染，也就不在拖动落点里）
+                val hidden = AllSettings.hiddenHomeInstances.state.toSet()
+                instances = instances.moveToAdjacent(from, to) {
+                    it.orderKey() !in hidden
+                }
             }
         },
         onEnd = {
@@ -305,10 +345,11 @@ private fun InstanceModule(
     //与实例卡片一致：拖动过程只改内存顺序，落盘放到拖动结束（避免每帧写存储导致闪屏）
     val worldReorder = rememberReorderState(
         onMove = { dragged, target ->
-            val from = instance.worlds.indexOfFirst { it.orderKey() == dragged }
-            val to = instance.worlds.indexOfFirst { it.orderKey() == target }
+            //用存档目录名做落点标识（显示名可能重复）；落盘顺序仍由 orderKey 决定
+            val from = instance.worlds.indexOfFirst { it.reorderIdentity() == dragged }
+            val to = instance.worlds.indexOfFirst { it.reorderIdentity() == target }
             if (from >= 0 && to >= 0 && from != to) {
-                onWorldsReordered(HomeLayoutStore.move(instance.worlds, from, to), false)
+                onWorldsReordered(instance.worlds.moveToAdjacent(from, to), false)
             }
         },
         onEnd = { onWorldsReordered(instance.worlds, true) }
@@ -318,7 +359,7 @@ private fun InstanceModule(
             val from = instance.servers.indexOfFirst { it.orderKey() == dragged }
             val to = instance.servers.indexOfFirst { it.orderKey() == target }
             if (from >= 0 && to >= 0 && from != to) {
-                onServersReordered(HomeLayoutStore.move(instance.servers, from, to), false)
+                onServersReordered(instance.servers.moveToAdjacent(from, to), false)
             }
         },
         onEnd = { onServersReordered(instance.servers, true) }
@@ -410,17 +451,22 @@ private fun InstanceModule(
             if (instance.worlds.isNotEmpty()) {
                 HomeGroup(titleRes = R.string.home_card_worlds_title, scale = scale) {
                     instance.worlds.forEach { world ->
-                        HomeEntryChip(
-                            title = world.name,
-                            subtitle = world.save.levelMCVersion,
-                            scale = scale,
-                            reorderModifier = Modifier.reorderItem(
-                                key = world.orderKey(),
-                                state = worldReorder
-                            ),
-                            material = material,
-                            onClick = { onPlayWorld(world.instance, world.save.saveFile.name) }
-                        )
+                        //⚠️ 必须带 key：拖动中列表顺序一变，没有 key 的话
+                        //pointerInput(key) 会跟着槽位重启，手势被当场取消（拖动只动一下就停）。
+                        //这里用存档目录名（实例内唯一）而不是显示名，避免两个同名世界共用状态。
+                        key(world.reorderIdentity()) {
+                            HomeEntryChip(
+                                title = world.name,
+                                subtitle = world.save.levelMCVersion,
+                                scale = scale,
+                                reorderModifier = Modifier.reorderItem(
+                                    key = world.reorderIdentity(),
+                                    state = worldReorder
+                                ),
+                                material = material,
+                                onClick = { onPlayWorld(world.instance, world.save.saveFile.name) }
+                            )
+                        }
                     }
                 }
             }
@@ -429,17 +475,19 @@ private fun InstanceModule(
             if (instance.servers.isNotEmpty()) {
                 HomeGroup(titleRes = R.string.home_card_servers_title, scale = scale) {
                     instance.servers.forEach { server ->
-                        HomeEntryChip(
-                            title = server.server.name.ifBlank { server.server.originIp },
-                            subtitle = server.server.originIp,
-                            scale = scale,
-                            reorderModifier = Modifier.reorderItem(
-                                key = server.orderKey(),
-                                state = serverReorder
-                            ),
-                            material = material,
-                            onClick = { onJoinServer(server.instance, server.server.originIp) }
-                        )
+                        key(server.orderKey()) {
+                            HomeEntryChip(
+                                title = server.server.name.ifBlank { server.server.originIp },
+                                subtitle = server.server.originIp,
+                                scale = scale,
+                                reorderModifier = Modifier.reorderItem(
+                                    key = server.orderKey(),
+                                    state = serverReorder
+                                ),
+                                material = material,
+                                onClick = { onJoinServer(server.instance, server.server.originIp) }
+                            )
+                        }
                     }
                 }
             }

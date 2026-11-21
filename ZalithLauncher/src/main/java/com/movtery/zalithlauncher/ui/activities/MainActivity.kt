@@ -34,6 +34,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.CompositionLocalProvider
@@ -170,6 +171,17 @@ class MainActivity : BaseAppCompatActivity() {
     )
 
     /**
+     * 游戏内菜单点了「多人联机」：请求已收到、还没被 Compose 消费掉。
+     *
+     * 游戏界面跑在 `:game` 进程，读不到启动器的导航栈，只能靠 Intent extra 把「意图」带回来；
+     * 而导航栈要等 `MainScreen` 组合出来之后才存在，所以先在这个标记里中转，
+     * 由 setContent 内 composition 之后的 `LaunchedEffect` 消费并清标记。
+     *
+     * 必须是 Compose 状态：`onNewIntent` 时界面的组合已经存在，只有改状态才能触发重组去消费。
+     */
+    private val openMultiplayerRequest = mutableStateOf(false)
+
+    /**
      * 整合包导入 ViewModel
      */
     val modpackImportViewModel: ModpackImportViewModel by viewModels()
@@ -223,6 +235,8 @@ class MainActivity : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
         //处理外部导入
         val isImporting = handleImportIfNeeded(intent)
+        //处理「游戏内菜单 → 多人联机」的跨进程请求（进程被杀后从游戏返回时走这里）
+        handleOpenMultiplayerIfNeeded(intent)
 
         //加载渲染器
         Renderers.init()
@@ -499,6 +513,25 @@ class MainActivity : BaseAppCompatActivity() {
                     }
                 }
 
+                //28.2.4 新需求：游戏内菜单点了「多人联机」→ 落到启动器的「多人联机」页。
+                //⚠️ 必须放在 composition 之后的 LaunchedEffect 里改导航栈（不能直接在组合期间改）：
+                //MainScreen 组合出来时栈里只有 LauncherMain（NestedNavKey.Main 的 init），
+                //而 NavigationUI 自己的 `LaunchedEffect(currentKey)` 也会同步一次 currentKey；
+                //放在 MainScreen 之后注册，保证我们的改动是「最后写入」，不会被它覆盖。
+                //改法与顶部胶囊的 openTab(NormalNavKey.Multiplayer) 一致：
+                //先把栈清成只有主界面，再压入多人联机页 → 返回键严格回到主界面。
+                if (openMultiplayerRequest.value) {
+                    LaunchedEffect(Unit) {
+                        runCatching {
+                            val mainScreen = screenBackStackModel.mainScreen
+                            mainScreen.clearWith(NormalNavKey.LauncherMain)
+                            mainScreen.navigateTo(NormalNavKey.Multiplayer)
+                        }
+                        //无论成功与否都清掉标记：否则一旦出错，每次重组都会重试导航
+                        openMultiplayerRequest.value = false
+                    }
+                }
+
                 //显示赞助支持的小弹窗
                 if (!isImporting && finishedGame.state >= 100 && showSponsorship.state) {
                     SimpleAlertDialog(
@@ -646,6 +679,8 @@ class MainActivity : BaseAppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleImportIfNeeded(intent)
+        //从游戏里点「多人联机」回来时，MainActivity 往往还活着（singleTop + REORDER_TO_FRONT）
+        handleOpenMultiplayerIfNeeded(intent)
         // 重载渲染器
         Renderers.init(true)
         // 重载插件
@@ -926,6 +961,24 @@ class MainActivity : BaseAppCompatActivity() {
         return false
     }
 
+    /**
+     * 处理「游戏内菜单 → 多人联机」的跨进程请求。
+     *
+     * 游戏界面在 `:game` 进程，只能靠 Intent extra 表达「回来之后要打开哪个页面」：
+     * - 启动器进程还活着（用户之前用「返回游戏」回去过）→ `REORDER_TO_FRONT | SINGLE_TOP` 触发 [onNewIntent]；
+     * - 启动器进程已经结束（正常启动游戏后 MainActivity 会 finish）→ 新建实例走 [onCreate]。
+     * 两条路都读同一个 extra，交给 Compose 侧消费。
+     *
+     * ⚠️ 读完立刻 `removeExtra`：Activity 因内存回收 / 「不保留活动」重建时会把原始 intent 再投递一次，
+     * 不删的话用户明明已经离开多人联机页，屏幕一转又被弹回去。
+     */
+    private fun handleOpenMultiplayerIfNeeded(intent: Intent?) {
+        if (intent == null) return
+        if (!intent.getBooleanExtra(EXTRA_OPEN_MULTIPLAYER, false)) return
+        intent.removeExtra(EXTRA_OPEN_MULTIPLAYER)
+        openMultiplayerRequest.value = true
+    }
+
     private fun handleImportIfNeeded(intent: Intent?): Boolean {
         if (intent == null) return false
 
@@ -1089,5 +1142,16 @@ class MainActivity : BaseAppCompatActivity() {
             return true
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    companion object {
+        /**
+         * 游戏内菜单 → 启动器「多人联机」页。
+         *
+         * 游戏界面跑在 `:game` 进程，看不到主进程的导航栈，所以只传一个「意图」：
+         * MainActivity 收到后由 Compose 侧的 LaunchedEffect 消费，导航到 `NormalNavKey.Multiplayer`
+         * （那一页同时有陶瓦 / 樱花内网穿透两种联机模式）。
+         */
+        const val EXTRA_OPEN_MULTIPLAYER = "EXTRA_OPEN_MULTIPLAYER"
     }
 }

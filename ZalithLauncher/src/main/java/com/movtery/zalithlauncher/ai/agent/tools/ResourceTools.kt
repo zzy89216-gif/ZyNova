@@ -35,8 +35,17 @@ import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.coroutineScope
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "AIResourceTools"
+
+/**
+ * 镜像任务 id 序号（议题 #78）。
+ *
+ * 同一个资源重复安装 / 并发安装时，光靠毫秒时间戳可能撞 id；TaskSystem 对同 id 的
+ * 第二个任务会**静默丢弃**，所以再加一个进程内单调序号兜底。
+ */
+private val RESOURCE_TASK_SEQUENCE = AtomicInteger(0)
 
 /**
  * 资源搜索与安装工具。
@@ -244,8 +253,9 @@ private suspend fun installResourceWithProgress(
     instance: Version
 ): ResourceInstallOutcome = coroutineScope {
     val result = CompletableDeferred<Result<ResourceInstallOutcome>>()
-    //id 带上时间戳：同一个资源重复安装时不会被 TaskSystem 的去重逻辑吞掉
-    val taskId = "ai_install_resource_${instance.getVersionName()}_${platform.name}_${projectId}_${System.currentTimeMillis()}"
+    //id 带上「序号 + 时间戳」：同一个资源重复安装 / 并发安装时不会被 TaskSystem 的去重逻辑吞掉
+    val taskId = "ai_install_resource_${instance.getVersionName()}_${platform.name}_${projectId}_" +
+        "${RESOURCE_TASK_SEQUENCE.incrementAndGet()}_${System.currentTimeMillis()}"
 
     TaskSystem.submitTask(
         Task.runTask(

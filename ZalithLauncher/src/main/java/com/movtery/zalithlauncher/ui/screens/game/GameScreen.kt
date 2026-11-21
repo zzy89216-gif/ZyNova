@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.game
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -87,6 +88,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.isLauncherInDarkTheme
 import com.movtery.zalithlauncher.setting.enums.toAction
 import com.movtery.zalithlauncher.terracotta.Terracotta
+import com.movtery.zalithlauncher.ui.activities.MainActivity
 import com.movtery.zalithlauncher.ui.activities.backToLauncher
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.MenuState
@@ -699,6 +701,24 @@ fun GameScreen(
             onBackToLauncher = {
                 viewModel.gameMenuState = MenuState.HIDE
                 backToLauncher(context)
+            },
+            //28.2.4 新需求：回启动器并直接打开「多人联机」页（陶瓦 / 樱花内网穿透都在那一页）。
+            //游戏跑在 `:game` 进程，启动器的导航栈在主进程里、跨进程读不到，
+            //所以只能带一个 Intent extra 回主进程，由 MainActivity 在 composition 里消费。
+            //flags 与 backToLauncher() 保持一致：只把（可能已存在的）MainActivity 排到前台，
+            //不新建任务、也不结束 VMActivity —— JVM 不退出、联机不断，从「返回游戏」还能回来。
+            onOpenMultiplayer = {
+                viewModel.gameMenuState = MenuState.HIDE
+                runCatching {
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        //正常情况 context 就是 VMActivity；万一被包成非 Activity 的 Context，
+                        //startActivity 必须带 NEW_TASK，否则会抛 AndroidRuntimeException
+                        if (context !is android.app.Activity) addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra(MainActivity.EXTRA_OPEN_MULTIPLAYER, true)
+                    }
+                    context.startActivity(intent)
+                }
             },
             //游戏内 ESC：以前绑在系统返回键上，现在挪到侧边栏按钮，
             //点了就相当于键盘按一下 Esc（打开/关闭 Minecraft 自己的暂停菜单）

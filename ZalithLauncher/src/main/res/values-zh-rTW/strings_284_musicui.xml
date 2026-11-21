@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ZyNova Launcher · 28.2.4 音樂播放器介面（議題 #80 / #81）· 繁體中文
+-->
+<resources>
+    <string name="music_lyrics_loading">歌詞載入中…</string>
+    <string name="music_lyrics_empty">這首歌暫時沒有歌詞</string>
+    <string name="music_lyrics_hint">點「匯入歌詞」選擇 .lrc 歌詞檔，會關聯到目前這首歌。</string>
+    <string name="music_lyrics_import">匯入歌詞</string>
+    <string name="music_lyrics_importing">正在匯入歌詞…</string>
+    <string name="music_lyrics_import_success">歌詞已匯入</string>
+    <string name="music_lyrics_import_failed">沒能從該檔案裡讀到歌詞</string>
+    <string name="music_lyrics_not_lrc">請選擇 .lrc 歌詞檔</string>
+    <string name="music_lyrics_cancelled">沒有選擇歌詞檔</string>
+</resources>

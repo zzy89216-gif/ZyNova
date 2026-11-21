@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.main
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -58,6 +59,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +81,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -211,6 +216,21 @@ fun MainScreen(
 
     //游戏进程（`:game`）是否还活着：决定要不要显示「返回游戏」
     var gameRunning by remember { mutableStateOf(false) }
+
+    //回到前台**立刻**核对一次，不等 2s 轮询：
+    //从游戏退出回到启动器时，胶囊最多会残留 2s，用户恰好点下去就会拉起空壳（闪退）。
+    //游戏在前台时 MainActivity 处于 stopped，收不到 ON_RESUME，所以这里不会误隐藏胶囊。
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                gameRunning = isGameProcessAlive(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     LaunchedEffect(inLauncherScreen) {
         //只在主界面轮询，其它页面根本不显示这个入口
         if (!inLauncherScreen) return@LaunchedEffect
@@ -354,7 +374,19 @@ fun MainScreen(
                     ReturnToGamePill(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(bottom = 18.dp)
+                            .padding(bottom = 18.dp),
+                        onClick = {
+                            //点击时当场校验（resumeGame 内部会再查一次会话）：
+                            //会话已经结束就**立即收起胶囊并提示**，绝不拉起没有启动参数的空壳
+                            if (!resumeGame(context)) {
+                                gameRunning = false
+                                Toast.makeText(
+                                    context,
+                                    R.string.home_return_to_game_expired,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     )
                 }
             }
@@ -1046,16 +1078,18 @@ private fun TaskItem(
  *
  * 游戏（`:game` 进程）只是退到后台，并没有退出：点这里直接把它拉回前台
  * （`REORDER_TO_FRONT`），不会重新启动、不会丢进度。
+ *
+ * @param onClick 由调用方做「点击时当场校验 + 失效收起提示」，组件本身只管点击
  */
 @Composable
 private fun ReturnToGamePill(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Surface(
         modifier = modifier
             .clip(MaterialTheme.shapes.extraLarge)
-            .clickable { resumeGame(context) },
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.extraLarge,
         color = cardColor(false),
         contentColor = onCardColor(),

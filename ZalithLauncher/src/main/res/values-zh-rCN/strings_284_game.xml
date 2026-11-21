@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ZyNova Launcher · 28.2.4 游戏内菜单新增「多人联机」快捷入口 -->
+<resources>
+    <string name="game_menu_option_multiplayer">多人联机</string>
+</resources>
