@@ -25,6 +25,7 @@ import com.movtery.zalithlauncher.game.download.resources.ResourceManager
 import com.movtery.zalithlauncher.game.download.resources.ResourceType
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -165,6 +166,9 @@ object FavoriteInstaller {
                     installed += resolved.displayName
                     result.missingRequiredDependencies.forEach { missing += it.toString() }
                 }.onFailure { th ->
+                    //用户取消 / 页面离开导致的协程取消不是「前置安装失败」，原样抛出，
+                    //否则会记成缺前置并继续尝试后面的依赖（还把取消显示成失败）。
+                    if (th is CancellationException) throw th
                     Logger.warning(TAG, "Failed to install dependency $projectId", th)
                     missing += projectId
                 }
@@ -240,18 +244,26 @@ object FavoriteInstaller {
         source: File,
     ): PlatformVersion? {
         val sha1 = runCatching { sha1Of(source) }
-            .onFailure { Logger.warning(TAG, "Failed to hash ${entry.name}", it) }
+            .onFailure { th ->
+                if (th is CancellationException) throw th
+                Logger.warning(TAG, "Failed to hash ${entry.name}", th)
+            }
             .getOrNull() ?: return null
         val version = runCatching { getVersionByLocalFile(source, sha1) }
-            .onFailure { Logger.warning(TAG, "Platform lookup failed for ${entry.name}", it) }
+            .onFailure { th ->
+                //取消不等于「平台没认出这个文件」，别因此降级成直接复制
+                if (th is CancellationException) throw th
+                Logger.warning(TAG, "Platform lookup failed for ${entry.name}", th)
+            }
             .getOrNull() ?: return null
 
         if (version.isFileInitialized) return version
 
         val initialized = runCatching {
             version.initFile(entry.onlineProjectId.orEmpty())
-        }.onFailure {
-            Logger.warning(TAG, "Failed to initialize platform file of ${entry.name}", it)
+        }.onFailure { th ->
+            if (th is CancellationException) throw th
+            Logger.warning(TAG, "Failed to initialize platform file of ${entry.name}", th)
         }.getOrDefault(false)
         return version.takeIf { initialized }
     }

@@ -100,8 +100,9 @@ class BatchDownloader(
 
             val jobs = requests.map { request ->
                 launch(Dispatchers.IO) {
-                    //先取得一个连接许可再打开 .part 文件：
-                    //否则全部作业同时持着打开的句柄排队，海量句柄会拖垮存储层
+                    //启动节流：先等一个连接许可空出来再开始打开 .part 文件，
+                    //避免全部作业同时抢句柄排队（这里拿到即放，不是持锁；
+                    //真正的并发数由 FileDownloader 内部的同一个信号量控制，别把 runOne 包进 withPermit，会死锁）
                     connections.withPermit { }
                     runOne(request, failures, fileClientFor(request), unfinished)
                 }

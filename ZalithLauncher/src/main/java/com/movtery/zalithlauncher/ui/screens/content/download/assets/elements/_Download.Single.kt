@@ -422,7 +422,11 @@ private fun SelectVersionListItem(
         }
     ) {
         Row(
-            modifier = modifier.padding(vertical = 8.dp),
+            //⚠️ 外层 Surface 已经消费过调用方的 modifier；这里再拼一次会把
+            //padding / fillMaxWidth 叠加一遍。只保留本行自己的留白与铺满。
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(

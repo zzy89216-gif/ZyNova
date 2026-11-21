@@ -21,6 +21,7 @@ package com.movtery.zalithlauncher.game.favorites
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -107,6 +108,11 @@ object FavoriteImporter {
             )
             FavoriteStore.add(entry)
             entry
+        } catch (e: CancellationException) {
+            //用户取消导入 / 协程取消不是「导入失败」：清掉临时文件后原样抛出，
+            //不能包成 FavoriteImportException，否则界面会把取消显示成失败。
+            temp.delete()
+            throw e
         } catch (e: FavoriteAlreadyImportedException) {
             temp.delete()
             throw e

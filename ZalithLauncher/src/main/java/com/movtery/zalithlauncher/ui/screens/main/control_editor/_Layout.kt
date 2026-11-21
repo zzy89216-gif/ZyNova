@@ -201,7 +201,10 @@ fun <E> InfoLayoutListItem(
                         ) {
                             items(items) { item ->
                                 Row(
-                                    modifier = modifier
+                                    //⚠️ 外层 Surface 已经消费过调用方的 modifier；
+                                    //这里再拼一次，调用方以后传 padding 就会在每一行里重复叠加。
+                                    modifier = Modifier
+                                        .fillMaxWidth()
                                         .clip(shape = MaterialTheme.shapes.medium)
                                         .clickable {
                                             onClick(item)

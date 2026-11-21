@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -136,9 +137,15 @@ object TaskSystem {
 
     /**
      * 停止所有任务
+     *
+     * ⚠️ 不能直接 `scope.cancel()`：`CoroutineScope.cancel()` 取消的是根 Job，**不可恢复**；
+     * 之后再 `submitTask()` 启动的协程会立刻处于取消状态，任务体根本不执行。
+     * 而 [scope] 同时被 GameInstaller / ModPackInstaller / 收藏安装等复用，
+     * 结果就是用户只要在设置里点一次「取消全部任务」，本次进程内后续下载/安装全部静默失效。
+     * 这里只取消当前所有子任务，根 scope 保持可用。
      */
     fun stopAll() {
-        scope.cancel()
+        scope.coroutineContext.cancelChildren()
         _tasksFlow.update { emptyList() }
         allJobs.clear()
         allListeners.clear()

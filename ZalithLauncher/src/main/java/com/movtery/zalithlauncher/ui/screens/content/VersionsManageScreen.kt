@@ -533,7 +533,9 @@ private fun VersionsLayout(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         state = listState,
                     ) {
-                        items(versions, key = { it.toString() }) { version ->
+                        //⚠️ key 不能用 Version.toString()：Version 没有覆写 toString，默认是 identity hash，
+                        //每次刷新重建对象后 key 全变，animateItem / 滚动位置被当成全新列表（列表会闪/跳）。
+                        items(versions, key = { it.getVersionName() }) { version ->
                             VersionItemLayout(
                                 modifier = Modifier
                                     .fillMaxWidth()

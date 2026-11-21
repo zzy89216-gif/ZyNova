@@ -608,7 +608,13 @@ private fun ControlLayoutItem(
             ) {
                 val info = data.controlLayout.info
                 Row(
-                    modifier = modifier.height(IntrinsicSize.Min),
+                    //⚠️ 只保留本行需要的约束：外层 Surface 已经消费过调用方传进来的
+                    //modifier（含 fillMaxWidth + 垂直 padding），这里再拼一次会让
+                    //padding 叠加（列表项一会儿松一会儿紧）。fillMaxWidth 要保留，
+                    //否则 Row 会按内容收缩，右边留白。
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

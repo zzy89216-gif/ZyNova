@@ -241,24 +241,19 @@ private class AddonsViewModel(
             return
         }
 
-        val unselectedLoader = buildList {
-            add(currentAddon.forgeVersion)
-            if (loaderSupports.isNeoForgeSupports) {
-                add(addonList.neoforgeList)
-            }
-            if (loaderSupports.isFabricSupports) {
-                add(addonList.fabricList)
-            }
-            if (loaderSupports.isLegacyFabricSupports) {
-                add(addonList.legacyFabricList)
-            }
-            if (loaderSupports.isQuiltSupports) {
-                add(addonList.quiltList)
-            }
-            if (loaderSupports.isCleanroomSupports) {
-                add(addonList.cleanroomList)
-            }
-        }.isEmpty()
+        //⚠️ 这里必须收集「用户已选中的版本值」：
+        //旧写法把 MutableState 对象（forgeVersion）和候选列表（addonList.xxxList）整段塞进
+        //buildList，列表里永远至少有一个非 null 对象，`.isEmpty()` 恒为 false，
+        //于是「一个加载器都没选」也会被当成已选择——原版实例的更新按钮一直亮着，
+        //点下去只会生成空 diff 的无效安装。按 supports 过滤 + 取 `.value` 才是真实选择状态。
+        val unselectedLoader = listOfNotNull(
+            currentAddon.forgeVersion.value,
+            currentAddon.neoforgeVersion.value.takeIf { loaderSupports.isNeoForgeSupports },
+            currentAddon.fabricVersion.value.takeIf { loaderSupports.isFabricSupports },
+            currentAddon.legacyFabricVersion.value.takeIf { loaderSupports.isLegacyFabricSupports },
+            currentAddon.quiltVersion.value.takeIf { loaderSupports.isQuiltSupports },
+            currentAddon.cleanroomVersion.value.takeIf { loaderSupports.isCleanroomSupports }
+        ).isEmpty()
 
         if (loaderInfo == null) {
             //如果当前版本没有加载器，则根据当前是否选择加载器决定
