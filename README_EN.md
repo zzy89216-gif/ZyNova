@@ -60,6 +60,7 @@ Networks in China: mirrors are used on demand and fall back to the official sour
 - **"Cancel all tasks" no longer breaks downloads / installs for the rest of the session**; it only cancels the current tasks.
 - **Cancellation is no longer reported as failure** in favourite install / import flows.
 - **Two upstream crash fixes**: Android 8 clipboard crash and automatic Java runtime selection crash.
+- **Renderers**: Ironized Zink is built in again (four official presets plus an independent OpenGL version, 3.3–4.6, so old devices can finally lower it); Auto now picks by device capability (GLES 3.2+ / Vulkan) and version instead of guessing.
 - Smaller fixes: wrong "Update loader" button state, doubled padding in a few lists, flickering version list on refresh.
 
 ## Docs and feedback
