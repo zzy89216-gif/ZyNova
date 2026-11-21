@@ -386,8 +386,8 @@ AI `ContentTools` 全部走同一套判定。CurseForge 侧 Quilted / Legacy 的
 
 - 删除渲染器实现、`game/renderer/ironizedzink/` 配置模型、`AllSettings.ironizedZink*`
   14 个设置项、独立参数页与导航键、`kopper-zink-release.aar`、Mesa 许可与 CREDITS
-- 自动模式顺序改为 MobileGlues → GL4ES；旧配置中的 Ironized Zink UUID 会回退到列表首个
-- ⚠️ 以后不要再把 Mesa/Zink/Kopper 作为内置渲染器加回来；需要 Zink 时走渲染器插件
+- 自动模式顺序曾改为 MobileGlues → GL4ES；旧配置中的 Ironized Zink UUID 会回退到列表首个
+- ⚠️ 该移除已被后续补丁撤销：Ironized Zink 已**满血恢复**（见下方「Ironized Zink 恢复」）
 
 **二、MobileGlues 2.0.1-dev**
 
@@ -3346,3 +3346,46 @@ surface 重建后渲染状态未恢复、窗口引用计数多算）；
 ### 下次发版要做的
 已转到 Issue 跟踪，不在文档里维护清单：<https://github.com/zzy89216-gif/ZyNova/issues/50>。
 一句话：**下次打 APK 时，把官方 X 和项目邮箱写进「关于页」**。
+
+---
+
+## 28.2.3（未发版）：Ironized Zink 满血恢复 + 自动渲染器设备能力优化 🔧
+
+> 撤销 27.9.0 对 Zink 的移除。**只恢复 Zink**，MobileGlues / LTW / 收藏 / 导出 /
+> 崩溃分析等 27.9.0 的其它改动保持原样，不做反向还原。
+
+**一、恢复的文件与二进制**
+
+- `libs/kopper-zink-release.aar`（16,002,238 B；通过 build.gradle.kts 已有的
+  `fileTree("libs", include = ["*.jar", "*.aar"])` 自动打包，不需要单独写依赖）
+- `game/renderer/ironizedzink/IronizedZinkConfig.kt`（230 行）与
+  `IronizedZinkSettings.kt`（68 行）
+- `game/renderer/renderers/IronizedZinkRenderer.kt`（77 行）
+- `ui/screens/content/settings/IronizedZinkConfigCards.kt`（218 行）
+- `assets/licenses/ironized-zink-CREDITS.md`、`res/raw/ironized_zink_license.txt`、
+  `res/raw/mesa_licenses.txt`
+- 两份 `THIRD_PARTY_NOTICES.md` 加回 2.4 Ironized Zink / 2.5 Mesa（Zink + Kopper）条目
+
+**二、共享文件接线**
+
+- `Renderers.init()`：`addRenderers(MobileGlues, IronizedZink, GL4ES)` + 单独的 LTW
+- `AutoRenderer`：偏好顺序 **MobileGlues → GL4ES → Ironized Zink**，并为每项加设备能力门槛
+  （MobileGlues 需 GLES 3.2+、Ironized Zink 需 Vulkan；探测失败时退回「版本兼容的第一个」）
+- `RendererVersions`：`IRONIZED_ZINK = "1.1.0"`（官方 tag `v1.1.0`，commit `88f7c202`）
+- `AllSettings`：恢复 14 个 `ironizedZink*` 键（默认值 = 上游 Default 预设）
+- `GameLauncher.setRendererEnv()`：Ironized Zink 不再被通用 Mesa 兜底值覆盖
+- `NormalNavKey.Settings.RendererAdvancedZink` + SettingsScreen 路由 +
+  `IronizedZinkAdvancedSettingsScreen` 恢复独立参数页
+- `AdvancedSettingsScreen`：渲染器分组新增 Ironized Zink 入口卡（与渲染设置页等价）
+- `RendererSettingsScreen`：选中 Zink 时本页直接展开配置卡；Vulkan 驱动 /
+  「使用系统 Vulkan 驱动」（Adreno 警告）/ Zink VSync 恢复
+- `values/` + `values-zh-rCN/`：补齐 Ironized Zink 文案，并更新自动顺序说明
+
+**三、议题 #13（预设把 OpenGL 版本锁死 4.6）修复**
+
+- `applyIronizedZinkPreset()` **不再写** `ironizedZinkGlVersion`：预设只写其它 12 个参数
+- OpenGL 版本成为完全独立的设置，直接写入 `MESA_GL_VERSION_OVERRIDE`
+- 可选版本从 4 档扩到 3.3 / 3.4 / 4.0–4.6 共 9 档，`glslFor()` 同步补齐
+- 预设命中判定改为忽略 GL 版本（`matchesIgnoringGlVersion`），
+  「Default + 3.3」仍显示命中 Default，而不是「已自定义」
+- UI 摘要明确写出「预设只改其它开关，GL 版本不会被预设改写」

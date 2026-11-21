@@ -37,6 +37,7 @@ import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.setting.enums.HomePageType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
 import com.movtery.zalithlauncher.game.renderer.AutoRenderer
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.ZinkPreset
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MobileGluesGlVersion
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MobileGluesMultidraw
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
@@ -93,8 +94,8 @@ object AllSettings : SettingsRegistry() {
      * 默认 **「自动」**：每个实例启动时按偏好顺序挑一个支持该 Minecraft 版本的渲染器
      * （见 `game/renderer/AutoRenderer.kt` 与 `Renderers.resolveIdentifier`）。
      *
-     * 之所以默认自动而不是直接写死某一个：内置渲染器的版本覆盖范围不同 ——
-     * MobileGlues 声明 `minMCVer = 1.17`，GL4ES 声明 `maxMCVer = 1.21.4`。
+     * 之所以默认自动而不是直接写死某一个：内置三个渲染器的版本覆盖范围不同 ——
+     * MobileGlues 声明 `minMCVer = 1.17`，只有 Ironized Zink 不限制版本。
      * 固定默认某一个，必然对一部分 Minecraft 版本是错的（旧版本实例每次启动都要先吃一次
      * 「渲染器可能不兼容」的警告）。自动模式把这个选择交给启动器。
      *
@@ -147,6 +148,84 @@ object AllSettings : SettingsRegistry() {
      * 启用着色器日志输出
      */
     val dumpShaders = boolSetting("dumpShaders", false)
+
+    //Ironized Zink
+    //以下参数完整对应上游 Ironized Zink 的原生配置（作者 GoyDevv，GPL-3.0）：
+    //https://github.com/GoyDevv/IronizedZink
+    //默认值与该上游的 Default 预设完全一致。
+
+    /**
+     * Ironized Zink 官方预设
+     */
+    val ironizedZinkPreset = enumSetting("ironizedZinkPreset", ZinkPreset.DEFAULT)
+
+    /**
+     * OpenGL 版本（3.3 / 3.4 / 4.0 / 4.1 / 4.2 / 4.3 / 4.4 / 4.5 / 4.6）
+     *
+     * ⚠️ 议题 #13：这是**独立生效**的用户选择。切换预设只写其它 12 个参数，
+     * 绝不覆盖本项；环境变量 `MESA_GL_VERSION_OVERRIDE` 永远取这里的值。
+     */
+    val ironizedZinkGlVersion = stringSetting("ironizedZinkGlVersion", "4.6")
+
+    /**
+     * 线程化 GL（mesa_glthread）
+     */
+    val ironizedZinkThreadedGl = boolSetting("ironizedZinkThreadedGl", true)
+
+    /**
+     * 大核绑定（POJAV_BIG_CORE_AFFINITY）
+     */
+    val ironizedZinkBigCoreAffinity = boolSetting("ironizedZinkBigCoreAffinity", false)
+
+    /**
+     * 允许乱序绘制（allow_draw_out_of_order）
+     */
+    val ironizedZinkOutOfOrder = boolSetting("ironizedZinkOutOfOrder", false)
+
+    /**
+     * 关闭 GL 错误检查（MESA_NO_ERROR，未定义行为，默认关闭）
+     */
+    val ironizedZinkNoError = boolSetting("ironizedZinkNoError", false)
+
+    /**
+     * 垂直同步（跟随屏幕真实刷新率）
+     */
+    val ironizedZinkVsync = boolSetting("ironizedZinkVsync", true)
+
+    /**
+     * 放宽 GLSL 限制（着色器兼容性）
+     */
+    val ironizedZinkRelaxGlsl = boolSetting("ironizedZinkRelaxGlsl", true)
+
+    /**
+     * 暴露全部扩展（关闭则限制到 2018 年）
+     */
+    val ironizedZinkAllExtensions = boolSetting("ironizedZinkAllExtensions", true)
+
+    /**
+     * 着色器磁盘缓存
+     */
+    val ironizedZinkShaderCache = boolSetting("ironizedZinkShaderCache", true)
+
+    /**
+     * 单文件着色器缓存
+     */
+    val ironizedZinkSingleFileCache = boolSetting("ironizedZinkSingleFileCache", true)
+
+    /**
+     * 延迟描述符（ZINK_DESCRIPTORS=lazy，实验性）
+     */
+    val ironizedZinkLazyDescriptors = boolSetting("ironizedZinkLazyDescriptors", false)
+
+    /**
+     * 内联 uniform（ZINK_INLINE_UNIFORMS，实验性）
+     */
+    val ironizedZinkInlineUniforms = boolSetting("ironizedZinkInlineUniforms", false)
+
+    /**
+     * 强制软件渲染（LIBGL_ALWAYS_SOFTWARE，实验性）
+     */
+    val ironizedZinkForceSoftware = boolSetting("ironizedZinkForceSoftware", false)
 
     //MobileGlues
     //MobileGlues 的 OpenGL 版本**不是**环境变量，而是它自己 config.json 里的

@@ -944,7 +944,7 @@
     <string name="settings_tab_control_manage">Key Layouts</string>
     <string name="settings_tab_info_about">About &amp; Support</string>
     <string name="settings_renderer_global_renderer_title">Global Renderer</string>
-    <string name="settings_renderer_global_renderer_summary">Renderer used by default. Auto picks one that supports each instance\'s Minecraft version (MobileGlues → GL4ES); choosing a specific renderer always takes priority</string>
+    <string name="settings_renderer_global_renderer_summary">Renderer used by default. Auto picks one that supports each instance\'s Minecraft version (MobileGlues → Ironized Zink → GL4ES); choosing a specific renderer always takes priority</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan Driver</string>
     <string name="settings_renderer_env_title">Environment Variable: %s</string>
     <string name="settings_renderer_config_title">Renderer Configuration</string>
@@ -1615,6 +1615,23 @@
     <string name="fm_property_folders">Folders</string>
     <string name="fm_calculating">Calculating…</string>
     <string name="fm_name_conflict">Name conflicts with an existing entry</string>
+    <!-- Ironized Zink 渲染器配置（内置渲染器，配置模型移植自上游 Ironized Zink，GPL-3.0） -->
+    <string name="settings_renderer_ironized_entry_summary">Presets, OpenGL version and advanced switches.</string>
+    <string name="settings_renderer_ironized_preset_title">Preset</string>
+    <string name="settings_renderer_ironized_preset_summary">Official Ironized Zink presets. Picking one rewrites the 12 performance/compatibility switches only; the OpenGL version is a separate setting below and is never overwritten.</string>
+    <string name="settings_renderer_ironized_preset_custom">Custom — the current switches match no preset. Pick a preset to restore a supported configuration.</string>
+    <string name="settings_renderer_ironized_preset_potato_tagline">Absolute maximum FPS</string>
+    <string name="settings_renderer_ironized_preset_potato_note">MC 1.8 → latest (incl. 26.x) · Shaders: not recommended</string>
+    <string name="settings_renderer_ironized_preset_performance_tagline">High FPS with Sodium &amp; light shaders</string>
+    <string name="settings_renderer_ironized_preset_performance_note">MC 1.20.x → latest (incl. 26.x) · Shaders: light (e.g. Complementary low/medium)</string>
+    <string name="settings_renderer_ironized_preset_default_tagline">Balanced Zink + shaders (recommended)</string>
+    <string name="settings_renderer_ironized_preset_default_note">MC 1.16.x → latest (incl. 26.x) · Shaders: full (Iris / OptiFine)</string>
+    <string name="settings_renderer_ironized_preset_max_compat_tagline">Run everything — versions, shaders &amp; mods</string>
+    <string name="settings_renderer_ironized_preset_max_compat_note">All versions (1.8 → 26.x) · Shaders: full + heavy packs</string>
+    <string name="settings_renderer_ironized_gl_version_title">OpenGL version</string>
+    <string name="settings_renderer_ironized_gl_version_summary">3.3 – 4.6, written straight to MESA_GL_VERSION_OVERRIDE. All four presets are tuned for 4.6; if your GPU driver does not translate Vulkan to Zink 4.6 correctly (broken picture / refuses to start), lower it here. Independent of the preset, takes effect on the next launch.</string>
+    <string name="settings_renderer_ironized_gl_version_independent">Preset %1$s · OpenGL %2$s. Presets only change the other switches — this OpenGL version stays as you set it.</string>
+    <string name="settings_renderer_ironized_unsafe_combo">The saved parameters still use a combination that is the confirmed cause of the "hand renders through GUI" glitch. Pick any preset above (or turn off one of the two switches) to restore a supported configuration.</string>
     <string name="settings_renderer_auto_title">Auto</string>
     <string name="settings_renderer_auto_summary">Pick the best renderer for each instance automatically — no need to choose one yourself.</string>
     <string name="settings_renderer_mobileglues_summary">Translates desktop OpenGL onto the device\'s OpenGL ES 3.x</string>
@@ -1705,7 +1722,7 @@
     <string name="settings_renderer_version_label">Version</string>
     <string name="settings_renderer_version_unknown">Unknown</string>
     <string name="settings_renderer_priority_title">Auto selection order</string>
-    <string name="settings_renderer_priority_summary">With Auto, the launcher picks the first renderer that supports this game version, in the order MobileGlues, GL4ES.</string>
+    <string name="settings_renderer_priority_summary">With Auto, the launcher picks the first renderer that supports this game version, in the order MobileGlues, Ironized Zink, GL4ES.</string>
     <string name="settings_renderer_advanced_title">Advanced options</string>
     <string name="settings_renderer_advanced_summary">These are for people who know what they are doing. Wrong values can cause glitches, crashes or worse performance. Leave them alone if unsure.</string>
     <string name="settings_renderer_advanced_show">Show advanced options</string>
@@ -1856,6 +1873,7 @@
     <string name="settings_renderer_status_open_advanced">Tap to open this renderer\'s detailed settings</string>
     <string name="settings_advanced_renderer_mg">MobileGlues</string>
     <string name="settings_mg_advanced_group">MobileGlues advanced keys</string>
+    <string name="settings_advanced_renderer_zink">Ironized Zink</string>
     <string name="settings_renderer_ltw_name">LTW (Experimental)</string>
     <string name="settings_renderer_ltw_summary">Experimental · not recommended — LTW-Turbo is an early-stage GL-to-GLES wrapper; crashes and rendering glitches are expected</string>
     <string name="settings_advanced_renderer_ltw">LTW (Experimental)</string>

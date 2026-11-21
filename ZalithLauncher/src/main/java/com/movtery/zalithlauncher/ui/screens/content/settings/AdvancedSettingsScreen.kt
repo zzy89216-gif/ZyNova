@@ -104,6 +104,13 @@ fun AdvancedSettingsScreen(
                     SettingsCard(
                         modifier = Modifier.fillMaxWidth(),
                         position = CardPosition.Middle,
+                        title = stringResource(R.string.settings_advanced_renderer_zink),
+                        summary = stringResource(R.string.settings_renderer_ironized_entry_summary),
+                        onClick = { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedZink) }
+                    )
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
                         title = stringResource(R.string.settings_advanced_renderer_ltw),
                         summary = stringResource(R.string.settings_renderer_ltw_summary),
                         onClick = { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedLtw) }

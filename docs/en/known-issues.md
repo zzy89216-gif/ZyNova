@@ -1,6 +1,6 @@
 # Known issues and limits
 
-- Ironized Zink removed; use a plugin for Zink.
+- Ironized Zink needs a working Vulkan driver; if it fails, lower its OpenGL version or use MobileGlues / GL4ES.
 - LTW is arm64-only and experimental.
 - Background blur still costs something on very low-end devices (capped at 24dp, 12dp on <=4-core devices).
 - Export supports Modrinth only.

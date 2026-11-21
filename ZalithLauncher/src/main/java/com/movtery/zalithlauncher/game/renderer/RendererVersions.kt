@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.game.renderer
 
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MOBILE_GLUES_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.LTWRenderer
@@ -40,6 +41,9 @@ object RendererVersions {
     /** MobileGlues：2.0.1-dev（上游 2.8 内置的预发布构建） */
     const val MOBILE_GLUES = "2.0.1-dev"
 
+    /** Ironized Zink：官方 release tag `v1.1.0`（2026-07-15，commit 88f7c202） */
+    const val IRONIZED_ZINK = "1.1.0"
+
     /** GL4ES：`gl4es_extra_extra`，随包的是 `libgl4es_114.so` */
     const val GL4ES = "1.1.4"
 
@@ -52,6 +56,7 @@ object RendererVersions {
      */
     fun of(identifier: String): String? = when (identifier) {
         MOBILE_GLUES_UNIQUE_IDENTIFIER -> MOBILE_GLUES
+        IRONIZED_ZINK_UNIQUE_IDENTIFIER -> IRONIZED_ZINK
         //直接问渲染器自己，避免在这里再抄一份 UUID（UUID 是用户配置里的持久值，不能改）
         GL4ESRenderer.getUniqueIdentifier() -> GL4ES
         LTWRenderer.getUniqueIdentifier() -> LTW

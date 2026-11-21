@@ -20,8 +20,12 @@ package com.movtery.zalithlauncher.game.renderer
 
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.GlobalContext
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MOBILE_GLUES_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
+import com.movtery.zalithlauncher.utils.logging.Logger
+
+private const val TAG = "AutoRenderer"
 
 /**
  * 「自动」渲染器选项。
@@ -30,10 +34,11 @@ import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
  * 它只是渲染器列表里的一个**选择**：选了它就表示「每次启动自己挑一个合适的」。
  * 真正做事的是 [Renderers.resolveIdentifier]，本对象只负责在设置界面里显示。
  *
- * 为什么需要它：内置渲染器的版本覆盖范围不同
- * （MobileGlues 声明 `minMCVer = 1.17`，GL4ES 声明 `maxMCVer = 1.21.4`）。
- * 若只能手动指定一个，「默认值」必然对一部分版本是错的 ——
- * 旧版本实例每次启动都要先弹一次「渲染器可能不兼容」的警告。
+ * 为什么需要它：内置渲染器的**版本覆盖范围**和**设备要求**都不同
+ * （MobileGlues 要求 GLES 3.2+ 且只支持 1.17+；GL4ES 只到 1.21.4；
+ * Ironized Zink 不限版本但必须有 Vulkan）。若只能手动指定一个，
+ * 「默认值」必然对一部分设备 / 版本是错的 —— 用户什么都没做错，
+ * 却要每次启动先吃一次「渲染器可能不兼容」的警告，或者直接黑屏。
  * 自动模式把这个选择交给启动器。
  */
 object AutoRenderer : RendererInterface {
@@ -41,32 +46,87 @@ object AutoRenderer : RendererInterface {
     const val IDENTIFIER = "auto"
 
     /**
-     * 自动模式的偏好顺序：**从上到下第一个支持该 Minecraft 版本的**会被采用。
+     * 自动模式的一个候选：标识符 + 「这台设备跑不跑得动」的判断。
      *
-     * 顺序理由：
-     * 1. MobileGlues —— 直接跑在设备自身的 OpenGL ES 上，不需要 Vulkan，开箱可用性最好；
-     * 2. GL4ES —— 覆盖 1.16 及以前的老版本，也是最后的兜底。
-     *
-     * ⚠️ 这个顺序会实际影响游戏表现，调整前请想清楚；
-     * 以后新增内置渲染器时，也要考虑是否加进这里。
+     * `deviceSupports` 只回答兼容性问题，**不判断性能**；
+     * 真正的排序由列表顺序决定。
      */
-    private val AUTO_PREFERENCE = listOf(
-        MOBILE_GLUES_UNIQUE_IDENTIFIER,
-        GL4ESRenderer.getUniqueIdentifier()
+    private data class AutoChoice(
+        val identifier: String,
+        val deviceSupports: () -> Boolean,
     )
 
     /**
-     * 按偏好顺序找出第一个「声明支持 [mcVersion]」的渲染器。
+     * 自动模式的偏好顺序：**从上到下，第一个「设备跑得动 + 版本也兼容」的会被采用**。
      *
-     * 只依据渲染器自己声明的版本区间判断，不做任何设备 / GPU 探测 ——
-     * 自动模式的作用是「不选错」，不是「选出最快的」。
-     * 返回 `null` 表示没有渲染器支持该版本。
+     * 顺序理由：
+     * 1. MobileGlues —— 直接跑在设备自身的 OpenGL ES 上，不需要 Vulkan，开箱可用性最好；
+     *    但它要求 GLES 3.2+，低端设备选了也起不来，所以加设备能力门槛；
+     * 2. GL4ES —— 老版本（≤ 1.21.4）的稳定兜底，GLES 2.0 设备就能跑；
+     * 3. Ironized Zink —— 需要 Vulkan，且比前两个重；放在 GL4ES 之后，
+     *    只在 GL4ES 覆盖不到的版本（1.21.5+）或前面都跑不动时才轮到它。
+     *
+     * ⚠️ 这个顺序会实际影响游戏表现，调整前请想清楚；
+     * 以后新增内置渲染器时，也要考虑是否加进这里并补上设备门槛。
+     */
+    private val AUTO_PREFERENCE = listOf(
+        AutoChoice(MOBILE_GLUES_UNIQUE_IDENTIFIER) {
+            RendererDeviceProfile.isGlEsAtLeast(3, 2)
+        },
+        AutoChoice(GL4ESRenderer.getUniqueIdentifier()) { true },
+        AutoChoice(IRONIZED_ZINK_UNIQUE_IDENTIFIER) {
+            RendererDeviceProfile.supportsVulkan
+        },
+    )
+
+    /**
+     * 按「设备能力 → 偏好顺序 → 版本兼容」挑一个渲染器。
+     *
+     * 1. 先按 [AUTO_PREFERENCE] 顺序找第一个**设备跑得动且声明支持 [mcVersion]** 的；
+     * 2. 一个都没有时，退回「版本兼容的第一个内置渲染器」，并记一条警告 ——
+     *    设备能力探测可能不准（读不到 GLES 版本、系统 feature 缺失），
+     *    不能因为一次探测失败就让玩家没有渲染器可选。
+     *
+     * @return `null` 表示渲染器列表为空，或没有任何一个在版本上兼容。
      */
     fun pick(mcVersion: String?): RendererInterface? {
         val available = Renderers.getRenderers()
-        return AUTO_PREFERENCE
-            .mapNotNull { id -> available.find { it.getUniqueIdentifier() == id } }
-            .firstOrNull { Renderers.isCompatible(it, mcVersion) }
+
+        AUTO_PREFERENCE.forEach { choice ->
+            val renderer = available.find { it.getUniqueIdentifier() == choice.identifier } ?: return@forEach
+
+            if (!choice.deviceSupports()) {
+                Logger.info(TAG, "Auto: skip ${renderer.getRendererName()} (device cannot run it), MC=$mcVersion")
+                return@forEach
+            }
+            if (!Renderers.isCompatible(renderer, mcVersion)) {
+                Logger.info(TAG, "Auto: skip ${renderer.getRendererName()} (MC $mcVersion not supported)")
+                return@forEach
+            }
+
+            Logger.info(
+                TAG,
+                "Auto renderer picked ${renderer.getRendererName()} for MC $mcVersion (${RendererDeviceProfile.describe()})"
+            )
+            return renderer
+        }
+
+        //兜底：设备能力探测失败 / 渲染器列表被插件改过时，至少保证「版本兼容」这一条
+        val fallback = available.firstOrNull { Renderers.isCompatible(it, mcVersion) }
+        if (fallback != null) {
+            Logger.warning(
+                TAG,
+                "Auto: no device-capable renderer for MC $mcVersion, " +
+                        "falling back to ${fallback.getRendererName()} (${RendererDeviceProfile.describe()})"
+            )
+        } else {
+            Logger.warning(
+                TAG,
+                "Auto: no renderer compatible with MC $mcVersion " +
+                        "(${available.joinToString { it.getRendererName() }})"
+            )
+        }
+        return fallback
     }
 
     override fun getRendererId(): String = IDENTIFIER

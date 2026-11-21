@@ -19,6 +19,7 @@
 package com.movtery.zalithlauncher.game.renderer
 
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
+import com.movtery.zalithlauncher.game.renderer.renderers.IronizedZinkRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.LTWRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.MobileGluesRenderer
 import com.movtery.zalithlauncher.game.version.installed.utils.isBiggerVer
@@ -30,7 +31,7 @@ private const val TAG = "Renderers"
 /**
  * 启动器所有渲染器总管理者，启动器内置的渲染器与渲染器插件加载的渲染器，都会加载到这里
  *
- * 内置渲染器：**MobileGlues（默认）**、GL4ES、LTW（实验性，自动模式不会选它）。
+ * 内置渲染器：**MobileGlues（默认）**、Ironized Zink、GL4ES、LTW（实验性，自动模式不会选它）。
  *
  * ⚠️ **列表顺序有意义**：`setCurrentRenderer()` 在找不到已保存的渲染器时
  * （例如用户存过已被删除的渲染器 UUID）会回退到**列表首个**。
@@ -55,6 +56,7 @@ object Renderers {
 
         addRenderers(
             MobileGluesRenderer,
+            IronizedZinkRenderer,
             GL4ESRenderer
         )
 
@@ -130,7 +132,7 @@ object Renderers {
      * 选择顺序：
      * 1. [preferredIdentifier] 能跑就用它；
      * 2. 否则回退到列表里**第一个声明支持该版本**的渲染器
-     *    （列表首个是 MobileGlues，兼容性过滤后通常落到 GL4ES）；
+     *    （列表首个是 MobileGlues，兼容性过滤后通常落到不限制版本的 Ironized Zink）；
      * 3. 都不满足时保留原值，交回启动路径去弹那个警告（不做静默的错事）。
      */
     fun findCompatibleIdentifier(preferredIdentifier: String, mcVersion: String?): String {
@@ -138,7 +140,10 @@ object Renderers {
             ?: return preferredIdentifier
         if (isCompatible(preferred, mcVersion)) return preferredIdentifier
 
-        val fallback = renderers.firstOrNull { isCompatible(it, mcVersion) }
+        //回退也走「自动」的同一套逻辑（设备能力 + 偏好顺序），而不是简单拿列表首个：
+        //列表首个是 MobileGlues，在 GLES 3.2 以下的设备上选它等于必黑屏。
+        val fallback = AutoRenderer.pick(mcVersion)
+            ?: renderers.firstOrNull { isCompatible(it, mcVersion) }
         if (fallback != null) {
             Logger.info(
                 TAG,

@@ -1,6 +1,6 @@
 # 已知问题 / 限制
 
-- Ironized Zink 已移除；需要 Zink 用插件。
+- Ironized Zink 需要设备 Vulkan 驱动可用；失败时先降低它的 OpenGL 版本，或换 MobileGlues / GL4ES。
 - LTW 仅 arm64，实验性，可能崩溃。
 - 背景模糊在极低端设备上仍有开销（已限定上限 24dp、≤4 核自动降到 12dp）。
 - 导出只支持 Modrinth。

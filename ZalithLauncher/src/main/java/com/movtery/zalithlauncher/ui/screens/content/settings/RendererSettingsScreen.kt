@@ -51,6 +51,7 @@ import com.movtery.zalithlauncher.game.renderer.AutoRenderer
 import com.movtery.zalithlauncher.game.renderer.RendererInterface
 import com.movtery.zalithlauncher.game.renderer.RendererVersions
 import com.movtery.zalithlauncher.game.renderer.Renderers
+import com.movtery.zalithlauncher.game.renderer.ironizedzink.IRONIZED_ZINK_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.mobileglues.MOBILE_GLUES_UNIQUE_IDENTIFIER
 import com.movtery.zalithlauncher.game.renderer.renderers.LTWRenderer
 import com.movtery.zalithlauncher.game.renderer.renderers.GL4ESRenderer
@@ -62,6 +63,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.unit.floatRange
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedColumn
+import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
@@ -72,6 +74,7 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.ListSettin
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCardColumn
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
+import com.movtery.zalithlauncher.utils.isAdrenoGPU
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.sendDLPlugin
 
@@ -109,6 +112,7 @@ fun RendererSettingsScreen(
             val currentRendererId = AllSettings.renderer.state
             val isAuto = currentRendererId == AutoRenderer.IDENTIFIER
             val isMobileGlues = currentRendererId == MOBILE_GLUES_UNIQUE_IDENTIFIER
+            val isIronizedZink = currentRendererId == IRONIZED_ZINK_UNIQUE_IDENTIFIER
             val isGL4ES = currentRendererId == GL4ESRenderer.getUniqueIdentifier()
             val isLTW = currentRendererId == LTWRenderer.getUniqueIdentifier()
 
@@ -117,8 +121,8 @@ fun RendererSettingsScreen(
                     .firstOrNull { it.getUniqueIdentifier() == currentRendererId }
             }
             val isPluginRenderer = currentRenderer is RendererV2Data
-            //走 Vulkan 的才需要驱动：只剩插件渲染器（内置渲染器都不再走 Vulkan）
-            val usesVulkan = isPluginRenderer
+            //走 Vulkan 的才需要驱动：Zink、插件渲染器，以及「自动」（可能挑到 Zink）
+            val usesVulkan = isIronizedZink || isAuto || isPluginRenderer
 
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(
@@ -198,6 +202,9 @@ fun RendererSettingsScreen(
                             isMobileGlues -> {
                                 { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedMobileGlues) }
                             }
+                            isIronizedZink -> {
+                                { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedZink) }
+                            }
                             isGL4ES -> {
                                 { toSettingsScreen(NormalNavKey.Settings.RendererAdvancedGl4es) }
                             }
@@ -214,6 +221,19 @@ fun RendererSettingsScreen(
             if (isMobileGlues) {
                 AnimatedItem(scope) { yOffset ->
                     MobileGluesConfigCards(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                    )
+                }
+            }
+
+            //Ironized Zink 的配置**在这页直接展开**：
+            //预设 + OpenGL 版本是这个渲染器最常用的两个决定，进游戏前就要能改；
+            //高级开关默认收在「高级参数」折叠区里（见 IronizedZinkConfigCards）。
+            if (isIronizedZink) {
+                AnimatedItem(scope) { yOffset ->
+                    IronizedZinkConfigCards(
                         modifier = Modifier
                             .fillMaxWidth()
                             .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
@@ -301,6 +321,44 @@ fun RendererSettingsScreen(
                                     )
                                 }
                             }
+                        )
+                    }
+
+                    if (isIronizedZink) {
+                        var adrenoGPUAlert by remember { mutableStateOf(false) }
+
+                        SwitchSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Middle,
+                            unit = AllSettings.zinkPreferSystemDriver,
+                            title = stringResource(R.string.settings_renderer_vulkan_driver_system_title),
+                            summary = stringResource(R.string.settings_renderer_vulkan_driver_system_summary),
+                            onCheckedChange = { checked ->
+                                if (checked && isAdrenoGPU()) adrenoGPUAlert = true
+                            }
+                        )
+
+                        if (adrenoGPUAlert) {
+                            SimpleAlertDialog(
+                                title = stringResource(R.string.generic_warning),
+                                text = stringResource(R.string.settings_renderer_zink_driver_adreno),
+                                onConfirm = {
+                                    AllSettings.zinkPreferSystemDriver.save(true)
+                                    adrenoGPUAlert = false
+                                },
+                                onDismiss = {
+                                    AllSettings.zinkPreferSystemDriver.save(false)
+                                    adrenoGPUAlert = false
+                                }
+                            )
+                        }
+
+                        SwitchSettingsCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            position = CardPosition.Middle,
+                            unit = AllSettings.vsyncInZink,
+                            title = stringResource(R.string.settings_renderer_vsync_in_zink_title),
+                            summary = stringResource(R.string.settings_renderer_vsync_in_zink_summary)
                         )
                     }
 

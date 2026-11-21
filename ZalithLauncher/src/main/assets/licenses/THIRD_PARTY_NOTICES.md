@@ -9,7 +9,10 @@
 一句话结论：
 
 - **本项目自身：GPL-3.0**（见仓库根目录 `LICENSE`）
-- **内置渲染器**：MobileGlues = **LGPL-2.1**、GL4ES = **MIT**、LTW-Turbo = **LGPL-3.0**
+- **内置渲染器**：Ironized Zink = **GPL-3.0**、MobileGlues = **LGPL-2.1**、GL4ES = **MIT**、LTW-Turbo = **LGPL-3.0**
+- **Ironized Zink 承载的渲染引擎**：Mesa（其中的 **Zink** 驱动与 **Kopper** 窗口系统层）——
+  主 Mesa / Gallium 代码为 **MIT**，GLX 客户端代码为 **SGI Free Software License B**，
+  GL / GLX 头文件为 **Khronos**
 - **内网穿透客户端**：frp / frpc（樱花定制构建）= **Apache-2.0**
 - **陶瓦联机 Terracotta（含 `libterracotta.so`）= AGPL-3.0** ⚠️
   AGPL-3.0 比 GPL-3.0 更严格：**重新分发时（含修改版）需要按 AGPL-3.0 §13 提供完整对应源码**，
@@ -82,6 +85,42 @@ artDev、SerpentSpirale、CADIndie；LTW-Turbo 由 MathCode 等维护。
 对应源码即上述 GitHub 仓库的 `v1.0.3-preview.1` 对应提交。该库以独立动态库形式
 随 APK 分发，用户可替换为自己编译的同名库。
 
+### 2.4 Ironized Zink（内置）
+
+| | |
+|---|---|
+| 上游 | https://github.com/GoyDevv/IronizedZink |
+| 作者 | GoyDevv |
+| 版本 | 1.1.0（commit `88f7c2028defe513fd05f591e42a2253e842e4fe`） |
+| 许可证 | **GNU GPL-3.0** — 完整文本见 `ZalithLauncher/src/main/res/raw/ironized_zink_license.txt` |
+| 随附声明 | `ZalithLauncher/src/main/assets/licenses/ironized-zink-CREDITS.md`（上游 `CREDITS.md` 原文，未改动） |
+| 随附形式 | 配置 / 预设代码移植进启动器（`game/renderer/ironizedzink/`），渲染引擎二进制由 `ZalithLauncher/libs/kopper-zink-release.aar` 提供 |
+
+Ironized Zink 自身是一个「打包 + 配置」项目，把 Mesa 的 Zink Gallium 驱动与
+Kopper 窗口系统层包装成一个渲染器；上游许可证全文与署名文件随 APK 一同分发。
+本项目只把它的配置模型（环境变量 / 四个官方预设）接入启动器设置，
+**未修改**上述二进制。
+
+### 2.5 Ironized Zink 承载的渲染引擎：Mesa（含 Zink / Kopper）
+
+| | |
+|---|---|
+| 项目 | Mesa 3-D Graphics Library — https://mesa3d.org / https://gitlab.freedesktop.org/mesa/mesa |
+| 版权 | Copyright © 1999-2007 Brian Paul and the Mesa contributors，以及各组件各自作者 |
+| 组件许可证 | **主 Mesa 代码 / Gallium 代码：MIT**；**GLX 客户端代码：SGI Free Software License B**；**扩展头文件（`include/GL/glext.h`、`include/GL/glxext.h`）：Khronos**；C11 线程模拟：Boost（宽松许可） |
+| 随附形式 | 未经修改的预编译共享库：`libEGL_mesa.so`、`libglxshim.so`、`libglapi.so`、`libzink_dri.so`、`libcutils.so`（Mesa 23.0.4，四个 ABI，由 `libs/kopper-zink-release.aar` 打包） |
+| 完整文本 | 仓库内：`ZalithLauncher/src/main/res/raw/mesa_licenses.txt`（随 APK 分发）；<br>APK 内另有一份由 `libs/kopper-zink-release.aar` 提供的 `assets/licenses/mesa-licenses.rst`（该文件只存在于 AAR 与成品 APK 中，**不在仓库工作树里**） |
+
+> 依 Mesa 项目的要求：本软件不得被称作 “MesaGL”，它是 *Mesa* 或
+> *The Mesa 3-D Graphics Library*。
+
+这些 Android 预编译二进制来自 **AngelAuraMC 的 `mesa_zink_kopper` 构建**，
+其来源与版权说明见上游 Ironized Zink 的 `CREDITS.md`（已随 APK 分发）。
+本项目对这些二进制**未做任何修改**。
+
+同一 Mesa 代码库产出的 **Turnip**（`libvulkan_freedreno.so`，Mesa 的 Freedreno Vulkan
+驱动）同样以 MIT 许可随本项目分发，用于 Vulkan 驱动选择。
+
 ---
 
 ## 3. 客户端组件
@@ -146,10 +185,12 @@ artDev、SerpentSpirale、CADIndie；LTW-Turbo 由 MathCode 等维护。
 
 本仓库相对上游所做的、与第三方组件相关的改动：
 
-1. **移除渲染器**：删除了内置的 Ironized Zink（及其承载的 Mesa / Zink / Kopper
-   二进制）、Krypton Wrapper（NG-GL4ES）、Kopper Zink、VirGL、Freedreno、Panfrost，
-   以及它们专属的 AAR、`.so` 与许可资源。被移除组件的许可证与署名不再随包分发，
-   故不再列入应用内许可列表。**上游贡献者的署名信息没有从任何保留文件中被删除。**
+1. **移除渲染器**：删除了 Krypton Wrapper（NG-GL4ES）、Kopper Zink（已被 Ironized Zink
+   接管同一套 UUID 与二进制）、VirGL、Freedreno、Panfrost，以及它们专属的 AAR、`.so`
+   与许可资源。被移除组件的许可证与署名不再随包分发，故不再列入应用内许可列表。
+   **上游贡献者的署名信息没有从任何保留文件中被删除。**
+   Ironized Zink 曾于 27.9.0 被一并移除，**现已恢复内置**（渲染器实现、四个官方预设、
+   完整参数页、`kopper-zink-release.aar`、Mesa 许可与 CREDITS 全部回到包内）。
 2. **新增内置渲染器**：MobileGlues 由启动器直接内置，不再需要单独安装插件 APK；
    LTW-Turbo 以实验性渲染器形式内置（仅 arm64-v8a）。
 3. **MobileGlues 配置接入**：只写入上游 native 真正读取的 `config.json` 键

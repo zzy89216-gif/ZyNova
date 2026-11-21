@@ -944,7 +944,7 @@
     <string name="settings_tab_control_manage">按键布局</string>
     <string name="settings_tab_info_about">关于与支持</string>
     <string name="settings_renderer_global_renderer_title">全局渲染器</string>
-    <string name="settings_renderer_global_renderer_summary">默认使用的渲染器。「自动」会按实例的 Minecraft 版本自动挑选（MobileGlues → GL4ES）；手动指定则始终优先按你的选择</string>
+    <string name="settings_renderer_global_renderer_summary">默认使用的渲染器。「自动」会按实例的 Minecraft 版本自动挑选（MobileGlues → Ironized Zink → GL4ES）；手动指定则始终优先按你的选择</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驱动器</string>
     <string name="settings_renderer_env_title">环境变量：%s</string>
     <string name="settings_renderer_config_title">渲染器配置</string>
@@ -1586,6 +1586,23 @@
     <string name="fm_property_folders">文件夹数</string>
     <string name="fm_calculating">计算中…</string>
     <string name="fm_name_conflict">与已有条目重名</string>
+    <!-- Ironized Zink 渲染器配置（内置渲染器，配置模型移植自上游 Ironized Zink，GPL-3.0） -->
+    <string name="settings_renderer_ironized_preset_title">预设</string>
+    <string name="settings_renderer_ironized_entry_summary">预设、OpenGL 版本与高级开关。</string>
+    <string name="settings_renderer_ironized_preset_summary">Ironized Zink 官方预设。选择预设只会改写另外 12 个性能 / 兼容开关，不会覆盖下方的 OpenGL 版本 —— 两者互相独立。</string>
+    <string name="settings_renderer_ironized_preset_custom">已自定义 —— 当前开关与任何预设都不一致，重新选择任意预设即可恢复受支持的配置。</string>
+    <string name="settings_renderer_ironized_preset_potato_tagline">绝对最高帧率</string>
+    <string name="settings_renderer_ironized_preset_potato_note">MC 1.8 → 最新（含 26.x）· 光影：不推荐</string>
+    <string name="settings_renderer_ironized_preset_performance_tagline">高帧率 + Sodium &amp; 轻量光影</string>
+    <string name="settings_renderer_ironized_preset_performance_note">MC 1.20.x → 最新（含 26.x）· 光影：轻量（如 Complementary 低/中）</string>
+    <string name="settings_renderer_ironized_preset_default_tagline">均衡的 Zink + 光影（推荐）</string>
+    <string name="settings_renderer_ironized_preset_default_note">MC 1.16.x → 最新（含 26.x）· 光影：完整（Iris / OptiFine）</string>
+    <string name="settings_renderer_ironized_preset_max_compat_tagline">什么都能跑 —— 版本、光影与模组</string>
+    <string name="settings_renderer_ironized_preset_max_compat_note">全部版本（1.8 → 26.x）· 光影：完整 + 重度光影包</string>
+    <string name="settings_renderer_ironized_gl_version_title">OpenGL 版本</string>
+    <string name="settings_renderer_ironized_gl_version_summary">3.3 – 4.6，直接写入 MESA_GL_VERSION_OVERRIDE。4 个官方预设都是按 4.6 调的；如果你的 GPU 驱动对 Vulkan→Zink 4.6 转译不完整（画面异常或进不去），就在这里降级。本项与预设互相独立，下次启动生效。</string>
+    <string name="settings_renderer_ironized_gl_version_independent">当前预设 %1$s · OpenGL %2$s。预设只改其它开关，这里的 OpenGL 版本不会被预设改写。</string>
+    <string name="settings_renderer_ironized_unsafe_combo">保存的参数组合仍是「手穿过 GUI 界面」画面错乱的已知成因 —— 请在上方重新选择任意预设（或关掉两个开关中的一个）以恢复受支持的配置。</string>
     <string name="settings_renderer_auto_title">自动</string>
     <string name="settings_renderer_auto_summary">按实例自动挑选合适的渲染器，不需要自己选。</string>
     <string name="settings_renderer_mobileglues_summary">把桌面 OpenGL 转译到设备的 OpenGL ES 3.x</string>
@@ -1676,7 +1693,7 @@
     <string name="settings_renderer_version_label">当前版本</string>
     <string name="settings_renderer_version_unknown">未知</string>
     <string name="settings_renderer_priority_title">自动选择的顺序</string>
-    <string name="settings_renderer_priority_summary">选「自动」时，会按 MobileGlues、GL4ES 的顺序，挑第一个能跑你这个游戏版本的渲染器。</string>
+    <string name="settings_renderer_priority_summary">选「自动」时，会按 MobileGlues、Ironized Zink、GL4ES 的顺序，挑第一个能跑你这个游戏版本的渲染器。</string>
     <string name="settings_renderer_advanced_title">高级参数</string>
     <string name="settings_renderer_advanced_summary">下面这些是给懂行的人调的。改错可能花屏、闪退或者更卡，不确定就保持默认。</string>
     <string name="settings_renderer_advanced_show">展开高级参数</string>
@@ -1827,6 +1844,7 @@
     <string name="settings_renderer_status_open_advanced">点这里打开这个渲染器的详细参数</string>
     <string name="settings_advanced_renderer_mg">MobileGlues</string>
     <string name="settings_mg_advanced_group">MobileGlues 高级键</string>
+    <string name="settings_advanced_renderer_zink">Ironized Zink</string>
     <string name="settings_renderer_ltw_name">LTW（实验性）</string>
     <string name="settings_renderer_ltw_summary">实验性 · 不推荐 —— LTW-Turbo 仍处于早期开发阶段，崩溃与画面异常都可能出现</string>
     <string name="settings_advanced_renderer_ltw">LTW（实验性）</string>

@@ -42,15 +42,15 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SettingsCa
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.SwitchSettingsCard
 
 /**
- * 渲染器详细参数（三个独立页面）
+ * 渲染器详细参数（每个渲染器一页）
  *
  * 反馈：参数不要一股脑堆在「高级设置」里，也不要三个渲染器挤在同一页。
  * 每个渲染器一页，每页只放这个渲染器自己的东西；
  * 版式沿用设置中心的原生骨架（BaseScreen + AnimatedColumn + SettingsCardColumn），
  * 不另造一套视觉。
  *
- * ⚠️ 所有参数都是真实的（GL4ES 的环境变量、MobileGlues 的 config.json），
- * 默认值等于历史写死值，升级后行为不变。
+ * ⚠️ 所有参数都是真实的（GL4ES 的环境变量、MobileGlues 的 config.json、
+ * Ironized Zink 的环境变量），默认值等于历史写死值，升级后行为不变。
  */
 
 /** MobileGlues 详细参数 */
@@ -121,6 +121,23 @@ fun MobileGluesAdvancedSettingsScreen(
         )
 
         MobileGluesMultidrawCards(modifier = Modifier.fillMaxWidth())
+    }
+}
+
+/** Ironized Zink 详细参数 */
+@Composable
+fun IronizedZinkAdvancedSettingsScreen(
+    key: NestedNavKey.Settings,
+    settingsScreenKey: TitledNavKey?,
+    mainScreenKey: TitledNavKey?,
+) {
+    RendererAdvancedPage(
+        normalKey = NormalNavKey.Settings.RendererAdvancedZink,
+        settingsKey = key,
+        settingsScreenKey = settingsScreenKey,
+        mainScreenKey = mainScreenKey
+    ) {
+        IronizedZinkConfigCards(modifier = Modifier.fillMaxWidth())
     }
 }
 

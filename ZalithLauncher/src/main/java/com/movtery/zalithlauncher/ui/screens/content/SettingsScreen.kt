@@ -65,6 +65,7 @@ import com.movtery.zalithlauncher.ui.screens.content.settings.GameSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.GamepadSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.JavaManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.LauncherSettingsScreen
+import com.movtery.zalithlauncher.ui.screens.content.settings.IronizedZinkAdvancedSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.LTWAdvancedSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.MobileGluesAdvancedSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.settings.Gl4esAdvancedSettingsScreen
@@ -282,6 +283,13 @@ private fun NavigationUI(
                 }
                 entry<NormalNavKey.Settings.RendererAdvancedMobileGlues> {
                     MobileGluesAdvancedSettingsScreen(
+                        key = key,
+                        settingsScreenKey = settingsScreenKey,
+                        mainScreenKey = mainScreenKey,
+                    )
+                }
+                entry<NormalNavKey.Settings.RendererAdvancedZink> {
+                    IronizedZinkAdvancedSettingsScreen(
                         key = key,
                         settingsScreenKey = settingsScreenKey,
                         mainScreenKey = mainScreenKey,
