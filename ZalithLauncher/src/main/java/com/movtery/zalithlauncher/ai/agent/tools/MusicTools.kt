@@ -34,7 +34,7 @@ private const val MAX_TRACK_HINTS = 10
 /**
  * 内置音乐播放器的 AI 工具（议题 #80 / #81）。
  *
- * 只**读用** `game/music/**` 的现有能力，不自己造播放器、不碰歌词解析：
+ * 只**读用** `game/music` 目录的现有能力，不自己造播放器、不碰歌词解析：
  * - [MusicLibrary.list] 负责扫描曲库（IO 线程）；
  * - [MusicPlayerController] 是进程级单例，**所有公开方法都必须在主线程调用**（ExoPlayer 的线程约束）。
  *
