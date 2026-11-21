@@ -10,34 +10,44 @@
 
 # ZyNova
 
-> 📌 **今本：28.2.4** · [沿革](../../CHANGELOG.md) · [發佈](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **今本：28.2.4** · [沿革](../../CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.2.4-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.4)
 
 ---
 
-夫 Android 上之 **Minecraft: Java Edition** 啟動器也，本 ZalithLauncher2 之源碼而別治之，非官本也。
+夫 ZyNova 者，Android 之上 **Minecraft: Java Edition** 之啟動器也。本 ZalithLauncher2 之源，別加修治而自布之，非官物也。
 
-其設計一言以蔽之：**少點幾下**。凡可預判者，先為汝決；不能決者，方問一次。
+其設也，一語可盡：**少點數下**。凡可先爲汝決者，決之；其不能決者，乃問一次。
 
-## 🧭 與諸啟動器之異
+## 🧭 與他啟動器之異
 
-- **不使汝迷於設定**：安裝、版本相配、模組依賴，可自動者皆自動之
-- **模組之困有人任之**：整合包數十模組、依賴連綿，悉付之於流水之序
-- **崩潰不須妄測**：以誌授 AI 讀之，勝於論壇翻檢十頁
+- **不使汝迷於設置**：安裝、版本之配、模組之依，凡可自決者，皆自決之。
+- **模組之患，有人任之**：整合包數十模組、依賴如蔓，悉付之於流序，不勞汝手。
+- **崩潰不須妄度**：以日誌授 AI 讀之，勝於論壇翻檢十頁。
 
 ## ✨ 近事
 
-詳見 [CHANGELOG.md](../../CHANGELOG.md)。
+本版二十八點二點四，預行之本也，非正式之版。其要如左：
+
+- **可並下數事**：本體、整合包、資源，一時並排，各具其程與其止；復點同物，則有告焉，不復默然。
+- **首頁卡片之遷，安而不搖**：向者拖之則閃，或至傾覆；今逐卡而移，縱橫皆可，閃與潰俱去。
+- **樂府之補**：歌詞可注（同名 `.lrc`，通知欄亦見其句）；頂欄有「今奏」之條，可進退、可止作；
+  程與時刻皆準，雖止而位不失；橫屏之狹，亦不溢出。
+- **「返於戲」之候，去而不留**：戲既退，其候即沒；雖點之於將沒之際，亦不崩。
+- **AI 之增**：可並裝數本體；又添樂事二器，凡五十三器。
+- **戲側之欄，新增「多人聯機」**：斂其單，歸於啟動器，徑至聯機之頁；戲不輟也。
+
+詳見 [沿革](../../CHANGELOG.md)。
 
 ## 🛠️ 主要之能
 
-- **AI 代事**：預設 DeepSeek —— 裝遊戲本體、整合包與模組，改設定，讀誌，啟遊戲
-- **渲染器**：自動 / MobileGlues / Ironized Zink / GL4ES / LTW（試行）
-- **資源之核**：Modrinth / CurseForge 搜求、依賴解析、下載、校驗、安裝
-- **收藏與封存**：線上收藏 + 私有目錄封存，以 SHA-256 別其重
-- **前置 API 防誤**：Fabric API / Quilted Fabric API / Legacy Fabric API 由安裝之序自附，不可重裝、不可搜得、亦不可刪
+- **AI 代事**：預設 DeepSeek —— 裝本體、整合包與模組，改其設置，讀其日誌，啟其戲。
+- **渲染器**：自動 / MobileGlues / Ironized Zink / GL4ES / LTW（試行）。
+- **資源之核**：Modrinth / CurseForge 搜求、依賴解析、下載、校驗、安裝。
+- **收藏與封存**：線上收藏 + 私有目錄封存，以 SHA-256 別其重。
+- **前置 API 防誤**：Fabric API / Quilted Fabric API / Legacy Fabric API，皆由安裝之序自附，不可重裝、不可搜得、亦不可刪。
 
 ## 📦 下載與自建
 
@@ -47,7 +57,7 @@
 
 ## 📚 文書
 
-> 📚 官文惟簡體中文與英文二套（各 78 篇）；下列之文皆指簡體中文之本，用語微異。
+> 📚 官文惟簡體中文與英文二套（各七十八篇）；下列之文皆指簡體中文之本，用語微異。
 
 | 內容 | 檔案 |
 |---|---|
