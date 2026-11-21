@@ -34,6 +34,7 @@ Simplified Chinese and English live at the repository root ([README.md](../READM
 | فارسی | [fa](fa/README.md) | 由右至左排版 |
 | العربية | [ar](ar/README.md) | 由右至左排版 |
 | Roman Urdu | [ur-Latn](ur-Latn/README.md) | 拉丁字母書寫 |
+| 文言 | [lzh](lzh/README.md) | 文言文書面語 |
 
 > 📚 完整的用户文档目前只有中文与英文两套（[docs/zh](../docs/zh/README.md) · [docs/en](../docs/en/README.md)）；
 > 各语言页面里的文档链接指向英文版。
