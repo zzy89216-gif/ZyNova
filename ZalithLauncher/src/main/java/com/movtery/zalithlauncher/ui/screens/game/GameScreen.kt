@@ -116,6 +116,7 @@ import com.movtery.zalithlauncher.ui.screens.game.elements.SendKeycodeState
 import com.movtery.zalithlauncher.ui.screens.game.multiplayer.TerracottaOperation
 import com.movtery.zalithlauncher.ui.screens.game.multiplayer.rememberTerracottaViewModel
 import com.movtery.zalithlauncher.ui.screens.main.control_editor.ControlEditor
+import com.movtery.zalithlauncher.utils.getDisplayFriendlyRes
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.viewmodel.EditorViewModel
 import com.movtery.zalithlauncher.viewmodel.EventViewModel
@@ -134,6 +135,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.lwjgl.glfw.CallbackBridge
 import java.io.File
+import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "GameScreen"
@@ -557,6 +559,14 @@ fun GameScreen(
     ) {
         val screenSize = rememberBoxSize()
 
+        //当前**实际生效**的游戏渲染尺寸（不是设置里的比例）：
+        //游戏内改分辨率时设置会先变、窗口/画面随后才在 VMActivity.refreshWindowSize() 里应用，
+        //触摸换算与快捷栏判定都以窗口实际尺寸为准，两边才不会错位
+        val windowChangeKey by ZLBridgeStates.windowChangeKey.collectAsStateWithLifecycle()
+        val gameRenderSize = remember(screenSize, windowChangeKey) {
+            currentGameRenderSize(screenSize)
+        }
+
         if (!viewModel.isEditingLayout) {
             if (AllSettings.gamepadControl.state) {
                 GamepadOnActionListener(
@@ -609,6 +619,7 @@ fun GameScreen(
                     modifier = Modifier.fillMaxSize(),
                     cursorMode = cursorMode,
                     screenSize = screenSize,
+                    gameRenderSize = gameRenderSize,
                     onInputAreaRectUpdated = onInputAreaRectUpdated,
                     textInputMode = textInputMode,
                     isMoveOnlyPointer = { viewModel.moveOnlyPointers.contains(it) },
@@ -633,7 +644,7 @@ fun GameScreen(
                     CallbackBridge.sendKeyPress(keycode)
                 },
                 isGrabbing = isGrabbing,
-                resolutionRatio = AllSettings.resolutionRatio.state,
+                renderSize = gameRenderSize,
                 onOccupiedPointer = { viewModel.occupiedPointers.add(it) },
                 onReleasePointer = { viewModel.occupiedPointers.remove(it) }
             )
@@ -926,6 +937,8 @@ private fun MouseControlLayout(
     modifier: Modifier = Modifier,
     cursorMode: Int,
     screenSize: IntSize,
+    /** 当前实际生效的游戏渲染尺寸（见 [currentGameRenderSize]） */
+    gameRenderSize: IntSize,
     onInputAreaRectUpdated: (IntRect?) -> Unit,
     textInputMode: TextInputMode,
     isMoveOnlyPointer: (PointerId) -> Boolean,
@@ -963,7 +976,12 @@ private fun MouseControlLayout(
             onMouse = onMouseMoved,
             gamepadViewModel = gamepadViewModel,
             onTap = { position ->
-                CallbackBridge.putMouseEventWithCoords(LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_LEFT.toInt(), position.x.sumPosition(), position.y.sumPosition())
+                val gamePosition = position.toGamePosition(screenSize, gameRenderSize)
+                CallbackBridge.putMouseEventWithCoords(
+                    LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_LEFT.toInt(),
+                    gamePosition.x,
+                    gamePosition.y
+                )
             },
             onCapturedTap = {
                 if (AllSettings.gestureControl.state) {
@@ -987,7 +1005,8 @@ private fun MouseControlLayout(
                 }
             },
             onPointerMove = { pos ->
-                pos.sendPosition()
+                val gamePosition = pos.toGamePosition(screenSize, gameRenderSize)
+                CallbackBridge.sendCursorPos(gamePosition.x, gamePosition.y)
             },
             onCapturedMove = { delta ->
                 CallbackBridge.sendCursorDelta(
@@ -1009,10 +1028,38 @@ private fun MouseControlLayout(
     }
 }
 
-private fun Offset.sendPosition() {
-    CallbackBridge.sendCursorPos(x.sumPosition(), y.sumPosition())
+/**
+ * 当前**实际生效**的游戏渲染尺寸。
+ *
+ * 不能直接用设置里的比例：游戏内拖动分辨率滑杆时设置（Compose state）会立刻变化，
+ * 而窗口/Surface 的真实尺寸要等松手后 VMActivity.refreshWindowSize() 才应用；
+ * 两者不一致时按设置换算就会整体偏移（点不到快捷栏/按钮）。
+ *
+ * [CallbackBridge.windowWidth]/[CallbackBridge.windowHeight] 由 refreshWindowSize() 写入，
+ * 配合 [ZLBridgeStates.windowChangeKey] 观察；还没启动完成（仍为 0）时退回设置比例。
+ */
+private fun currentGameRenderSize(screenSize: IntSize): IntSize {
+    val applied = IntSize(CallbackBridge.windowWidth, CallbackBridge.windowHeight)
+    if (applied.width > 0 && applied.height > 0 && screenSize.width > 0 && screenSize.height > 0) {
+        //同一局内渲染宽高比一定等于视图宽高比；差太多说明是上一局 / JVM 残留的旧窗口值，
+        //不能拿来换算（此时退回设置比例，等窗口尺寸真正刷新后 windowChangeKey 会再触发一次）
+        val viewAspect = screenSize.width.toFloat() / screenSize.height.toFloat()
+        val renderAspect = applied.width.toFloat() / applied.height.toFloat()
+        if (abs(renderAspect - viewAspect) <= 0.02f) return applied
+    }
+
+    val ratio = AllSettings.resolutionRatio.state / 100f
+    return IntSize(
+        width = getDisplayFriendlyRes(screenSize.width, ratio),
+        height = getDisplayFriendlyRes(screenSize.height, ratio)
+    )
 }
 
-private fun Float.sumPosition(): Float {
-    return (this * (AllSettings.resolutionRatio.state / 100f))
+/**
+ * 视图坐标 → 游戏渲染坐标（按实际渲染尺寸 / 视图尺寸逐轴换算）
+ */
+private fun Offset.toGamePosition(screenSize: IntSize, gameRenderSize: IntSize): Offset {
+    val scaleX = if (screenSize.width > 0) gameRenderSize.width.toFloat() / screenSize.width.toFloat() else 1f
+    val scaleY = if (screenSize.height > 0) gameRenderSize.height.toFloat() / screenSize.height.toFloat() else 1f
+    return Offset(x * scaleX, y * scaleY)
 }

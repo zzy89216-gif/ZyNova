@@ -382,8 +382,10 @@ private fun GameActionContent(
                 value = AllSettings.resolutionRatio.state,
                 valueRange = AllSettings.resolutionRatio.floatRange,
                 onValueChange = { value ->
+                    //拖动过程中只更新设置状态、不重建渲染窗口：画面尺寸要到松手后才真正改变，
+                    //触摸换算/快捷栏判定都以「实际窗口尺寸」为准（GameScreen.currentGameRenderSize），
+                    //所以拖动期间不会出现「输入按新比例、画面还是旧尺寸」的错位
                     AllSettings.resolutionRatio.updateState(value)
-//                        onRefreshWindowSize()
                 },
                 onValueChangeFinished = { value ->
                     AllSettings.resolutionRatio.save(value)

@@ -128,7 +128,7 @@ private val keyList = listOf(
  * 点击、滑动快捷栏，会计算指针处于哪个槽位中，并触发 [sendKeycode] 回调
  *
  * @param isGrabbing 处于鼠标抓获模式下，才会开启判定箱
- * @param resolutionRatio 当前分辨率缩放
+ * @param renderSize 当前**实际生效**的游戏渲染尺寸（不是设置里的比例；见 GameScreen.currentGameRenderSize）
  */
 @Composable
 fun BoxScope.MinecraftHotbar(
@@ -138,7 +138,7 @@ fun BoxScope.MinecraftHotbar(
     heightPercentage: Float,
     sendKeycode: (key: Int) -> Unit,
     isGrabbing: Boolean = false,
-    resolutionRatio: Int,
+    renderSize: IntSize,
     onOccupiedPointer: (PointerId) -> Unit,
     onReleasePointer: (PointerId) -> Unit
 ) {
@@ -153,16 +153,18 @@ fun BoxScope.MinecraftHotbar(
             val windowChangeKey by ZLBridgeStates.windowChangeKey.collectAsStateWithLifecycle()
             LaunchedEffect(
                 isGrabbing, optionsChangeKey, screenSize, density,
-                resolutionRatio, windowChangeKey
+                renderSize, windowChangeKey
             ) {
                 val guiScale = getMCGuiScale(
-                    width = (screenSize.width * resolutionRatio / 100f).toInt(),
-                    height = (screenSize.height * resolutionRatio / 100f).toInt()
+                    width = renderSize.width,
+                    height = renderSize.height
                 )
                 val slotSize = guiScale * 20
+                //画面是等比拉伸铺满整个 View 的：渲染像素要换算成视图像素，判定框才能和看到的快捷栏对齐
+                val slotSizeView = slotSize * renderSize.viewScaleTo(screenSize)
 
                 with(density) {
-                    hotbarSize = DpSize((slotSize * hotbarList.size).toDp(), slotSize.toDp())
+                    hotbarSize = DpSize((slotSizeView * hotbarList.size).toDp(), slotSizeView.toDp())
                 }
             }
         }
@@ -170,10 +172,12 @@ fun BoxScope.MinecraftHotbar(
             var isInitialized by remember { mutableStateOf(false) }
 
             LaunchedEffect(
-                widthPercentage, heightPercentage
+                widthPercentage, heightPercentage, screenSize, renderSize
             ) {
-                val width = (screenSize.width * widthPercentage).toInt()
-                val height = (screenSize.height * heightPercentage).toInt()
+                //自定义大小同样跟着画面拉伸走（100% 比例时系数为 1，行为不变）
+                val viewScale = renderSize.viewScaleTo(screenSize)
+                val width = (screenSize.width * widthPercentage * viewScale).toInt()
+                val height = (screenSize.height * heightPercentage * viewScale).toInt()
 
                 with(density) {
                     hotbarSize = DpSize(width.toDp(), height.toDp())
@@ -397,6 +401,18 @@ private fun Modifier.mainTouchLogic(
             }
         }
     }
+}
+
+/**
+ * 渲染尺寸 → 视图尺寸的显示缩放（画面等比拉伸铺满整个 View）
+ * 100% 分辨率时为 1f；渲染尺寸未知时也返回 1f
+ */
+private fun IntSize.viewScaleTo(screenSize: IntSize): Float {
+    if (width <= 0 || height <= 0 || screenSize.width <= 0 || screenSize.height <= 0) return 1f
+    return minOf(
+        screenSize.width.toFloat() / width.toFloat(),
+        screenSize.height.toFloat() / height.toFloat()
+    )
 }
 
 private fun getMCGuiScale(width: Int, height: Int): Int {
