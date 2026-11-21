@@ -10,7 +10,7 @@
 **A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.1-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.1)
+[![Release](https://img.shields.io/badge/Release-28.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.2)
 [![Docs](https://img.shields.io/badge/Docs-77%20articles-blue)](docs/en/README.md)
 
 One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
@@ -50,14 +50,17 @@ If the fingerprint does not match, **do not install it** — download again from
 
 Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-## What's new in 28.2.1
+## What's new in 28.2.2
 
-- **Fixed a launcher crash when installing resources / modpacks**: versions whose file metadata had not finished loading were used directly and threw an uncaught exception in the background; installation now verifies the file info first and asks you to pick another version when there is no downloadable file.
-- **Fixed an error when opening Favorites from Settings → resource downloads and tapping a mod without a version for the current instance**: the app now names the target instance (Minecraft version + loader) and offers "View all versions"; favorite cards also show a hint such as "No 1.20.1 version".
-- **More accurate download page state**: the "installed" marker on resource details refreshes after an install (no need to leave and re-enter); empty filters show an empty state with "Show all versions".
-- **Quieter, honest logs**: reading saved servers, SakuraFrp auto refresh, world scanning and search paging no longer report normal cancellation as failure; mod read failures now include the real reason; batch download counters are fixed.
-- **Clearer message when every source fails**: each source's reason is listed, with advice to check the network or switch the mirror.
-- **No more false blocks across the new year**: when holiday data expires, the underage play-time gate falls back to ordinary weekend rules (still 20:00–21:00 daily); when the region cannot be determined at all, the app no longer blocks startup.
+**Pre-release** (for testing; not the stable line yet).
+
+- **Duplicate "Follow global" entry in the renderer list** is gone — after setting a per-instance renderer you can switch back to the global setting again.
+- **The in-game "waiting for the game screen" card is no longer stretched to full width**; it wraps its content and stays centred.
+- **Only one public contact mailbox**: `ZyNovaLauncher@outlook.com` (the China-specific 163 mailbox was removed).
+- **"Cancel all tasks" no longer breaks downloads / installs for the rest of the session**; it only cancels the current tasks.
+- **Cancellation is no longer reported as failure** in favourite install / import flows.
+- **Two upstream crash fixes**: Android 8 clipboard crash and automatic Java runtime selection crash.
+- Smaller fixes: wrong "Update loader" button state, doubled padding in a few lists, flickering version list on refresh.
 
 ## Docs and feedback
 

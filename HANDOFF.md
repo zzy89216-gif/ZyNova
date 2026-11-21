@@ -48,14 +48,23 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.2.1**（`launcher_version_code=282001`，**正式版**，版本名不带后缀）；
+- 当前版本 **28.2.2**（`launcher_version_code=282002`，**预发行版**，版本名不带后缀）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.2.1**（`launcher_version_code=282001`，正式版）
+**当前版本：28.2.2**（`launcher_version_code=282002`，预发行版）
+
+### 28.2.2 预发行版（本轮修复）
+
+- 议题 #65：版本设置 → 渲染器列表不再出现两条「跟随全局」（`getIDList()` 自带一条 + 手动又加一条）。
+- 议题 #66：游戏内「等待游戏画面」提示卡不再被撑到全屏宽（`BackgroundCard.fillContentWidth`）。
+- 议题 #67：移除国内特供 163 邮箱，唯一公开邮箱 `ZyNovaLauncher@outlook.com`。
+- 任务系统：`stopAll()` 不再取消根协程作用域（否则「取消全部任务」后下载/安装全静默失效）。
+- 收藏安装/导入不再把协程取消记成失败；「更新加载器」按钮误判修复；几处 modifier 重复叠加修复。
+- 上游同步：Android 8.x 剪贴板崩溃、自动选 JRE 崩溃。
 
 ### 28.2.1 的结构性变化
 
