@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ZyNova Launcher · 28.2.3 内置音乐播放器（议题 #77）的字符串（默认英文）
+  ⚠️ 新 key 集中放在这个文件里，避免和别的议题同时改 res/values/strings.xml 冲突。
+-->
+<resources>
+    <string name="music_title">Music</string>
+    <string name="music_library_summary">%1$d tracks</string>
+    <string name="music_import">Import</string>
+    <string name="music_importing">Importing…</string>
+    <string name="music_import_cancelled">No files selected</string>
+    <string name="music_import_success">Imported %1$d track(s)</string>
+    <string name="music_import_no_files">No importable audio files</string>
+    <string name="music_import_not_audio">Skipped (not audio): %1$s</string>
+    <string name="music_import_failed">Failed to import: %1$s</string>
+    <string name="music_empty_title">No music yet</string>
+    <string name="music_empty_summary">Import audio from your device. Files are copied into the launcher\'s private storage, so deleting the originals won\'t break playback.</string>
+    <string name="music_nothing_playing">Nothing is playing</string>
+    <string name="music_now_playing">Now playing</string>
+    <string name="music_play">Play</string>
+    <string name="music_pause">Pause</string>
+    <string name="music_previous">Previous</string>
+    <string name="music_next">Next</string>
+    <string name="music_stop">Stop</string>
+    <string name="music_playback_failed">Playback failed: %1$s</string>
+    <string name="music_focus_denied">Can\'t get audio focus; another app may be playing audio</string>
+    <string name="music_delete_title">Delete track</string>
+    <string name="music_delete_message">Delete “%1$s”? The file will be removed from the launcher\'s private storage.</string>
+    <string name="music_delete_success">Deleted %1$s</string>
+    <string name="music_delete_failed">Failed to delete %1$s</string>
+    <string name="music_notification_channel_name">Music playback</string>
+    <string name="music_notification_channel_description">Playback controls while music plays in the background</string>
+    <string name="music_notification_playing">Playing</string>
+    <string name="music_notification_paused">Paused</string>
+    <string name="game_menu_option_music">Music</string>
+    <string name="music_remote_subtitle">Playing from the launcher\'s music player</string>
+    <string name="music_remote_hint">Pick a track below to start playing. Import and delete are available on the launcher\'s Music page.</string>
+    <string name="music_remote_unavailable">Cannot reach the playback service</string>
+</resources>

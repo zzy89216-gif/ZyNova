@@ -15,7 +15,8 @@ It can also **bring up multiplayer end to end**:
 
 So a request like "get multiplayer working for me" can be completed without you ever telling it a port number.
 
-It can also browse the web: `web_search`, `fetch_webpage`, `search_mcmod` (toggle in AI settings; internal addresses blocked)
+It can also browse the web: `web_search`, `fetch_webpage`, `search_mcmod` (DuckDuckGo or the official DeepSeek
+search; toggle in AI settings; internal addresses blocked)
 
 It never gains permissions that were not granted.
 
@@ -61,8 +62,13 @@ These are not plain strings in `options.txt`; the tools map them for you:
   - **DuckDuckGo** (default, no key);
   - **DeepSeek Search** (needs a search key in AI settings and bills per successful request) — reuse the same
     key when your main model is DeepSeek.
-- If DeepSeek Search fails (no key, out of credit, rate limited, timeout) it **silently falls back** to
-  DuckDuckGo instead of failing the turn
+- When DeepSeek Search is unavailable (no key, invalid key, out of credit, rate limited, timeout, network error),
+  the result starts with a **clear reason** and automatically falls back to DuckDuckGo: the turn keeps working,
+  and the AI never pretends the results came from DeepSeek.
+- DeepSeek returns long summaries only; when a page body is needed, the AI fetches that page separately.
+- You can also let the AI change this itself: say "switch web search to DeepSeek" and it updates the search engine
+  and search key (leave the key empty to reuse the main model's key). The same works for other AI settings
+  (model / base URL / key / web access toggle).
 - If parsing fails the AI falls back to `fetch_webpage`
 
 

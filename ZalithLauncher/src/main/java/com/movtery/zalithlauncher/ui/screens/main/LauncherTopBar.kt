@@ -75,7 +75,7 @@ import com.movtery.zalithlauncher.utils.festival.LocalFestivals
  * - 右端：有下载任务且任务面板收起时，显示一个小圆环。
  *
  * 与旧版的区别：不再把功能入口排在右侧，也不再使用「…」溢出菜单——
- * 七个入口全部平铺在居中胶囊里。
+ * 八个入口全部平铺在居中胶囊里（第 8 个「音乐」由议题 #77 加入，与下载并列）。
  */
 @Composable
 fun LauncherTopBar(
@@ -91,6 +91,7 @@ fun LauncherTopBar(
     toPersonalization: () -> Unit,
     toDownloadScreen: () -> Unit,
     toMultiplayerScreen: () -> Unit,
+    toMusic: () -> Unit,
     openFileManager: () -> Unit,
     toAIChat: () -> Unit,
     changeExpandedState: () -> Unit,
@@ -102,6 +103,7 @@ fun LauncherTopBar(
     val inSettingsScreen = mainScreenKey is NestedNavKey.Settings
     val inAIChatScreen = mainScreenKey is NormalNavKey.AIChat
     val inPersonalizationScreen = mainScreenKey is NormalNavKey.Personalization
+    val inMusicScreen = mainScreenKey is NormalNavKey.Music
 
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Box(
@@ -178,9 +180,9 @@ fun LauncherTopBar(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 顺序：主菜单 → AI → 多人 → 下载 → 文件 → 个性化 → 设置
+                // 顺序：主菜单 → AI → 多人 → 下载 → 音乐 → 文件 → 个性化 → 设置
                 // 主菜单放最左（选中态最稳定），AI 是核心入口放第二，
-                // 高频的联机/下载居中，文件与两个「配置类」入口靠右。
+                // 高频的联机/下载/音乐居中，文件与两个「配置类」入口靠右。
                 CapsuleItem(
                     selected = inLauncherScreen,
                     painter = painterResource(R.drawable.ic_home_filled),
@@ -204,6 +206,13 @@ fun LauncherTopBar(
                     painter = painterResource(R.drawable.ic_download_2_filled),
                     label = stringResource(R.string.generic_download),
                     onClick = { if (!inDownloadScreen) toDownloadScreen() }
+                )
+                //议题 #77：内置音乐播放器，与下载并列的常用入口
+                CapsuleItem(
+                    selected = inMusicScreen,
+                    painter = painterResource(R.drawable.ic_music_filled),
+                    label = stringResource(R.string.music_title),
+                    onClick = { if (!inMusicScreen) toMusic() }
                 )
                 CapsuleItem(
                     selected = false,

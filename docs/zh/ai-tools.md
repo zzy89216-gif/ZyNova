@@ -13,7 +13,8 @@
 
 所以像「帮我把联机开起来」这种话，它可以一路做完，中途不需要你告诉它端口是多少。
 
-- **联网**：`web_search` 搜索、`fetch_webpage` 读网页正文、`search_mcmod` 查 MC 百科（设置里可关；禁止访问内网）
+- **联网**：`web_search` 搜索、`fetch_webpage` 读网页正文、`search_mcmod` 查 MC 百科
+  （可选 DuckDuckGo / DeepSeek 官方搜索；设置里可关；禁止访问内网）
 
 它不会凭空获得未提供的权限。
 
@@ -54,11 +55,15 @@
 ## 联网
 
 - 开关：设置 → AI 设置 → 网络搜索 → 允许 AI 联网
-- 搜索引擎两选一：
+- 搜索引擎两种可选：
   - **DuckDuckGo**（默认，免 Key）；
   - **DeepSeek 官方搜索**（要在 AI 设置里填搜索用的 Key，按成功请求计费）——
     主模型是 DeepSeek 时可以直接复用同一把 Key。
-- DeepSeek 搜索失败（没 Key / 欠费 / 限流 / 超时）会**静默降级**回 DuckDuckGo，不会让整轮对话失败
+- DeepSeek 不可用时（没配 Key、Key 无效、欠费、限流、超时、网络异常等），结果开头会**明确写出原因**，
+  并自动退回 DuckDuckGo 继续搜；整轮对话不会因此失败，AI 也不会把结果说成是 DeepSeek 搜到的。
+- DeepSeek 返回的是长摘要；需要网页正文时，AI 会再去抓目标页面。
+- 也可以直接让 AI 自己改：说「把联网搜索换成 DeepSeek」，它会同时改好搜索引擎和搜索 Key
+  （Key 留空＝复用主模型那把）；模型 / 接口地址 / Key / 联网开关这些 AI 设置同样可以交给它改。
 - 搜索解析失败时，AI 会自动改用 `fetch_webpage` 抓结果页
 
 

@@ -116,6 +116,7 @@ import com.movtery.zalithlauncher.ui.screens.content.LauncherScreen
 import com.movtery.zalithlauncher.ui.screens.content.LicenseScreen
 import com.movtery.zalithlauncher.ui.screens.content.LogViewScreen
 import com.movtery.zalithlauncher.ui.screens.content.MultiplayerScreen
+import com.movtery.zalithlauncher.ui.screens.content.music.MusicScreen
 import com.movtery.zalithlauncher.ui.screens.content.PersonalizationScreen
 import com.movtery.zalithlauncher.ui.screens.content.SettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.VersionExportScreen
@@ -140,6 +141,8 @@ import com.movtery.zalithlauncher.viewmodel.EventViewModel
 import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
+import com.movtery.zalithlauncher.ui.screens.content.download.GameDownloadViewModel
+import com.movtery.zalithlauncher.ui.screens.content.download.ModPackViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
 import kotlinx.coroutines.delay
 
@@ -148,6 +151,8 @@ fun MainScreen(
     screenBackStackModel: ScreenBackStackViewModel,
     eventViewModel: EventViewModel,
     modpackImportViewModel: ModpackImportViewModel,
+    gameDownloadViewModel: GameDownloadViewModel,
+    modPackViewModel: ModPackViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     val tasks by TaskSystem.tasksFlow.collectAsStateWithLifecycle()
@@ -299,6 +304,8 @@ fun MainScreen(
                     screenBackStackModel.navigateToDownload()
                 },
                 toMultiplayerScreen = { openTab(NormalNavKey.Multiplayer) },
+                //议题 #77：内置音乐播放器（顶部胶囊第 8 个入口）
+                toMusic = { openTab(NormalNavKey.Music) },
                 openFileManager = {
                     eventViewModel.sendEvent(
                         EventViewModel.Event.OpenFileManager(
@@ -325,6 +332,8 @@ fun MainScreen(
                     toMainScreen = toMainScreen,
                     eventViewModel = eventViewModel,
                     modpackImportViewModel = modpackImportViewModel,
+                    gameDownloadViewModel = gameDownloadViewModel,
+                    modPackViewModel = modPackViewModel,
                     submitError = submitError
                 )
 
@@ -610,6 +619,8 @@ private fun NavigationUI(
     toMainScreen: () -> Unit,
     eventViewModel: EventViewModel,
     modpackImportViewModel: ModpackImportViewModel,
+    gameDownloadViewModel: GameDownloadViewModel,
+    modPackViewModel: ModPackViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     val backStack = screenBackStackModel.mainScreen.backStack
@@ -751,6 +762,8 @@ private fun NavigationUI(
                         backScreenViewModel = screenBackStackModel,
                         eventViewModel = eventViewModel,
                         modpackImportViewModel = modpackImportViewModel,
+                        gameDownloadViewModel = gameDownloadViewModel,
+                        modPackViewModel = modPackViewModel,
                         submitError = submitError
                     )
                 }
@@ -787,6 +800,11 @@ private fun NavigationUI(
                         //主页进收藏是「纯浏览」入口：没有实例上下文（installTargetVersion=null），
                         //但错误提示要接上，否则安装失败只会在页面里留一行字
                         submitError = submitError,
+                    )
+                }
+                entry<NormalNavKey.Music> {
+                    MusicScreen(
+                        backStackViewModel = screenBackStackModel,
                     )
                 }
                 entry<NormalNavKey.HomePageEditor> {

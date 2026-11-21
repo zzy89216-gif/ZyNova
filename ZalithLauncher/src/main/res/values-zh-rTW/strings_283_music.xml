@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ZyNova Launcher · 28.2.3 內建音樂播放器（議題 #77）· 繁體中文
+-->
+<resources>
+    <string name="music_title">音樂</string>
+    <string name="music_library_summary">共 %1$d 首</string>
+    <string name="music_import">匯入</string>
+    <string name="music_importing">正在匯入…</string>
+    <string name="music_import_cancelled">沒有選擇檔案</string>
+    <string name="music_import_success">已匯入 %1$d 首</string>
+    <string name="music_import_no_files">沒有可匯入的音訊檔案</string>
+    <string name="music_import_not_audio">已略過（不是音訊）：%1$s</string>
+    <string name="music_import_failed">匯入失敗：%1$s</string>
+    <string name="music_empty_title">還沒有音樂</string>
+    <string name="music_empty_summary">點擊「匯入」從系統檔案選擇器裡選音訊。檔案會複製到啟動器私有目錄，刪除原始檔案也不影響播放。</string>
+    <string name="music_nothing_playing">未在播放</string>
+    <string name="music_now_playing">正在播放</string>
+    <string name="music_play">播放</string>
+    <string name="music_pause">暫停</string>
+    <string name="music_previous">上一首</string>
+    <string name="music_next">下一首</string>
+    <string name="music_stop">停止</string>
+    <string name="music_playback_failed">播放失敗：%1$s</string>
+    <string name="music_focus_denied">無法取得音訊焦點，可能有其他應用程式正在播放聲音</string>
+    <string name="music_delete_title">刪除音樂</string>
+    <string name="music_delete_message">確定要刪除《%1$s》嗎？檔案會從啟動器私有目錄中移除。</string>
+    <string name="music_delete_success">已刪除 %1$s</string>
+    <string name="music_delete_failed">刪除失敗：%1$s</string>
+    <string name="music_notification_channel_name">音樂播放</string>
+    <string name="music_notification_channel_description">背景播放音樂時顯示播放控制</string>
+    <string name="music_notification_playing">正在播放</string>
+    <string name="music_notification_paused">已暫停</string>
+    <string name="game_menu_option_music">音樂</string>
+    <string name="music_remote_subtitle">控制啟動器裡的音樂播放器</string>
+    <string name="music_remote_hint">點下面任意一首開始播放。匯入與刪除請到啟動器的「音樂」頁。</string>
+    <string name="music_remote_unavailable">無法連線播放服務</string>
+</resources>

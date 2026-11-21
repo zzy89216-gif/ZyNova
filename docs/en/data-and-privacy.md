@@ -8,6 +8,7 @@
 | Launcher logs | public `/ZyNova/logs/` | kept |
 | Java runtimes / JNA | private app storage | removed |
 | Favorites archive | private app storage `files/favorites/` | removed |
+| Music library | private app storage `files/music/` | removed |
 | Control layouts | app external dir `control_layouts/` | removed |
 | Settings / account tokens | MMKV (private app storage) | removed |
 | MobileGlues config | app external dir `mobileglues/config.json` | removed |

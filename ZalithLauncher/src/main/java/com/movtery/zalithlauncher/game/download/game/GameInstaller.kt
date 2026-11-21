@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.Intent
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.GlobalContext
+import com.movtery.zalithlauncher.game.download.InstallJournal
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
 import com.movtery.zalithlauncher.coroutine.TitledTask
@@ -97,6 +98,9 @@ class GameInstaller(
      */
     private val downloader = BaseMinecraftDownloader()
 
+    /** 安装失败/取消的收尾只做一次（cancelInstall 与任务流取消可能都会触发） */
+    private val interruptedInstallHandled = java.util.concurrent.atomic.AtomicBoolean(false)
+
     /**
      * 目标游戏客户端目录（缓存）
      * versions/<client-name>/...
@@ -121,7 +125,12 @@ class GameInstaller(
         isRunning: () -> Unit = {},
         onInstalled: (version: String) -> Unit,
         onError: (th: Throwable) -> Unit,
-        onGameAlreadyInstalled: () -> Unit
+        onGameAlreadyInstalled: () -> Unit,
+        /**
+         * 安装被取消（用户从任务面板取消 / 「取消全部任务」）时回调。
+         * 界面必须靠它把「安装中」状态复位，否则按钮会永远停在安装中（议题 #72/#73）。
+         */
+        onCancelled: () -> Unit = {}
     ) {
         if (taskExecutor.isRunning()) {
             //正在安装中，阻止这次安装请求
@@ -129,27 +138,37 @@ class GameInstaller(
             return
         }
 
+        //目标版本已经存在：安装不会真正发生，绝不能继续走 onComplete（否则会误报安装成功）
+        val alreadyInstalled = java.util.concurrent.atomic.AtomicBoolean(false)
         taskExecutor.executePhasesAsync(
             onStart = {
                 val tasks = try {
                     getTaskPhase()
                 } catch (_: GameAlreadyInstalledException) {
+                    alreadyInstalled.set(true)
                     onGameAlreadyInstalled()
                     return@executePhasesAsync
                 }
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
+                if (alreadyInstalled.get()) return@executePhasesAsync
                 if (info.overwrite) {
                     clearBackupFiles()
                 }
+                InstallJournal.clearGameInstall()
                 onInstalled(info.customVersionName)
             },
             onError = {
-                if (info.overwrite) {
-                    revertClientDir()
-                }
+                //安装失败也要把半成品收拾掉：新装删掉半成品版本目录，
+                //覆盖/更新则尽量把旧 json/jar 放回去（议题 #73）
+                finishInterruptedInstall(clearTarget = true)
                 onError(it)
+            },
+            onCancel = {
+                //「取消全部任务」这类整体取消不会经过 cancelInstall()：这里也要做同样的清理
+                finishInterruptedInstall(clearTarget = true)
+                onCancelled()
             }
         )
     }
@@ -180,13 +199,16 @@ class GameInstaller(
                 if (info.overwrite) {
                     clearBackupFiles()
                 }
+                InstallJournal.clearGameInstall()
                 onInstalled()
             },
             onError = {
-                if (info.overwrite) {
-                    revertClientDir()
-                }
+                //更新加载器失败：把旧 json/jar 恢复回去，避免出现读不出来的版本
+                finishInterruptedInstall(clearTarget = false)
                 onError(it)
+            },
+            onCancel = {
+                finishInterruptedInstall(clearTarget = false)
             }
         )
     }
@@ -225,6 +247,28 @@ class GameInstaller(
             Logger.debug(TAG, "The game has already been installed!")
             throw GameAlreadyInstalledException()
         }
+
+        //议题 #73：安装开始前把关键状态落盘，进程被杀后下次启动才能判断「上次没装完」。
+        //新装：目标目录是本次新建的，恢复时直接删掉半成品；
+        //覆盖安装 / 更新加载器：旧 json/jar 先备份到私有目录，恢复时放回去。
+        //目标版本原来不存在（没有 json）→ 目录是这次安装新建的，恢复时可以直接删；
+        //原来存在（覆盖安装 / 更新加载器）→ 只能恢复旧 json/jar 备份，不能删目录里用户自己的文件
+        val targetVersionAlreadyExists = targetVersionJson.exists()
+        val backupPaths: Pair<String?, String?> = if (!targetVersionAlreadyExists) {
+            null to null
+        } else {
+            InstallJournal.backupVersionFiles(
+                targetJson = targetVersionJson,
+                targetJar = targetVersionJar
+            )
+        }
+        InstallJournal.beginGameInstall(
+            targetVersionName = info.customVersionName,
+            overwrite = info.overwrite,
+            deleteTargetOnRecovery = !targetVersionAlreadyExists,
+            backupJsonPath = backupPaths.first,
+            backupJarPath = backupPaths.second
+        )
 
         //如果是覆盖安装，将清除目标版本Json和Jar
         if (info.overwrite) {
@@ -362,6 +406,8 @@ class GameInstaller(
                             cleanroomFolder = pathConfig.cleanroomDir,
                             onComplete = {
                                 onInstalled(pathConfig.targetClientDir)
+                                //全部文件已经落到目标版本目录：本次安装成功，清掉落盘记录
+                                InstallJournal.clearGameInstall()
                                 targetClientDir = null
                             }
                         )
@@ -371,6 +417,7 @@ class GameInstaller(
                             tempMinecraftDir = pathConfig.tempMinecraftDir,
                             onComplete = {
                                 onInstalled(pathConfig.targetClientDir)
+                                InstallJournal.clearGameInstall()
                                 targetClientDir = null
                             }
                         )
@@ -499,6 +546,7 @@ class GameInstaller(
                         cleanroomFolder = pathConfig.cleanroomDir,
                         onComplete = {
                             onInstalled()
+                            InstallJournal.clearGameInstall()
                             targetClientDir = null
                         }
                     )
@@ -705,13 +753,10 @@ class GameInstaller(
         clearTarget: Boolean = true
     ) {
         taskExecutor.cancel()
-
-        if (clearTarget && !info.overwrite) {
-            clearTargetClient()
-        }
-
-        if (info.overwrite) {
-            revertClientDir()
+        //取消通常来自界面线程：清理/回滚可能涉及删除整个版本目录，必须放到 IO，
+        //否则大目录会在主线程删到卡死（长按取消 → ANR）。记录最后才清，中途被杀下次启动还能恢复。
+        CoroutineScope(Dispatchers.IO).launch {
+            finishInterruptedInstall(clearTarget)
         }
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -719,6 +764,31 @@ class GameInstaller(
             val intent = Intent(GlobalContext.applicationContext, JvmService::class.java)
             GlobalContext.applicationContext.stopService(intent)
             JVMSocketServer.stop()
+        }
+    }
+
+    /**
+     * 安装失败/被取消后的统一收尾（幂等，只执行一次）
+     *
+     * - 覆盖安装：把旧 json/jar 恢复回去（私有目录备份优先，cache 备份兜底）
+     * - 新装：删掉半成品版本目录
+     * - 更新加载器（clearTarget=false）：只恢复旧文件，不删整个版本目录
+     *
+     * 清理完成后才清落魄盘记录，避免「记录没了、目录没删完」时再被杀一次没人接着收拾。
+     */
+    private fun finishInterruptedInstall(clearTarget: Boolean) {
+        if (!interruptedInstallHandled.compareAndSet(false, true)) return
+        if (!info.overwrite) {
+            //新装：rollback 会删掉半成品目录；更新加载器：只会恢复备份
+            val result = InstallJournal.rollbackInterruptedGameInstall()
+            if (clearTarget && result == null) {
+                //没有落盘记录（例如记录写入失败）时按目标目录兜底删除
+                clearTargetClient()
+            }
+        } else {
+            //覆盖安装：先按持久备份恢复，revertClientDir 再用 cache 备份兜底
+            InstallJournal.rollbackInterruptedGameInstall()
+            revertClientDir()
         }
     }
 
@@ -762,6 +832,8 @@ class GameInstaller(
                 FileUtils.deleteQuietly(it)
                 Logger.info(TAG, "Successfully deleted version directory: ${it.name} at path: ${it.absolutePath}")
             }
+            //目录已经删掉，记录可以安全清除
+            InstallJournal.clearGameInstall()
         }
     }
 
@@ -791,6 +863,8 @@ class GameInstaller(
             }.onFailure { e ->
                 Logger.error(TAG, "Failed to revert client files: ${e.message}", e)
             }
+            //旧文件已经放回（或确认放不回去），记录可以清除
+            InstallJournal.clearGameInstall()
         }
     }
 

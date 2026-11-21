@@ -3,7 +3,7 @@
 ## First: get the log
 
 - Game crash: "Share logs" in the top-right corner of the crash screen;
-- Launcher crash: Settings → About / the log entry;
+- Launcher crash: Settings → About & Plugins / the log entry;
 - Run log: version overview → "Run log".
 
 **A screenshot is worth less than a log**; the "crash analysis" on the crash screen is only a heuristic hint — the log is the source of truth.
@@ -63,7 +63,7 @@ See `login.md`; the polling problem is fixed — if it still fails, switch netwo
 ## When reporting a problem, include
 
 1. Device model / Android version / GPU;
-2. Launcher version (Settings → About);
+2. Launcher version (Settings → About & Plugins);
 3. Game version + loader;
 4. Reproduction steps;
 5. A log link (do not send only screenshots).

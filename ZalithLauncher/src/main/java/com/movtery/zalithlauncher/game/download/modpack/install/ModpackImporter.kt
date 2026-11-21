@@ -26,6 +26,7 @@ import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
 import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
+import com.movtery.zalithlauncher.game.download.InstallJournal
 import com.movtery.zalithlauncher.game.download.modpack.platform.ALL_PACK_PARSER
 import com.movtery.zalithlauncher.game.download.modpack.platform.AbstractPack
 import com.movtery.zalithlauncher.game.path.GamePathManager
@@ -95,15 +96,24 @@ class ModpackImporter(
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
+                //导入成功：清掉落盘记录（嵌套的游戏安装记录一并清）
+                InstallJournal.clearModpackInstall()
+                InstallJournal.clearGameInstall()
                 onFinished(modpack.getFinalClientName())
             },
             onError = { e ->
+                //议题 #73：整合包导入失败/取消时干净回滚，避免留下半成品实例
+                InstallJournal.rollbackInterruptedModpackInstall()
                 if (e is UsingMobileDataException) {
                     //用户不希望使用移动网络
                     onCancelled()
                     return@executePhasesAsync
                 }
                 onError(e)
+            },
+            onCancel = {
+                InstallJournal.rollbackInterruptedModpackInstall()
+                onCancelled()
             }
         )
     }
@@ -111,6 +121,8 @@ class ModpackImporter(
     private suspend fun getTaskPhases() = withContext(Dispatchers.IO) {
         //临时游戏环境目录
         val tempModPackDir = PathManager.DIR_CACHE_MODPACK_DOWNLOADER
+        //议题 #73：整合包导入同样从开始就落盘记录，进程被杀后下次启动才能判断「没装完」
+        InstallJournal.beginModpackInstall(tempModPackDir.absolutePath)
         val tempVersionsDir = File(tempModPackDir, "fkVersion")
         //整合包安装包文件
         val installerDir = File(tempModPackDir, "installer")
@@ -216,7 +228,12 @@ class ModpackImporter(
                             context = context,
                             scope = scope,
                             versionFolder = tempVersionsDir,
-                            waitForVersionName = waitForVersionName,
+                            //记录用户确认的目标版本名：进程被杀后恢复时才能定位半成品版本
+                            waitForVersionName = { suggested ->
+                                waitForVersionName(suggested).also { name ->
+                                    InstallJournal.updateModpackTargetVersion(name)
+                                }
+                            },
                             addPhases = { phases ->
                                 taskExecutor.addPhases(phases)
                             },

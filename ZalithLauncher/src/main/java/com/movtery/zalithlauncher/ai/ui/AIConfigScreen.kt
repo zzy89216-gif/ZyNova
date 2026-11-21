@@ -386,7 +386,8 @@ fun AIConfigContent(
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
                         value = AISettings.searchApiKey.state,
-                        onValueChange = { AISettings.searchApiKey.save(it) },
+                        //输入时就 trim：粘贴带换行/空格的 Key 会让 Authorization 头非法，最终表现为「搜索用不了」
+                        onValueChange = { AISettings.searchApiKey.save(it.trim()) },
                         label = { Text(stringResource(R.string.ai_search_key_title)) },
                         supportingText = { Text(stringResource(R.string.ai_search_key_summary)) },
                         singleLine = true

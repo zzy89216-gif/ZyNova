@@ -78,8 +78,21 @@ fun downloadSingleForVersions(
             versions.forEach { ver ->
                 val targetFolder = File(ver.getGameDir(), folder)
                 val targetFile = File(targetFolder, version.platformFileName())
-                if (targetFile.exists() && !targetFile.delete()) throw IOException("Failed to properly delete the existing target file.")
-                cacheFile.copyTo(targetFile)
+                //议题 #73：先写 `.part` 再改名，进程在复制途中被杀也不会留下半截文件
+                val tempFile = File(targetFolder, "${version.platformFileName()}.part")
+                try {
+                    cacheFile.copyTo(tempFile, overwrite = true)
+                    if (targetFile.exists() && !targetFile.delete()) {
+                        throw IOException("Failed to properly delete the existing target file.")
+                    }
+                    if (!tempFile.renameTo(targetFile)) {
+                        tempFile.copyTo(targetFile, overwrite = true)
+                        FileUtils.deleteQuietly(tempFile)
+                    }
+                } catch (e: Throwable) {
+                    FileUtils.deleteQuietly(tempFile)
+                    throw e
+                }
                 onFileCopied(targetFile, targetFolder) //文件已复制回调
             }
         },
@@ -99,6 +112,8 @@ fun downloadSingleForVersions(
                 val targetFolder = File(ver.getGameDir(), folder)
                 val targetFile = File(targetFolder, version.platformFileName())
                 if (targetFile.exists()) FileUtils.deleteQuietly(targetFile)
+                //连带清掉可能残留的 .part
+                FileUtils.deleteQuietly(File(targetFolder, "${version.platformFileName()}.part"))
                 onFileCancelled(targetFile, targetFolder) //文件已取消回调
             }
         },

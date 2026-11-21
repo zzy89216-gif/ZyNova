@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.2.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.2)
+[![Release](https://img.shields.io/badge/Release-28.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.3)
 
 ---
 
@@ -54,7 +54,7 @@ Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 📚 Documentação
 
-> 📚 A documentação existe em chinês e inglês (77 artigos cada); esta página é a introdução em português.
+> 📚 A documentação existe em chinês e inglês (78 artigos cada); esta página é a introdução em português.
 
 | Conteúdo | Arquivo |
 |---|---|

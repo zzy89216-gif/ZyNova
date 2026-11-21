@@ -41,7 +41,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -67,6 +69,7 @@ import com.movtery.zalithlauncher.ui.components.MenuTextButton
 import com.movtery.zalithlauncher.ui.components.lazyScrollWithBar
 import com.movtery.zalithlauncher.ui.control.HotbarRule
 import com.movtery.zalithlauncher.ui.control.gyroscope.isGyroscopeAvailable
+import com.movtery.zalithlauncher.ui.screens.content.music.MusicPlayerDialog
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.cardTitleColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
@@ -107,6 +110,11 @@ fun GameMenuSubscreen(
     onEditLayout: () -> Unit,
     onShowToast: (AndroidStringText, Int) -> Unit
 ) {
+    //议题 #77：游戏内音乐弹层。状态放在这里（而不是 GameActionContent）：
+    //打开音乐时要先把菜单收起来，菜单 DOM 会被 AnimatedVisibility 收起，
+    //弹层状态必须挂在始终存在的父级上，否则关闭菜单的同时弹层就没了。
+    var showMusicDialog by remember { mutableStateOf(false) }
+
     DualMenuSubscreen(
         state = state,
         closeScreen = closeScreen,
@@ -188,10 +196,19 @@ fun GameMenuSubscreen(
                 enableTerracotta = enableTerracotta,
                 onOpenTerracottaMenu = onOpenTerracottaMenu,
                 onRefreshWindowSize = onRefreshWindowSize,
+                //点击音乐：先收起启动器菜单，再打开全屏播放弹层（Dialog 独立窗口，不抢游戏输入）
+                onOpenMusic = {
+                    closeScreen()
+                    showMusicDialog = true
+                },
                 onShowToast = onShowToast
             )
         }
     )
+
+    if (showMusicDialog) {
+        MusicPlayerDialog(onDismiss = { showMusicDialog = false })
+    }
 }
 
 @Composable
@@ -203,6 +220,7 @@ private fun GameActionContent(
     enableTerracotta: Boolean,
     onOpenTerracottaMenu: () -> Unit,
     onRefreshWindowSize: () -> Unit,
+    onOpenMusic: () -> Unit,
     onShowToast: (AndroidStringText, Int) -> Unit,
     modifier: Modifier = Modifier,
     color: Color = cardColor(false),
@@ -237,6 +255,16 @@ private fun GameActionContent(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.game_menu_option_send_escape),
                 onClick = onSendEscape,
+                color = color,
+                contentColor = contentColor,
+            )
+        }
+        //议题 #77：打开内置音乐播放器（与启动器顶部胶囊的「音乐」是同一份播放界面）
+        item {
+            MenuTextButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.game_menu_option_music),
+                onClick = onOpenMusic,
                 color = color,
                 contentColor = contentColor,
             )

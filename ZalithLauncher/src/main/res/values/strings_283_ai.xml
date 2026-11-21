@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 28.2.3 AI 联网搜索：DeepSeek 引擎失败原因与降级必须对用户可见 -->
+<resources>
+    <string name="ai_search_ds_no_key">No DeepSeek Search key is configured (Settings → AI settings → Web search → DeepSeek Search key; leave it empty to reuse the main model key).</string>
+    <string name="ai_search_ds_empty">DeepSeek returned no matching results.</string>
+    <string name="ai_search_ds_error_bad_request">DeepSeek rejected the search request (HTTP 400): %1$s</string>
+    <string name="ai_search_ds_error_auth">DeepSeek Search key is invalid or unauthorized (HTTP 401/403); check the key in AI settings.</string>
+    <string name="ai_search_ds_error_balance">DeepSeek account balance is insufficient (HTTP 402); top up and try again.</string>
+    <string name="ai_search_ds_error_not_supported">The current API address does not support web search (HTTP 404): %1$s. Switch back to https://api.deepseek.com/v1 or choose DuckDuckGo.</string>
+    <string name="ai_search_ds_error_rate_limited">DeepSeek Search is rate limited (HTTP 429); try again in a moment.</string>
+    <string name="ai_search_ds_error_server">DeepSeek Search server error (HTTP %1$d): %2$s</string>
+    <string name="ai_search_ds_error_http">DeepSeek Search failed (HTTP %1$d): %2$s</string>
+    <string name="ai_search_ds_error_timeout">DeepSeek Search timed out after %1$d s (slow network or queued server request).</string>
+    <string name="ai_search_ds_error_network">DeepSeek Search network request failed: %1$s</string>
+    <string name="ai_search_ds_error_bad_response">DeepSeek Search returned data that could not be parsed.</string>
+    <string name="ai_search_ds_error_detail_unknown">the server returned no detail</string>
+    <string name="ai_search_fallback_notice">⚠️ DeepSeek Search did not succeed; fell back to DuckDuckGo. Reason: %1$s</string>
+    <string name="ai_search_ddg_failed">DuckDuckGo fallback also failed: %1$s</string>
+</resources>

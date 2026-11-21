@@ -152,17 +152,18 @@ class TaskFlowExecutor(
                     //以前这里一律走 onCancel()，界面会停在最后一帧、不弹错误、无法恢复。
                     th is TimeoutCancellationException -> {
                         Logger.warning(TAG, "The task flow timed out.", th)
-                        onError(
+                        notifyError(
+                            onError,
                             TimeoutException(th.message ?: "task flow timeout").apply { initCause(th) }
                         )
                     }
                     th is CancellationException || th.isInterruptedIOException() -> {
                         Logger.debug(TAG, "The current task flow has been cancelled. ${th.getMessageOrToString()}")
-                        onCancel()
+                        notifyCancel(onCancel)
                     }
                     else -> {
                         Logger.warning(TAG, "An exception occurred while executing the task flow.", th)
-                        onError(th)
+                        notifyError(onError, th)
                     }
                 }
                 return@withContext
@@ -182,8 +183,36 @@ class TaskFlowExecutor(
         onCancel: () -> Unit = {}
     ) {
         job = scope.launch(Dispatchers.IO) {
-            onStart()
-            executePhases(onComplete, onError, onCancel)
+            try {
+                onStart()
+                executePhases(onComplete, onError, onCancel)
+            } catch (e: CancellationException) {
+                //启动阶段就被取消：按取消路径处理，保持取消语义（不吞）
+                Logger.debug(TAG, "The task flow was cancelled while starting. ${e.getMessageOrToString()}")
+                notifyCancel(onCancel)
+            } catch (e: Throwable) {
+                //⚠️ onStart 或最终 onComplete 抛异常以前会变成未捕获异常，直接把进程打崩，
+                //   界面则永远停在「安装中」。统一转成 onError，至少让用户看到失败。
+                Logger.warning(TAG, "Failed to start the task flow.", e)
+                notifyError(onError, e)
+            }
+        }
+    }
+
+    /** 回调自身抛异常也不能把 executor 协程打崩（否则同样是未捕获异常） */
+    private fun notifyError(callback: (Throwable) -> Unit, th: Throwable) {
+        runCatching {
+            callback(th)
+        }.onFailure {
+            Logger.error(TAG, "The onError callback itself failed.", it)
+        }
+    }
+
+    private fun notifyCancel(callback: () -> Unit) {
+        runCatching {
+            callback()
+        }.onFailure {
+            Logger.error(TAG, "The onCancel callback itself failed.", it)
         }
     }
 

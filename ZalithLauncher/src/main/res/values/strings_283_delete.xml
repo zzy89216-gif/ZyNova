@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 28.2.3 议题 #74：删除版本的全屏确定进度 -->
+<resources>
+    <string name="versions_delete_progress_title">Deleting %1$s</string>
+    <string name="versions_delete_phase_scanning">Counting files…</string>
+    <string name="versions_delete_phase_deleting">Deleting files…</string>
+    <string name="versions_delete_phase_scanning_detail">%1$d files · %2$s</string>
+    <string name="versions_delete_progress_detail">%1$d%%  %2$d / %3$d files · %4$s / %5$s</string>
+    <string name="versions_delete_progress_current">Working on: %1$s</string>
+    <string name="versions_delete_progress_keep_open">Keep this screen open while the version is being deleted. You can cancel at any time.</string>
+    <string name="versions_delete_progress_cancel_hint">Cancelled. Some files may have already been deleted; the remaining files will be cleaned up automatically later.</string>
+    <string name="versions_delete_progress_cancel_restored_hint">Cancelled. The version is unchanged and still in the list.</string>
+    <string name="versions_delete_progress_cancel_partial_hint">Cancelled. The version has been restored to the list, but %1$d file(s) were already deleted before cancelling.</string>
+    <string name="versions_delete_progress_done">Version deleted</string>
+    <string name="versions_delete_progress_cancelled">Deletion cancelled</string>
+    <string name="versions_delete_progress_failed">Failed to delete the version</string>
+</resources>

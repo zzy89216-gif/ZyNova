@@ -8,6 +8,7 @@
 | 启动器日志 | 公共目录 `/ZyNova/logs/` | 保留 |
 | Java 运行时 / JNA | 应用私有目录 | 删除 |
 | 收藏归档 | 应用私有目录 `files/favorites/` | 删除 |
+| 音乐曲库 | 应用私有目录 `files/music/` | 删除 |
 | 控制布局 | 应用外部目录 `control_layouts/` | 删除 |
 | 设置 / 账号令牌 | MMKV（应用私有） | 删除 |
 | MobileGlues 配置 | 应用外部目录 `mobileglues/config.json` | 删除 |

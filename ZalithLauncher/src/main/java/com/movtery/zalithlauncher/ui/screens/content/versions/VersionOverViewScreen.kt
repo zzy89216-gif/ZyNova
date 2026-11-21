@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.context.copyLocalFile
@@ -69,6 +71,7 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.DeleteVersionDialog
+import com.movtery.zalithlauncher.ui.screens.content.elements.DeleteVersionProgressDialog
 import com.movtery.zalithlauncher.ui.screens.content.elements.ImportFileButton
 import com.movtery.zalithlauncher.ui.screens.content.elements.RenameVersionDialog
 import com.movtery.zalithlauncher.ui.screens.content.versions.layouts.VersionChunkBackground
@@ -95,7 +98,21 @@ fun VersionOverViewScreen(
     version: Version,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
-    if (!version.isValid()) {
+    val deleteProgressState = VersionsManager.deleteProgress.collectAsStateWithLifecycle()
+    val deleteResultState = VersionsManager.deleteResult.collectAsStateWithLifecycle()
+    val versionName = remember(version) { version.getVersionName() }
+
+    //删除进行中 / 刚结束时，不要因为「版本目录已经被挪到删除临时目录」就立刻把界面切走，
+    //否则全屏进度和完成提示会被打断（用户会以为删除被静默取消了）。
+    //用 derivedStateOf 只在这个布尔翻转时重组，避免进度每 100ms 刷新都把整页重组一遍。
+    val deleteInFlight by remember(versionName) {
+        derivedStateOf {
+            deleteProgressState.value?.versionName == versionName ||
+                    deleteResultState.value?.versionName == versionName
+        }
+    }
+
+    if (!version.isValid() && !deleteInFlight) {
         backToMainScreen()
         return
     }
@@ -503,6 +520,8 @@ sealed interface VersionsOperation {
     data class EditSummary(val version: Version): VersionsOperation
     data class Rename(val version: Version): VersionsOperation
     data class Delete(val version: Version): VersionsOperation
+    /** 已确认删除，进入全屏进度界面 */
+    data class DeleteInProgress(val version: Version): VersionsOperation
     data class RunTask(val title: Int, val task: suspend () -> Unit): VersionsOperation
 }
 
@@ -549,11 +568,22 @@ private fun VersionsOperation(
             DeleteVersionDialog(
                 version = version,
                 onDismissRequest = { updateOperation(VersionsOperation.None) },
-                onConfirm = { title, task ->
-                    updateOperation(
-                        VersionsOperation.RunTask(
-                            title = title,
-                            task = task
+                onConfirm = { updateOperation(VersionsOperation.DeleteInProgress(version)) }
+            )
+        }
+        is VersionsOperation.DeleteInProgress -> {
+            DeleteVersionProgressDialog(
+                version = versionsOperation.version,
+                onDismiss = {
+                    VersionsManager.clearDeleteResult()
+                    updateOperation(VersionsOperation.None)
+                },
+                onError = { e ->
+                    Logger.error(TAG, "Failed to delete the version.", e)
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.versions_manage_task_error),
+                            message = androidText(e.getMessageOrToString())
                         )
                     )
                 }

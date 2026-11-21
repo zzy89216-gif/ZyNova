@@ -61,6 +61,15 @@ sealed interface NormalNavKey : TitledNavKey {
     @Serializable data object Favorites : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.favorites_title)
     }
+    /**
+     * 内置音乐播放器屏幕（议题 #77）
+     *
+     * 顶部胶囊的「音乐」入口直接落到这里；游戏内启动器菜单打开的是同一份
+     * 播放界面（`MusicPlayerDialog`），两边共用 `MusicPlayerController` 单例。
+     */
+    @Serializable data object Music : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.music_title)
+    }
     /** 账号管理屏幕 */
     @Serializable data class AccountManager(
         val loginMenu: FirstLoginMenu = FirstLoginMenu.NONE
@@ -86,9 +95,16 @@ sealed interface NormalNavKey : TitledNavKey {
     ) : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.page_title_select_files)
     }
-    /** 多人联机屏幕 */
+    /**
+     * 多人联机屏幕
+     *
+     * 标题直接用顶部页签 / 底部入口共用的「多人联机」（`terracotta`）。
+     * 这个页面里已经有「陶瓦联机 / 樱花内网穿透」两个模式（底部悬浮菜单就地切换），
+     * 再用「Terracotta | 陶瓦联机」当页面标题会和模式切换菜单混在一起，
+     * 所以页面标题统一叫「多人联机」（议题 #68）。
+     */
     @Serializable data object Multiplayer: NormalNavKey {
-        @Contextual override val title: AndroidStringText = androidText(R.string.terracotta_terracotta)
+        @Contextual override val title: AndroidStringText = androidText(R.string.terracotta)
     }
 
     /** 樱花内网穿透屏幕 */

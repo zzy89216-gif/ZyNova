@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -47,9 +48,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -93,6 +98,15 @@ fun AboutInfoScreen(
     openLicense: (raw: Int) -> Unit,
     openLink: (url: String) -> Unit
 ) {
+    //议题 #69 / #70：这一屏的四颗操作按钮共用一个固定宽度（见 rememberAboutActionButtonsWidth），
+    //这样「检查更新 / 赞助支持」与「项目地址 / Discord」等宽、等高，右边缘也落在同一列上。
+    val actionButtonWidth = rememberAboutActionButtonsWidth(
+        stringResource(R.string.upgrade_title),
+        stringResource(R.string.about_sponsor),
+        stringResource(R.string.about_launcher_project_link),
+        stringResource(R.string.about_launcher_discord)
+    )
+
     BaseScreen(
         Triple(key, mainScreenKey, false),
         Triple(NormalNavKey.Settings.AboutInfo, settingsScreenKey, false)
@@ -113,19 +127,19 @@ fun AboutInfoScreen(
                             title = BuildKeys.LAUNCHER_NAME,
                             text = stringResource(R.string.about_launcher_version, BuildConfig.VERSION_NAME),
                             button = {
-                                Button(
+                                AboutActionButton(
+                                    buttonWidth = actionButtonWidth,
+                                    text = stringResource(R.string.upgrade_title),
                                     onClick = checkUpdate
-                                ) {
-                                    Text(text = stringResource(R.string.upgrade_title))
-                                }
+                                )
                                 //维护者要求：这里不再放「许可证」按钮，改成「赞助」。
                                 //GPL 的许可证与声明仍然能看——下面「开源与合规」板块里有完整入口，
                                 //所以合规义务没有减少，只是把首屏位置让给更常用的赞助入口。
-                                Button(
+                                AboutActionButton(
+                                    buttonWidth = actionButtonWidth,
+                                    text = stringResource(R.string.about_sponsor),
                                     onClick = { openLink(URL_ZY_NOVA_SUPPORT) }
-                                ) {
-                                    Text(text = stringResource(R.string.about_sponsor))
-                                }
+                                )
                             }
                         )
 
@@ -143,16 +157,16 @@ fun AboutInfoScreen(
                             title = stringResource(R.string.about_launcher_author_zzy_title),
                             text = stringResource(R.string.about_launcher_author_zzy_text, BuildKeys.LAUNCHER_NAME),
                             button = {
-                                Button(
+                                AboutActionButton(
+                                    buttonWidth = actionButtonWidth,
+                                    text = stringResource(R.string.about_launcher_project_link),
                                     onClick = { openLink(URL_PROJECT) }
-                                ) {
-                                    Text(text = stringResource(R.string.about_launcher_project_link))
-                                }
-                                Button(
+                                )
+                                AboutActionButton(
+                                    buttonWidth = actionButtonWidth,
+                                    text = stringResource(R.string.about_launcher_discord),
                                     onClick = { openLink(URL_DISCORD) }
-                                ) {
-                                    Text(text = stringResource(R.string.about_launcher_discord))
-                                }
+                                )
                             }
                         )
 
@@ -358,6 +372,63 @@ fun AboutInfoScreen(
                 }
             }
         }
+    }
+}
+
+/** 关于页操作按钮的水平内边距，与 material3 Button 的默认内边距一致（议题 #69 / #70） */
+private val AboutActionButtonHorizontalPadding = 24.dp
+
+/** 关于页操作按钮的垂直内边距，与 material3 Button 的默认内边距一致 */
+private val AboutActionButtonVerticalPadding = 8.dp
+
+/**
+ * 量出关于页四颗操作按钮的统一宽度（议题 #69 / #70）。
+ *
+ * 按钮宽度原本跟着文字长度走：「检查更新 / 赞助支持 / 项目地址」是四个汉字，
+ * 「Discord」是七个西文字符，宽窄各不相同，于是两行按钮右边缘对不齐、大小也不统一。
+ *
+ * 这里用 `TextMeasurer` 按按钮实际使用的 `labelLarge` 样式量出几条标签里最宽的一条，
+ * 再加上统一的左右内边距得到一个固定宽度；换语言或改字号后宽度会重新算，
+ * 不需要写死成某一种语言下的 dp。
+ */
+@Composable
+private fun rememberAboutActionButtonsWidth(vararg labels: String): Dp {
+    val textMeasurer = rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.labelLarge
+    val maxTextWidthPx = labels.maxOf { label ->
+        textMeasurer.measure(text = label, style = labelStyle).size.width
+    }
+    return with(LocalDensity.current) {
+        //+1dp 兜住测量与布局之间的取整误差，免得文字刚好差一点点被省略号截断
+        maxTextWidthPx.toDp() + AboutActionButtonHorizontalPadding * 2 + 1.dp
+    }
+}
+
+/**
+ * 关于页的统一操作按钮（议题 #69 / #70）。
+ *
+ * 四颗按钮都用 [buttonWidth] 这个固定宽度和同一套内边距，因此等宽、等高；
+ * 文字强制单行 + 省略号，保证任何语言下按钮高度都不会因为换行而变高。
+ */
+@Composable
+private fun AboutActionButton(
+    buttonWidth: Dp,
+    text: String,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = Modifier.width(buttonWidth),
+        onClick = onClick,
+        contentPadding = PaddingValues(
+            horizontal = AboutActionButtonHorizontalPadding,
+            vertical = AboutActionButtonVerticalPadding
+        )
+    ) {
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

@@ -468,6 +468,15 @@ private fun VersionsLayout(
     Box(
         modifier = modifier.offset { IntOffset(x = 0, y = surfaceYOffset.roundToPx()) }
     ) {
+        //操作弹窗（删除进度等）的状态放在「正在刷新」判断之外：
+        //删除结束时会触发一次刷新，如果把弹窗跟着 spinner 一起卸载，用户会看到进度条突然消失（像被静默取消）
+        var versionsOperation by remember { mutableStateOf<VersionsOperation>(VersionsOperation.None) }
+        VersionsOperation(
+            versionsOperation = versionsOperation,
+            updateVersionsOperation = { versionsOperation = it },
+            submitError = submitError
+        )
+
         if (isRefreshing) { //版本正在刷新中
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -476,13 +485,6 @@ private fun VersionsLayout(
                 LoadingIndicator()
             }
         } else {
-            var versionsOperation by remember { mutableStateOf<VersionsOperation>(VersionsOperation.None) }
-            VersionsOperation(
-                versionsOperation = versionsOperation,
-                updateVersionsOperation = { versionsOperation = it },
-                submitError = submitError
-            )
-
             // 操作栏滚动吸附
             val density = LocalDensity.current
             val topAppBarState = rememberTopAppBarState()

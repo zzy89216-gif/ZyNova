@@ -15,24 +15,33 @@
 
 package com.movtery.zalithlauncher.ai.agent.tools
 
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ai.AISettings
 import com.movtery.zalithlauncher.ai.agent.AITool
 import com.movtery.zalithlauncher.ai.AISearchEngine
+import com.movtery.zalithlauncher.ai.aiString
 import com.movtery.zalithlauncher.ai.agent.AIToolRisk
 import com.movtery.zalithlauncher.ai.agent.AIToolSchema
+import com.movtery.zalithlauncher.path.createOkHttpClientBuilder
 import com.movtery.zalithlauncher.utils.logging.Logger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -50,20 +59,71 @@ private const val MAX_BODY_CHARS = 8_000
 private const val USER_AGENT =
     "Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36"
 
+/**
+ * 网页抓取 / DuckDuckGo / MC 百科用的客户端。
+ *
+ * 同样复用项目带 ResilientDns 的构建器：系统 DNS 被污染或解析失败时自动走 DoH，
+ * 否则这些抓取在部分网络上会直接 UnknownHost、白白失败。
+ * 只读网页不像 AI 对话要秒级响应，连接 12 秒、读取 25 秒足够；
+ * DeepSeek 搜索另用 [deepSeekHttpClient]（更长，因为服务端要检索网页）。
+ */
 private val httpClient: OkHttpClient by lazy {
-    OkHttpClient.Builder()
-        .connectTimeout(12, TimeUnit.SECONDS)
-        .readTimeout(18, TimeUnit.SECONDS)
-        .followRedirects(true)
-        .build()
+    createOkHttpClientBuilder { builder ->
+        builder.connectTimeout(12, TimeUnit.SECONDS)
+        builder.readTimeout(25, TimeUnit.SECONDS)
+        builder.followRedirects(true)
+    }.build()
 }
+
+/** DeepSeek Search 官方限制：query 1~128 个字符，超了会直接 400 */
+private const val MAX_DEEPSEEK_QUERY_CHARS = 128
+
+/** DeepSeek Search 的整体超时；提示文案里的秒数也用它，避免两处写死后对不上 */
+private const val DEEPSEEK_CALL_TIMEOUT_SECONDS = 60L
+
+/**
+ * DeepSeek Search 专用客户端。
+ *
+ * ⚠️ 不能复用上面的 [httpClient]：那个是给网页抓取用的（读超时 25 秒），
+ * 而 Search 接口在服务端要检索网页，官方示例给的是 60 秒整体超时（curl `--max-time 60`）。
+ * 旧实现只有 18 秒，经常被超时打断，还把超时当成「DeepSeek 坏了」静默退回 DuckDuckGo ——
+ * 真机上的表现就是「DeepSeek 的搜索不能用 / 搜不到就退回」。
+ *
+ * 这里放宽读超时，并复用项目带 ResilientDns 的构建器（系统 DNS 失败时自动走 DoH）。
+ */
+private val deepSeekHttpClient: OkHttpClient by lazy {
+    createOkHttpClientBuilder { builder ->
+        builder.connectTimeout(15, TimeUnit.SECONDS)
+        builder.readTimeout(45, TimeUnit.SECONDS)
+        builder.callTimeout(DEEPSEEK_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+    }.build()
+}
+
+/**
+ * 与 [runCatching] 相同，但**不吞协程取消**。
+ *
+ * `runCatching` 会把 `CancellationException` 也接住，用户点「停止」后工具还会返回一个
+ * 「失败」字符串继续往下走；这里把取消原样抛出。
+ */
+private inline fun <T> runCatchingCancellable(block: () -> T): Result<T> =
+    try {
+        Result.success(block())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Throwable) {
+        Result.failure(e)
+    }
 
 internal fun webTools(): List<AITool> = listOf(
     aiTool(
         name = "web_search",
         description = """
-            联网搜索（DuckDuckGo 网页版）。用于查模组报错、崩溃信息、版本兼容性等本机资料里没有的内容。
-            返回前若干条结果的标题 + 链接 + 摘要。需要看正文时再用 fetch_webpage。
+            联网搜索（引擎由 AI 设置决定：DeepSeek 官方搜索 / DuckDuckGo 网页版）。
+            用于查模组报错、崩溃信息、版本兼容性等本机资料里没有的内容。
+            返回前若干条结果的标题 + 链接 + 摘要（DeepSeek 引擎给的是长摘要，不含网页正文；
+            要读正文请再调用 fetch_webpage）。
+            如果结果开头带「⚠️」并说明已退回 DuckDuckGo（英文界面下是 fell back to DuckDuckGo），
+            说明 DeepSeek 引擎这次没成功，请把原因如实告诉用户，不要当成 DeepSeek 的结果。
         """.trimIndent(),
         parameters = AIToolSchema.objectSchema(
             properties = mapOf(
@@ -81,7 +141,7 @@ internal fun webTools(): List<AITool> = listOf(
         //⚠️ 必须在 IO 线程：OkHttp 的 socket 连接不能跑在主线程，
         //否则抛 NetworkOnMainThreadException（28.0.5 真机 100% 复现）。
         withContext(Dispatchers.IO) {
-            runCatching { searchWeb(query, limit) }
+            runCatchingCancellable { searchWeb(query, limit) }
                 .getOrElse { e ->
                     Logger.warning(TAG, "web_search failed", e)
                     "搜索失败：${e.message ?: e::class.simpleName}"
@@ -108,7 +168,7 @@ internal fun webTools(): List<AITool> = listOf(
         val blocked = ssrfReason(raw)
         if (blocked != null) return@aiTool blocked
         withContext(Dispatchers.IO) {
-            runCatching { fetchAsText(raw) }
+            runCatchingCancellable { fetchAsText(raw) }
                 .getOrElse { e ->
                     Logger.warning(TAG, "fetch_webpage failed", e)
                     "抓取失败：${e.message ?: e::class.simpleName}"
@@ -130,11 +190,11 @@ internal fun webTools(): List<AITool> = listOf(
         if (query.isEmpty()) return@aiTool "query 不能为空"
         val url = "https://search.mcmod.cn/s?key=" + java.net.URLEncoder.encode(query, "UTF-8")
         withContext(Dispatchers.IO) {
-        runCatching {
+        runCatchingCancellable {
             val html = get(url)
             //mcmod 限流时返回 200 + 「搜索太频繁」，必须单独识别，别混成「没有结果」
             if (html.contains("搜索太频繁") || html.contains("请稍后再试")) {
-                return@runCatching "MC 百科正在限流（提示「搜索太频繁」），过一会儿再试"
+                return@runCatchingCancellable "MC 百科正在限流（提示「搜索太频繁」），过一会儿再试"
             }
             //链接可能是 //www.mcmod.cn/class/…、https://… 或 /class/…
             val items = Regex("""href="((?:https?:)?//(?:www\.)?mcmod\.cn/(?:class|modpack)/\d+\.html|/(?:class|modpack)/\d+\.html)"[^>]*>(.*?)</a>""",
@@ -174,7 +234,177 @@ internal fun webTools(): List<AITool> = listOf(
 )
 
 /**
- * 搜索：固定用 DuckDuckGo（不需要任何 Key，也就没有「配置引擎」这回事了）。
+ * 搜索入口：按设置选引擎。
+ *
+ * ⚠️ 旧实现用 `runCatching` 吞掉 DeepSeek 的一切失败（没配 Key / 欠费 / 限流 / 超时 / 解析失败），
+ * 然后**静默**跑 DuckDuckGo，工具返回里只写「搜索（DuckDuckGo）」。
+ * 用户完全看不到 DeepSeek 为什么没用上，表现就成了「DeepSeek 的搜索不能用、搜不到就退回」。
+ *
+ * 现在：兜底仍然保留（联网查询不该让整轮对话失败），但**降级必须可见** ——
+ * 结果开头会写明 DeepSeek 为什么没成功，模型也会照实告诉用户。
+ */
+private fun searchWeb(query: String, limit: Int): String {
+    if (AISettings.searchEngine.state != AISearchEngine.DEEPSEEK) {
+        return duckDuckGoSearch(query, limit)
+    }
+
+    //搜索 Key 优先用单独配置的；留空则复用主模型 Key（设置页文案就是这么写的）
+    val key = AISettings.searchApiKey.state.trim()
+        .ifEmpty { AISettings.apiKey.state.trim() }
+    if (key.isEmpty()) {
+        Logger.warning(TAG, "DeepSeek search skipped: no search key configured")
+        return withDuckDuckGoFallback(aiString(R.string.ai_search_ds_no_key), query, limit)
+    }
+
+    val reason = try {
+        return deepSeekSearch(query, limit, key)
+    } catch (e: CancellationException) {
+        //⚠️ 协程取消不是「搜索失败」，不能吞掉（否则用户点了「停止」还会继续跑兜底）
+        throw e
+    } catch (e: DeepSeekSearchError) {
+        Logger.warning(TAG, "DeepSeek search failed: ${e.message}")
+        e.message ?: aiString(R.string.ai_search_ds_error_bad_response)
+    } catch (e: InterruptedIOException) {
+        Logger.warning(TAG, "DeepSeek search timed out after ${DEEPSEEK_CALL_TIMEOUT_SECONDS}s: ${e.message}")
+        aiString(R.string.ai_search_ds_error_timeout, DEEPSEEK_CALL_TIMEOUT_SECONDS.toInt())
+    } catch (e: IOException) {
+        Logger.warning(TAG, "DeepSeek search network error", e)
+        aiString(R.string.ai_search_ds_error_network, e.message ?: (e::class.simpleName ?: "IO"))
+    } catch (e: Exception) {
+        Logger.warning(TAG, "DeepSeek search unexpected error", e)
+        aiString(R.string.ai_search_ds_error_network, e.message ?: (e::class.simpleName ?: "?"))
+    }
+    return withDuckDuckGoFallback(reason, query, limit)
+}
+
+/**
+ * DeepSeek 没拿到可用结果：先写清楚原因，再附上 DuckDuckGo 兜底结果。
+ *
+ * 这样用户 / 模型既能拿到结果，也能知道「这次不是 DeepSeek 搜的、为什么」。
+ */
+private fun withDuckDuckGoFallback(reason: String, query: String, limit: Int): String {
+    val fallback = try {
+        duckDuckGoSearch(query, limit)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Logger.warning(TAG, "DuckDuckGo fallback failed", e)
+        aiString(R.string.ai_search_ddg_failed, e.message ?: (e::class.simpleName ?: "?"))
+    }
+    return aiString(R.string.ai_search_fallback_notice, reason) + "\n" + fallback
+}
+
+/** DeepSeek Search 的可读失败原因（message 已本地化，直接给模型 / 用户看） */
+private class DeepSeekSearchError(message: String) : Exception(message)
+
+/**
+ * DeepSeek 官方 Search API。
+ *
+ * 端点：`POST <Base URL>/tools/search`（官方默认 `https://api.deepseek.com/v1/tools/search`）
+ * 请求：`query`(1~128 字符) / `count`(1~50) / `need_content`(是否返回网页正文)
+ * 响应：`{"results":[{rerank_score,title,url,snippet,summary,content,site_name,site_icon,date,authority}]}`
+ * 计费：按**成功请求**计（结果非空才计费），失败、空结果、超时不计费。
+ * 文档：https://api-docs.deepseek.com/zh-cn/api/search/
+ */
+private fun deepSeekSearch(query: String, limit: Int, key: String): String {
+    val payload = buildJsonObject {
+        put("query", query.take(MAX_DEEPSEEK_QUERY_CHARS))
+        put("count", limit.coerceIn(1, 50))
+        //只取长摘要（summary 约 600~800 字，正好给模型读）。
+        //need_content=true 会让服务端在返回前抓取每个网页正文，时延从几秒涨到几十秒，
+        //旧代码的 18 秒读超时就是这么被打爆、每次搜索都掉进兜底的；
+        //要看正文时让模型再调 fetch_webpage，比这里整页抓取更可控。
+        put("need_content", false)
+    }
+    val request = Request.Builder()
+        .url(deepSeekSearchUrl())
+        .header("Authorization", "Bearer $key")
+        .header("Content-Type", "application/json")
+        .header("User-Agent", USER_AGENT)
+        .post(payload.toString().toRequestBody("application/json".toMediaType()))
+        .build()
+
+    deepSeekHttpClient.newCall(request).execute().use { response ->
+        val body = response.body?.string().orEmpty()
+        if (!response.isSuccessful) {
+            throw DeepSeekSearchError(deepSeekHttpError(response.code, body))
+        }
+        val root = runCatching { Json.parseToJsonElement(body).jsonObject }.getOrNull()
+            ?: throw DeepSeekSearchError(aiString(R.string.ai_search_ds_error_bad_response))
+        val results = root["results"] as? JsonArray
+            ?: throw DeepSeekSearchError(aiString(R.string.ai_search_ds_error_bad_response))
+        if (results.isEmpty()) throw DeepSeekSearchError(aiString(R.string.ai_search_ds_empty))
+
+        val sb = StringBuilder()
+        sb.append("搜索（DeepSeek）：").append(query).append('\n')
+        results.take(limit).forEachIndexed { index, element ->
+            val item = element as? JsonObject ?: return@forEachIndexed
+            val title = item.text("title")
+            val url = item.text("url")
+            //summary 是官方给模型读的长摘要（600~800 字）；snippet 是旧字段，留作兜底
+            val summary = item.text("summary").ifBlank { item.text("snippet") }
+            val content = item.text("content")
+            val site = item.text("site_name")
+            val date = item.text("date").take(10)
+            sb.append(index + 1).append(". ").append(title).append('\n')
+            sb.append("   ").append(url).append('\n')
+            if (summary.isNotBlank()) sb.append("   ").append(summary).append('\n')
+            if (content.isNotBlank()) sb.append("   正文：").append(content.take(1200)).append('\n')
+            val meta = listOf(site, date).filter { it.isNotBlank() }.joinToString(" · ")
+            if (meta.isNotBlank()) sb.append("   （").append(meta).append("）\n")
+        }
+        return sb.toString()
+    }
+}
+
+/** 读 JSON 对象的字符串字段；缺失或为 JSON null 时返回空串 */
+private fun JsonObject.text(key: String): String =
+    (this[key] as? JsonPrimitive)?.contentOrNull.orEmpty()
+
+/**
+ * Search 接口地址：跟随设置里的 Base URL。
+ *
+ * 官方完整地址是 `https://api.deepseek.com/v1/tools/search`（Base URL 默认值就是 `…/v1`）。
+ * 旧实现把官方域名写死：用户如果在 AI 设置里填了「兼容 OpenAI 协议的中转地址」，
+ * 搜索却仍然打到官方站点，中转的 Key 在官方无效 → 401 → 静默退回 DuckDuckGo。
+ * 现在跟随 Base URL；只写了域名、漏掉 `/v1` 的会被补上（避免拼出 `…/v1/v1/tools/search`）。
+ */
+private fun deepSeekSearchUrl(): String {
+    val base = AISettings.getBaseUrl()
+    val versioned = if (base.endsWith("/v1")) base else "$base/v1"
+    return "$versioned/tools/search"
+}
+
+/**
+ * 把 Search 接口的 HTTP 错误翻译成明确原因。
+ *
+ * 官方错误码：400 参数不合法 / 401 Key 无效 / 402 余额不足 / 403 拒绝 /
+ * 408 读请求体超时 / 429 限流 / 5xx 服务端错误。
+ * 旧实现只抛 “DeepSeek Search HTTP 402” 这种码，用户根本不知道是欠费还是 Key 错了。
+ */
+private fun deepSeekHttpError(code: Int, body: String): String {
+    val detail = runCatching {
+        val obj = Json.parseToJsonElement(body).jsonObject
+        when (val err = obj["error"]) {
+            is JsonObject -> err["message"]
+            else -> obj["message"]
+        }.let { (it as? JsonPrimitive)?.contentOrNull }
+    }.getOrNull()?.takeIf { it.isNotBlank() }?.take(300)
+        ?: aiString(R.string.ai_search_ds_error_detail_unknown)
+
+    return when (code) {
+        400 -> aiString(R.string.ai_search_ds_error_bad_request, detail)
+        401, 403 -> aiString(R.string.ai_search_ds_error_auth)
+        402 -> aiString(R.string.ai_search_ds_error_balance)
+        404 -> aiString(R.string.ai_search_ds_error_not_supported, deepSeekSearchUrl())
+        429 -> aiString(R.string.ai_search_ds_error_rate_limited)
+        in 500..599 -> aiString(R.string.ai_search_ds_error_server, code, detail)
+        else -> aiString(R.string.ai_search_ds_error_http, code, detail)
+    }
+}
+
+/**
+ * 搜索：DuckDuckGo（不需要任何 Key）。
  *
  * 28.0.6 之前的实现只认 `<a class="result__a" href="...">` 这种精确结构，
  * DDG 页面结构一变就整体失效（真机实测：永远返回「没有搜到结果」）。
@@ -184,81 +414,6 @@ internal fun webTools(): List<AITool> = listOf(
  * 3. 再不行扫普通外链。
  * 任何一层命中就返回，避免「页面明明有结果却说没有」。
  */
-/**
- * 搜索入口：按设置选引擎。
- *
- * DeepSeek 优先（结果带 summary/content，中文更准）；
- * 未配置 Key、余额不足、限流、超时或返回异常时**静默降级**到 DuckDuckGo，
- * 保证「联网查一下」这件事不会因为引擎故障整段卡死。
- */
-private fun searchWeb(query: String, limit: Int): String {
-    if (AISettings.searchEngine.state == AISearchEngine.DEEPSEEK) {
-        val key = AISettings.searchApiKey.state.ifBlank { AISettings.apiKey.state }
-        if (key.isNotBlank()) {
-            runCatching { deepSeekSearch(query, limit, key) }
-                .onSuccess { return it }
-                .onFailure { e ->
-                    Logger.warning(TAG, "DeepSeek search failed, falling back to DuckDuckGo", e)
-                }
-        }
-    }
-    return duckDuckGoSearch(query, limit)
-}
-
-/**
- * DeepSeek 官方 Search API。
- *
- * 端点：`POST https://api.deepseek.com/v1/tools/search`
- * 请求：`query`(1~128 字符) / `count`(1~50) / `need_content`(是否返回正文)
- * 计费：按**成功请求**计，约 $0.75 / 1000 次；失败、空结果、超时不收费。
- */
-private fun deepSeekSearch(query: String, limit: Int, key: String): String {
-    val payload = buildString {
-        append("{\"query\":")
-        append(org.json.JSONObject.quote(query))
-        append(",\"count\":").append(limit.coerceIn(1, 50))
-        append(",\"need_content\":true}")
-    }
-    val request = Request.Builder()
-        .url("https://api.deepseek.com/v1/tools/search")
-        .header("Authorization", "Bearer $key")
-        .header("Content-Type", "application/json")
-        .header("User-Agent", USER_AGENT)
-        .post(payload.toRequestBody("application/json".toMediaType()))
-        .build()
-
-    httpClient.newCall(request).execute().use { response ->
-        if (!response.isSuccessful) {
-            throw IOException("DeepSeek Search HTTP ${response.code}")
-        }
-        val body = response.body?.string().orEmpty()
-        val root = Json.parseToJsonElement(body).jsonObject
-        val results = root["results"]?.jsonArray ?: return "没有搜到结果。"
-        if (results.isEmpty()) return "没有搜到结果。"
-
-        val sb = StringBuilder()
-        sb.append("搜索（DeepSeek）：").append(query).append('\n')
-        results.take(limit).forEachIndexed { index, element ->
-            val item = element.jsonObject
-            val title = item["title"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
-            val url = item["url"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
-            val summary = item["summary"]?.jsonPrimitive?.contentOrNullSafe()
-                ?: item["snippet"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
-            val content = item["content"]?.jsonPrimitive?.contentOrNullSafe().orEmpty()
-            sb.append(index + 1).append(". ").append(title).append('\n')
-            sb.append("   ").append(url).append('\n')
-            if (summary.isNotBlank()) sb.append("   ").append(summary).append('\n')
-            if (content.isNotBlank()) {
-                sb.append("   正文：").append(content.take(1200)).append('\n')
-            }
-        }
-        return sb.toString()
-    }
-}
-
-private fun kotlinx.serialization.json.JsonPrimitive.contentOrNullSafe(): String? =
-    runCatching { content }.getOrNull()
-
 private fun duckDuckGoSearch(query: String, limit: Int): String {
     val url = "https://html.duckduckgo.com/html/?q=" + java.net.URLEncoder.encode(query, "UTF-8")
     val html = get(url)

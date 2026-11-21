@@ -75,6 +75,12 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [本地归档](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites-archive.md) |
 | [从收藏安装](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/favorites-install.md) |
 
+### 音乐播放器
+
+| 文档 |
+|---|
+| [内置音乐播放器](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/music-player.md) |
+
 ### AI Agent
 
 | 文档 |
@@ -162,7 +168,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 2. **本文件的目录表必须同步**；新增文件不登记等于没写。
 3. **不要在这里写密钥、Token、内网地址、个人联系方式**。
 4. **版本号、下载地址、UI 路径必须可核对**；不确定就写「以当前版本界面为准」，不要编。
-5. 六语言 `README*.md` 是另一套东西：中文可玩梗，其他语言必须严肃、逐段对齐；详细历史以 `HANDOFF.md` / `CHANGELOG.md` 为准。
+5. 各语言 `README*.md`（共 24 种语言）是另一套东西：中文可玩梗，其他语言必须严肃、逐段对齐；详细历史以 `HANDOFF.md` / `CHANGELOG.md` 为准。
 6. **每篇文档必须同时存在中文（`docs/zh/`）与英文（`docs/en/`）版本，文件名一致；改动一篇就同步另一篇。**
 
 > 用户文档集中在 `docs/`；更早的记录散落在 HANDOFF / README / CHANGELOG。

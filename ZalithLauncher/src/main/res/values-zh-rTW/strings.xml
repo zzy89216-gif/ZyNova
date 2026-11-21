@@ -769,7 +769,7 @@
     <string name="settings_tab_launcher">啟動器設定</string>
     <string name="settings_tab_java_manage">Java 管理</string>
     <string name="settings_tab_control_manage">控制管理</string>
-    <string name="settings_tab_info_about">關於</string>
+    <string name="settings_tab_info_about">關於與插件</string>
     <string name="settings_renderer_auto_title">自動</string>
     <string name="settings_renderer_auto_summary">依實例自動挑選合適的渲染器，不需要自己選。</string>
     <string name="settings_renderer_global_renderer_title">全域渲染器</string>

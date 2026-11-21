@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.2.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.2.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.2)
+[![Release](https://img.shields.io/badge/Release-28.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.3)
 
 ---
 
@@ -57,7 +57,7 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 
 ## 📚 文件
 
-> 📚 官方文件目前只有簡體中文與英文兩套（各 77 篇）；以下連結為簡體中文版，用語略有差異。
+> 📚 官方文件目前只有簡體中文與英文兩套（各 78 篇）；以下連結為簡體中文版，用語略有差異。
 
 | 內容 | 檔案 |
 |---|---|

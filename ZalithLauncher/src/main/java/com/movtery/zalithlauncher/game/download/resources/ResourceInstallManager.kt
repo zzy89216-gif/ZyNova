@@ -691,10 +691,24 @@ object ResourceInstallManager {
         var installed = 0
         outcome.results.forEach { result ->
             val targetFile = File(targetFolder, result.file.name)
-            if (targetFile.exists() && !targetFile.delete()) {
-                throw IOException("Failed to delete the existing resource file: ${targetFile.absolutePath}")
+            //议题 #73：先写 `.part` 再改名，避免进程在复制途中被杀时
+            //在 mods/资源包目录里留下一个半截的 jar/zip（游戏读到会直接崩）。
+            val tempFile = File(targetFolder, "${result.file.name}.part")
+            try {
+                result.file.copyTo(tempFile, overwrite = true)
+                if (targetFile.exists() && !targetFile.delete()) {
+                    throw IOException("Failed to delete the existing resource file: ${targetFile.absolutePath}")
+                }
+                if (!tempFile.renameTo(targetFile)) {
+                    //个别文件系统上 rename 会失败：退化为复制（至少内容已经是完整的）
+                    tempFile.copyTo(targetFile, overwrite = true)
+                    FileUtils.deleteQuietly(tempFile)
+                }
+            } catch (e: Throwable) {
+                //失败时不要留下 .part
+                FileUtils.deleteQuietly(tempFile)
+                throw e
             }
-            result.file.copyTo(targetFile, overwrite = true)
 
             //存档资源需要解压后才能被游戏识别
             if (type == ResourceType.SAVE) {

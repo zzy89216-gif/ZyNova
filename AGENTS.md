@@ -27,13 +27,13 @@
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.2.2`（**预发行版**，APK 内不带后缀；发行名就是「28.2.2」，GitHub Release 勾 pre-release） |
-| versionCode | `282002` |
+| 版本名 | 当前 `28.2.3`（**预发行版**，APK 内不带后缀；发行名就是「28.2.3」，GitHub Release 勾 pre-release） |
+| versionCode | `282003` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.2.2`（预发行）+ `v28.2.1` / `v28.2.0`（正式，保留） |
-| main | 28.2.2 代码；只有 `main` 一个分支 |
+| Release | `v28.2.3`（最新，预发行）+ `v28.2.2`（预发行）+ `v28.2.1` / `v28.2.0`（正式，保留） |
+| main | 28.2.3 代码；只有 `main` 一个分支 |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
-| 用户文档 | `docs/zh` 与 `docs/en` **各 77 篇**，文件名一一对应 |
+| 用户文档 | `docs/zh` 与 `docs/en` **各 78 篇**，文件名一一对应 |
 | 下一轮待办 | 统一在 GitHub Issue 里跟踪（原先仓库根的清单文档已删除，不再维护第二份） |
 
 > ⚠️ **条款版本与应用版本已解耦**（2026-11 起）：`OnboardingState.CURRENT_LEGAL_VERSION` 是独立常量，
@@ -65,8 +65,9 @@
 
 ### AI 能力（51 个工具）
 完整清单见 [`docs/zh/ai-tools.md`](docs/zh/ai-tools.md)。分类：安装与启动、资源与整合包、实例、文件、公有存储、
-文档生成（手写 OOXML，不引 POI）、日志与崩溃、联网（固定 DuckDuckGo）、联机（陶瓦 + 樱花 frp）、收藏、设置。
-已移除：崩溃自动修复（`CrashGuard` / `AIPendingPrompt`）、搜索引擎配置。
+文档生成（手写 OOXML，不引 POI）、日志与崩溃、联网（DuckDuckGo / DeepSeek 官方搜索，DeepSeek 失败会在结果里写明原因并兜底）、
+联机（陶瓦 + 樱花 frp）、收藏、设置。
+已移除：崩溃自动修复（`CrashGuard` / `AIPendingPrompt`）。
 
 ### 其他
 - **游戏数据在公共存储**：`/storage/emulated/0/ZyNova/.Minecraft`（`PathManager.PUBLIC_GAME_DIR_NAME` + `PUBLIC_GAME_DIR_INNER`），
@@ -151,7 +152,7 @@ POST /repos/zzy89216-gif/ZyNova/releases
 
 ## 五、文档规则（维护者最在意这条）
 
-1. **中英必须成对**：`docs/zh` 与 `docs/en` 文件名一对一、篇数相同（当前各 77 篇），并都在各自的 `README.md` 索引里登记。
+1. **中英必须成对**：`docs/zh` 与 `docs/en` 文件名一对一、篇数相同（当前各 78 篇），并都在各自的 `README.md` 索引里登记。
 2. **坏链必须为 0**：相对链接、图片、文内锚点都要能解析。
 3. **索引标题 = 正文 H1**，不要各写各的。
 4. **用户文档里不要写内部版本号**（如「27.9.0 起」）：那些版本用户从没见过。用行为描述代替。

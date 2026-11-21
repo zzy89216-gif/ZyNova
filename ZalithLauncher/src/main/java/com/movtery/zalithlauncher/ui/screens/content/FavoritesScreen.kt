@@ -30,19 +30,21 @@ import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteProject
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteInstallOutcome
 import com.movtery.zalithlauncher.game.download.assets.favorites.FavoriteQuickInstaller
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Tab
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -63,9 +65,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.movtery.zalithlauncher.R
@@ -95,6 +99,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
@@ -364,11 +369,9 @@ private fun LocalArchiveContent(
             }
 
             if (entries.isEmpty() && !busy) {
-                Text(
-                    modifier = Modifier.padding(16.dp),
+                FavoritesEmptyCard(
                     text = stringResource(R.string.favorites_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    iconRes = R.drawable.ic_star_filled
                 )
             }
 
@@ -577,20 +580,56 @@ fun FavoritesScreen(
     onBrowseVersions: ((Platform, String, PlatformClasses, String?) -> Unit)? = null,
 ) {
     var tab by remember { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
+    /** 在线收藏的远端刷新状态；刷新入口在页头，所以状态提升到页面这一层 */
+    var refreshing by remember { mutableStateOf(false) }
+    //在线收藏数量：页头计数与「刷新」是否可用都看它。
+    //projects 是 SnapshotStateMap，收藏增删 / 装载完成后这里会自动重组
+    val onlineCount = FavoriteProjectsRepository.projects.size
 
     BaseScreen(screenKey = screenKey, currentKey = currentKey) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TabRow(selectedTabIndex = tab, modifier = Modifier.fillMaxWidth()) {
-                Tab(
-                    selected = tab == 0,
-                    onClick = { tab = 0 },
-                    text = { Text(text = stringResource(R.string.favorites_tab_online)) }
+        Column(modifier = Modifier.fillMaxSize()) {
+            //议题 #76：原来是裸 `TabRow`，默认容器色是 surface（深色主题下接近纯黑），
+            //铺在壁纸页面上就像贴了一条黑条；这里换成与联机页一致的玻璃胶囊切换菜单，
+            //并把「刷新」收进同一条页头视觉带，别再让它悬在内容上方。
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, end = 12.dp, top = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                FavoritesTabSwitcher(
+                    selectedTab = tab,
+                    onTabSelected = { tab = it }
                 )
-                Tab(
-                    selected = tab == 1,
-                    onClick = { tab = 1 },
-                    text = { Text(text = stringResource(R.string.favorites_tab_local)) }
-                )
+
+                if (tab == 0) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.favorites_online_count, onlineCount),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.End,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    FavoritesRefreshButton(
+                        refreshing = refreshing,
+                        enabled = !refreshing && onlineCount > 0,
+                        onClick = {
+                            refreshing = true
+                            scope.launch {
+                                //刷新失败保持静默（沿用原行为）：远端数据不动，本地收藏仍在
+                                runCatching { FavoriteProjectsRepository.refreshRemote() }
+                                refreshing = false
+                            }
+                        }
+                    )
+                } else {
+                    //本地归档没有可刷新的远端数据：占位撑开，让切换菜单待在原位，切页不左右跳
+                    Spacer(modifier = Modifier.weight(1f))
+                }
             }
 
             when (tab) {
@@ -605,6 +644,176 @@ fun FavoritesScreen(
     }
 }
 
+/**
+ * 收藏页顶部的分段切换（在线收藏 / 本地归档）。
+ *
+ * 样式照搬 [MultiplayerModeSwitcher]：玻璃底 `Surface` + 超大圆角 + 选中项主色胶囊底衬。
+ * 配色全部走主题 token（`cardColor` / `onCardColor` / `primaryContainer`），
+ * 浅色 / 深色 / 各配色主题都能正常显示；`influencedByBackground = false` 与联机页一致——
+ * 悬浮胶囊不跟背景不透明度一起变透明，否则压在壁纸上的文字会看不清。
+ * 不用 `TabRow` 的原因见议题 #76：`TabRow` 默认容器色是 `surface`，在这套铺壁纸的界面上是一条黑条。
+ */
+@Composable
+private fun FavoritesTabSwitcher(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val titles = remember {
+        listOf(R.string.favorites_tab_online, R.string.favorites_tab_local)
+    }
+
+    Surface(
+        modifier = modifier.clip(MaterialTheme.shapes.extraLarge),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = cardColor(false),
+        contentColor = onCardColor(),
+        tonalElevation = 3.dp,
+        shadowElevation = 6.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(all = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            titles.forEachIndexed { index, titleRes ->
+                FavoritesTabOption(
+                    text = stringResource(titleRes),
+                    selected = index == selectedTab,
+                    onClick = { if (index != selectedTab) onTabSelected(index) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FavoritesTabOption(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.extraLarge)
+            .clickable(onClick = onClick),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+        contentColor = if (selected) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        }
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1
+        )
+    }
+}
+
+/**
+ * 页头的「刷新」入口：与切换菜单同一视觉区、同一套玻璃胶囊样式，
+ * 也不再悬空压着内容。
+ *
+ * 结构刻意与 [FavoritesTabSwitcher] 对齐：外层玻璃壳留 4dp 边距，内层是可点击胶囊
+ * （Material3 的点击区域有 48dp 最小触控尺寸，两层结构能保证两颗胶囊等高，不会一大一小）。
+ *
+ * @param enabled 没有在线收藏时按原行为置灰（此时也没有可刷新的远端数据）
+ */
+@Composable
+private fun FavoritesRefreshButton(
+    refreshing: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.extraLarge)
+            .alpha(if (enabled || refreshing) 1f else 0.5f),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = cardColor(false),
+        contentColor = onCardColor(),
+        tonalElevation = 3.dp,
+        shadowElevation = 6.dp
+    ) {
+        //4dp 外壳留白与切换菜单完全一致：内层点击胶囊按 48dp 最小触控尺寸撑高，两层合起来等高
+        Box(modifier = Modifier.padding(all = 4.dp)) {
+            Surface(
+                modifier = Modifier.clip(MaterialTheme.shapes.extraLarge),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = Color.Transparent,
+                contentColor = onCardColor(),
+                enabled = enabled,
+                onClick = onClick
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    if (refreshing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(R.drawable.ic_refresh),
+                            contentDescription = null
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.favorites_online_refresh),
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 空状态提示卡片。
+ *
+ * 议题 #76 截图里空状态说明只是裸文字直接压在壁纸上，几乎看不清；
+ * 收进玻璃卡片后与页面其它卡片同级，空 / 有数据两种状态视觉上连续。
+ */
+@Composable
+private fun FavoritesEmptyCard(
+    text: String,
+    @DrawableRes iconRes: Int,
+    modifier: Modifier = Modifier
+) {
+    BackgroundCard(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                modifier = Modifier.size(26.dp),
+                painter = painterResource(iconRes),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                contentDescription = null
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
 /** 在线收藏：搬自上游 ZalithLauncher2 的 FavoriteProjectsRepository */
 @Composable
 private fun OnlineFavoritesContent(
@@ -614,8 +823,6 @@ private fun OnlineFavoritesContent(
     onBrowseVersions: ((Platform, String, PlatformClasses, String?) -> Unit)? = null,
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var refreshing by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         FavoriteProjectsRepository.ensureLoaded()
@@ -747,31 +954,7 @@ private fun OnlineFavoritesContent(
             .padding(all = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = stringResource(R.string.favorites_online_count, entries.size),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            FilledTonalButton(
-                enabled = !refreshing && entries.isNotEmpty(),
-                onClick = {
-                    refreshing = true
-                    scope.launch {
-                        runCatching { FavoriteProjectsRepository.refreshRemote() }
-                        refreshing = false
-                    }
-                }
-            ) {
-                Text(text = stringResource(R.string.favorites_online_refresh))
-            }
-        }
-
+        //收藏数量与「刷新」已经收进页头（见 [FavoritesScreen]），这里只负责列表内容
         //目标实例提示：让用户点下载之前就知道会装进哪个实例
         installContext?.let { target ->
             Text(
@@ -792,11 +975,9 @@ private fun OnlineFavoritesContent(
         }
 
         if (entries.isEmpty()) {
-            Text(
-                modifier = Modifier.padding(16.dp),
+            FavoritesEmptyCard(
                 text = stringResource(R.string.favorites_online_empty),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                iconRes = R.drawable.ic_favorite_outlined
             )
         }
 

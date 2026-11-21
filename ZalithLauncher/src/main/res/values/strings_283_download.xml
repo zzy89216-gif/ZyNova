@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 启动恢复：上次下载/安装被进程被杀打断（议题 #73） -->
+    <string name="download_recovery_game_cleaned">The previous installation was interrupted; the unfinished files have been cleaned up.</string>
+    <string name="download_recovery_game_restored">The previous reinstall was interrupted; your previous version files have been restored.</string>
+    <string name="download_recovery_game_restore_failed">The previous reinstall was interrupted and the previous version files could not be restored automatically. Please install the version again.</string>
+    <string name="download_recovery_modpack_cleaned">The previous modpack installation was interrupted; the unfinished files have been removed. Please install it again.</string>
+</resources>

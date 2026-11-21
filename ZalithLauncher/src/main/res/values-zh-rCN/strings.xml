@@ -942,7 +942,7 @@
     <string name="settings_tab_launcher">启动器设置</string>
     <string name="settings_tab_java_manage">Java 管理</string>
     <string name="settings_tab_control_manage">按键布局</string>
-    <string name="settings_tab_info_about">关于与支持</string>
+    <string name="settings_tab_info_about">关于与插件</string>
     <string name="settings_renderer_global_renderer_title">全局渲染器</string>
     <string name="settings_renderer_global_renderer_summary">默认使用的渲染器。「自动」会按设备能力与实例的 Minecraft 版本自动挑选（MobileGlues → GL4ES → Ironized Zink）；手动指定则始终优先按你的选择</string>
     <string name="settings_renderer_global_vulkan_driver_title">Vulkan 驱动器</string>

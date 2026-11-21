@@ -20,6 +20,9 @@ to the permission page and does **not** switch the game directory to private sto
 again and the data is back (the files never left `/ZyNova/.Minecraft`).
 **The UI stutters?** Glass has a single background blur and no always-on animations. If it is still heavy,
 turn "background blur" down or set "background opacity" to 100% (blur is skipped then).
+**Deleting a version feels slow?** It walks the whole version folder first (counting files and size), then deletes
+them one by one, so large versions take a while. Deletion now shows a full-screen determinate progress you can
+cancel at any time; cancelling restores the version when possible and tells you how many files were already gone.
 **Does the AI delete things?** In full-control mode it can execute writes; use confirm mode if unsure.
 **Logs private?** They may contain IDs and paths; review before sharing.
 
@@ -31,4 +34,4 @@ There is only one project mailbox, and it works everywhere:
 | <ZyNovaLauncher@outlook.com> | The single public project mailbox (Chinese mailboxes, QQ Mail and overseas mailboxes all work) |
 | <https://x.com/ZyNovaProject> | Official X account (announcements, release news) |
 
-Please include the launcher version (Settings → About), game version + loader, reproduction steps and a log link.
+Please include the launcher version (Settings → About & Plugins), game version + loader, reproduction steps and a log link.

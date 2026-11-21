@@ -75,6 +75,12 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [Local archive](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites-archive.md) |
 | [Installing from favorites](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/favorites-install.md) |
 
+### Music player
+
+| Document |
+|---|
+| [Built-in music player](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/music-player.md) |
+
 ### AI Agent
 
 | Document |
@@ -162,5 +168,5 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 2. Register new files in this index and in `docs/README.md`.
 3. Never write secrets, tokens, internal addresses or personal data here.
 4. Keep version numbers and UI paths verifiable; say "as of the current UI" when unsure.
-5. The six `README*.md` files are localized separately; Chinese may be playful, other languages must stay factual.
+5. The localized `README*.md` files (24 languages) are maintained separately; Chinese may be playful, other languages must stay factual.
 

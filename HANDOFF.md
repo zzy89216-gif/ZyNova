@@ -33,31 +33,52 @@
 | 文件 | 内容 |
 |---|---|
 | `docs/README.md` | **中英双语文档入口**（跳转到 `docs/zh/` 或 `docs/en/`） |
-| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 77 篇，文件名一一对应 |
-| `docs/install.md` / `docs/first-launch.md` / `docs/choose-apk.md` | 安装、首次启动、安装包说明（只有一个通用版） |
-| `docs/usage.md` / `docs/install-*.md` / `docs/export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
-| `docs/instance-settings.md` / `docs/java.md` / `docs/memory.md` / `docs/jvm-args.md` / `docs/backup.md` | 实例、Java、内存、JVM 参数、备份 |
-| `docs/renderers*.md` / `docs/mobileglues.md` / `docs/gl4es.md` / `docs/ltw.md` | 渲染器总览与各渲染器专题 |
-| `docs/login*.md` / `docs/favorites*.md` / `docs/ai-*.md` | 登录、收藏、AI Agent |
-| `docs/crash-*.md` / `docs/troubleshooting.md` / `docs/faq.md` | 崩溃分析、日志、常见故障、FAQ |
-| `docs/data-*.md` / `docs/uninstall.md` / `docs/logs-upload.md` / `docs/api-keys.md` | 数据位置、卸载、日志上传、Key |
-| `docs/build*.md` / `docs/release.md` / `docs/issue-templates.md` | 构建、CI、发布、议题模板 |
+| `docs/zh/README.md` / `docs/en/README.md` | 中文 / 英文总索引，各列 78 篇，文件名一一对应 |
+| `docs/{zh,en}/install.md` / `first-launch.md` / `choose-apk.md` | 安装、首次启动、安装包说明（只有一个通用版） |
+| `docs/{zh,en}/usage.md` / `install-*.md` / `export-modpack.md` | 日常使用、游戏/模组/整合包/资源/光影/存档、导出 |
+| `docs/{zh,en}/music-player.md` | 内置音乐播放器（#77，28.2.3 起） |
+| `docs/{zh,en}/instance-settings.md` / `java.md` / `memory.md` / `jvm-args.md` / `backup.md` | 实例、Java、内存、JVM 参数、备份 |
+| `docs/{zh,en}/renderers*.md` / `mobileglues.md` / `gl4es.md` / `ltw.md` | 渲染器总览与各渲染器专题 |
+| `docs/{zh,en}/login*.md` / `favorites*.md` / `ai-*.md` | 登录、收藏、AI Agent |
+| `docs/{zh,en}/crash-*.md` / `troubleshooting.md` / `faq.md` | 崩溃分析、日志、常见故障、FAQ |
+| `docs/{zh,en}/data-*.md` / `uninstall.md` / `logs-upload.md` / `api-keys.md` | 数据位置、卸载、日志上传、Key |
+| `docs/{zh,en}/build*.md` / `release.md` / `issue-templates.md` | 构建、CI、发布、议题模板 |
 
 ⚠️ **硬性要求**：以后新增功能 / 修 Bug / 改 UI 入口，必须同步更新对应 `docs/` 文件，**并且中英两份都要写**；
 新增文档必须在 `docs/zh/README.md` 与 `docs/en/README.md` 同时登记，文件名保持一致。只改代码不改文档，视为没完成。
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.2.2**（`launcher_version_code=282002`，**预发行版**，版本名不带后缀）；
+- 当前版本 **28.2.3**（`launcher_version_code=282003`，**预发行版**，版本名不带后缀）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.2.2**（`launcher_version_code=282002`，预发行版）
+**当前版本：28.2.3**（`launcher_version_code=282003`，预发行版）
 
-### 28.2.2 预发行版（本轮修复）
+### 28.2.3 预发行版（本轮修复）
+
+- 议题 #74：删除版本改为全屏**确定进度**（先扫描统计文件数 / 大小，再逐文件删；可取消）；实例开删前先挪进隐藏
+  临时目录，取消时尽量 rename 回原路径恢复；删除任务挂在 `VersionsManager` 自己的作用域上，不再阻塞到像卡死。
+- 议题 #72：安装成功 / 整合包命名 / 移动网络 / 通知权限等弹窗全局化，任何页面都会正常弹出；离开下载页不再取消或
+  挂起安装；「取消全部任务」/ 任务面板取消后状态能正确复位。
+- 议题 #73：安装过程写 journal，进程被杀后下次启动自动安全恢复（半成品清理 / 覆盖安装回滚旧 json+jar /
+  整合包残留清理并提示重装）；资源文件先写 `.part` 再改名；修 `onStart` 异常导致的崩溃与永久「安装中」。
+- 议题 #71：关于页更名「关于与插件 / About & Plugins」；`settings_tab_info_about` 中 / 英 / 繁三套改值，
+  其他语言的泛指名保持不动。
+- 议题 #68：多人联机页标题改为「多人联机」。
+- 议题 #69 / #70：关于页四颗按钮等宽等高、右边缘对齐（按最长标签自适应，换语言不写死）。
+- 议题 #76：收藏页顶部切换条由裸 `TabRow` 改为玻璃 / 胶囊样式，刷新按钮同套样式。
+- 议题 #77：**新增内置音乐播放器（MVP）**——`game/music/`、`ui/screens/content/music/`、
+  `res/values*/strings_283_music.xml`；前台服务 + 通知栏控制、音频焦点让位、拔耳机暂停、
+  游戏内跨进程快照面板；曲库在私有目录 `files/music/`。
+- AI 联网搜索：DeepSeek 官方搜索链路修复（超时 / 接口地址 / 错误分类），失败不再静默——结果里写明原因并
+  兜底 DuckDuckGo；`update_ai_setting` 支持 `searchEngine` 与搜索 Key（留空复用主模型 Key）。
+- 文档：新增 `docs/{zh,en}/music-player.md`，用户文档 77 → 78 篇。
+
+### 28.2.2 预发行版（上轮修复）
 
 - 议题 #65：版本设置 → 渲染器列表不再出现两条「跟随全局」（`getIDList()` 自带一条 + 手动又加一条）。
 - 议题 #66：游戏内「等待游戏画面」提示卡不再被撑到全屏宽（`BackgroundCard.fillContentWidth`）。
@@ -3300,7 +3321,7 @@ LTW 实验性（仅 arm64）；收藏按钮补到资源页与详情页；导出�
 崩溃页新增「崩溃分析 · 怎么处理」；AI 设置页与输入框重做；微软登录轮询修复；
 构建拆成 universal + arm64 两个 APK。发布地址：
 <https://github.com/zzy89216-gif/ZyNova/releases/tag/v27.9.0>。
-用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 77 篇，入口 `docs/README.md`。）
+用户文档已拆到 `docs/zh/` 与 `docs/en/`，各 78 篇，入口 `docs/README.md`。）
 
 **27.4.0**：2026-10-16（27.4.0 已开发完成 —— 新增并默认启用「自动」渲染器
 （`AutoRenderer` + `Renderers.resolveIdentifier`：按 Minecraft 版本在
@@ -3346,6 +3367,47 @@ surface 重建后渲染状态未恢复、窗口引用计数多算）；
 ### 下次发版要做的
 已转到 Issue 跟踪，不在文档里维护清单：<https://github.com/zzy89216-gif/ZyNova/issues/50>。
 一句话：**下次打 APK 时，把官方 X 和项目邮箱写进「关于页」**。
+
+---
+
+## 28.2.3（预发行版）：内置音乐播放器 + 下载 / 删除链路加固 ✨
+
+> 本轮修 8 个议题（#68 #69 #70 #71 #72 #73 #74 #76），新增内置音乐播放器（#77 MVP），并修 AI 联网搜索。
+> 音乐播放器是**新增模块**，下面这份接线说明别丢；它没有 media session，别把「锁屏 / 蓝牙媒体键」写进文档。
+
+**一、新增：内置音乐播放器（#77）**
+
+- 入口：顶栏胶囊第 8 个「音乐」→ `NormalNavKey.Music` → `MusicScreen`；游戏内启动器菜单右栏「音乐」→
+  `MusicPlayerDialog`（弹层，不退出游戏），两边共用 `MusicPlayerController` 单例。
+- 曲库：`game/music/MusicLibrary.kt` 把导入的文件复制进 `filesDir/music`（先写 `<name>.part` 再改名，
+  同名自动加后缀）；支持 mp3 / m4a / m4b / aac / flac / ogg / oga / opus / wav / weba / 3gp / mp4。
+- 播放：`MusicPlayerController`（AndroidX Media3 ExoPlayer，**所有公开方法必须主线程调用**）+
+  `MusicPreferences`（MMKV 记住上次曲目与进度）；播完自动下一首（列表循环），暂停时切歌只换不开播。
+- 后台：`MusicService` 前台服务 + `MusicNotification`（上一首 / 播放暂停 / 下一首，划掉通知 = 停止）；
+  音频焦点被抢 → 暂停让位；`becoming-noisy` → 拔耳机暂停。
+- 游戏内面板：`MusicRemotePanel` 通过 MMKV 跨进程快照（`music.state.*`，500ms 刷新）显示状态，可切歌 / 拖进度；
+  导入与删除只回启动器「音乐」页做。
+- UI 文案在 `res/values/strings_283_music.xml` 与 `values-zh-rCN/strings_283_music.xml`（新 key 集中放这里）。
+
+**二、下载 / 安装链路（#72 #73）**
+
+- 安装全程写 journal；进程被杀后下次启动做安全恢复（半成品清理 / 覆盖安装回滚 / 整合包残留清理并提示重装）。
+- 资源文件先写 `.part` 再 rename，不再留半个 jar；修 `onStart` 异常导致的崩溃与永久「安装中」。
+- 安装成功、整合包命名、权限提醒等弹窗改到全局层，不再依赖 `DownloadScreen` 的 composition。
+
+**三、删除版本（#74）**
+
+- 先扫描统计文件数 / 总大小，再逐文件删；进度是**确定值**（百分比 / 文件数 / 已删与总大小 / 当前文件），可取消。
+- 开删前把实例挪进隐藏临时目录，取消时尽量 rename 回原路径；实现在
+  `VersionsManageElements.DeleteVersionProgressDialog`，任务挂在 `VersionsManager` 自己的作用域上。
+
+**四、其他**
+
+- 关于页更名「关于与插件」（`settings_tab_info_about` 中 / 英 / 繁三套），四颗按钮等宽等高、右边缘对齐。
+- 多人联机页标题改为「多人联机」。
+- 收藏页顶部切换条去掉裸 `TabRow`，改用玻璃 / 胶囊样式，刷新按钮同套。
+- AI 联网搜索：`AISearchEngine` / `WebTools` 失败可见化（写明原因 + 兜底 DuckDuckGo），`AIConfigTools` 支持
+  改搜索引擎与搜索 Key。
 
 ---
 

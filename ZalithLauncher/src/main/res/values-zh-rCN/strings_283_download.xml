@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 启动恢复：上次下载/安装被进程被杀打断（议题 #73） -->
+    <string name="download_recovery_game_cleaned">上次安装被中断，已自动清理未完成的文件。</string>
+    <string name="download_recovery_game_restored">上次覆盖安装被中断，已恢复原有版本文件。</string>
+    <string name="download_recovery_game_restore_failed">上次覆盖安装被中断，原版本文件无法自动恢复，请重新安装该版本。</string>
+    <string name="download_recovery_modpack_cleaned">上次整合包安装被中断，已清理未完成的文件，请重新安装。</string>
+</resources>

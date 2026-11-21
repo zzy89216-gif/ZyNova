@@ -47,6 +47,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.context.COPY_LABEL_LINK
+import com.movtery.zalithlauncher.game.download.InstallJournal
+import com.movtery.zalithlauncher.game.download.InstallRecoveryResult
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.filemanager.FileManagerLauncher
@@ -72,6 +74,10 @@ import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
+import com.movtery.zalithlauncher.ui.screens.content.download.GameDownloadInstallDialogs
+import com.movtery.zalithlauncher.ui.screens.content.download.GameDownloadViewModel
+import com.movtery.zalithlauncher.ui.screens.content.download.ModPackDownloadInstallDialogs
+import com.movtery.zalithlauncher.ui.screens.content.download.ModPackViewModel
 import com.movtery.zalithlauncher.ui.screens.content.elements.Background
 import com.movtery.zalithlauncher.ui.screens.content.elements.LaunchGameOperation
 import com.movtery.zalithlauncher.ui.screens.content.elements.TitleTaskFlowDialog
@@ -167,6 +173,16 @@ class MainActivity : BaseAppCompatActivity() {
      * 整合包导入 ViewModel
      */
     val modpackImportViewModel: ModpackImportViewModel by viewModels()
+
+    /**
+     * 游戏版本下载安装 ViewModel（Activity 级：离开下载页也不中断，弹窗全局可见）
+     */
+    val gameDownloadViewModel: GameDownloadViewModel by viewModels()
+
+    /**
+     * 整合包下载安装 ViewModel（Activity 级：同上）
+     */
+    val modPackViewModel: ModPackViewModel by viewModels()
 
     /**
      * 启动器更新状态 ViewModel
@@ -420,6 +436,8 @@ class MainActivity : BaseAppCompatActivity() {
                             screenBackStackModel = screenBackStackModel,
                             eventViewModel = eventViewModel,
                             modpackImportViewModel = modpackImportViewModel,
+                            gameDownloadViewModel = gameDownloadViewModel,
+                            modPackViewModel = modPackViewModel,
                             submitError = {
                                 errorViewModel.showError(it)
                             }
@@ -528,6 +546,18 @@ class MainActivity : BaseAppCompatActivity() {
                     onConfirmUse = { use ->
                         modpackImportViewModel.confirmUseMobileData(use)
                     }
+                )
+
+                //游戏版本 / 整合包下载安装的弹窗宿主（议题 #72）：
+                //放在 Activity 顶层，无论用户当前在哪个页面，「安装成功」「输入版本名」都能正常弹出并完成
+                GameDownloadInstallDialogs(
+                    viewModel = gameDownloadViewModel,
+                    eventViewModel = eventViewModel
+                )
+
+                ModPackDownloadInstallDialogs(
+                    viewModel = modPackViewModel,
+                    eventViewModel = eventViewModel
                 )
 
                 //启动器主页操作流程
@@ -1006,6 +1036,48 @@ class MainActivity : BaseAppCompatActivity() {
                 com.movtery.zalithlauncher.context.refreshContext(this@MainActivity)
                 if (granted) refreshData()
             }
+        }
+
+        //议题 #73：进程启动后处理上次被杀留下的中断下载/安装。
+        //只在进程内第一次 onResume 且存储权限就绪时执行（InstallJournal 内部静态标记防旋转重复回滚）。
+        recoverInterruptedInstallsOnce()
+    }
+
+    /**
+     * 启动恢复：清理/回滚上次被进程被杀打断的安装，并把结果用 Toast 告诉用户。
+     *
+     * 只做一次（进程内），恢复本身在 IO 线程、内部全程 try/catch，任何失败都只记日志，
+     * 绝不影响启动；恢复结束后刷新一次版本列表。
+     */
+    private fun recoverInterruptedInstallsOnce() {
+        if (!com.movtery.zalithlauncher.utils.isStorageReady(this)) {
+            //没有存储权限时什么也删不掉，等拿到了再试（下次 onResume）
+            return
+        }
+        lifecycleScope.launch {
+            val results = withContext(Dispatchers.IO) {
+                InstallJournal.recoverOncePerProcess()
+            }
+            if (results.isEmpty()) return@launch
+
+            val messages = results.distinct().map { result ->
+                when (result) {
+                    InstallRecoveryResult.GAME_CLEANED ->
+                        getString(R.string.download_recovery_game_cleaned)
+                    InstallRecoveryResult.GAME_RESTORED ->
+                        getString(R.string.download_recovery_game_restored)
+                    InstallRecoveryResult.GAME_RESTORE_FAILED ->
+                        getString(R.string.download_recovery_game_restore_failed)
+                    InstallRecoveryResult.MODPACK_CLEANED ->
+                        getString(R.string.download_recovery_modpack_cleaned)
+                }
+            }.distinct()
+            Toast.makeText(
+                this@MainActivity,
+                messages.joinToString(separator = "\n"),
+                Toast.LENGTH_LONG
+            ).show()
+            VersionsManager.refresh("[InstallRecovery] interrupted downloads/installs recovered")
         }
     }
 

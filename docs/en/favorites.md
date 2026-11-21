@@ -32,3 +32,6 @@
 
 Favorites use a **simplified card**: icon on the left, title plus author / type in the middle, and on the right a big
 download button next to a small unfavorite ♥. No description, no download counts — it is obvious what to tap.
+
+The "Online favorites / Local archive" switcher at the top and the refresh button in the top-right corner are now
+styled like the rest of the app (glass / pill), so they match the cards instead of a jarring black bar.

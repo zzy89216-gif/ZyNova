@@ -25,6 +25,7 @@ import com.movtery.zalithlauncher.coroutine.TaskFlowExecutor
 import com.movtery.zalithlauncher.coroutine.TitledTask
 import com.movtery.zalithlauncher.coroutine.addTask
 import com.movtery.zalithlauncher.coroutine.buildPhase
+import com.movtery.zalithlauncher.game.download.InstallJournal
 import com.movtery.zalithlauncher.game.download.assets.platform.PlatformVersion
 import com.movtery.zalithlauncher.game.download.assets.platform.mcim.mapMCIMMirrorUrls
 import com.movtery.zalithlauncher.game.download.game.GameDownloadInfo
@@ -108,15 +109,26 @@ class ModPackInstaller(
                 taskExecutor.addPhases(tasks)
             },
             onComplete = {
+                //安装成功：落盘记录已经没有用了，清掉（嵌套的游戏安装记录也一并清）
+                InstallJournal.clearModpackInstall()
+                InstallJournal.clearGameInstall()
                 onInstalled(targetVersionName)
             },
             onError = { e ->
+                //议题 #73：失败/取消时干净回滚，避免留下「能启动但缺模组」的假版本，
+                //也避免半成品目录挡住下一次同名词安装
+                InstallJournal.rollbackInterruptedModpackInstall()
                 if (e is UsingMobileDataException) {
                     //用户不希望使用移动网络
                     onCancelled()
                     return@executePhasesAsync
                 }
                 onError(e)
+            },
+            onCancel = {
+                //任务被取消时以前什么都不回调，界面会永远停在「安装中」（议题 #72/#73）
+                InstallJournal.rollbackInterruptedModpackInstall()
+                onCancelled()
             }
         )
     }
@@ -132,6 +144,8 @@ class ModPackInstaller(
 
         //临时游戏环境目录
         val tempModPackDir = PathManager.DIR_CACHE_MODPACK_DOWNLOADER
+        //议题 #73：整合包安装从开始就落盘记录，进程被杀后下次启动才能判断「没装完」
+        InstallJournal.beginModpackInstall(tempModPackDir.absolutePath)
         val tempVersionsDir = File(tempModPackDir, "fkVersion")
         //整合包安装包文件
         val installerFile = File(tempModPackDir, "installer.zip")
@@ -226,6 +240,8 @@ class ModPackInstaller(
                 ) { task ->
                     task.updateProgress(-1f)
                     targetVersionName = waitForVersionName(modpackInfo)
+                    //目标版本名确定了：补写记录，恢复时才能定位半成品版本
+                    InstallJournal.updateModpackTargetVersion(targetVersionName)
                 }
 
                 //下载整合包模组文件

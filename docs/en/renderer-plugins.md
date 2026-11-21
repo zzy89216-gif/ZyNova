@@ -8,6 +8,8 @@ renderer list automatically — **no launcher restart needed**.
 
 - Settings → Renderer → download plugins (the app offers two entry points: a GitHub mirror release and a
   Chinese file host).
+- To see which plugins are loaded: Settings → About & Plugins → Loaded Plugins (renderers, Vulkan drivers,
+  native and ffmpeg plugins all appear there).
 - Only install plugins whose origin you can verify. A random renderer APK from the internet may contain a
   modified driver binary, which makes problems very hard to diagnose.
 

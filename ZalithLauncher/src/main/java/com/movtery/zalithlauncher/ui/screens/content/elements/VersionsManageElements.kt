@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.elements
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,6 +43,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
@@ -71,8 +74,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -82,6 +89,8 @@ import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
 import com.movtery.zalithlauncher.game.path.GamePath
 import com.movtery.zalithlauncher.game.path.GamePathManager
+import com.movtery.zalithlauncher.game.version.installed.DeleteVersionPhase
+import com.movtery.zalithlauncher.game.version.installed.DeleteVersionResult
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.game.version.installed.cleanup.CleanFailedException
@@ -100,11 +109,13 @@ import com.movtery.zalithlauncher.ui.components.verticalScrollWithBar
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
 import com.movtery.zalithlauncher.utils.animation.getAnimateTween
+import com.movtery.zalithlauncher.utils.file.formatFileSize
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.string.getMessageOrToString
 import com.movtery.zalithlauncher.utils.string.isNotEmptyOrBlank
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 
 private const val TAG = "VersionsManageElements"
 
@@ -121,6 +132,8 @@ sealed interface VersionsOperation {
     data class Rename(val version: Version): VersionsOperation
     data class Copy(val version: Version): VersionsOperation
     data class Delete(val version: Version, val text: String? = null): VersionsOperation
+    /** 已确认删除，进入全屏进度界面 */
+    data class DeleteInProgress(val version: Version): VersionsOperation
     data class InvalidDelete(val version: Version): VersionsOperation
     data class RunTask(val title: Int, val task: suspend () -> Unit): VersionsOperation
 }
@@ -424,11 +437,24 @@ fun VersionsOperation(
                 version = version,
                 message = versionsOperation.text,
                 onDismissRequest = { updateVersionsOperation(VersionsOperation.None) },
-                onConfirm = { title, task ->
-                    updateVersionsOperation(
-                        VersionsOperation.RunTask(
-                            title = title,
-                            task = task
+                onConfirm = {
+                    updateVersionsOperation(VersionsOperation.DeleteInProgress(version))
+                }
+            )
+        }
+        is VersionsOperation.DeleteInProgress -> {
+            DeleteVersionProgressDialog(
+                version = versionsOperation.version,
+                onDismiss = {
+                    VersionsManager.clearDeleteResult()
+                    updateVersionsOperation(VersionsOperation.None)
+                },
+                onError = { e ->
+                    Logger.error(TAG, "Failed to delete the version.", e)
+                    submitError(
+                        ErrorViewModel.ThrowableMessage(
+                            title = androidText(R.string.versions_manage_task_error),
+                            message = androidText(e.getMessageOrToString())
                         )
                     )
                 }
@@ -541,22 +567,14 @@ fun DeleteVersionDialog(
     version: Version,
     message: String? = null,
     onDismissRequest: () -> Unit = {},
-    onConfirm: (title: Int, task: suspend () -> Unit) -> Unit = { _, _ -> },
-    onVersionDeleted: () -> Unit = {}
+    onConfirm: () -> Unit = {}
 ) {
-    val deleteVersion = {
-        onConfirm(R.string.versions_manage_delete_version) {
-            VersionsManager.deleteVersion(version)
-            onVersionDeleted()
-        }
-    }
-
     if (message != null) {
         SimpleAlertDialog(
             title = stringResource(R.string.versions_manage_delete_version),
             text = message,
             onDismiss = onDismissRequest,
-            onConfirm = deleteVersion
+            onConfirm = onConfirm
         )
     } else {
         SimpleAlertDialog(
@@ -572,10 +590,220 @@ fun DeleteVersionDialog(
                     )
                 }
             },
-            onConfirm = deleteVersion,
+            onConfirm = onConfirm,
             onCancel = onDismissRequest,
             onDismissRequest = onDismissRequest
         )
+    }
+}
+
+/**
+ * 删除版本的全屏进度界面（议题 #74）。
+ *
+ * 旧实现用 [SimpleTaskDialog] 直接跑 `FileUtils.deleteQuietly`：
+ * 进度条只能是不确定状态、没有取消按钮、失败还被静默吞掉，大版本一删就是几分钟，看起来就像卡死。
+ * 现在：
+ * 1. 先扫描统计文件数 / 总大小，删除阶段显示**确定**进度（百分比 + 文件数 + 已删/总大小）；
+ * 2. 扫描阶段也有明确阶段文案与已扫描的文件数，不再是空转圈；
+ * 3. 删除任务挂在 [VersionsManager] 自己的作用域上，随时可以取消；
+ *    实例在开始删除前会先被挪到隐藏临时目录，取消/失败都不会在版本列表里留下「删了一半」的实例。
+ */
+@Composable
+fun DeleteVersionProgressDialog(
+    version: Version,
+    onDismiss: () -> Unit,
+    onError: (Throwable) -> Unit
+) {
+    val progress by VersionsManager.deleteProgress.collectAsStateWithLifecycle()
+    val result by VersionsManager.deleteResult.collectAsStateWithLifecycle()
+
+    val versionName = remember(version) { version.getVersionName() }
+
+    //界面一出现就启动删除；真正的删除不绑定组合生命周期（见 VersionsManager.startDeleteVersion）
+    LaunchedEffect(Unit) {
+        if (!VersionsManager.startDeleteVersion(version)) {
+            onDismiss()
+        }
+    }
+
+    //成功 / 取消短暂展示结果后自动关闭，不额外增加一次点击；失败交给统一的错误提示
+    LaunchedEffect(result) {
+        when (val current = result) {
+            is DeleteVersionResult.Success -> {
+                delay(800L)
+                onDismiss()
+            }
+            is DeleteVersionResult.Cancelled -> {
+                delay(1600L)
+                onDismiss()
+            }
+            is DeleteVersionResult.Failed -> {
+                onError(current.throwable)
+                onDismiss()
+            }
+            null -> Unit
+        }
+    }
+
+    Dialog(
+        //删除过程中不允许点外部 / 返回键关闭：避免变成没有界面的静默删除
+        onDismissRequest = {},
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        )
+    ) {
+        //⚠️ dismissOnBackPress=false 只是不触发弹窗自己的关闭回调，系统返回键仍可能被导航层吃掉：
+        //那样用户能退页、删除却在后台继续，结果也没人清理。这里显式吞掉返回键（进度/取消都只走界面按钮）。
+        BackHandler(enabled = true) {}
+
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = cardColor(false),
+            contentColor = onCardColor()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val failed = result is DeleteVersionResult.Failed
+                val iconRes = when (result) {
+                    is DeleteVersionResult.Failed -> R.drawable.ic_warning_outlined
+                    is DeleteVersionResult.Success -> R.drawable.ic_check
+                    is DeleteVersionResult.Cancelled -> R.drawable.ic_close
+                    null -> R.drawable.ic_delete_filled
+                }
+
+                Icon(
+                    modifier = Modifier.size(56.dp),
+                    painter = painterResource(iconRes),
+                    contentDescription = null,
+                    tint = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = when (result) {
+                        is DeleteVersionResult.Success -> stringResource(R.string.versions_delete_progress_done)
+                        is DeleteVersionResult.Cancelled -> stringResource(R.string.versions_delete_progress_cancelled)
+                        is DeleteVersionResult.Failed -> stringResource(R.string.versions_delete_progress_failed)
+                        null -> {
+                            val name = progress?.versionName ?: versionName
+                            stringResource(R.string.versions_delete_progress_title, name)
+                        }
+                    },
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = if (failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+
+                if (result == null) {
+                    val currentProgress = progress
+                    val phase = currentProgress?.phase ?: DeleteVersionPhase.SCANNING
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = when (phase) {
+                            DeleteVersionPhase.SCANNING -> stringResource(R.string.versions_delete_phase_scanning)
+                            DeleteVersionPhase.DELETING -> stringResource(R.string.versions_delete_phase_deleting)
+                        },
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    val fraction = currentProgress?.fraction
+                    if (fraction == null) {
+                        //扫描阶段总数还不知道，只能给不确定进度；下面的实时数字说明扫描还在推进
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    } else {
+                        LinearProgressIndicator(
+                            progress = { fraction },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    currentProgress?.let { data ->
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = if (data.phase == DeleteVersionPhase.SCANNING) {
+                                stringResource(
+                                    R.string.versions_delete_phase_scanning_detail,
+                                    data.totalFiles,
+                                    formatFileSize(data.totalBytes)
+                                )
+                            } else {
+                                stringResource(
+                                    R.string.versions_delete_progress_detail,
+                                    ((data.fraction ?: 0f) * 100).toInt(),
+                                    data.doneFiles,
+                                    data.totalFiles,
+                                    formatFileSize(data.doneBytes),
+                                    formatFileSize(data.totalBytes)
+                                )
+                            },
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+
+                        data.currentEntry.takeIf { it.isNotBlank() }?.let { entry ->
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = stringResource(R.string.versions_delete_progress_current, entry),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(28.dp))
+                    Button(onClick = { VersionsManager.cancelDeleteVersion() }) {
+                        Text(text = stringResource(R.string.generic_cancel))
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.versions_delete_progress_keep_open),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    val current = result
+                    if (current is DeleteVersionResult.Cancelled) {
+                        //能恢复就明确告诉用户「实例还在」；恢复不了 / 已经删了一部分才提示残留
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = when {
+                                !current.restored ->
+                                    stringResource(R.string.versions_delete_progress_cancel_hint)
+                                current.deletedFiles > 0 ->
+                                    stringResource(
+                                        R.string.versions_delete_progress_cancel_partial_hint,
+                                        current.deletedFiles
+                                    )
+                                else ->
+                                    stringResource(R.string.versions_delete_progress_cancel_restored_hint)
+                            },
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -58,6 +58,8 @@ import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadGameScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadModPackScreen
+import com.movtery.zalithlauncher.ui.screens.content.download.GameDownloadViewModel
+import com.movtery.zalithlauncher.ui.screens.content.download.ModPackViewModel
 import com.movtery.zalithlauncher.ui.screens.content.FavoritesScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadModScreen
 import com.movtery.zalithlauncher.ui.screens.content.download.DownloadResourcePackScreen
@@ -98,6 +100,8 @@ fun DownloadScreen(
     backScreenViewModel: ScreenBackStackViewModel,
     modpackImportViewModel: ModpackImportViewModel,
     eventViewModel: EventViewModel,
+    gameDownloadViewModel: GameDownloadViewModel,
+    modPackViewModel: ModPackViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     BaseScreen(
@@ -123,6 +127,8 @@ fun DownloadScreen(
                 backScreenViewModel = backScreenViewModel,
                 eventViewModel = eventViewModel,
                 modpackImportViewModel = modpackImportViewModel,
+                gameDownloadViewModel = gameDownloadViewModel,
+                modPackViewModel = modPackViewModel,
                 submitError = submitError,
                 modifier = Modifier.fillMaxHeight()
             )
@@ -207,6 +213,8 @@ private fun NavigationUI(
     backScreenViewModel: ScreenBackStackViewModel,
     eventViewModel: EventViewModel,
     modpackImportViewModel: ModpackImportViewModel,
+    gameDownloadViewModel: GameDownloadViewModel,
+    modPackViewModel: ModPackViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -235,7 +243,8 @@ private fun NavigationUI(
                         onCurrentKeyChange = { newKey ->
                             backScreenViewModel.downloadGameScreen.currentKey = newKey
                         },
-                        eventViewModel = eventViewModel
+                        eventViewModel = eventViewModel,
+                        viewModel = gameDownloadViewModel
                     )
                 }
                 entry<NestedNavKey.DownloadModPack> { key ->
@@ -248,7 +257,8 @@ private fun NavigationUI(
                             backScreenViewModel.downloadModPackScreen.currentKey = newKey
                         },
                         eventViewModel = eventViewModel,
-                        importerViewModel = modpackImportViewModel
+                        importerViewModel = modpackImportViewModel,
+                        viewModel = modPackViewModel
                     )
                 }
                 entry<NormalNavKey.Favorites> { favKey ->

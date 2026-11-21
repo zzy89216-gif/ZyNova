@@ -3,7 +3,7 @@
 ## Interface
 
 - The top bar is a **centered liquid-glass capsule**, left to right:
-  **Home / AI / Multiplayer / Downloads / Files / Personalization / Settings**.
+  **Home / AI / Multiplayer / Downloads / Music / Files / Personalization / Settings**.
 - The title stays in the top-left corner; a back button appears on sub-pages.
 - While a task is running, a small ring appears at the right end of the capsule — tap it to open the task panel.
 - All appearance options live in **Settings → General**; the top-bar **Personalization** entry is only a shortcut.
@@ -23,6 +23,17 @@
 - **Version settings** changes Java, memory, renderer, resolution and JVM arguments.
 - **Mod management** enables, disables or deletes mods; Fabric API is added by the Fabric flow and must not be installed twice by hand.
 - **Run log** lives on the version overview page; when something crashes, share the log from there first.
+
+### Deleting an installed version
+
+- Entry: **Version list** → the menu next to a version → **Delete** → confirm **Delete Version**.
+- Deletion shows a **full-screen progress**: it first counts the files (count + size), then deletes them one by one,
+  showing the percentage, file count, deleted / total size and the current file — so it no longer looks stuck.
+  You can cancel at any time.
+- Cancelling **restores the version when possible**: files that were not deleted yet are kept, and the final
+  notice tells you how many files had already been deleted if the cancel came too late.
+- Deletion covers everything under `./versions/<version-name>`; with version isolation on, that includes this
+  version's worlds, resource packs and mods. **Back up anything you want to keep first.**
 
 ## Home cards
 

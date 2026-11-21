@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 28.2.3 AI 联网搜索：DeepSeek 引擎失败原因与降级必须对用户可见 -->
+<resources>
+    <string name="ai_search_ds_no_key">还没有配置 DeepSeek 搜索 Key（设置 → AI 设置 → 网络搜索 → DeepSeek 搜索 Key；留空则复用主模型的 Key）。</string>
+    <string name="ai_search_ds_empty">DeepSeek 没有返回匹配结果。</string>
+    <string name="ai_search_ds_error_bad_request">DeepSeek 拒绝了这次搜索请求（HTTP 400）：%1$s</string>
+    <string name="ai_search_ds_error_auth">DeepSeek 搜索 Key 无效或没有权限（HTTP 401/403），请到 AI 设置里检查 Key。</string>
+    <string name="ai_search_ds_error_balance">DeepSeek 账户余额不足（HTTP 402），请充值后再试。</string>
+    <string name="ai_search_ds_error_not_supported">当前接口地址不支持联网搜索（HTTP 404）：%1$s。请换回官方地址 https://api.deepseek.com/v1，或改用 DuckDuckGo。</string>
+    <string name="ai_search_ds_error_rate_limited">DeepSeek 搜索被限流（HTTP 429），过一会儿再试。</string>
+    <string name="ai_search_ds_error_server">DeepSeek 搜索服务端异常（HTTP %1$d）：%2$s</string>
+    <string name="ai_search_ds_error_http">DeepSeek 搜索失败（HTTP %1$d）：%2$s</string>
+    <string name="ai_search_ds_error_timeout">DeepSeek 搜索超时（等待 %1$d 秒仍没有响应），可能是网络慢或服务端排队。</string>
+    <string name="ai_search_ds_error_network">DeepSeek 搜索网络请求失败：%1$s</string>
+    <string name="ai_search_ds_error_bad_response">DeepSeek 搜索返回的数据无法解析。</string>
+    <string name="ai_search_ds_error_detail_unknown">服务端没有返回详细原因</string>
+    <string name="ai_search_fallback_notice">⚠️ DeepSeek 搜索没有成功，已退回 DuckDuckGo。原因：%1$s</string>
+    <string name="ai_search_ddg_failed">DuckDuckGo 兜底也失败了：%1$s</string>
+</resources>

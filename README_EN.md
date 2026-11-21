@@ -10,8 +10,8 @@
 **A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.2.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.2)
-[![Docs](https://img.shields.io/badge/Docs-77%20articles-blue)](docs/en/README.md)
+[![Release](https://img.shields.io/badge/Release-28.2.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.2.3)
+[![Docs](https://img.shields.io/badge/Docs-78%20articles-blue)](docs/en/README.md)
 
 One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
 
@@ -45,23 +45,35 @@ If the fingerprint does not match, **do not install it** — download again from
 | **One-tap install** | Resources and modpacks install in one step from the list, required dependencies included |
 | **Renderers** | Auto / MobileGlues / Ironized Zink / GL4ES / LTW (experimental, arm64 only) |
 | **Favorites** | Online favorites + local archive (SHA-256 dedupe), one-tap download right on the card |
+| **Music player** | Import local tracks, play them as a list, switch tracks in game — background playback with notification controls |
 | **Multiplayer** | Terracotta (P2P) / SakuraFrp, one screen, tutorials written against the real flow |
 | **Data** | `/storage/emulated/0/ZyNova/.Minecraft` (instances / worlds / mods), logs in `/ZyNova/logs` |
 
 Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-## What's new in 28.2.2
+## What's new in 28.2.3
 
-**Pre-release** (for testing; not the stable line yet).
+**Pre-release (test build)** — for testing, not the stable line yet.
 
-- **Duplicate "Follow global" entry in the renderer list** is gone — after setting a per-instance renderer you can switch back to the global setting again.
-- **The in-game "waiting for the game screen" card is no longer stretched to full width**; it wraps its content and stays centred.
-- **Only one public contact mailbox**: `ZyNovaLauncher@outlook.com` (the China-specific 163 mailbox was removed).
-- **"Cancel all tasks" no longer breaks downloads / installs for the rest of the session**; it only cancels the current tasks.
-- **Cancellation is no longer reported as failure** in favourite install / import flows.
-- **Two upstream crash fixes**: Android 8 clipboard crash and automatic Java runtime selection crash.
-- **Renderers**: Ironized Zink is built in again (four official presets plus an independent OpenGL version, 3.3–4.6, so old devices can finally lower it); Auto now picks by device capability (GLES 3.2+ / Vulkan) and version instead of guessing.
-- Smaller fixes: wrong "Update loader" button state, doubled padding in a few lists, flickering version list on refresh.
+- **Built-in music player**: a Music entry in the top bar; import local tracks, play them as a list, and switch
+  tracks from the in-game launcher menu. Background playback with notification controls
+  ([how to use](docs/en/music-player.md)).
+- **Deleting a version no longer looks stuck**: full-screen determinate progress (files / size / percentage /
+  current file), cancellable, and cancelling restores the version when possible.
+- **Downloads work from any screen**: install-success, modpack-name and permission prompts no longer appear only
+  on the Downloads page, and leaving the page does not cancel or suspend an install.
+- **An interrupted install recovers**: after the process is killed, the next start cleans up or rolls back safely —
+  no half-written jars and no permanent "installing" state.
+- **"About & Support" is now "About & Plugins"**: the page already lists loaded plugins, so the name now matches.
+- **Multiplayer page title fixed**: it says Multiplayer instead of "Terracotta | ..." — both Terracotta and
+  SakuraFrp live on that page.
+- **Favorites top bar rework**: the online-favorites / local-archive switcher and the refresh button now use the
+  app-wide glass/pill styling.
+- **About-page buttons aligned**: check-update / sponsor / project / Discord buttons are now equal width and
+  height with a shared right edge.
+- **AI web search**: the official DeepSeek search path is fixed; when it is unavailable the result states the
+  reason and falls back to DuckDuckGo instead of failing silently. The AI can also switch the search engine and
+  configure the key itself.
 
 ## Docs and feedback
 
