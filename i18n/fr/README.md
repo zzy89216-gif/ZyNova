@@ -29,6 +29,15 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 
 ## ✨ Changements récents
 
+Les points clés de la version **28.2.4** (pré-version / build de test) :
+
+- **Plusieurs téléchargements et installations en parallèle** : versions du jeu, modpacks et ressources peuvent être lancés en même temps ; progression, vitesse et annulation sont indépendantes pour chaque tâche. Un second clic sur la même cible affiche désormais un message au lieu de rester sans effet.
+- **Réorganisation des cartes d'accueil plus stable** : le glisser-déposer par appui long ne clignote plus et ne plante plus ; un glissement rapide échange les cartes une par une, et le glissement horizontal est pris en charge.
+- **Lecteur de musique enrichi** : chargement automatique des paroles `.lrc` de même nom et import depuis la page ; la notification affiche la ligne précédente et la ligne actuelle. Une mini-barre dans la barre supérieure (titre + lecture/pause + changement de piste) fait son apparition. La position et la durée restent correctes en pause, et l'interface ne déborde plus en paysage ou sur écran bas.
+- **« Retour au jeu » corrigé** : l'entrée disparaît dès que le jeu se ferme, et un clic juste avant ne plante plus.
+- **IA renforcée** : installation simultanée de plusieurs versions du jeu ; nouveaux outils de contrôle musical (53 outils au total).
+- **Nouveau « Multijoueur » dans le menu en jeu** : le menu se referme, le lanceur ouvre directement la page Multijoueur — le jeu continue de tourner en arrière-plan.
+
 Changements complets : [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Fonctionnalités

@@ -23,6 +23,15 @@ La idea: **menos toques**. En lugar de soltarte veinte ajustes, el lanzador deci
 
 ## ✨ Cambios recientes
 
+Novedades principales de la versión **28.2.4** (prelanzamiento / compilación de prueba):
+
+- **Varias descargas e instalaciones a la vez**: las versiones del juego, los modpacks y los recursos pueden iniciarse en paralelo; cada tarea tiene su propio progreso, velocidad y cancelación. Si vuelve a pulsar el mismo objetivo, ahora aparece un aviso en lugar de no hacer nada.
+- **Reordenar las tarjetas de inicio con más estabilidad**: arrastrar con pulsación larga ya no parpadea ni provoca cierres; al arrastrar rápido las tarjetas se intercambian una a una y también se admite el arrastre horizontal.
+- **Reproductor de música mejorado**: carga automática de letras `.lrc` con el mismo nombre e importación desde la página; la notificación muestra la línea anterior y la actual. Se añade una mini barra en la barra superior (título + reproducir/pausar + cambiar de pista). La posición y la duración se muestran correctamente en pausa, y la interfaz ya no se desborda en horizontal ni en pantallas bajas.
+- **«Volver al juego» corregido**: la entrada desaparece en cuanto se cierra el juego y pulsarla justo antes ya no provoca el cierre.
+- **IA ampliada**: se pueden instalar varias versiones del juego a la vez; nuevas herramientas de control de música (53 herramientas en total).
+- **Nuevo acceso «Multijugador» en el menú del juego**: el menú se cierra, el launcher abre directamente la página Multijugador y el juego sigue ejecutándose en segundo plano.
+
 Cambios completos: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Funciones

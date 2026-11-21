@@ -23,6 +23,15 @@ Ideea: **mai puține atingeri**. În loc să-ți arunce în față douăzeci de 
 
 ## ✨ Modificări recente
 
+**28.2.4** (pre-lansare / build de test): principalele noutăți.
+
+- **Mai multe descărcări și instalări simultane**: versiunile jocului, modpack-urile și resursele pot porni în paralel; fiecare sarcină are propriul progres, viteză și buton de anulare. Dacă apeși din nou același element, apare acum un mesaj, nu mai rămâne fără reacție.
+- **Reordonarea cardurilor din ecranul principal e mai stabilă**: tragerea cu apăsare lungă nu mai pâlpâie și nu mai produce închideri; la tragere rapidă cardurile se schimbă unul câte unul, iar tragerea pe orizontală este și ea acceptată.
+- **Playerul de muzică îmbunătățit**: versuri `.lrc` cu același nume încărcate automat și import din pagină; notificarea afișează rândul anterior și rândul curent. În bara de sus a apărut o mini-bară (titlu + redare/pauză + schimbare piesă). Poziția și durata sunt corecte și în pauză, iar interfața nu mai depășește ecranul pe orizontală sau pe ecrane joase.
+- **„Înapoi la joc” reparat**: intrarea dispare imediat ce jocul se închide, iar un clic chiar înainte nu mai provoacă blocarea.
+- **AI extins**: se pot instala mai multe versiuni ale jocului simultan; unelte noi pentru controlul muzicii (53 de unelte în total).
+- **Intrare nouă „Multijucător” în meniul din joc**: meniul se închide, launcherul deschide direct pagina Multijucător, iar jocul continuă în fundal.
+
 Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Ce poate face

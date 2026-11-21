@@ -29,6 +29,15 @@ L'idea è una sola: **meno tocchi**. Invece di mostrare venti impostazioni, il l
 
 ## ✨ Modifiche recenti
 
+**28.2.4** (pre-release / build di test): le novità principali.
+
+- **Più download e installazioni insieme**: versioni del gioco, modpack e risorse possono partire in parallelo; avanzamento, velocità e annullamento sono indipendenti per ogni attività. Toccando di nuovo lo stesso elemento ora compare un avviso, invece di non succedere nulla.
+- **Riordino delle schede della home più stabile**: il trascinamento con pressione lunga non sfarfalla più e non manda in crash; anche trascinando velocemente le schede si scambiano una alla volta, e il trascinamento orizzontale è supportato.
+- **Lettore musicale potenziato**: caricamento automatico dei testi `.lrc` con lo stesso nome e importazione dalla pagina; la notifica mostra la riga precedente e quella attuale. Nella barra superiore arriva una mini-barra (titolo + riproduci/pausa + cambio brano). Posizione e durata restano corrette in pausa e l'interfaccia non sborda più in orizzontale o su schermi bassi.
+- **«Torna al gioco» sistemato**: la voce scompare appena il gioco si chiude e toccarla subito prima non provoca più il crash.
+- **IA potenziata**: si possono installare più versioni del gioco insieme; nuovi strumenti per controllare la musica (53 strumenti in totale).
+- **Nuova voce «Multigiocatore» nel menu in gioco**: il menu si chiude, il launcher apre direttamente la pagina Multigiocatore e il gioco continua in background.
+
 Modifiche complete: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Funzioni

@@ -23,6 +23,15 @@ Das Prinzip: **weniger tippen**. Erst entscheiden, dann fragen — und nur dort 
 
 ## ✨ Aktuelle Änderungen
 
+Die wichtigsten Neuerungen in **28.2.4** (Vorabversion / Testbuild):
+
+- **Mehrere Downloads und Installationen gleichzeitig**: Spielversionen, Modpacks und Ressourcen lassen sich parallel starten; Fortschritt, Geschwindigkeit und Abbrechen gelten für jede Aufgabe separat. Ein erneuter Klick auf dasselbe Ziel zeigt jetzt einen Hinweis, statt still nichts zu tun.
+- **Stabileres Umsortieren der Startseiten-Karten**: Langes Drücken und Ziehen flackert nicht mehr und stürzt nicht ab; auch schnelles Ziehen tauscht die Karten einzeln, waagerechtes Ziehen wird ebenfalls unterstützt.
+- **Musikplayer ausgebaut**: gleichnamige `.lrc`-Dateien werden automatisch geladen, Songtexte lassen sich direkt auf der Seite importieren; die Benachrichtigung zeigt die vorherige und die aktuelle Zeile. In der oberen Leiste gibt es einen Mini-Player (Titel + Wiedergabe/Pause + Titelwechsel). Position und Dauer stimmen auch im pausierten Zustand; im Querformat und auf niedrigen Bildschirmen läuft das Layout nicht mehr über.
+- **„Zurück zum Spiel“ korrigiert**: Nach dem Beenden des Spiels verschwindet der Eintrag sofort; ein Klick kurz davor führt nicht mehr zum Absturz.
+- **KI erweitert**: Mehrere Spielversionen lassen sich gleichzeitig installieren; neue Werkzeuge zur Musiksteuerung (insgesamt 53 Werkzeuge).
+- **Neuer Eintrag „Mehrspieler“ im Spielmenü**: Das Menü schließt sich, der Launcher öffnet direkt die Mehrspieler-Seite – das Spiel läuft im Hintergrund weiter.
+
 Vollständige Änderungen: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Funktionen

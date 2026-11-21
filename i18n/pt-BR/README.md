@@ -29,6 +29,15 @@ A ideia é simples: **menos toques**. Em vez de despejar vinte configurações n
 
 ## ✨ Mudanças recentes
 
+**28.2.4** (pré-lançamento / build de teste): os principais destaques.
+
+- **Vários downloads e instalações ao mesmo tempo**: versões do jogo, modpacks e recursos podem começar juntos; cada tarefa tem seu próprio progresso, velocidade e botão de cancelar. Tocar de novo no mesmo item agora mostra um aviso, em vez de não fazer nada.
+- **Reordenar os cartões da tela inicial ficou mais estável**: arrastar com toque longo não pisca mais nem fecha o app; ao arrastar rápido os cartões trocam de lugar um a um, e o arrasto na horizontal também funciona.
+- **Player de música melhorado**: carrega automaticamente letras `.lrc` com o mesmo nome e permite importar pela página; a notificação mostra a linha anterior e a atual. Uma mini barra no topo (título + play/pausa + trocar faixa) foi adicionada. A posição e a duração ficam corretas mesmo pausado, e a interface não estoura mais no modo paisagem ou em telas baixas.
+- **«Voltar ao jogo» corrigido**: o atalho some assim que o jogo fecha e tocar nele um instante antes não causa mais fechamento.
+- **IA reforçada**: dá para instalar várias versões do jogo ao mesmo tempo; novas ferramentas de controle de música (53 ferramentas no total).
+- **Novo atalho «Multijogador» no menu do jogo**: o menu fecha, o launcher abre direto a página Multijogador e o jogo continua rodando em segundo plano.
+
 Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ O que faz

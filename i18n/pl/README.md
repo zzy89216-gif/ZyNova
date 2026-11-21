@@ -23,6 +23,15 @@ Pomysł jest jeden: **mniej kliknięć**. Zamiast wyrzucać na ekran dwadzieści
 
 ## ✨ Najnowsze zmiany
 
+**28.2.4** (wersja przedpremierowa / build testowy): najważniejsze zmiany.
+
+- **Kilka pobrań i instalacji naraz**: wersje gry, modpacki i zasoby można uruchamiać równolegle; każda z nich ma własny postęp, prędkość i anulowanie. Ponowne kliknięcie tego samego elementu pokazuje teraz komunikat zamiast nic nie robić.
+- **Stabilniejsze przeciąganie kart na stronie głównej**: przeciąganie po długim przytrzymaniu nie migocze i nie wysypuje aplikacji; przy szybkim przeciąganiu karty zamieniają się po jednej, a przeciąganie w poziomie też działa.
+- **Ulepszony odtwarzacz muzyki**: automatyczne wczytywanie tekstów `.lrc` o tej samej nazwie i import ze strony; powiadomienie pokazuje poprzedni i bieżący wers. W górnym pasku pojawił się mini odtwarzacz (tytuł + odtwarzanie/pauza + zmiana utworu). Pozycja i długość są poprawne także po pauzie, a interfejs nie wychodzi już za ekran w poziomie i na niskich ekranach.
+- **Naprawiono „Powrót do gry”**: pozycja znika od razu po zamknięciu gry, a kliknięcie tuż przed tym nie powoduje już awarii.
+- **AI rozbudowane**: można instalować kilka wersji gry naraz; dodano narzędzia do sterowania muzyką (łącznie 53 narzędzia).
+- **Nowa pozycja „Gra wieloosobowa” w menu w grze**: menu się zamyka, launcher od razu otwiera stronę gry wieloosobowej, a gra działa dalej w tle.
+
 Pełna lista zmian: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Co potrafi

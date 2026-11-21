@@ -23,6 +23,15 @@ Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengatura
 
 ## ✨ Perubahan terbaru
 
+**28.2.4** (pra-rilis / build uji): perubahan utama.
+
+- **Beberapa unduhan dan pemasangan sekaligus**: versi game, modpack, dan sumber daya bisa dijalankan bersamaan; tiap tugas punya progres, kecepatan, dan pembatalan sendiri. Menekan item yang sama lagi kini menampilkan pemberitahuan, bukan diam saja.
+- **Menyusun ulang kartu di beranda lebih stabil**: tekan lama lalu seret tidak lagi berkedip atau membuat aplikasi tertutup; saat diseret cepat kartu bertukar satu per satu, dan seret horizontal juga didukung.
+- **Pemutar musik diperlengkapi**: lirik `.lrc` bernama sama dimuat otomatis dan bisa diimpor dari halaman; notifikasi menampilkan baris sebelumnya dan baris saat ini. Bilah mini di bilah atas (judul + putar/jeda + ganti trek) ditambahkan. Posisi dan durasi tetap benar saat dijeda, dan tata letak tidak lagi meluber di mode lanskap atau layar pendek.
+- **«Kembali ke game» diperbaiki**: entri langsung hilang begitu game ditutup, dan menekannya sesaat sebelum itu tidak lagi membuat aplikasi crash.
+- **AI diperkuat**: beberapa versi game bisa dipasang sekaligus; alat kendali musik ditambahkan (total 53 alat).
+- **Entri baru «Multipemain» di menu dalam game**: menu menutup, launcher langsung membuka halaman Multipemain, dan game tetap berjalan di latar belakang.
+
 Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Kemampuan

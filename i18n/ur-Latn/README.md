@@ -23,6 +23,15 @@ Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pe
 
 ## ✨ Haal ki tabdeeliyan
 
+**28.2.4** (pre-release / test build): aham tabdeeliyan.
+
+- **Ek saath kai downloads aur installs**: game versions, modpacks aur resources ek saath shuru ho sakte hain; har task ka apna progress, speed aur cancel hota hai. Usi item par dobara dabane se ab paigham dikhta hai, khamoshi nahi.
+- **Home screen ke cards ki tarteeb zyada mustahkam**: long-press karke kheenchnay se screen ab jhapki nahi maarti aur app band nahi hota; tez kheenchnay par cards ek ek karke badalte hain, aur horizontal kheenchna bhi kaam karta hai.
+- **Music player behtar hua**: same naam ki `.lrc` files khud load hoti hain aur page se lyrics import ki ja sakti hain; notification pichli line aur maujooda line dikhata hai. Upar ki bar mein mini player (gaane ka naam + play/pause + track badlein) shamil hua. Pause ki halat mein bhi position aur duration theek dikhte hain, aur landscape ya chhoti screens par layout bahar nahi nikalta.
+- **«Game par wapas jayein» durust kiya gaya**: game band hote hi entry ghayab ho jati hai, aur us se pehle dabane par ab crash nahi hota.
+- **AI mazboot hua**: ek saath kai game versions install kiye ja sakte hain; music control ke tools shamil kiye gaye (kul 53 tools).
+- **Game ke menu mein nayi «Multiplayer» entry**: menu band hota hai, launcher seedha Multiplayer page kholta hai; game band nahi hota, background mein chalta rehta hai.
+
 Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Kya kar sakta hai

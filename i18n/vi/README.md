@@ -23,6 +23,15 @@ Trình khởi chạy **Minecraft: Java Edition** trên Android, phát triển đ
 
 ## ✨ Thay đổi gần đây
 
+**28.2.4** (bản phát hành trước / bản thử nghiệm): các thay đổi chính.
+
+- **Tải và cài nhiều thứ cùng lúc**: phiên bản game, modpack và tài nguyên có thể chạy song song; mỗi tác vụ có tiến độ, tốc độ và nút hủy riêng. Nhấn lại cùng một mục giờ sẽ hiện thông báo thay vì không phản ứng gì.
+- **Kéo thả thẻ ở trang chính ổn định hơn**: nhấn giữ rồi kéo không còn nhấp nháy hay thoát ứng dụng; kéo nhanh vẫn đổi từng thẻ một, và kéo ngang cũng được hỗ trợ.
+- **Trình phát nhạc được bổ sung**: tự động tải lời bài hát `.lrc` cùng tên và cho phép nhập lời ngay trên trang; thông báo hiển thị dòng trước và dòng hiện tại. Thanh trên cùng có thêm mini player (tên bài + phát/tạm dừng + chuyển bài). Vị trí và thời lượng hiển thị đúng cả khi tạm dừng, giao diện không còn tràn ở chế độ ngang hoặc màn hình thấp.
+- **Sửa «Quay lại game»**: mục này biến mất ngay khi game đóng, và nhấn ngay trước lúc đó không còn gây thoát ứng dụng.
+- **AI mạnh hơn**: có thể cài nhiều phiên bản game cùng lúc; thêm công cụ điều khiển nhạc (tổng cộng 53 công cụ).
+- **Thêm mục «Nhiều người chơi» trong menu trong game**: menu đóng lại, trình khởi chạy mở thẳng trang Nhiều người chơi; game không thoát mà tiếp tục chạy nền.
+
 Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Tính năng

@@ -23,6 +23,15 @@ Fikir tek: **daha az dokunuş**. Yirmi ayarı önüne dökmek yerine önce kendi
 
 ## ✨ Son değişiklikler
 
+**28.2.4** (ön sürüm / test yapısı): öne çıkan değişiklikler.
+
+- **Birden çok indirme ve kurulum aynı anda**: oyun sürümleri, mod paketleri ve kaynaklar paralel başlatılabilir; her görevin ilerlemesi, hızı ve iptali bağımsızdır. Aynı öğeye yeniden basıldığında artık sessiz kalmak yerine bir uyarı gösterilir.
+- **Ana sayfadaki kartları sıralama daha kararlı**: uzun basıp sürüklerken ekran titremiyor ve uygulama kapanmıyor; hızlı sürüklemede kartlar tek tek yer değiştirir, yatay sürükleme de desteklenir.
+- **Müzik oynatıcı geliştirildi**: aynı adlı `.lrc` dosyaları otomatik yüklenir ve sayfadan şarkı sözü içe aktarılabilir; bildirimde önceki satır ve geçerli satır görünür. Üst çubukta mini oynatıcı (şarkı adı + oynat/duraklat + parça değiştir) eklendi. Konum ve süre duraklatılmışken de doğru görünür, yatay ve kısa ekranlarda arayüz taşmaz.
+- **«Oyuna dön» düzeltildi**: oyun kapanınca giriş hemen kaybolur ve kaybolmadan hemen önce dokunmak artık çökme yaratmaz.
+- **Yapay zekâ güçlendirildi**: aynı anda birden çok oyun sürümü kurulabilir; müzik denetimi araçları eklendi (toplam 53 araç).
+- **Oyun içi menüye «Çok oyunculu» eklendi**: menü kapanır, launcher doğrudan Çok oyunculu sayfasını açar; oyun kapanmaz, arka planda çalışmaya devam eder.
+
 Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
 
 ## 🛠️ Neler yapabilir
