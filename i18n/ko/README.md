@@ -34,7 +34,7 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 ## 🛠️ 주요 기능
 
 - **AI Agent**: 기본 DeepSeek — 게임 본체·모드팩·모드 설치, 설정 변경, 로그 확인, 실행까지 수행
-- **렌더러**: 자동 / MobileGlues / GL4ES / LTW(실험적)
+- **렌더러**: 자동 / MobileGlues / Ironized Zink / GL4ES / LTW(실험적)
 - **리소스 코어**: Modrinth / CurseForge 검색, 의존성 해석, 다운로드, 검증, 설치
 - **즐겨찾기와 보관**: 온라인 즐겨찾기 + 앱 전용 저장소(SHA-256 중복 제거)
 - **Fabric API 보호**: 설치 흐름에서만 추가되며 수동 중복 설치·검색·삭제가 불가능합니다

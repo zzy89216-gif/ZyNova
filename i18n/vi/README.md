@@ -28,7 +28,7 @@ Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Tính năng
 
 - **Trợ lý AI**: mặc định DeepSeek — cài game, modpack và mod, đổi cài đặt, đọc log, khởi chạy game
-- **Bộ kết xuất**: Tự động / MobileGlues / GL4ES / LTW (thử nghiệm)
+- **Bộ kết xuất**: Tự động / MobileGlues / Ironized Zink / GL4ES / LTW (thử nghiệm)
 - **Lõi tài nguyên**: tìm trên Modrinth / CurseForge, phân giải phụ thuộc, tải, kiểm tra, cài đặt
 - **Yêu thích và lưu trữ**: yêu thích trực tuyến + kho riêng, chống trùng bằng SHA-256
 - **Bảo vệ API Fabric**: Fabric API / Quilted Fabric API / Legacy Fabric API do trình cài thêm — không nhân bản, không tìm thấy, không xoá được

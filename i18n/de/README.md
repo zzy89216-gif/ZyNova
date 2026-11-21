@@ -28,7 +28,7 @@ Vollständige Änderungen: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Funktionen
 
 - **KI-Agent**: standardmäßig DeepSeek — installiert Spiel, Modpacks und Mods, ändert Einstellungen, liest Logs, startet das Spiel
-- **Renderer**: Auto / MobileGlues / GL4ES / LTW (experimentell)
+- **Renderer**: Auto / MobileGlues / Ironized Zink / GL4ES / LTW (experimentell)
 - **Ressourcen-Kern**: Suche bei Modrinth / CurseForge, Abhängigkeiten auflösen, herunterladen, prüfen, installieren
 - **Favoriten & Archiv**: Online-Favoriten plus privates Archiv mit SHA-256-Deduplizierung
 - **Fabric-API-Schutz**: Fabric API / Quilted Fabric API / Legacy Fabric API kommen nur über den Installationsablauf — kein Duplikat, nicht auffindbar, nicht löschbar

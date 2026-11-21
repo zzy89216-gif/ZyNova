@@ -28,7 +28,7 @@ Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Kemampuan
 
 - **Agen AI**: bawaan DeepSeek — memasang game, modpack, dan mod, mengubah pengaturan, membaca log, menjalankan game
-- **Renderer**: Otomatis / MobileGlues / GL4ES / LTW (eksperimental)
+- **Renderer**: Otomatis / MobileGlues / Ironized Zink / GL4ES / LTW (eksperimental)
 - **Inti sumber daya**: pencarian Modrinth / CurseForge, penyelesaian dependensi, unduh, verifikasi, pasang
 - **Favorit dan arsip**: favorit daring + arsip pribadi, deduplikasi SHA-256
 - **Perlindungan API Fabric**: hanya ditambahkan lewat alur pemasangan — tidak bisa diduplikasi, dicari, atau dihapus

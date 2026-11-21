@@ -74,6 +74,11 @@
   没权限就由存储权限门禁拦住（否则会出现「数据看起来全没了、重新授权也回不来」的 P0）；
   私有目录只在迁移时作为来源被读取；
   老用户升级**强制迁移**（`GameDirMigration`，全屏进度、可续传、搬完要点「下一步」；失败也留在公共目录重试）
+- **内置渲染器**：自动 / MobileGlues / **Ironized Zink**（Mesa Zink + Kopper，随包 16MB AAR）/
+  GL4ES / LTW（实验性，仅 arm64，自动模式不选）。「自动」按**设备能力**（MobileGlues 需 GLES 3.2+、
+  Ironized Zink 需 Vulkan）+ 版本兼容 + 偏好顺序（MobileGlues → GL4ES → Ironized Zink）挑选，
+  实现在 `game/renderer/AutoRenderer.kt` 与 `RendererDeviceProfile.kt`；
+  手动选择不兼容时回退也走同一套逻辑。**不要再按 27.9.0 的旧决定把 Zink 移除**（维护者已要求恢复）。
 - 默认主页 = **Cards**（主页卡片），数据 IO 线程加载 + 回前台刷新
 - `options.txt` 用真实键：`graphicsMode`(0/1/2)、`particles`(0/1/2)、`fov`(归一化)
 - 返回导航递归下探最深层（修「下载页点返回直接回主界面」）

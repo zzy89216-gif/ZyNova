@@ -28,7 +28,7 @@ Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Neler yapabilir
 
 - **Yapay zekâ ajanı**: varsayılan DeepSeek — oyunu, mod paketlerini ve modları kurar, ayarları değiştirir, günlükleri okur, oyunu başlatır
-- **Görüntüleyiciler**: Otomatik / MobileGlues / GL4ES / LTW (deneysel)
+- **Görüntüleyiciler**: Otomatik / MobileGlues / Ironized Zink / GL4ES / LTW (deneysel)
 - **Kaynak çekirdeği**: Modrinth / CurseForge araması, bağımlılık çözümleme, indirme, doğrulama, kurulum
 - **Favoriler ve arşiv**: çevrim içi favoriler + özel arşiv, SHA-256 ile tekilleştirme
 - **Fabric API koruması**: Fabric API / Quilted Fabric API / Legacy Fabric API yalnızca kurulum akışıyla eklenir — çoğaltılamaz, aranamaz, silinemez

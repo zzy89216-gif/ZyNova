@@ -28,7 +28,7 @@ Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Kya kar sakta hai
 
 - **AI Agent**: default DeepSeek — game, modpacks aur mods install karta hai, settings badalta hai, logs parhta hai, game launch karta hai
-- **Renderers**: Auto / MobileGlues / GL4ES / LTW (experimental)
+- **Renderers**: Auto / MobileGlues / Ironized Zink / GL4ES / LTW (experimental)
 - **Resource core**: Modrinth / CurseForge search, dependency resolution, download, verify, install
 - **Favourites aur archive**: online favourites + private archive, SHA-256 dedupe
 - **Fabric API guard**: sirf install flow se add hoti hain — duplicate, search ya delete nahi ho sakti

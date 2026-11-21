@@ -53,4 +53,4 @@
 ## 驱动
 
 - Ironized Zink（以及可能挑到它的「自动」）与渲染器插件走 Vulkan 时才显示「Vulkan 驱动」选项。
-- 内置的 MobileGlues / GL4ES / LTW 不需要选驱动。
+- 内置的 MobileGlues / GL4ES / LTW 不需要选驱动；Ironized Zink 需要。

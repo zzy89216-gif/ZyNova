@@ -34,7 +34,7 @@ Modifiche complete: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Funzioni
 
 - **Agente IA**: DeepSeek per impostazione predefinita — installa gioco, modpack e mod, modifica le impostazioni, legge i log, avvia il gioco
-- **Renderer**: Auto / MobileGlues / GL4ES / LTW (sperimentale)
+- **Renderer**: Auto / MobileGlues / Ironized Zink / GL4ES / LTW (sperimentale)
 - **Nucleo risorse**: ricerca su Modrinth / CurseForge, risoluzione delle dipendenze, download, verifica, installazione
 - **Preferiti e archivio**: preferiti online + archivio privato con deduplica SHA-256
 - **Protezione delle API Fabric**: Fabric API / Quilted Fabric API / Legacy Fabric API arrivano solo dall'installazione — niente doppioni, non cercabili, non eliminabili

@@ -34,7 +34,7 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 ## 🛠️ 主要功能
 
 - **AI 代理**：預設 DeepSeek — 安裝遊戲本體、整合包與模組，修改設定，讀取日誌，啟動遊戲
-- **渲染器**：自動 / MobileGlues / GL4ES / LTW（實驗性）
+- **渲染器**：自動 / MobileGlues / Ironized Zink / GL4ES / LTW（實驗性）
 - **資源核心**：Modrinth / CurseForge 搜尋、依賴解析、下載、校驗、安裝
 - **收藏與封存**：線上收藏 + 私有目錄封存，以 SHA-256 去重
 - **前置 API 防呆**：Fabric API / Quilted Fabric API / Legacy Fabric API 由安裝流程自動加入，無法重複安裝、搜尋不到、也刪不掉

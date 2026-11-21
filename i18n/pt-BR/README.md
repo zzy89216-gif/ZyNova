@@ -34,7 +34,7 @@ Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ O que faz
 
 - **Agente de IA**: DeepSeek por padrão — instala o jogo, modpacks e mods, altera configurações, lê logs, inicia o jogo
-- **Renderizadores**: Automático / MobileGlues / GL4ES / LTW (experimental)
+- **Renderizadores**: Automático / MobileGlues / Ironized Zink / GL4ES / LTW (experimental)
 - **Núcleo de recursos**: busca no Modrinth / CurseForge, resolução de dependências, download, verificação, instalação
 - **Favoritos e arquivo**: favoritos online + arquivo privado, com deduplicação por SHA-256
 - **Proteção das APIs do Fabric**: Fabric API / Quilted Fabric API / Legacy Fabric API entram pelo instalador — nada de duplicar, buscar ou apagar
@@ -44,7 +44,7 @@ Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 - **Modpack**: um pacote de mods que se instala de uma vez
 - **Shader**: iluminação e água mais bonitas; fica nos ajustes gráficos
 - **Instância**: pasta própria com versão, mods e configurações
-- **Renderizador**: a camada que desenha o jogo (MobileGlues / GL4ES / LTW)
+- **Renderizador**: a camada que desenha o jogo (MobileGlues / Ironized Zink / GL4ES / LTW)
 
 ## 📦 Download e compilação
 

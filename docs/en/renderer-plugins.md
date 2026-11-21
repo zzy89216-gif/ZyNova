@@ -1,7 +1,7 @@
 # Renderer plugins
 
-Only three renderers ship with the launcher: MobileGlues, GL4ES and LTW. Devices those do not cover are
-served by **renderer plugins**. A plugin is a normal APK; once installed, its renderers show up in the
+The launcher ships Auto, MobileGlues, Ironized Zink, GL4ES and LTW (experimental). Devices those do not cover
+are served by **renderer plugins**. A plugin is a normal APK; once installed, its renderers show up in the
 renderer list automatically — **no launcher restart needed**.
 
 ## Where to get them

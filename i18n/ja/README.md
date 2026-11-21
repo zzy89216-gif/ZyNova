@@ -28,7 +28,7 @@ Android 向けの **Minecraft: Java Edition** ランチャー。ZalithLauncher2 
 ## 🛠️ 主な機能
 
 - **AI Agent**：既定は DeepSeek。ゲーム本体・MOD パック・MOD の導入、設定変更、ログ閲覧、起動まで実行
-- **レンダラー**：自動 / MobileGlues / GL4ES / LTW（実験的）
+- **レンダラー**：自動 / MobileGlues / Ironized Zink / GL4ES / LTW（実験的）
 - **リソース基盤**：Modrinth / CurseForge 検索、依存解決、ダウンロード、検証、導入
 - **お気に入りと保管**：オンラインのお気に入り + アプリ専用領域の保管（SHA-256 で重複排除）
 - **Fabric API の保護**：導入手順からのみ追加され、手動での重複導入・検索・削除はできません

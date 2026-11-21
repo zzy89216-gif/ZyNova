@@ -28,7 +28,7 @@ Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Ce poate face
 
 - **Agent AI**: DeepSeek implicit — instalează jocul, modpack-urile și modurile, modifică setările, citește logurile, pornește jocul
-- **Randare**: Automat / MobileGlues / GL4ES / LTW (experimental)
+- **Randare**: Automat / MobileGlues / Ironized Zink / GL4ES / LTW (experimental)
 - **Nucleul de resurse**: căutare Modrinth / CurseForge, rezolvarea dependențelor, descărcare, verificare, instalare
 - **Favorite și arhivă**: favorite online + arhivă privată, deduplicare SHA-256
 - **Protecția API Fabric**: Fabric API / Quilted Fabric API / Legacy Fabric API sunt adăugate de instalare — nu pot fi duplicate, căutate sau șterse

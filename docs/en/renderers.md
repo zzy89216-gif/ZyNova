@@ -55,4 +55,4 @@
 ## Drivers
 
 - The "Vulkan driver" option appears for Ironized Zink (and Auto, which may pick it) and when a renderer plugin uses Vulkan.
-- The built-in MobileGlues / GL4ES / LTW do not need a driver choice.
+- The built-in MobileGlues / GL4ES / LTW do not need a driver choice; Ironized Zink does.

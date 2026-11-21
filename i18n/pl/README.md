@@ -28,7 +28,7 @@ Pełna lista zmian: [CHANGELOG.md](../../CHANGELOG.md).
 ## 🛠️ Co potrafi
 
 - **Agent AI**: domyślnie DeepSeek — instaluje grę, modpacki i mody, zmienia ustawienia, czyta logi, uruchamia grę
-- **Renderery**: Auto / MobileGlues / GL4ES / LTW (eksperymentalny)
+- **Renderery**: Auto / MobileGlues / Ironized Zink / GL4ES / LTW (eksperymentalny)
 - **Rdzeń zasobów**: wyszukiwanie Modrinth / CurseForge, rozwiązywanie zależności, pobieranie, weryfikacja, instalacja
 - **Ulubione i archiwum**: ulubione online + prywatne archiwum z deduplikacją SHA-256
 - **Ochrona API Fabric**: Fabric API / Quilted Fabric API / Legacy Fabric API dodaje instalator — nie da się ich zdublować, wyszukać ani usunąć

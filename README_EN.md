@@ -43,7 +43,7 @@ If the fingerprint does not match, **do not install it** — download again from
 |---|---|
 | **AI agent** | DeepSeek by default: installs games / modpacks / mods, changes settings, reads logs, launches — 51 tools |
 | **One-tap install** | Resources and modpacks install in one step from the list, required dependencies included |
-| **Renderers** | Auto / MobileGlues / GL4ES / LTW (experimental, arm64 only) |
+| **Renderers** | Auto / MobileGlues / Ironized Zink / GL4ES / LTW (experimental, arm64 only) |
 | **Favorites** | Online favorites + local archive (SHA-256 dedupe), one-tap download right on the card |
 | **Multiplayer** | Terracotta (P2P) / SakuraFrp, one screen, tutorials written against the real flow |
 | **Data** | `/storage/emulated/0/ZyNova/.Minecraft` (instances / worlds / mods), logs in `/ZyNova/logs` |
