@@ -52,6 +52,7 @@ import io.ktor.client.plugins.ResponseException as KtorResponseException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONObject
@@ -121,7 +122,9 @@ fun microsoftLogin(
             task.updateMessage(androidText(R.string.account_microsoft_fetch_device_code))
             val deviceCode = fetchDeviceCodeResponse(coroutineContext)
             Logger.debug(TAG, "Device code received, verification url: ${deviceCode.verificationUrl}, expires in ${deviceCode.expiresIn}s")
-            copyText(COPY_LABEL_DEVICE_CODE, deviceCode.userCode, context, false)
+            withContext(Dispatchers.Main) {
+                copyText(COPY_LABEL_DEVICE_CODE, deviceCode.userCode, context, false)
+            }
             showToast(
                 androidText(R.string.account_microsoft_coped_device_code, deviceCode.userCode),
                 Toast.LENGTH_SHORT
