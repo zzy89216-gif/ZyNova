@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 
 ## ✨ സമീപകാല മാറ്റങ്ങൾ
 
-**28.3.2** (ഏറ്റവും പുതിയത്): ഹോം പുതുക്കി (സമീപ ലോകങ്ങൾ + മുഴുവൻ ലോകപ്പട്ടിക + ഇഷ്ടാനുസൃത ഫീഡ്), «വ്യക്തിഗതമാക്കൽ» പേജ് ഒഴിവാക്കി, റെൻഡറർ വിശദാംശങ്ങളുടെ തലക്കെട്ട് ശരിയാക്കി, പതിപ്പ് ഡിലീറ്റിൽ പൂർണ സ്ക്രീൻ പുരോഗതി, പ്രകടനം മെച്ചപ്പെടുത്തി, Discord ലിങ്ക് പുതുക്കി.
+**28.3.3** (ഏറ്റവും പുതിയത്): ഹോം പുതുക്കി (സമീപ ലോകങ്ങൾ + മുഴുവൻ ലോകപ്പട്ടിക + ഇഷ്ടാനുസൃത ഫീഡ്), «വ്യക്തിഗതമാക്കൽ» പേജ് ഒഴിവാക്കി, റെൻഡറർ വിശദാംശങ്ങളുടെ തലക്കെട്ട് ശരിയാക്കി, പതിപ്പ് ഡിലീറ്റിൽ പൂർണ സ്ക്രീൻ പുരോഗതി, പ്രകടനം മെച്ചപ്പെടുത്തി, Discord ലിങ്ക് പുതുക്കി.
 
 > രൂപം 28.3.0 പോലെ തന്നെ — ഡൈനാമിക് ഗ്ലാസ്, റിഫ്രാക്ഷൻ, കാന്തിക ഇഫക്ടുകൾ ഇല്ല.
 

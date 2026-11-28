@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@ Android 向けの **Minecraft: Java Edition** ランチャー。ZalithLauncher2 
 
 ## ✨ 最近の変更
 
-**28.3.2**（最新）：ホーム画面を刷新（最近のワールド＋全ワールド一覧＋カスタムホーム情報）、「パーソナライズ」ページを廃止、レンダラー詳細のタイトルを修正、バージョン削除を全画面の進捗表示に、動作のもたつきを改善、Discord リンクを更新。
+**28.3.3**（最新）：ホーム画面を刷新（最近のワールド＋全ワールド一覧＋カスタムホーム情報）、「パーソナライズ」ページを廃止、レンダラー詳細のタイトルを修正、バージョン削除を全画面の進捗表示に、動作のもたつきを改善、Discord リンクを更新。
 
 > 見た目は 28.3.0 のまま。動くガラス・屈折・マグネット効果は含みません。
 

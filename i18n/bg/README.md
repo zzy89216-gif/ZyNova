@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## ✨ Последни промени
 
-**28.3.2** (най-ново): обновен начален екран (последни светове + пълен списък + персонализиран информационен поток), премахната страница „Персонализация“, поправено заглавие на подробностите за рендера, прогрес на цял екран при изтриване на версия, подобрена производителност, обновен Discord линк.
+**28.3.3** (най-ново): обновен начален екран (последни светове + пълен списък + персонализиран информационен поток), премахната страница „Персонализация“, поправено заглавие на подробностите за рендера, прогрес на цял екран при изтриване на версия, подобрена производителност, обновен Discord линк.
 
 > Визуалният стил остава като в 28.3.0 — без динамично стъкло, пречупване или магнитни ефекти.
 

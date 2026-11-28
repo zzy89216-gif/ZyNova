@@ -325,51 +325,10 @@ fun cardHomePage(
                     Text(stringResource(R.string.home_download_instance))
                 }
             }
-        } else {
-            visibleInstances.forEach { instance ->
-                val instanceKey = instance.orderKey()
-                key(instanceKey) {
-                InstanceModule(
-                    instance = instance,
-                    scale = cardScale,
-                    material = material,
-                    reorderState = cardReorder,
-                    reorderKey = instanceKey,
-                    onWorldsReordered = { worlds, save ->
-                        instances = instances.map { current ->
-                            if (current.orderKey() == instanceKey) current.copy(worlds = worlds) else current
-                        }
-                        if (save) {
-                            HomeLayoutStore.save(
-                                HomeLayoutStore.keyWorlds(instanceKey),
-                                worlds.map { it.orderKey() }
-                            )
-                        }
-                    },
-                    onServersReordered = { servers, save ->
-                        instances = instances.map { current ->
-                            if (current.orderKey() == instanceKey) current.copy(servers = servers) else current
-                        }
-                        if (save) {
-                            HomeLayoutStore.save(
-                                HomeLayoutStore.keyServers(instanceKey),
-                                servers.map { it.orderKey() }
-                            )
-                        }
-                    },
-                    onLaunch = { onLaunchVersion(instance.instance) },
-                    onPlayWorld = onPlayWorld,
-                    onJoinServer = onJoinServer,
-                    onWorldCreated = {
-                        //新建世界后立刻让跨实例世界缓存失效，顶部「最近游玩」不会显示旧数据
-                        HomeDataProvider.invalidateWorlds()
-                        reloadToken++
-                    },
-                    onServerCreated = { reloadToken++ }
-                )
-                }
-            }
         }
+
+        //（议题 #100）旧的「按实例分组的世界卡片」已删除：世界统一走顶部「最近游玩 + 查看全部」，
+        //主页只保留最近世界与自定义资讯，不再重复展示旧卡片。
 
         //世界区下方：自定义主页资讯区块（默认开启，设置里可关 / 管理预设卡片）
         HomeFeedSection(scale = cardScale)

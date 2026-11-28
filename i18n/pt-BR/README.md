@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -29,7 +29,7 @@ A ideia é simples: **menos toques**. Em vez de despejar vinte configurações n
 
 ## ✨ Mudanças recentes
 
-**28.3.2** (mais recente): tela inicial reformulada (mundos recentes + lista completa + feed personalizado), página «Personalização» removida, título dos detalhes do renderizador corrigido, progresso em tela cheia ao excluir uma versão, melhorias de desempenho, link do Discord atualizado.
+**28.3.3** (mais recente): tela inicial reformulada (mundos recentes + lista completa + feed personalizado), página «Personalização» removida, título dos detalhes do renderizador corrigido, progresso em tela cheia ao excluir uma versão, melhorias de desempenho, link do Discord atualizado.
 
 > A aparência continua como na 28.3.0 — sem vidro dinâmico, refração ou efeitos magnéticos.
 

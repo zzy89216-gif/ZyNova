@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -29,7 +29,7 @@
 
 ## ✨ Останні зміни
 
-**28.3.2** (найновіша): оновлена головна (останні світи + повний список + власна стрічка), сторінку «Персоналізація» прибрано, виправлено заголовок параметрів рендерера, повноекранний прогрес під час видалення версії, покращено продуктивність, оновлено посилання Discord.
+**28.3.3** (найновіша): оновлена головна (останні світи + повний список + власна стрічка), сторінку «Персоналізація» прибрано, виправлено заголовок параметрів рендерера, повноекранний прогрес під час видалення версії, покращено продуктивність, оновлено посилання Discord.
 
 > Зовнішній вигляд лишається як у 28.3.0 — без динамічного скла, заломлення та магнітних ефектів.
 

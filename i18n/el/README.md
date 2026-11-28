@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## ✨ Πρόσφατες αλλαγές
 
-**28.3.2** (τελευταία): νέα αρχική (τελευταίοι κόσμοι + πλήρης λίστα + προσαρμοσμένη ροή), αφαίρεση σελίδας «Εξατομίκευση», διόρθωση τίτλου λεπτομερειών renderer, πρόοδος πλήρους οθόνης στη διαγραφή έκδοσης, βελτιώσεις απόδοσης, ενημερωμένος σύνδεσμος Discord.
+**28.3.3** (τελευταία): νέα αρχική (τελευταίοι κόσμοι + πλήρης λίστα + προσαρμοσμένη ροή), αφαίρεση σελίδας «Εξατομίκευση», διόρθωση τίτλου λεπτομερειών renderer, πρόοδος πλήρους οθόνης στη διαγραφή έκδοσης, βελτιώσεις απόδοσης, ενημερωμένος σύνδεσμος Discord.
 
 > Η εμφάνιση μένει όπως στο 28.3.0 — χωρίς δυναμικό γυαλί, διάθλαση ή μαγνητικά εφέ.
 

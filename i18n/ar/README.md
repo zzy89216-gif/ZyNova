@@ -12,10 +12,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## ✨ أحدث التغييرات
 
-**28.3.2** (أحدث إصدار): إعادة تصميم الصفحة الرئيسية (آخر العوالم + قائمة العوالم الكاملة + موجز رئيسية مخصص)، وإزالة صفحة «التخصيص»، وإصلاح عنوان تفاصيل العارض، وتقدّم ملء الشاشة عند حذف إصدار، وتحسين الأداء والتقطيع، وتحديث رابط Discord.
+**28.3.3** (أحدث إصدار): إعادة تصميم الصفحة الرئيسية (آخر العوالم + قائمة العوالم الكاملة + موجز رئيسية مخصص)، وإزالة صفحة «التخصيص»، وإصلاح عنوان تفاصيل العارض، وتقدّم ملء الشاشة عند حذف إصدار، وتحسين الأداء والتقطيع، وتحديث رابط Discord.
 
 > المظهر البصري كما في 28.3.0 — بدون زجاج ديناميكي أو انكسار أو تأثيرات مغناطيسية.
 

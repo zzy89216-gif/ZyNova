@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -29,7 +29,7 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 
 ## ✨ Changements récents
 
-**28.3.2** (dernière) : page d’accueil repensée (mondes récents + liste complète + fil personnalisé), page « Personnalisation » supprimée, titre des détails du moteur corrigé, progression plein écran lors de la suppression d’une version, meilleures performances, lien Discord mis à jour.
+**28.3.3** (dernière) : page d’accueil repensée (mondes récents + liste complète + fil personnalisé), page « Personnalisation » supprimée, titre des détails du moteur corrigé, progression plein écran lors de la suppression d’une version, meilleures performances, lien Discord mis à jour.
 
 > L’apparence reste celle de 28.3.0 : pas de verre dynamique, de réfraction ni d’effets magnétiques.
 

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@ Ideea: **mai puține atingeri**. În loc să-ți arunce în față douăzeci de 
 
 ## ✨ Modificări recente
 
-**28.3.2** (cea mai nouă): pagina principală refăcută (ultimele lumi + lista completă + flux personalizat), pagina „Personalizare” eliminată, titlul detaliilor rendererului corectat, progres pe tot ecranul la ștergerea unei versiuni, performanță îmbunătățită, link Discord actualizat.
+**28.3.3** (cea mai nouă): pagina principală refăcută (ultimele lumi + lista completă + flux personalizat), pagina „Personalizare” eliminată, titlul detaliilor rendererului corectat, progres pe tot ecranul la ștergerea unei versiuni, performanță îmbunătățită, link Discord actualizat.
 
 > Aspectul rămâne ca în 28.3.0 — fără sticlă dinamică, refracție sau efecte magnetice.
 

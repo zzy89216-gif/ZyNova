@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **今本：28.3.2** · [沿革](../../CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **今本：28.3.3** · [沿革](../../CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -29,7 +29,7 @@
 
 ## ✨ 近事
 
-**28.3.2**（今本）：首頁改之（近戲諸界 + 諸界全錄 + 自定主頁資訊），去「個性」之頁，正渲染器詳目之名，刪版本改為全屏定程，卡頓稍減，Discord 之鏈並新。
+**28.3.3**（今本）：首頁改之（近戲諸界 + 諸界全錄 + 自定主頁資訊），去「個性」之頁，正渲染器詳目之名，刪版本改為全屏定程，卡頓稍減，Discord 之鏈並新。
 
 > 界面之觀仍如 28.3.0，未含動玻璃、折射、磁吸之效。
 

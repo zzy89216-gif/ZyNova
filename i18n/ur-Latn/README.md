@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@ Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pe
 
 ## ✨ Haal ki tabdeeliyan
 
-**28.3.2** (latest): home naya (haali worlds + poori list + custom home feed), «Personalization» page hata diya, renderer details ka title theek kiya, version delete par full-screen progress, performance behtar, Discord link update.
+**28.3.3** (latest): home naya (haali worlds + poori list + custom home feed), «Personalization» page hata diya, renderer details ka title theek kiya, version delete par full-screen progress, performance behtar, Discord link update.
 
 > Look 28.3.0 jaisa hi hai — dynamic glass, refraction aur magnetic effects shamil nahi.
 

@@ -24,7 +24,7 @@
 
 ## Instances
 
-- Long-press or tap an instance card on the home screen to open the instance page.
+- To open the instance page: the home screen no longer shows the old instance cards; open it from the **Versions** list (tap an instance entry).
 - **Version settings** changes Java, memory, renderer, resolution and JVM arguments.
 - **Mod management** enables, disables or deletes mods; Fabric API is added by the Fabric flow and must not be installed twice by hand.
 - **Run log** lives on the version overview page; when something crashes, share the log from there first.
@@ -45,8 +45,7 @@
 The home screen is **card-based** by default (switch between Blank / Card Home / Load from Local / Load from URL under Settings → Launcher → Home → Home type). From top to bottom:
 
 1. **Recently played**: worlds you played last, aggregated across instances, up to four of them. Tap one to launch it; the fifth card, **View all**, opens the **All worlds** list with search, sorting and filtering by instance / game version — see [Installing or importing worlds](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-world.md).
-2. **Instance cards**: long-press a card and drag to reorder; drop it once it **covers half** of another card and they swap, without flicker. The "Hide this instance on Home / Show this instance on Home" button under Instance → Version overview → Quick actions affects **only that instance**; it no longer turns every card off at once.
-3. **Custom home**: news cards below the worlds section (Minecraft news / Java version updates / Modrinth / CurseForge / Minecraft community), **on by default**. The switch (Custom home feed) is under Settings → Launcher, and cards can be added, removed, hidden or dragged into a new order. When offline or when a request fails it uses the local cache and never blocks the rest of the home page — see [Custom home page](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/custom-home.md).
+2. **Custom home**: news cards below the worlds section (Minecraft news / Java version updates / Modrinth / CurseForge / Minecraft community), **on by default**. The switch (Custom home feed) is under Settings → Launcher, and cards can be added, removed, hidden or dragged into a new order. When offline or when a request fails it uses the local cache and never blocks the rest of the home page — see [Custom home page](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/custom-home.md).
 
 ## Export
 

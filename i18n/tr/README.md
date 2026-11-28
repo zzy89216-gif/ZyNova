@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 
 ---
 
@@ -23,7 +23,7 @@ Fikir tek: **daha az dokunuş**. Yirmi ayarı önüne dökmek yerine önce kendi
 
 ## ✨ Son değişiklikler
 
-**28.3.2** (en yeni): ana sayfa yenilendi (son dünyalar + tam liste + özel ana sayfa akışı), «Kişiselleştirme» sayfası kaldırıldı, oluşturucu ayrıntıları başlığı düzeltildi, sürüm silmede tam ekran ilerleme, performans iyileştirmeleri, Discord bağlantısı güncellendi.
+**28.3.3** (en yeni): ana sayfa yenilendi (son dünyalar + tam liste + özel ana sayfa akışı), «Kişiselleştirme» sayfası kaldırıldı, oluşturucu ayrıntıları başlığı düzeltildi, sürüm silmede tam ekran ilerleme, performans iyileştirmeleri, Discord bağlantısı güncellendi.
 
 > Görünüm 28.3.0 ile aynı — dinamik cam, kırılma veya manyetik efekt yok.
 

@@ -10,7 +10,7 @@
 **Android 上的 Minecraft: Java Edition 启动器** · 基于 ZalithLauncher2 自行维护发布 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
+[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
 [![Docs](https://img.shields.io/badge/Docs-78%20%E7%AF%87-blue)](docs/zh/README.md)
 
 设计只有一句：**少点几下**。先替你判断，判断不了再问一次；装游戏、装整合包、装模组、理依赖、读崩溃日志，都尽量交给 AI。
@@ -52,10 +52,11 @@
 
 国内网络：按需走镜像，镜像缺文件自动回退官方；CurseForge 可能需镜像，Modrinth 通常直连。出错先换网络、关代理再试。
 
-## 28.3.2 更新要点
+## 28.3.3 更新要点
 
-**28.3.2** 在 28.3.0 正式版基础上改主页、删除「个性化」页并修一批问题；**界面视觉与 28.3.0 一致**，本版未包含动态玻璃 / 真折射 / 磁吸等视觉改动。
+**28.3.3** 在 28.3.0 正式版基础上改主页、删除「个性化」页并修一批问题；**界面视觉与 28.3.0 一致**，本版未包含动态玻璃 / 真折射 / 磁吸等视觉改动。
 
+- **主页旧卡片移除**（#100）：删除主页中间「按实例分组」的旧世界卡片，世界统一走顶部「最近游玩 + 查看全部」。
 - **主页改版**（#91）：顶部显示最近游玩的 4 个世界，点「查看全部」进入全部世界列表（搜索 / 排序 / 按实例与游戏版本筛选，可直接启动）；世界区下方新增「自定义主页」资讯卡片（Minecraft 新闻 / Java 版本更新 / Modrinth / CurseForge / Minecraft 社区活动），可添加、删除、隐藏、拖动排序，断网不影响启动。
 - **移除「个性化」**：主菜单「个性化」页与顶栏调色盘入口一并删除；外观相关设置（主题、壁纸、圆角、玻璃、背景模糊等）仍在 **设置 → 启动器**。
 - **修复删除版本**：删除进度改为真全屏（铺满屏幕、返回键不误触、可随时取消）。
