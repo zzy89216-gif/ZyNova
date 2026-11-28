@@ -125,6 +125,8 @@ import com.movtery.zalithlauncher.viewmodel.VulkanCheckerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Locale
@@ -231,6 +233,34 @@ class MainActivity : BaseAppCompatActivity() {
      */
     private var fmEventRegistrar: FileManagerEventRegistrar? = null
 
+    /**
+     * 插件加载串行锁。
+     *
+     * 插件加载要全量查询 PackageManager 并解析元数据 / 写图标缓存，是冷启动和「从游戏返回」时的主线程重活，
+     * 现在统一放到 IO 线程加载；用锁保证「冷启动的那次」和「onNewIntent 的强制重载」不会同时改同一批列表。
+     */
+    private val pluginLoadMutex = Mutex()
+
+    /**
+     * 后台加载插件（冷启动 / 从游戏返回）。
+     *
+     * 为什么异步：`loadAllPlugins` 会遍历所有可启动应用、读它们的 metaData、还会写插件图标缓存到磁盘，
+     * 同步跑在 onCreate 里会直接拖慢首帧。插件列表只在「渲染器设置 / 关于页」这类后续页面读取，
+     * 用户点进去之前早就加载完了；游戏进程（VMActivity）在 `:game` 独立进程里会自己再加载一次，不受影响。
+     */
+    private fun loadPluginsAsync(force: Boolean) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            pluginLoadMutex.withLock {
+                //强制重载时连渲染器列表一起重置：两者都在这一把锁里改，
+                //避免「主线程清空渲染器列表」和「后台加载插件往里加渲染器」并发改同一个列表。
+                if (force) {
+                    Renderers.init(true)
+                }
+                PluginLoader.loadAllPlugins(this@MainActivity, force)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //处理外部导入
@@ -238,10 +268,10 @@ class MainActivity : BaseAppCompatActivity() {
         //处理「游戏内菜单 → 多人联机」的跨进程请求（进程被杀后从游戏返回时走这里）
         handleOpenMultiplayerIfNeeded(intent)
 
-        //加载渲染器
+        //加载渲染器（只是把内置渲染器实例登记进来，开销很小，保持同步以保证启动路径一定有兜底渲染器）
         Renderers.init()
-        //加载插件
-        PluginLoader.loadAllPlugins(this, false)
+        //加载插件：冷启动主线程重活，挪到 IO 线程异步加载（见 loadPluginsAsync 注释）
+        loadPluginsAsync(force = false)
         refreshData()
 
         //注册文件管理器事件监听
@@ -681,10 +711,9 @@ class MainActivity : BaseAppCompatActivity() {
         handleImportIfNeeded(intent)
         //从游戏里点「多人联机」回来时，MainActivity 往往还活着（singleTop + REORDER_TO_FRONT）
         handleOpenMultiplayerIfNeeded(intent)
-        // 重载渲染器
-        Renderers.init(true)
-        // 重载插件
-        PluginLoader.loadAllPlugins(this, true)
+        // 重载渲染器 + 插件：全量扫描 + 解析 + 写图标缓存都是主线程重活，
+        // 从游戏切回来的瞬间同步做会明显卡一下；统一挪到 IO 线程串行重载（见 loadPluginsAsync）
+        loadPluginsAsync(force = true)
     }
 
     override fun onDestroy() {
@@ -1036,19 +1065,34 @@ class MainActivity : BaseAppCompatActivity() {
             intent.getParcelableExtra(EXTRA_IMPORT_URI)
         } ?: return false
 
-        val name = queryDisplayName(uri) ?: ("imported_" + System.currentTimeMillis())
-        val dir = java.io.File(PathManager.DIR_FILES_EXTERNAL, "imported").apply { mkdirs() }
-        val target = java.io.File(dir, name)
-        return runCatching {
-            copyLocalFile(uri, target)
-            Toast.makeText(this, getString(R.string.imported_to_private, target.absolutePath), Toast.LENGTH_LONG).show()
-            Logger.info(TAG, "Imported external file to ${target.absolutePath}")
-            true
-        }.getOrElse { e ->
-            Logger.warning(TAG, "Unable to import $uri", e)
-            Toast.makeText(this, getString(R.string.import_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
-            false
+        //启动性能：分享 / 「用 ZyNova 打开」外部文件时，这里要整份复制文件（可能是几十上百 MB），
+        //原来直接在 onCreate 主线程同步复制，首帧会被卡住。改成 IO 线程复制、完成后再提示，界面照常先出来。
+        lifecycleScope.launch(Dispatchers.IO) {
+            val name = queryDisplayName(uri) ?: ("imported_" + System.currentTimeMillis())
+            val dir = java.io.File(PathManager.DIR_FILES_EXTERNAL, "imported").apply { mkdirs() }
+            val target = java.io.File(dir, name)
+            runCatching {
+                copyLocalFile(uri, target)
+                Logger.info(TAG, "Imported external file to ${target.absolutePath}")
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.imported_to_private, target.absolutePath),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }.onFailure { e ->
+                Logger.warning(TAG, "Unable to import $uri", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.import_failed, e.message ?: ""),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
+        return true
     }
 
     private fun queryDisplayName(uri: Uri): String? = runCatching {

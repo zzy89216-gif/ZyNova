@@ -537,7 +537,9 @@ private fun SavesList(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 state = scrollState,
             ) {
-                items(list) { saveData ->
+                //性能（列表滚动）：存档目录路径是稳定唯一 key，筛选 / 排序后 Compose 按身份复用列表项，
+                //避免整列项被当成新项重建（封面重新加载、内部状态丢失）。
+                items(list, key = { it.saveFile.absolutePath }) { saveData ->
                     SaveItemLayout(
                         modifier = Modifier.fillMaxWidth(),
                         saveData = saveData,

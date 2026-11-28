@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -28,6 +28,10 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 - Ceux qui savent seulement dire « ça plante » : donner le log à l'IA va plus vite que fouiller un forum
 
 ## ✨ Changements récents
+
+**28.3.2** (dernière) : page d’accueil repensée (mondes récents + liste complète + fil personnalisé), page « Personnalisation » supprimée, titre des détails du moteur corrigé, progression plein écran lors de la suppression d’une version, meilleures performances, lien Discord mis à jour.
+
+> L’apparence reste celle de 28.3.0 : pas de verre dynamique, de réfraction ni d’effets magnétiques.
 
 Les points clés de la version **28.3.0** (version stable) :
 
@@ -72,7 +76,7 @@ Changements complets : [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Soutien
 
 - Signaler un problème：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - E-mail：<ZyNovaLauncher@outlook.com>
 - X officiel：<https://x.com/ZyNovaProject>
 - Soutenir le projet：<https://afdian.com/a/hizzy>

@@ -72,11 +72,11 @@ import com.movtery.zalithlauncher.utils.festival.LocalFestivals
  * 单行布局：
  * - 左侧：标题（保持原内容与样式；子页面时前面多一个返回键）；
  * - 正中：液态玻璃胶囊，顺序为
- *   文件管理 → 主菜单 → 多人联机 → 下载 → 个性化 → 设置 → AI；
+ *   主菜单 → AI → 多人联机 → 下载 → 音乐 → 文件管理 → 设置；
  * - 右端：有下载任务且任务面板收起时，显示一个小圆环。
  *
  * 与旧版的区别：不再把功能入口排在右侧，也不再使用「…」溢出菜单——
- * 八个入口全部平铺在居中胶囊里（第 8 个「音乐」由议题 #77 加入，与下载并列）。
+ * 七个入口全部平铺在居中胶囊里（「音乐」由议题 #77 加入，与下载并列）。
  *
  * 议题 #81：顶栏下方还会挂一条 [MusicMiniPlayer]（「正在听的歌 + 播放/暂停 + 切歌」），
  * 只在**不是音乐页**且**有当前曲目**（播放中 / 暂停）时出现。它单独占一行，不挤占上面这条 64dp 顶栏。
@@ -92,7 +92,6 @@ fun LauncherTopBar(
     onScreenBack: () -> Unit,
     toMainScreen: () -> Unit,
     toSettingsScreen: () -> Unit,
-    toPersonalization: () -> Unit,
     toDownloadScreen: () -> Unit,
     toMultiplayerScreen: () -> Unit,
     toMusic: () -> Unit,
@@ -108,7 +107,6 @@ fun LauncherTopBar(
     val inDownloadScreen = mainScreenKey is NestedNavKey.Download
     val inSettingsScreen = mainScreenKey is NestedNavKey.Settings
     val inAIChatScreen = mainScreenKey is NormalNavKey.AIChat
-    val inPersonalizationScreen = mainScreenKey is NormalNavKey.Personalization
     val inMusicScreen = mainScreenKey is NormalNavKey.Music
 
     CompositionLocalProvider(LocalContentColor provides contentColor) {
@@ -187,9 +185,9 @@ fun LauncherTopBar(
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // 顺序：主菜单 → AI → 多人 → 下载 → 音乐 → 文件 → 个性化 → 设置
+                    // 顺序：主菜单 → AI → 多人 → 下载 → 音乐 → 文件 → 设置
                     // 主菜单放最左（选中态最稳定），AI 是核心入口放第二，
-                    // 高频的联机/下载/音乐居中，文件与两个「配置类」入口靠右。
+                    // 高频的联机/下载/音乐居中，文件与「配置类」入口靠右。
                     CapsuleItem(
                         selected = inLauncherScreen,
                         painter = painterResource(R.drawable.ic_home_filled),
@@ -226,12 +224,6 @@ fun LauncherTopBar(
                         painter = painterResource(R.drawable.ic_folder_filled),
                         label = stringResource(R.string.fm_activity_name),
                         onClick = openFileManager
-                    )
-                    CapsuleItem(
-                        selected = inPersonalizationScreen,
-                        painter = painterResource(R.drawable.ic_palette_filled),
-                        label = stringResource(R.string.personalization_title),
-                        onClick = { if (!inPersonalizationScreen) toPersonalization() }
                     )
                     CapsuleItem(
                         selected = inSettingsScreen,

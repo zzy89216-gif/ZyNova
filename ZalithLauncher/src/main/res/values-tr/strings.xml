@@ -1320,4 +1320,33 @@ Bunları elle kurun, aksi hâlde oyun açılırken çökebilir.</string>
     <string name="ai_search_engine_deepseek_price">Başarılı istek başına ücretlendirilir (~$0,75 / 1000). Başarısız veya boş aramalar ücretsizdir.</string>
     <string name="ai_search_key_title">DeepSeek Search anahtarı</string>
     <string name="ai_search_key_summary">Boş bırakırsanız ana DeepSeek anahtarı kullanılır.</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Son oynananlar</string>
+    <string name="home_recent_worlds_more">Tümünü gör</string>
+    <string name="world_list_title">Tüm dünyalar</string>
+    <string name="world_list_all_instances">Tüm örnekler</string>
+    <string name="world_list_all_versions">Tüm oyun sürümleri</string>
+    <string name="world_list_empty">Geçerli arama veya filtrelerle eşleşen dünya yok.</string>
+    <string name="world_list_never_played">Hiç oynanmadı</string>
+    <string name="home_feed_title">Özel ana sayfa</string>
+    <string name="home_feed_empty">Şu anda gösterilecek bir şey yok. Daha sonra otomatik olarak yenilenecek.</string>
+    <string name="home_feed_source_minecraft_news">Minecraft haberleri</string>
+    <string name="home_feed_source_java_updates">Java sürümü güncellemeleri</string>
+    <string name="home_feed_source_modrinth">Modrinth\'te trendler</string>
+    <string name="home_feed_source_curseforge">CurseForge seçkileri</string>
+    <string name="home_feed_source_minecraft_events">Minecraft topluluğu</string>
+    <string name="home_feed_settings_title">Özel ana sayfa akışı</string>
+    <string name="home_feed_settings_summary">Dünyalarınızın altında haberleri ve topluluk güncellemelerini gösterir. Başarısız istekler sessizce önbellekteki içeriği kullanır ve ana sayfanın geri kalanını asla engellemez.</string>
+    <string name="home_feed_manage_entry_title">Ana sayfa kartlarını yönet</string>
+    <string name="home_feed_manage_entry_summary">Hazır kartları ekleyin, kaldırın, gizleyin veya yeniden sıralayın.</string>
+    <string name="home_feed_manage_title">Ana sayfa kartları</string>
+    <string name="home_feed_manage_hint">Bir kartı sürüklemek için soldaki tutamacı uzun basılı tutun. Anahtar kartı gizler (yeniden gösterebilirsiniz); kaldırırsanız kart «Kullanılabilir kartlar»a geri döner.</string>
+    <string name="home_feed_manage_none_added">Henüz kart eklenmedi.</string>
+    <string name="home_feed_manage_available">Kullanılabilir kartlar</string>
+    <string name="home_feed_manage_reset">Varsayılana sıfırla</string>
+    <string name="home_feed_manage_drag_hint">Sıralamak için sürükleyin</string>
+    <string name="home_feed_manage_remove">Kaldır</string>
+    <string name="home_feed_manage_add">Ekle</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">İşleyici ayrıntıları (dört işleyicinin tümü)</string>
 </resources>

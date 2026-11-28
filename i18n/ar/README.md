@@ -12,10 +12,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -24,6 +24,10 @@
 الفكرة في سطر واحد: **خطوات أقل**. بدل أن يعرض عليك عشرين إعدادًا، يقرّر المشغّل أولًا ويسأل فقط حين يعجز عن القرار.
 
 ## ✨ أحدث التغييرات
+
+**28.3.2** (أحدث إصدار): إعادة تصميم الصفحة الرئيسية (آخر العوالم + قائمة العوالم الكاملة + موجز رئيسية مخصص)، وإزالة صفحة «التخصيص»، وإصلاح عنوان تفاصيل العارض، وتقدّم ملء الشاشة عند حذف إصدار، وتحسين الأداء والتقطيع، وتحديث رابط Discord.
+
+> المظهر البصري كما في 28.3.0 — بدون زجاج ديناميكي أو انكسار أو تأثيرات مغناطيسية.
 
 **28.3.0** (إصدار مستقر): أبرز التغييرات.
 
@@ -80,7 +84,7 @@
 ## 💖 الدعم
 
 - الإبلاغ عن مشكلة：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - البريد：<ZyNovaLauncher@outlook.com>
 - X الرسمي：<https://x.com/ZyNovaProject>
 - ادعم المشروع：<https://afdian.com/a/hizzy>

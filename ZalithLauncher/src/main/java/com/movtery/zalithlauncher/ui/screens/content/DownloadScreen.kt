@@ -89,7 +89,7 @@ fun ScreenBackStackViewModel.navigateToDownload(
     resourceInstallTarget = installTargetVersion
     downloadScreen.clearWith(targetScreen ?: downloadGameScreen)
     //下载是「标签页」级别：先把栈里除主界面以外的页面清掉，再压入下载页。
-    //否则「设置 → 返回」会退回到栈里残留的 AI / 个性化页面（27.10.2 的乱跳问题）。
+    //否则「设置 → 返回」会退回到栈里残留的 AI 页面（27.10.2 的乱跳问题）。
     mainScreen.backStack.removeIf { it !is NormalNavKey.LauncherMain }
     mainScreen.navigateTo(downloadScreen, useClassEquality = true)
 }

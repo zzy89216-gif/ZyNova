@@ -129,7 +129,7 @@ English: [docs/en/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [手柄](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/controls-gamepad.md) |
 | [主题与外观](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/theme.md) |
 | [玻璃材质](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/glass.md) |
-| [个性化与玻璃氛围](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/personalization.md) |
+| [自定义主页](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/custom-home.md) |
 | [语言](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/language.md) |
 | [任务面板](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/zh/task-panel.md) |
 

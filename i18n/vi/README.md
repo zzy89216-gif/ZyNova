@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Trình khởi chạy **Minecraft: Java Edition** trên Android, phát triển đ
 Ý tưởng gọn lại một câu: **ít chạm hơn**. Thay vì bày ra hai chục cài đặt, trình khởi chạy tự quyết trước và chỉ hỏi khi thật sự không quyết được.
 
 ## ✨ Thay đổi gần đây
+
+**28.3.2** (mới nhất): trang chủ làm mới (thế giới gần đây + danh sách đầy đủ + bảng tin tùy chỉnh), bỏ trang «Cá nhân hóa», sửa tiêu đề chi tiết renderer, tiến trình toàn màn hình khi xoá phiên bản, cải thiện hiệu năng, cập nhật liên kết Discord.
+
+> Giao diện giữ như 28.3.0 — không có kính động, khúc xạ hay hiệu ứng từ tính.
 
 **28.3.0** (bản chính thức): các thay đổi chính.
 
@@ -72,7 +76,7 @@ Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Ủng hộ
 
 - Báo lỗi：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - Email：<ZyNovaLauncher@outlook.com>
 - X chính thức：<https://x.com/ZyNovaProject>
 - Ủng hộ dự án：<https://afdian.com/a/hizzy>

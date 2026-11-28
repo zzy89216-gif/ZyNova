@@ -1475,12 +1475,6 @@
     <string name="settings_launcher_mirror_asset_platform_source_title">Fonte de download de mods</string>
     <string name="settings_launcher_mirror_auto">Automático</string>
     <string name="settings_launcher_liquid_glass_title">Efeito de vidro líquido</string>
-    <string name="personalization_title">Personalização</string>
-    <string name="personalization_wallpaper_title">Papel de parede</string>
-    <string name="personalization_wallpaper_summary_set">Toque para trocar a imagem ou o vídeo de fundo atual</string>
-    <string name="personalization_wallpaper_summary_empty">Ainda sem papel de parede, toque para escolher um</string>
-    <string name="personalization_more_settings">Mais configurações</string>
-    <string name="personalization_more_settings_summary">Tema, idioma, tela cheia e outras opções pouco usadas</string>
     <string name="settings_launcher_glass_strength_title">Intensidade do vidro</string>
     <string name="settings_launcher_glass_strength_summary">Quanto a tonalidade de vidro monocromático aparece. Valores menores ficam mais próximos de cores chapadas.</string>
     <string name="settings_launcher_corner_radius_title">Raio dos cantos</string>
@@ -1689,4 +1683,33 @@
     <string name="settings_network_cache_clear">Limpar</string>
     <string name="ai_error_runaway">"%1$s" foi chamado %2$d vezes com exatamente os mesmos argumentos, então parece travado em loop e foi interrompido. Tente descrever o que precisa de outra forma.</string>
     <string name="ai_error_no_tool">Não existe ferramenta chamada `%1$s`. Veja a lista de ferramentas no prompt do sistema.</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Jogados recentemente</string>
+    <string name="home_recent_worlds_more">Ver todos</string>
+    <string name="world_list_title">Todos os mundos</string>
+    <string name="world_list_all_instances">Todas as instâncias</string>
+    <string name="world_list_all_versions">Todas as versões do jogo</string>
+    <string name="world_list_empty">Nenhum mundo corresponde à pesquisa ou aos filtros atuais.</string>
+    <string name="world_list_never_played">Nunca jogado</string>
+    <string name="home_feed_title">Início personalizado</string>
+    <string name="home_feed_empty">Nada para mostrar agora. Vai atualizar automaticamente mais tarde.</string>
+    <string name="home_feed_source_minecraft_news">Notícias do Minecraft</string>
+    <string name="home_feed_source_java_updates">Novidades da versão Java</string>
+    <string name="home_feed_source_modrinth">Em alta no Modrinth</string>
+    <string name="home_feed_source_curseforge">Escolhas do CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Comunidade do Minecraft</string>
+    <string name="home_feed_settings_title">Feed do início personalizado</string>
+    <string name="home_feed_settings_summary">Mostra notícias e novidades da comunidade abaixo dos seus mundos. Requisições que falham usam o conteúdo em cache sem avisar e nunca bloqueiam o resto da página inicial.</string>
+    <string name="home_feed_manage_entry_title">Gerenciar cartões do início</string>
+    <string name="home_feed_manage_entry_summary">Adicione, remova, oculte ou reordene os cartões predefinidos.</string>
+    <string name="home_feed_manage_title">Cartões do início</string>
+    <string name="home_feed_manage_hint">Mantenha pressionada a alça à esquerda para arrastar um cartão. A chave oculta o cartão (você pode mostrá-lo de novo); remover devolve o cartão para «Cartões disponíveis».</string>
+    <string name="home_feed_manage_none_added">Nenhum cartão adicionado ainda.</string>
+    <string name="home_feed_manage_available">Cartões disponíveis</string>
+    <string name="home_feed_manage_reset">Restaurar padrão</string>
+    <string name="home_feed_manage_drag_hint">Arraste para reordenar</string>
+    <string name="home_feed_manage_remove">Remover</string>
+    <string name="home_feed_manage_add">Adicionar</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Detalhes do renderizador (todos os quatro renderizadores)</string>
 </resources>

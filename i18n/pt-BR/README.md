@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -28,6 +28,10 @@ A ideia é simples: **menos toques**. Em vez de despejar vinte configurações n
 3. Entre com a conta Microsoft, escolha ou instale uma versão, aperte jogar
 
 ## ✨ Mudanças recentes
+
+**28.3.2** (mais recente): tela inicial reformulada (mundos recentes + lista completa + feed personalizado), página «Personalização» removida, título dos detalhes do renderizador corrigido, progresso em tela cheia ao excluir uma versão, melhorias de desempenho, link do Discord atualizado.
+
+> A aparência continua como na 28.3.0 — sem vidro dinâmico, refração ou efeitos magnéticos.
 
 **28.3.0** (versão estável): os principais destaques.
 
@@ -79,7 +83,7 @@ Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Apoio
 
 - Reportar problema：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - E-mail：<ZyNovaLauncher@outlook.com>
 - X oficial：<https://x.com/ZyNovaProject>
 - Apoiar o projeto：<https://afdian.com/a/hizzy>

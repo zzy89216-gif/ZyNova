@@ -616,7 +616,9 @@ private fun ResourcePackList(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 state = scrollState,
             ) {
-                items(list) { pack ->
+                //性能（列表滚动）：资源包文件路径是稳定唯一 key，筛选 / 排序后 Compose 按身份复用列表项，
+                //避免整列项被当成新项重建（图标重新加载、展开状态丢失）。
+                items(list, key = { it.file.absolutePath }) { pack ->
                     ResourcePackItemLayout(
                         modifier = Modifier
                             .fillMaxWidth()

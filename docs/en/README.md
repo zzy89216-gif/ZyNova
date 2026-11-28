@@ -129,7 +129,7 @@ Chinese: [docs/zh/README.md](https://github.com/zzy89216-gif/ZyNova/blob/main/do
 | [Gamepad](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/controls-gamepad.md) |
 | [Theme and appearance](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/theme.md) |
 | [Glass material](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/glass.md) |
-| [Personalization and the glass look](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/personalization.md) |
+| [Custom home page](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/custom-home.md) |
 | [Language](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/language.md) |
 | [Task panel](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/task-panel.md) |
 

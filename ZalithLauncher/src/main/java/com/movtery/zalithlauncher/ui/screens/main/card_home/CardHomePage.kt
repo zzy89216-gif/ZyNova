@@ -65,6 +65,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.enums.HomeButtonMaterial
 import com.movtery.zalithlauncher.ui.components.HomeMaterialButton
 import com.movtery.zalithlauncher.ui.components.HomeMaterialChip
+import com.movtery.zalithlauncher.ui.screens.main.home_feed.HomeFeedSection
 import com.movtery.zalithlauncher.ui.components.homeButtonTextStyle
 import com.movtery.zalithlauncher.ui.components.ReorderState
 import com.movtery.zalithlauncher.ui.components.rememberHomeButtonMaterial
@@ -73,6 +74,18 @@ import com.movtery.zalithlauncher.ui.components.rememberReorderState
 import com.movtery.zalithlauncher.ui.screens.content.elements.backgroundGlass
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
+
+/** 主页顶部「最近游玩的 4 个世界」数量 */
+private const val RECENT_WORLDS_LIMIT = 4
+
+/**
+ * 跨实例聚合「最近游玩」的超时（毫秒）
+ *
+ * allWorlds() 会解析全部实例的存档（有 20 秒内存缓存），
+ * 主页不能被它拖住：超时就先用「已加载实例聚合」的兜底数据渲染，
+ * 下次刷新或进入「更多世界」页时再从缓存拿到全量结果。
+ */
+private const val RECENT_WORLDS_LOAD_TIMEOUT_MS = 4_000L
 
 /** 实例卡片在排序中的稳定标识 */
 private fun HomeInstance.orderKey(): String = instance.getVersionName()
@@ -138,9 +151,14 @@ fun cardHomePage(
     onJoinServer: (Version, String) -> Unit = { _, _ -> },
     /** 点「下载一个实例」时跳转到下载游戏本体页 */
     onOpenDownload: () -> Unit = {},
+    /** 点「最近游玩」区块的「更多」卡片时进入全部世界列表页 */
+    onOpenWorldList: () -> Unit = {},
 ) {
     var instances by remember { mutableStateOf<List<HomeInstance>>(emptyList()) }
     var loaded by remember { mutableStateOf(false) }
+
+    //最近游玩的 4 个世界（跨实例聚合，按最后游玩时间倒序）
+    var recentWorlds by remember { mutableStateOf<List<HomeWorld>>(emptyList()) }
 
     //创建世界 / 添加服务器后需要重新读取该实例的世界与服务器列表
     var reloadToken by remember { mutableStateOf(0) }
@@ -198,6 +216,28 @@ fun cardHomePage(
             loadFailed = true
             emptyList()
         }
+
+        //「最近游玩的 4 个世界」：按最后游玩时间跨**全部实例**聚合，取前 4 个。
+        //
+        //数据由 HomeDataProvider.allWorlds() 提供（内部在 IO 线程扫描、有 20 秒内存缓存、
+        //结果按 lastPlayedMillis 倒序），这里再套 4 秒超时：
+        //扫描慢 / 出错时回退到「刚加载好的实例世界聚合」，保证主页立即有内容、不被拖住。
+        //回退数据只覆盖已加载的实例模块（最多 4 个实例），是降级路径而不是常态。
+        val fallbackWorlds = instances.flatMap { instance -> instance.worlds }
+        recentWorlds = runCatching {
+            kotlinx.coroutines.withTimeout(RECENT_WORLDS_LOAD_TIMEOUT_MS) {
+                HomeDataProvider.allWorlds()
+            }
+        }.getOrElse { e ->
+            //只有超时 / 读取失败才降级；页面被关闭导致的协程取消必须继续抛出，不能吞掉
+            if (e is kotlinx.coroutines.CancellationException &&
+                e !is kotlinx.coroutines.TimeoutCancellationException
+            ) throw e
+            fallbackWorlds
+        }
+            .sortedByDescending { world -> world.lastPlayedMillis }
+            .take(RECENT_WORLDS_LIMIT)
+
         loaded = true
     }
 
@@ -252,6 +292,17 @@ fun cardHomePage(
             .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp * cardScale)
     ) {
+        //主页顶部：最近游玩的 4 个世界 + 「更多」卡片（没有世界时整块不显示）
+        if (recentWorlds.isNotEmpty()) {
+            RecentWorldsSection(
+                worlds = recentWorlds,
+                scale = cardScale,
+                material = material,
+                onPlayWorld = onPlayWorld,
+                onOpenWorldList = onOpenWorldList
+            )
+        }
+
         if (visibleInstances.isEmpty()) {
             //空状态：左边一大片空白很难看，也让人不知道下一步干什么。
             //直接给一个「下载一个实例」的入口，点了就进下载游戏本体页。
@@ -309,12 +360,19 @@ fun cardHomePage(
                     onLaunch = { onLaunchVersion(instance.instance) },
                     onPlayWorld = onPlayWorld,
                     onJoinServer = onJoinServer,
-                    onWorldCreated = { reloadToken++ },
+                    onWorldCreated = {
+                        //新建世界后立刻让跨实例世界缓存失效，顶部「最近游玩」不会显示旧数据
+                        HomeDataProvider.invalidateWorlds()
+                        reloadToken++
+                    },
                     onServerCreated = { reloadToken++ }
                 )
                 }
             }
         }
+
+        //世界区下方：自定义主页资讯区块（默认开启，设置里可关 / 管理预设卡片）
+        HomeFeedSection(scale = cardScale)
     }
 }
 
@@ -531,7 +589,7 @@ private fun HomeGroup(
  * 长按可以拖动排序（关键字见 [reorderModifier]）。
  */
 @Composable
-private fun HomeEntryChip(
+internal fun HomeEntryChip(
     title: String,
     subtitle: String?,
     scale: Float,

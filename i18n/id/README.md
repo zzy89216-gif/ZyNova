@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Peluncur **Minecraft: Java Edition** untuk Android, dikelola sendiri dari kode Z
 Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengaturan, peluncur memutuskan dulu dan hanya bertanya kalau memang tidak bisa.
 
 ## ✨ Perubahan terbaru
+
+**28.3.2** (terbaru): halaman utama baru (dunia terakhir + daftar lengkap + feed kustom), halaman «Personalisasi» dihapus, judul detail perender diperbaiki, progres layar penuh saat menghapus versi, peningkatan performa, tautan Discord diperbarui.
+
+> Tampilan tetap seperti 28.3.0 — tanpa kaca dinamis, refraksi, atau efek magnetik.
 
 **28.3.0** (versi stabil): perubahan utama.
 
@@ -78,7 +82,7 @@ Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Dukungan
 
 - Laporkan masalah：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - Email：<ZyNovaLauncher@outlook.com>
 - X resmi：<https://x.com/ZyNovaProject>
 - Dukung proyek：<https://afdian.com/a/hizzy>

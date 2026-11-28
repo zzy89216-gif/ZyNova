@@ -1307,4 +1307,33 @@
     <string name="ai_search_engine_deepseek_price">Cobrado por pedido bem-sucedido (~$0,75 / 1000). Pedidos falhados ou vazios são gratuitos.</string>
     <string name="ai_search_key_title">Chave do DeepSeek Search</string>
     <string name="ai_search_key_summary">Deixe vazio para reutilizar a chave principal do DeepSeek.</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Jogados recentemente</string>
+    <string name="home_recent_worlds_more">Ver tudo</string>
+    <string name="world_list_title">Todos os mundos</string>
+    <string name="world_list_all_instances">Todas as instâncias</string>
+    <string name="world_list_all_versions">Todas as versões do jogo</string>
+    <string name="world_list_empty">Nenhum mundo corresponde à pesquisa ou aos filtros atuais.</string>
+    <string name="world_list_never_played">Nunca jogado</string>
+    <string name="home_feed_title">Início personalizado</string>
+    <string name="home_feed_empty">De momento não há nada para mostrar. Atualiza automaticamente mais tarde.</string>
+    <string name="home_feed_source_minecraft_news">Notícias do Minecraft</string>
+    <string name="home_feed_source_java_updates">Novidades da versão Java</string>
+    <string name="home_feed_source_modrinth">Tendências do Modrinth</string>
+    <string name="home_feed_source_curseforge">Escolhas do CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Comunidade do Minecraft</string>
+    <string name="home_feed_settings_title">Conteúdo do início personalizado</string>
+    <string name="home_feed_settings_summary">Mostra notícias e novidades da comunidade abaixo dos teus mundos. Os pedidos falhados usam o conteúdo em cache sem avisar e nunca bloqueiam o resto da página inicial.</string>
+    <string name="home_feed_manage_entry_title">Gerir cartões do início</string>
+    <string name="home_feed_manage_entry_summary">Adiciona, remove, oculta ou reordena os cartões predefinidos.</string>
+    <string name="home_feed_manage_title">Cartões do início</string>
+    <string name="home_feed_manage_hint">Mantém premido o puxador à esquerda para arrastar um cartão. O interruptor oculta o cartão (podes voltar a mostrá-lo); se o removeres, volta a «Cartões disponíveis».</string>
+    <string name="home_feed_manage_none_added">Ainda não adicionaste cartões.</string>
+    <string name="home_feed_manage_available">Cartões disponíveis</string>
+    <string name="home_feed_manage_reset">Restaurar predefinições</string>
+    <string name="home_feed_manage_drag_hint">Arrasta para reordenar</string>
+    <string name="home_feed_manage_remove">Remover</string>
+    <string name="home_feed_manage_add">Adicionar</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Detalhes do renderizador (os quatro renderizadores)</string>
 </resources>

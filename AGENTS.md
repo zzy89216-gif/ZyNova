@@ -20,17 +20,17 @@
 | 最低系统 | Android 8.0（`minSdk 26`），`targetSdk 34`，`compileSdk 37` |
 | 构建 | JDK 17 + Android SDK/NDK，`./gradlew ZalithLauncher:assembleRelease` |
 | 核心原则 | **Context First. Less Steps.** 能自动判断就不让用户选；能一步就别拆两步 |
-| 官方渠道 | GitHub <https://github.com/zzy89216-gif/ZyNova> · Discord <https://discord.gg/QwPpZQHrTa> · X（主账号）<https://x.com/ZyNovaProject> |
+| 官方渠道 | GitHub <https://github.com/zzy89216-gif/ZyNova> · Discord <https://discord.gg/dbHTApYNYJ> · X（主账号）<https://x.com/ZyNovaProject> |
 | 联系邮箱 | <ZyNovaLauncher@outlook.com>（唯一公开项目邮箱） |
 
 ## 二、当前状态（写这份文档时的事实）
 
 | 项 | 值 |
 |---|---|
-| 版本名 | 当前 `28.3.0`（**正式版**，APK 内不带后缀；发行名就是「28.3.0」，GitHub Release 不勾 pre-release） |
-| versionCode | `283000` |
+| 版本名 | 当前 `28.3.2`（**预发行 / 待验证发布**；界面视觉与 28.3.0 一致，**不含**动态玻璃 / 真折射 / 磁吸 / 动效体系；APK 内 `versionName` 为纯数字 `28.3.2`） |
+| versionCode | `283200` |
 | 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
-| Release | `v28.3.0`（最新，正式）+ `v28.2.1` / `v28.2.0` / `v28.1.0`（正式，保留）；**预发行 Release（28.2.2–28.2.4）已删除** |
+| Release | `v28.3.0`（最新，正式）+ `v28.2.1` / `v28.2.0` / `v28.1.0`（正式，保留）；`28.3.2` 在 `28.3.2` 分支验证，未发布 |
 | 分支 | `main` 是稳定线；**每次改动先开分支**（如 `28.3.2`），构建与验证彻底没问题后再合并回 `main` |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
 | 用户文档 | `docs/zh` 与 `docs/en` **各 78 篇**，文件名一一对应 |

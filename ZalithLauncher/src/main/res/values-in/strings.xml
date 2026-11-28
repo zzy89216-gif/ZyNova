@@ -1338,4 +1338,33 @@ Pasang manual, jika tidak game bisa gagal saat dijalankan.</string>
     <string name="ai_search_engine_deepseek_price">Ditagih per permintaan berhasil (~$0,75 / 1000). Permintaan gagal atau kosong gratis.</string>
     <string name="ai_search_key_title">Kunci DeepSeek Search</string>
     <string name="ai_search_key_summary">Kosongkan untuk memakai kunci DeepSeek utama.</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Baru dimainkan</string>
+    <string name="home_recent_worlds_more">Lihat semua</string>
+    <string name="world_list_title">Semua dunia</string>
+    <string name="world_list_all_instances">Semua instans</string>
+    <string name="world_list_all_versions">Semua versi game</string>
+    <string name="world_list_empty">Tidak ada dunia yang cocok dengan pencarian atau filter saat ini.</string>
+    <string name="world_list_never_played">Belum pernah dimainkan</string>
+    <string name="home_feed_title">Beranda kustom</string>
+    <string name="home_feed_empty">Belum ada yang bisa ditampilkan. Nanti akan diperbarui otomatis.</string>
+    <string name="home_feed_source_minecraft_news">Berita Minecraft</string>
+    <string name="home_feed_source_java_updates">Pembaruan versi Java</string>
+    <string name="home_feed_source_modrinth">Tren Modrinth</string>
+    <string name="home_feed_source_curseforge">Pilihan CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Komunitas Minecraft</string>
+    <string name="home_feed_settings_title">Feed beranda kustom</string>
+    <string name="home_feed_settings_summary">Tampilkan berita dan pembaruan komunitas di bawah dunia Anda. Permintaan yang gagal memakai konten cache secara diam-diam dan tidak pernah memblokir bagian lain halaman beranda.</string>
+    <string name="home_feed_manage_entry_title">Kelola kartu beranda</string>
+    <string name="home_feed_manage_entry_summary">Tambah, hapus, sembunyikan, atau urutkan ulang kartu bawaan.</string>
+    <string name="home_feed_manage_title">Kartu beranda</string>
+    <string name="home_feed_manage_hint">Tekan lama gagang di kiri untuk menyeret kartu. Sakelar menyembunyikan kartu (bisa ditampilkan lagi); menghapusnya mengembalikan kartu ke «Kartu tersedia».</string>
+    <string name="home_feed_manage_none_added">Belum ada kartu yang ditambahkan.</string>
+    <string name="home_feed_manage_available">Kartu tersedia</string>
+    <string name="home_feed_manage_reset">Kembalikan ke default</string>
+    <string name="home_feed_manage_drag_hint">Seret untuk mengurutkan</string>
+    <string name="home_feed_manage_remove">Hapus</string>
+    <string name="home_feed_manage_add">Tambah</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Detail perender (keempat perender)</string>
 </resources>

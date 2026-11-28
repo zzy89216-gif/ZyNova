@@ -3,13 +3,13 @@
 ## Interface
 
 - The top bar is a **centered liquid-glass capsule**, left to right:
-  **Home / AI / Multiplayer / Downloads / Music / Files / Personalization / Settings**.
+  **Home / AI / Multiplayer / Downloads / Music / Files / Settings**.
 - The title stays in the top-left corner; a back button appears on sub-pages.
 - While a task is running, a small ring appears at the right end of the capsule — tap it to open the task panel.
 - Outside the music page, a compact "now playing" mini bar sits right below the top bar: song title on the left,
   play / pause and previous / next on the right; tap the bar to open the music page. It also shows while paused,
   and hides itself while nothing has been played yet or when there is no current track.
-- All appearance options live in **Settings → General**; the top-bar **Personalization** entry is only a shortcut.
+- Appearance options (theme, wallpaper, corner radius, glass, background blur and more) live under **Settings → Launcher**; the top bar no longer has a separate **Personalization** entry.
 
 ## Downloading and installing the game
 
@@ -40,11 +40,13 @@
 - Deletion covers everything under `./versions/<version-name>`; with version isolation on, that includes this
   version's worlds, resource packs and mods. **Back up anything you want to keep first.**
 
-## Home cards
+## Home
 
-- Long-press a card and drag to reorder; drop it once it **covers half** of another card and they swap, without flicker.
-- The "Hide this instance on Home / Show this instance on Home" button under Instance → Version overview → Quick actions
-  affects **only that instance**; it no longer turns every card off at once.
+The home screen is **card-based** by default (switch between Blank / Card Home / Load from Local / Load from URL under Settings → Launcher → Home → Home type). From top to bottom:
+
+1. **Recently played**: worlds you played last, aggregated across instances, up to four of them. Tap one to launch it; the fifth card, **View all**, opens the **All worlds** list with search, sorting and filtering by instance / game version — see [Installing or importing worlds](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/install-world.md).
+2. **Instance cards**: long-press a card and drag to reorder; drop it once it **covers half** of another card and they swap, without flicker. The "Hide this instance on Home / Show this instance on Home" button under Instance → Version overview → Quick actions affects **only that instance**; it no longer turns every card off at once.
+3. **Custom home**: news cards below the worlds section (Minecraft news / Java version updates / Modrinth / CurseForge / Minecraft community), **on by default**. The switch (Custom home feed) is under Settings → Launcher, and cards can be added, removed, hidden or dragged into a new order. When offline or when a request fails it uses the local cache and never blocks the rest of the home page — see [Custom home page](https://github.com/zzy89216-gif/ZyNova/blob/main/docs/en/custom-home.md).
 
 ## Export
 
@@ -69,6 +71,8 @@
 | See why it crashed | Crash screen → "Crash analysis — what to do" |
 | Share a log | Crash screen top-right / Version overview → Run log |
 | Configure AI | Settings → AI settings |
+| Find a particular world | Home → "Recently played" → "View all" |
+| Turn the home feed off | Settings → Launcher |
 
 ## Back key and ESC in game
 

@@ -501,4 +501,33 @@
     <string name="files_browse_folder">تصفح المجلد</string>
     <string name="files_importing">استيراد الملفات</string>
     <string name="files_delete_file">…هل أنت متأكد من رغبتك في حذف %s؟</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">تم لعبها مؤخرًا</string>
+    <string name="home_recent_worlds_more">عرض الكل</string>
+    <string name="world_list_title">كل العوالم</string>
+    <string name="world_list_all_instances">كل النسخ</string>
+    <string name="world_list_all_versions">كل إصدارات اللعبة</string>
+    <string name="world_list_empty">لا توجد عوالم تطابق البحث أو عوامل التصفية الحالية.</string>
+    <string name="world_list_never_played">لم تُلعب قط</string>
+    <string name="home_feed_title">رئيسية مخصصة</string>
+    <string name="home_feed_empty">لا يوجد شيء لعرضه الآن. سيتم التحديث تلقائيًا لاحقًا.</string>
+    <string name="home_feed_source_minecraft_news">أخبار Minecraft</string>
+    <string name="home_feed_source_java_updates">تحديثات إصدار Java</string>
+    <string name="home_feed_source_modrinth">الأكثر رواجًا على Modrinth</string>
+    <string name="home_feed_source_curseforge">اختيارات CurseForge</string>
+    <string name="home_feed_source_minecraft_events">مجتمع Minecraft</string>
+    <string name="home_feed_settings_title">موجز الرئيسية المخصص</string>
+    <string name="home_feed_settings_summary">إظهار الأخبار وتحديثات المجتمع أسفل عوالمك. عند فشل الطلبات يُستخدم المحتوى المخزّن مؤقتًا بهدوء دون تعطيل بقية الصفحة الرئيسية.</string>
+    <string name="home_feed_manage_entry_title">إدارة بطاقات الرئيسية</string>
+    <string name="home_feed_manage_entry_summary">أضف البطاقات الجاهزة أو أزلها أو أخفها أو أعد ترتيبها.</string>
+    <string name="home_feed_manage_title">بطاقات الرئيسية</string>
+    <string name="home_feed_manage_hint">اضغط مطوّلًا على المقبض في اليسار لسحب البطاقة. يخفي المفتاح البطاقة (يمكنك إظهارها مجددًا)؛ وإذا أزلتها فستعود إلى «البطاقات المتاحة».</string>
+    <string name="home_feed_manage_none_added">لم تُضف أي بطاقات بعد.</string>
+    <string name="home_feed_manage_available">البطاقات المتاحة</string>
+    <string name="home_feed_manage_reset">استعادة الافتراضي</string>
+    <string name="home_feed_manage_drag_hint">اسحب لإعادة الترتيب</string>
+    <string name="home_feed_manage_remove">إزالة</string>
+    <string name="home_feed_manage_add">إضافة</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">تفاصيل العارض (العارضات الأربع)</string>
 </resources>

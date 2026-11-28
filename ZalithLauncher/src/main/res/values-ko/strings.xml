@@ -1108,4 +1108,33 @@
     <string name="ai_search_engine_deepseek_price">성공한 요청당 과금됩니다(약 $0.75 / 1000회). 실패하거나 결과가 없는 검색은 무료입니다.</string>
     <string name="ai_search_key_title">DeepSeek Search 키</string>
     <string name="ai_search_key_summary">비워 두면 기본 DeepSeek 키를 재사용합니다.</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">최근 플레이한</string>
+    <string name="home_recent_worlds_more">모두 보기</string>
+    <string name="world_list_title">모든 월드</string>
+    <string name="world_list_all_instances">모든 인스턴스</string>
+    <string name="world_list_all_versions">모든 게임 버전</string>
+    <string name="world_list_empty">현재 검색이나 필터와 일치하는 월드가 없습니다.</string>
+    <string name="world_list_never_played">플레이한 적 없음</string>
+    <string name="home_feed_title">사용자 지정 홈</string>
+    <string name="home_feed_empty">지금은 표시할 콘텐츠가 없습니다. 나중에 자동으로 새로고침됩니다.</string>
+    <string name="home_feed_source_minecraft_news">Minecraft 뉴스</string>
+    <string name="home_feed_source_java_updates">Java 버전 업데이트</string>
+    <string name="home_feed_source_modrinth">Modrinth 인기</string>
+    <string name="home_feed_source_curseforge">CurseForge 추천</string>
+    <string name="home_feed_source_minecraft_events">Minecraft 커뮤니티</string>
+    <string name="home_feed_settings_title">사용자 지정 홈 피드</string>
+    <string name="home_feed_settings_summary">월드 아래에 뉴스와 커뮤니티 업데이트를 표시합니다. 요청이 실패하면 캐시된 콘텐츠를 조용히 사용하며 홈 페이지의 나머지 부분을 막지 않습니다.</string>
+    <string name="home_feed_manage_entry_title">홈 카드 관리</string>
+    <string name="home_feed_manage_entry_summary">프리셋 카드를 추가, 제거, 숨기기 또는 재정렬합니다.</string>
+    <string name="home_feed_manage_title">홈 카드</string>
+    <string name="home_feed_manage_hint">왼쪽 핸들을 길게 눌러 카드를 드래그하세요. 스위치를 끄면 카드가 숨겨지고(다시 표시 가능), 제거하면 «사용 가능한 카드»로 돌아갑니다.</string>
+    <string name="home_feed_manage_none_added">아직 추가된 카드가 없습니다.</string>
+    <string name="home_feed_manage_available">사용 가능한 카드</string>
+    <string name="home_feed_manage_reset">기본값으로 복원</string>
+    <string name="home_feed_manage_drag_hint">드래그하여 재정렬</string>
+    <string name="home_feed_manage_remove">제거</string>
+    <string name="home_feed_manage_add">추가</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">렌더러 세부 정보(렌더러 4종 모두)</string>
 </resources>

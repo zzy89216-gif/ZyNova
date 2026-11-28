@@ -13,7 +13,7 @@
 - **性质**：基于 [ZalithLauncher2](https://github.com/ZalithLauncher/ZalithLauncher2) 开源代码开发的 **非官方修改版** Minecraft: Java Edition Android 启动器
 - **许可证**：GPL-3.0（上游也是 GPL-3.0，ZyNova 必须保持开源）
 - **GitHub 仓库**：<https://github.com/zzy89216-gif/ZyNova>（分支 `main`）
-- **Discord**：<https://discord.gg/QwPpZQHrTa>（**永久邀请**，Discord API 校验 `expires_at = null`）
+- **Discord**：<https://discord.gg/dbHTApYNYJ>（**永久邀请**，Discord API 校验 `expires_at = null`）
 - **官方 X（主账号）**：<https://x.com/ZyNovaProject>
 - **邮箱**：<ZyNovaLauncher@outlook.com>（唯一公开项目邮箱）
 - **包名**：`com.zynova.launcher`
@@ -49,14 +49,31 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.3.0**（`launcher_version_code=283000`，**正式版**，版本名不带后缀）；
+- 当前版本 **28.3.2**（`launcher_version_code=283200`，**预发行 / 待验证发布**，分支 `28.3.2`；界面视觉保持 28.3.0）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.3.0**（`launcher_version_code=283000`，正式版）
+**当前版本：28.3.2**（`launcher_version_code=283200`，**预发行 / 待验证发布**）
+
+### 28.3.2（界面视觉保持 28.3.0，只回移功能与修复）
+
+- **主页改版（#91 回移）**：`ui/screens/main/card_home/RecentWorldsSection.kt`（最近游玩的 4 个世界 + 「更多」）、
+  `ui/screens/content/WorldListScreen.kt`（全部世界列表：搜索 / 排序 / 按实例与版本筛选 / 直接启动）、
+  `ui/screens/main/home_feed/`（Mojang launchercontent、Modrinth、CurseForge、官网 RSS 资讯；30 分钟缓存 +
+  失败静默回退，异步加载不进启动关键路径）、`ui/screens/content/HomeFeedManageScreen.kt`（卡片增删 / 排序 / 隐藏）；
+  `HomeDataProvider.allWorlds()` 提供 20s 内存缓存的跨实例世界数据；`AllSettings` 新增
+  `homeFeedEnabled` / `homeFeedCardOrder` / `homeFeedHiddenCards` / `homeFeedCardsInitialized`。
+- **移除「个性化」页**：删除 `PersonalizationScreen.kt`、`NormalNavKey.Personalization`、顶栏调色盘胶囊入口、
+  路由与专属字符串；外观相关设置仍保留在「设置 → 启动器」里。
+- **修复**：高级设置「渲染器详细参数」标题数量与实际不符（三个 → 四个，#92）；删除版本进度界面真全屏
+  （`decorFitsSystemWindows=false` + 窗口 MATCH_PARENT + 系统栏图标反色 + 安全区 insets，返回键不误触、可取消）。
+- **卡顿优化回移**：插件加载 / 外部导入移 IO、版本图标复用 Application ImageLoader、删除进度局部重组、
+  refresh 不清空列表、5 个版本资源列表稳定 key。
+- **Discord**：全仓库文档、应用内 `UrlManager` 与 `.github` 模板统一为 `https://discord.gg/dbHTApYNYJ`。
+- **明确不含**：动态玻璃 / 真折射 / 磁吸 / 动效体系、设置中心重构（外观页）、浅色背景 scrim 都不在本版。
 
 ### 28.3.0 正式版（汇总 28.2.2–28.2.4）
 
@@ -2184,7 +2201,7 @@ HTTP 403
    - 加载器名称改为归一化比较；只有 Mod / 整合包强制校验加载器
 3. **修复 Discord 邀请链接全部失效**（Issue #1）
    - 旧链接是**临时邀请**（`Tbn8Bqg2Yp`，Discord API 返回 `50270 Invite is expired`）
-   - 已换成**永久邀请** `QwPpZQHrTa`，并同步到 README（当时为 `README.md` / `README_EN_US.md` /
+   - 已换成永久邀请（当时为 `QwPpZQHrTa`；后来也失效，当前统一为 `dbHTApYNYJ`），并同步到 README（当时为 `README.md` / `README_EN_US.md` /
      HANDOFF / 应用内 `UrlManager`（`URL_COMMUNITY`、`URL_DISCORD`）
 
 ### 26.2.1 修复与新增 ✅

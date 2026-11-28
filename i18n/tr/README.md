@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Android için **Minecraft: Java Edition** başlatıcısı. ZalithLauncher2 kayna
 Fikir tek: **daha az dokunuş**. Yirmi ayarı önüne dökmek yerine önce kendisi karar veriyor, gerçekten karar veremediğinde soruyor.
 
 ## ✨ Son değişiklikler
+
+**28.3.2** (en yeni): ana sayfa yenilendi (son dünyalar + tam liste + özel ana sayfa akışı), «Kişiselleştirme» sayfası kaldırıldı, oluşturucu ayrıntıları başlığı düzeltildi, sürüm silmede tam ekran ilerleme, performans iyileştirmeleri, Discord bağlantısı güncellendi.
+
+> Görünüm 28.3.0 ile aynı — dinamik cam, kırılma veya manyetik efekt yok.
 
 **28.3.0** (kararlı sürüm): öne çıkan değişiklikler.
 
@@ -72,7 +76,7 @@ Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Destek
 
 - Sorun bildir：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - E-posta：<ZyNovaLauncher@outlook.com>
 - Resmî X：<https://x.com/ZyNovaProject>
 - Destek ol：<https://afdian.com/a/hizzy>

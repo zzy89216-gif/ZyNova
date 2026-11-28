@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@
 Принцип один: **меньше нажатий**. Не вываливать на игрока сотню настроек, а сначала решить за него — и переспросить только там, где решить нельзя.
 
 ## ✨ Последние изменения
+
+**28.3.2** (последняя): обновлённая главная (недавние миры + полный список + настраиваемая лента), страница «Персонализация» удалена, исправлен заголовок параметров визуализатора, полноэкранный прогресс удаления версии, улучшена производительность, обновлена ссылка Discord.
+
+> Внешний вид остаётся как в 28.3.0 — без динамического стекла, преломления и магнитных эффектов.
 
 **28.3.0** (стабильная версия): главные изменения.
 
@@ -73,7 +77,7 @@
 ## 💖 Поддержка
 
 - Сообщить об ошибке：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - Почта：<ZyNovaLauncher@outlook.com>
 - Официальный X：<https://x.com/ZyNovaProject>
 - Поддержать проект：<https://afdian.com/a/hizzy>

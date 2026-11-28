@@ -1587,12 +1587,6 @@
     <string name="settings_launcher_reduce_motion_title">減少動態效果</string>
     <string name="settings_launcher_reduce_motion_summary">關閉頁面切換動畫、動態玻璃的流動高光等持續動態效果。如果您對動效比較敏感，建議開啟</string>
     <string name="settings_launcher_liquid_glass_title">液態玻璃效果</string>
-    <string name="personalization_title">個性化</string>
-    <string name="personalization_wallpaper_title">桌布</string>
-    <string name="personalization_wallpaper_summary_set">點一下更換當前的背景圖片或影片</string>
-    <string name="personalization_wallpaper_summary_empty">還沒有設定桌布，點一下選擇</string>
-    <string name="personalization_more_settings">更多設定</string>
-    <string name="personalization_more_settings_summary">主題、語言、全屏等低頻選項都在這裡</string>
     <string name="settings_launcher_glass_strength_title">玻璃強度</string>
     <string name="settings_launcher_glass_strength_summary">調整單色玻璃漸變的強度，調低更接近純色，調高玻璃感更強</string>
     <string name="settings_launcher_corner_radius_title">卡片圓角</string>
@@ -1788,7 +1782,7 @@
     <string name="favorites_install_missing">這些前置沒裝上：%1$s</string>
     <string name="favorites_action_cancel_online">取消線上收藏</string>
     <string name="favorites_online_cancelled">已取消線上收藏（歸檔檔案保留）：%1$s</string>
-    <string name="settings_advanced_renderer_title">渲染器詳細引數（三個渲染器都能改）</string>
+    <string name="settings_advanced_renderer_title">渲染器詳細引數（四個渲染器都能改）</string>
     <string name="settings_mg_no_error_title">關閉 GL 錯誤檢查</string>
     <string name="settings_mg_no_error_summary">快一點；真出問題時不再報錯，更難查原因。</string>
     <string name="settings_mg_timer_query_title">時間查詢擴充套件</string>
@@ -1980,4 +1974,31 @@
     <string name="onboarding_age_adult">已滿 18 週歲</string>
     <string name="onboarding_age_note">請如實填寫。在法律有要求的地區，年齡會影響你可遊玩的時間。</string>
     <string name="onboarding_age_hint_global">你所在地區的法律若要求監護人同意，請在取得同意後使用本軟體。</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">最近遊玩</string>
+    <string name="home_recent_worlds_more">檢視全部</string>
+    <string name="world_list_title">全部世界</string>
+    <string name="world_list_all_instances">全部例項</string>
+    <string name="world_list_all_versions">全部遊戲版本</string>
+    <string name="world_list_empty">沒有符合目前搜尋或篩選條件的世界。</string>
+    <string name="world_list_never_played">從未遊玩</string>
+    <string name="home_feed_title">自訂首頁</string>
+    <string name="home_feed_empty">暫時沒有內容，稍後會自動重新整理。</string>
+    <string name="home_feed_source_minecraft_news">Minecraft 新聞</string>
+    <string name="home_feed_source_java_updates">Java 版本更新</string>
+    <string name="home_feed_source_modrinth">Modrinth 熱門</string>
+    <string name="home_feed_source_curseforge">CurseForge 精選</string>
+    <string name="home_feed_source_minecraft_events">Minecraft 社群</string>
+    <string name="home_feed_settings_title">自訂首頁資訊</string>
+    <string name="home_feed_settings_summary">在世界區下方顯示新聞與社群動態。網路失敗時會安靜地使用快取，不會阻塞首頁其它功能。</string>
+    <string name="home_feed_manage_entry_title">管理自訂首頁卡片</string>
+    <string name="home_feed_manage_entry_summary">新增、刪除、隱藏或重新排序預設卡片。</string>
+    <string name="home_feed_manage_title">自訂首頁卡片</string>
+    <string name="home_feed_manage_hint">長按左側握把拖曳卡片。開關會隱藏卡片（之後仍可顯示）；刪除後會回到下方「可新增的卡片」。</string>
+    <string name="home_feed_manage_none_added">尚未新增任何卡片。</string>
+    <string name="home_feed_manage_available">可新增的卡片</string>
+    <string name="home_feed_manage_reset">恢復預設</string>
+    <string name="home_feed_manage_drag_hint">拖曳以排序</string>
+    <string name="home_feed_manage_remove">刪除</string>
+    <string name="home_feed_manage_add">新增</string>
 </resources>

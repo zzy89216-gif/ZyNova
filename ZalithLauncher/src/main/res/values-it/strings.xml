@@ -171,4 +171,33 @@
     <string name="sort_by_file_name">Ordina per Nome del file</string>
     <string name="sort_by_last_modified">Ordina per Ultimo Modificato</string>
     <string name="sort_by_last_played">Ordina per ultimo giocato</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Giocati di recente</string>
+    <string name="home_recent_worlds_more">Vedi tutto</string>
+    <string name="world_list_title">Tutti i mondi</string>
+    <string name="world_list_all_instances">Tutte le istanze</string>
+    <string name="world_list_all_versions">Tutte le versioni del gioco</string>
+    <string name="world_list_empty">Nessun mondo corrisponde alla ricerca o ai filtri attuali.</string>
+    <string name="world_list_never_played">Mai giocato</string>
+    <string name="home_feed_title">Home personalizzata</string>
+    <string name="home_feed_empty">Al momento non c\'è nulla da mostrare. Si aggiornerà automaticamente più tardi.</string>
+    <string name="home_feed_source_minecraft_news">Notizie di Minecraft</string>
+    <string name="home_feed_source_java_updates">Novità della versione Java</string>
+    <string name="home_feed_source_modrinth">Tendenze di Modrinth</string>
+    <string name="home_feed_source_curseforge">Selezione di CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Community di Minecraft</string>
+    <string name="home_feed_settings_title">Feed della home personalizzata</string>
+    <string name="home_feed_settings_summary">Mostra notizie e aggiornamenti della community sotto i tuoi mondi. Le richieste non riuscite usano i contenuti in cache senza avvisare e non bloccano mai il resto della home.</string>
+    <string name="home_feed_manage_entry_title">Gestisci le schede della home</string>
+    <string name="home_feed_manage_entry_summary">Aggiungi, rimuovi, nascondi o riordina le schede predefinite.</string>
+    <string name="home_feed_manage_title">Schede della home</string>
+    <string name="home_feed_manage_hint">Tieni premuta la maniglia a sinistra per trascinare una scheda. L\'interruttore nasconde la scheda (puoi mostrarla di nuovo); rimuovendola torna in «Schede disponibili».</string>
+    <string name="home_feed_manage_none_added">Nessuna scheda aggiunta.</string>
+    <string name="home_feed_manage_available">Schede disponibili</string>
+    <string name="home_feed_manage_reset">Ripristina predefinite</string>
+    <string name="home_feed_manage_drag_hint">Trascina per riordinare</string>
+    <string name="home_feed_manage_remove">Rimuovi</string>
+    <string name="home_feed_manage_add">Aggiungi</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Dettagli del renderer (tutti e quattro i renderer)</string>
 </resources>

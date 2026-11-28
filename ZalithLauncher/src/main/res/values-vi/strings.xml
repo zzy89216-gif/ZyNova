@@ -1333,4 +1333,33 @@ Hãy cài thủ công, nếu không trò chơi có thể bị treo khi khởi ch
     <string name="ai_search_engine_deepseek_price">Tính phí theo yêu cầu thành công (~$0,75 / 1000). Yêu cầu lỗi hoặc rỗng miễn phí.</string>
     <string name="ai_search_key_title">Khoá DeepSeek Search</string>
     <string name="ai_search_key_summary">Để trống sẽ dùng khoá DeepSeek chính.</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Chơi gần đây</string>
+    <string name="home_recent_worlds_more">Xem tất cả</string>
+    <string name="world_list_title">Tất cả thế giới</string>
+    <string name="world_list_all_instances">Tất cả instance</string>
+    <string name="world_list_all_versions">Tất cả phiên bản game</string>
+    <string name="world_list_empty">Không có thế giới nào khớp với tìm kiếm hoặc bộ lọc hiện tại.</string>
+    <string name="world_list_never_played">Chưa từng chơi</string>
+    <string name="home_feed_title">Trang chủ tùy chỉnh</string>
+    <string name="home_feed_empty">Hiện chưa có gì để hiển thị. Nội dung sẽ tự làm mới sau.</string>
+    <string name="home_feed_source_minecraft_news">Tin tức Minecraft</string>
+    <string name="home_feed_source_java_updates">Cập nhật phiên bản Java</string>
+    <string name="home_feed_source_modrinth">Xu hướng Modrinth</string>
+    <string name="home_feed_source_curseforge">Lựa chọn CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Cộng đồng Minecraft</string>
+    <string name="home_feed_settings_title">Bảng tin trang chủ tùy chỉnh</string>
+    <string name="home_feed_settings_summary">Hiển thị tin tức và cập nhật cộng đồng bên dưới thế giới của bạn. Yêu cầu thất bại sẽ dùng nội dung đã lưu trong bộ nhớ đệm một cách im lặng và không bao giờ chặn phần còn lại của trang chủ.</string>
+    <string name="home_feed_manage_entry_title">Quản lý thẻ trang chủ</string>
+    <string name="home_feed_manage_entry_summary">Thêm, xoá, ẩn hoặc sắp xếp lại các thẻ có sẵn.</string>
+    <string name="home_feed_manage_title">Thẻ trang chủ</string>
+    <string name="home_feed_manage_hint">Nhấn giữ tay cầm bên trái để kéo thẻ. Công tắc sẽ ẩn thẻ (có thể hiện lại); xoá thẻ sẽ đưa thẻ về «Thẻ có sẵn».</string>
+    <string name="home_feed_manage_none_added">Chưa thêm thẻ nào.</string>
+    <string name="home_feed_manage_available">Thẻ có sẵn</string>
+    <string name="home_feed_manage_reset">Khôi phục mặc định</string>
+    <string name="home_feed_manage_drag_hint">Kéo để sắp xếp</string>
+    <string name="home_feed_manage_remove">Xoá</string>
+    <string name="home_feed_manage_add">Thêm</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Chi tiết renderer (cả bốn renderer)</string>
 </resources>

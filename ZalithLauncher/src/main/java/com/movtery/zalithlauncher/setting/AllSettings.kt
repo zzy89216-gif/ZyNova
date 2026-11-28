@@ -717,7 +717,7 @@ object AllSettings : SettingsRegistry() {
     /**
      * 启动器卡片圆角（dp）
      *
-     * 统一驱动 `MaterialTheme.shapes`，个性化页与设置页读写同一个值。
+     * 统一驱动 `MaterialTheme.shapes`，设置页与外观相关入口读写同一个值。
      */
     val launcherCornerRadius = intSetting("launcherCornerRadius", 36, 12..36)
 
@@ -787,6 +787,36 @@ object AllSettings : SettingsRegistry() {
      * 现在改成按实例记：只影响这一个版本，其它卡片照常显示。
      */
     val hiddenHomeInstances = stringListSetting("hiddenHomeInstances", emptyList())
+
+    /**
+     * 主页「自定义主页」资讯区块开关（默认开启）
+     *
+     * 区块位置：卡片式主页的世界区下方，展示 Minecraft 新闻 / Java 版本更新 /
+     * Modrinth 动态 / CurseForge 资讯 / Minecraft 活动等预设卡片。
+     * 关闭后主页完全不加载资讯（不联网、不读缓存）。
+     */
+    val homeFeedEnabled = boolSetting("homeFeedEnabled", true)
+
+    /**
+     * 已添加到「自定义主页」的卡片顺序（存 [com.movtery.zalithlauncher.ui.screens.main.home_feed.HomeFeedSource.id]）
+     *
+     * 空列表 = 全部预设卡片按默认顺序展示（老用户升级后不用做任何事）；
+     * 拖动排序 / 添加 / 删除都会更新这个列表。
+     */
+    val homeFeedCardOrder = stringListSetting("homeFeedCardOrder", emptyList())
+
+    /** 「自定义主页」里已添加但被隐藏的卡片 id（隐藏不等于删除，可随时重新打开） */
+    val homeFeedHiddenCards = stringListSetting("homeFeedHiddenCards", emptyList())
+
+    /**
+     * 「自定义主页」卡片是否已经被用户手动配置过
+     *
+     * 顺序列表为空既可能是「默认全部预设」，也可能是「用户把卡片全删了」，
+     * 光看列表无法区分。这里单独记一个标记：
+     * - false（默认）：全部预设卡片按默认顺序展示，之后版本新增的预设也会自动出现；
+     * - true：严格按 [homeFeedCardOrder] 展示（空列表 = 一张都不展示，删除不会被复活）。
+     */
+    val homeFeedCardsInitialized = boolSetting("homeFeedCardsInitialized", false)
 
 
     val homePageType = enumSetting("homePageType", HomePageType.Cards)

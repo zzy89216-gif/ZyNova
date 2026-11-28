@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Android ke liye **Minecraft: Java Edition** launcher. ZalithLauncher2 ke code se
 Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pehle khud faisla karta hai, aur sirf tab poochta hai jab waqai faisla na ho sake.
 
 ## ✨ Haal ki tabdeeliyan
+
+**28.3.2** (latest): home naya (haali worlds + poori list + custom home feed), «Personalization» page hata diya, renderer details ka title theek kiya, version delete par full-screen progress, performance behtar, Discord link update.
+
+> Look 28.3.0 jaisa hi hai — dynamic glass, refraction aur magnetic effects shamil nahi.
 
 **28.3.0** (stable version): aham tabdeeliyan.
 
@@ -78,7 +82,7 @@ Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Support
 
 - Masla report karein：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - Email：<ZyNovaLauncher@outlook.com>
 - Official X：<https://x.com/ZyNovaProject>
 - Project ko support karein：<https://afdian.com/a/hizzy>

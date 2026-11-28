@@ -191,7 +191,11 @@ fun LauncherScreen(
                         onLaunchGame = onLaunchGame,
                         onPlayWorld = onPlayWorld,
                         onJoinServer = onJoinServer,
-                        onOpenDownload = { backStackViewModel.navigateToDownload() }
+                        onOpenDownload = { backStackViewModel.navigateToDownload() },
+                        //主页「最近游玩的 4 个世界」区块的「更多」→ 全部世界列表页
+                        onOpenWorldList = {
+                            backStackViewModel.mainScreen.navigateTo(NormalNavKey.WorldList)
+                        }
                     )
                 }
 
@@ -245,6 +249,7 @@ private fun ContentMenu(
     onPlayWorld: (Version, String) -> Unit = { _, _ -> },
     onJoinServer: (Version, String) -> Unit = { _, _ -> },
     onOpenDownload: () -> Unit = {},
+    onOpenWorldList: () -> Unit = {},
 ) {
     val yOffset by swapAnimateDpAsState(
         targetValue = (-40).dp,
@@ -330,7 +335,8 @@ private fun ContentMenu(
                         onPlayWorld = onPlayWorld,
                         onJoinServer = onJoinServer,
                         //空状态里的「下载一个实例」：直接进下载 → 游戏本体
-                        onOpenDownload = onOpenDownload
+                        onOpenDownload = onOpenDownload,
+                        onOpenWorldList = onOpenWorldList
                     )
                 }
             }

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Un launcher **Minecraft: Java Edition** pentru Android, întreținut independent
 Ideea: **mai puține atingeri**. În loc să-ți arunce în față douăzeci de setări, launcherul decide întâi și întreabă doar când chiar nu se poate decide.
 
 ## ✨ Modificări recente
+
+**28.3.2** (cea mai nouă): pagina principală refăcută (ultimele lumi + lista completă + flux personalizat), pagina „Personalizare” eliminată, titlul detaliilor rendererului corectat, progres pe tot ecranul la ștergerea unei versiuni, performanță îmbunătățită, link Discord actualizat.
+
+> Aspectul rămâne ca în 28.3.0 — fără sticlă dinamică, refracție sau efecte magnetice.
 
 **28.3.0** (versiune stabilă): principalele noutăți.
 
@@ -72,7 +76,7 @@ Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Sprijin
 
 - Raportează o problemă：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - E-mail：<ZyNovaLauncher@outlook.com>
 - X oficial：<https://x.com/ZyNovaProject>
 - Susține proiectul：<https://afdian.com/a/hizzy>

@@ -48,15 +48,6 @@ sealed interface NormalNavKey : TitledNavKey {
     @Serializable data object AIChat : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.ai_title)
     }
-    /**
-     * 个性化屏幕（议题 #42 · 任务 2）
-     *
-     * 把最高频的观感调整（壁纸 / 不透明度 / 模糊 / 圆角 / 玻璃强度）从设置里提出来，
-     * 顶部胶囊的调色盘入口直接落到这个页面。
-     */
-    @Serializable data object Personalization : NormalNavKey {
-        @Contextual override val title: AndroidStringText = androidText(R.string.personalization_title)
-    }
     /** 收藏与本地归档屏幕（议题 #39） */
     @Serializable data object Favorites : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.favorites_title)
@@ -79,6 +70,15 @@ sealed interface NormalNavKey : TitledNavKey {
     /** 自定义主页编辑器屏幕 */
     @Serializable data object HomePageEditor : NormalNavKey {
         @Contextual override val title: AndroidStringText = androidText(R.string.page_title_home_page_editor)
+    }
+    /**
+     * 全部世界列表屏幕（议题 #91）
+     *
+     * 从卡片式主页「最近游玩的 4 个世界」区块的第 5 张「更多」卡片进入，
+     * 展示全部实例下的所有本地世界，支持搜索 / 排序 / 按版本与实例筛选。
+     */
+    @Serializable data object WorldList : NormalNavKey {
+        @Contextual override val title: AndroidStringText = androidText(R.string.world_list_title)
     }
     /** Web屏幕 */
     @Serializable data class WebScreen(val url: String) : NormalNavKey

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 ആശയം ഒന്നേയുള്ളൂ: **കുറച്ച് സ്പർശനങ്ങൾ**. ഇരുപത് ക്രമീകരണങ്ങൾ നിരത്തിവയ്ക്കുന്നതിനു പകരം, ലോഞ്ചർ ആദ്യം തീരുമാനിക്കും — കഴിയാത്തപ്പോൾ മാത്രം ചോദിക്കും.
 
 ## ✨ സമീപകാല മാറ്റങ്ങൾ
+
+**28.3.2** (ഏറ്റവും പുതിയത്): ഹോം പുതുക്കി (സമീപ ലോകങ്ങൾ + മുഴുവൻ ലോകപ്പട്ടിക + ഇഷ്ടാനുസൃത ഫീഡ്), «വ്യക്തിഗതമാക്കൽ» പേജ് ഒഴിവാക്കി, റെൻഡറർ വിശദാംശങ്ങളുടെ തലക്കെട്ട് ശരിയാക്കി, പതിപ്പ് ഡിലീറ്റിൽ പൂർണ സ്ക്രീൻ പുരോഗതി, പ്രകടനം മെച്ചപ്പെടുത്തി, Discord ലിങ്ക് പുതുക്കി.
+
+> രൂപം 28.3.0 പോലെ തന്നെ — ഡൈനാമിക് ഗ്ലാസ്, റിഫ്രാക്ഷൻ, കാന്തിക ഇഫക്ടുകൾ ഇല്ല.
 
 **28.3.0** (സ്ഥിരമായ പതിപ്പ്): പ്രധാന മാറ്റങ്ങൾ.
 
@@ -78,7 +82,7 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 ## 💖 പിന്തുണ
 
 - പ്രശ്നം അറിയിക്കുക：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - ഇമെയിൽ：<ZyNovaLauncher@outlook.com>
 - ഔദ്യോഗിക X：<https://x.com/ZyNovaProject>
 - പ്രോജക്റ്റിനെ പിന്തുണയ്ക്കുക：<https://afdian.com/a/hizzy>

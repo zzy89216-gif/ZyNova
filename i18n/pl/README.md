@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Launcher **Minecraft: Java Edition** na Androida, rozwijany niezależnie na bazi
 Pomysł jest jeden: **mniej kliknięć**. Zamiast wyrzucać na ekran dwadzieścia ustawień, launcher najpierw decyduje sam, a pyta dopiero wtedy, gdy naprawdę nie może.
 
 ## ✨ Najnowsze zmiany
+
+**28.3.2** (najnowsza): przebudowana strona główna (ostatnie światy + pełna lista + własny kanał informacyjny), usunięta strona „Personalizacja”, poprawiony tytuł szczegółów renderera, pełnoekranowy postęp usuwania wersji, lepsza wydajność, zaktualizowany link Discord.
+
+> Wygląd pozostaje jak w 28.3.0 — bez dynamicznego szkła, załamania światła i efektów magnetycznych.
 
 **28.3.0** (wersja stabilna): najważniejsze zmiany.
 
@@ -72,7 +76,7 @@ Pełna lista zmian: [CHANGELOG.md](../../CHANGELOG.md).
 ## 💖 Wsparcie
 
 - Zgłoś błąd：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - E-mail：<ZyNovaLauncher@outlook.com>
 - Oficjalny X：<https://x.com/ZyNovaProject>
 - Wesprzyj projekt：<https://afdian.com/a/hizzy>

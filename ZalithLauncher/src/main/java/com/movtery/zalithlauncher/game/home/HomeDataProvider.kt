@@ -26,6 +26,8 @@ import com.movtery.zalithlauncher.game.version.saves.SaveData
 import com.movtery.zalithlauncher.game.version.saves.parseLevelDatFile
 import com.movtery.zalithlauncher.utils.logging.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -36,7 +38,19 @@ private const val TAG = "HomeData"
  */
 data class HomeWorld(
     val instance: Version,
-    val save: SaveData
+    val save: SaveData,
+    /**
+     * 最后游玩时间（毫秒）
+     *
+     * 优先用存档 `level.dat` 里记录的上次保存时间；老存档 / 损坏存档没有这个字段时，
+     * 退化为存档目录的修改时间（只看文件属性，不解析文件内容，失败按 0 处理）。
+     * 「最近游玩的 4 个世界」与「更多世界」列表都按这个值倒序。
+     *
+     * ⚠️ 在**构造时**算好（构造发生在 IO 线程的存档扫描里），
+     * 不要写成 `get()` 每次现查：列表排序会在主线程反复比较，那样会变成一串文件系统调用。
+     */
+    val lastPlayedMillis: Long = save.lastPlayed?.takeIf { it > 0L }
+        ?: runCatching { save.saveFile.lastModified() }.getOrDefault(0L)
 ) {
     val name: String get() = save.levelName ?: save.saveFile.name
 }
@@ -91,6 +105,21 @@ object HomeDataProvider {
     /** 单个实例最多解析多少个存档目录（按修改时间取最近的） */
     private const val MAX_WORLDS_TO_SCAN = 8
 
+    /** 「更多世界」列表要跨实例聚合：最多扫描多少个最近使用的实例 */
+    private const val MAX_INSTANCES_FOR_ALL_WORLDS = 8
+
+    /** 「更多世界」列表里单个实例最多解析多少个存档（主页仍然只用 8 个的限量扫描） */
+    private const val MAX_WORLDS_PER_INSTANCE_FOR_LIST = 200
+
+    /** 全部世界列表最多返回多少条，避免极端情况下一次解析几百个存档 */
+    private const val MAX_ALL_WORLDS = 300
+
+    /** 跨实例世界扫描结果的内存缓存有效期（20 秒）：主页与「更多世界」页不会各扫一遍 */
+    private const val WORLDS_CACHE_TTL_MS = 20_000L
+
+    /** 世界扫描缓存（时间戳 + 结果）；[invalidateWorlds] 会清掉它 */
+    private var worldsCache: Pair<Long, List<HomeWorld>>? = null
+
     /**
      * 按「版本模块」组织的主页数据
      *
@@ -139,6 +168,66 @@ object HomeDataProvider {
     }
 
     /**
+     * 跨实例聚合的全部本地世界（按最后游玩时间倒序）
+     *
+     * 使用方：
+     * - 主页顶部「最近游玩的 4 个世界」（取前 4 个；调用方自带超时与降级兜底）
+     * - 「更多世界」独立列表页（全量展示）
+     *
+     * 实现：
+     * - 只扫描最近使用的 [MAX_INSTANCES_FOR_ALL_WORLDS] 个实例、
+     *   每个实例最多解析 [MAX_WORLDS_PER_INSTANCE_FOR_LIST] 个存档目录；
+     * - 结果缓存 [WORLDS_CACHE_TTL_MS]，主页回前台刷新 / 反复进出列表页都不会重复扫描；
+     * - 调用方可以在写完世界后调用 [invalidateWorlds] 立即失效。
+     *
+     * @param force 忽略缓存有效期，强制重新扫描
+     */
+    suspend fun allWorlds(force: Boolean = false): List<HomeWorld> = withContext(Dispatchers.IO) {
+        val cached = worldsCache
+        if (!force && cached != null &&
+            System.currentTimeMillis() - cached.first < WORLDS_CACHE_TTL_MS
+        ) {
+            return@withContext cached.second
+        }
+
+        val versions = VersionsManager.versions.value
+            .filter { it.isValid() }
+            .sortedByDescending { version ->
+                runCatching { version.getVersionPath().lastModified() }.getOrDefault(0L)
+            }
+            .take(MAX_INSTANCES_FOR_ALL_WORLDS)
+
+        val worlds = mutableListOf<HomeWorld>()
+        versions.forEach { instance ->
+            ensureActive()
+            runCatching {
+                scanWorlds(
+                    instance = instance,
+                    limit = MAX_WORLDS_PER_INSTANCE_FOR_LIST,
+                    maxDirs = MAX_WORLDS_PER_INSTANCE_FOR_LIST
+                )
+            }
+                .onFailure { e ->
+                    if (e is kotlinx.coroutines.CancellationException) throw e
+                    Logger.debug(TAG, "Failed to scan worlds of ${instance.getVersionName()}.", e)
+                }
+                .getOrNull()
+                ?.let(worlds::addAll)
+        }
+
+        val result = worlds
+            .sortedByDescending { it.lastPlayedMillis }
+            .take(MAX_ALL_WORLDS)
+        worldsCache = System.currentTimeMillis() to result
+        result
+    }
+
+    /** 让跨实例世界缓存立即失效（创建 / 导入存档后调用） */
+    fun invalidateWorlds() {
+        worldsCache = null
+    }
+
+    /**
      * 已保存的服务器
      */
     suspend fun savedServers(limit: Int = DEFAULT_LIMIT): List<HomeServer> = withContext(Dispatchers.IO) {
@@ -183,7 +272,9 @@ object HomeDataProvider {
      */
     private suspend fun scanWorlds(
         instance: Version,
-        limit: Int = DEFAULT_LIMIT
+        limit: Int = DEFAULT_LIMIT,
+        /** 最多解析多少个存档目录（按修改时间取最近的）；主页与「更多世界」页需求不同 */
+        maxDirs: Int = MAX_WORLDS_TO_SCAN
     ): List<HomeWorld> {
         val savesDir = File(instance.getGameDir(), "saves")
         if (!savesDir.isDirectory) return emptyList()
@@ -191,11 +282,13 @@ object HomeDataProvider {
         val dirs = savesDir.listFiles()
             ?.filter { it.isDirectory }
             ?.sortedByDescending { it.lastModified() }
-            ?.take(MAX_WORLDS_TO_SCAN)
+            ?.take(maxDirs)
             ?: return emptyList()
 
         val worlds = mutableListOf<HomeWorld>()
         dirs.forEach { dir ->
+            //「更多世界」页可能一次解析上百个存档，允许用户返回时立刻取消
+            currentCoroutineContext().ensureActive()
             runCatching {
                 val data = parseLevelDatFile(
                     saveFile = dir,
@@ -212,7 +305,7 @@ object HomeDataProvider {
         }
 
         return worlds
-            .sortedByDescending { it.save.lastPlayed ?: 0L }
+            .sortedByDescending { it.lastPlayedMillis }
             .take(limit)
     }
 }

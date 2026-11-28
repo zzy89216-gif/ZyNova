@@ -108,6 +108,7 @@ import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.TitledNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.DisabledAlpha
+import com.movtery.zalithlauncher.ui.screens.content.HomeFeedManageDialog
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.CardPosition
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.EnumSettingsCard
 import com.movtery.zalithlauncher.ui.screens.content.settings.layouts.IntSliderSettingsCard
@@ -150,6 +151,9 @@ fun LauncherSettingsScreen(
     toHomePageEditor: () -> Unit,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit,
 ) {
+    //自定义主页卡片管理弹窗（议题 #91）
+    var showHomeFeedManage by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
 
     BaseScreen(
@@ -546,6 +550,37 @@ fun LauncherSettingsScreen(
                 }
             }
 
+            //自定义主页（议题 #91）：世界区下方的资讯区块开关 + 预设卡片管理
+            AnimatedItem(scope) { yOffset ->
+                SettingsCardColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(x = 0, y = yOffset.roundToPx()) }
+                ) {
+                    SwitchSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top,
+                        unit = AllSettings.homeFeedEnabled,
+                        title = stringResource(R.string.home_feed_settings_title),
+                        summary = stringResource(R.string.home_feed_settings_summary)
+                    )
+
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        title = stringResource(R.string.home_feed_manage_entry_title),
+                        summary = stringResource(R.string.home_feed_manage_entry_summary),
+                        onClick = { showHomeFeedManage = true },
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_keyboard_arrow_right),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+            }
+
             //动画设置板块
             AnimatedItem(scope) { yOffset ->
                 SettingsCardColumn(
@@ -598,6 +633,11 @@ fun LauncherSettingsScreen(
 
         }
     }
+
+    HomeFeedManageDialog(
+        visible = showHomeFeedManage,
+        onDismissRequest = { showHomeFeedManage = false }
+    )
 }
 
 @Composable

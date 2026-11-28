@@ -12,10 +12,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -24,6 +24,10 @@
 ایده فقط یک خط است: **لمس کمتر**. به‌جای ریختن بیست تنظیم جلوی شما، لانچر اول خودش تصمیم می‌گیرد و فقط وقتی واقعاً نتواند، می‌پرسد.
 
 ## ✨ آخرین تغییرها
+
+**28.3.2** (آخرین): صفحهٔ اصلی تازه (دنیاهای اخیر + فهرست کامل + خبرنامهٔ سفارشی)، حذف صفحهٔ «شخصی‌سازی»، اصلاح عنوان جزئیات رندرر، پیشرفت تمام‌صفحه هنگام حذف نسخه، بهبود کارایی، به‌روزرسانی لینک Discord.
+
+> ظاهر مانند 28.3.0 می‌ماند — بدون شیشهٔ پویا، شکست نور یا جلوه‌های مغناطیسی.
 
 **28.3.0** (نسخهٔ پایدار): تغییرهای اصلی.
 
@@ -80,7 +84,7 @@
 ## 💖 پشتیبانی
 
 - گزارش مشکل：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - ایمیل：<ZyNovaLauncher@outlook.com>
 - X رسمی：<https://x.com/ZyNovaProject>
 - حمایت از پروژه：<https://afdian.com/a/hizzy>

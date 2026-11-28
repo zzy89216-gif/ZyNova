@@ -27,7 +27,7 @@ import com.movtery.zalithlauncher.setting.AllSettings
 /**
  * 按「卡片圆角」设置生成新版形状体系
  *
- * 27.10.2 起圆角不再是写死的常量，而是个性化页暴露给用户的参数
+ * 27.10.2 起圆角不再是写死的常量，而是外观相关设置暴露给用户的参数
  * （[AllSettings.launcherCornerRadius]，12~36dp，默认 28dp）。
  * 其余槽位按固定比例跟随主圆角，保证「卡片圆了、对话框还是方的」不会出现：
  *

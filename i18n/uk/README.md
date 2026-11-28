@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -28,6 +28,10 @@
 3. Вхід у Microsoft → вибір версії (або хай AI встановить) → запуск
 
 ## ✨ Останні зміни
+
+**28.3.2** (найновіша): оновлена головна (останні світи + повний список + власна стрічка), сторінку «Персоналізація» прибрано, виправлено заголовок параметрів рендерера, повноекранний прогрес під час видалення версії, покращено продуктивність, оновлено посилання Discord.
+
+> Зовнішній вигляд лишається як у 28.3.0 — без динамічного скла, заломлення та магнітних ефектів.
 
 **28.3.0** (стабільна версія): головні зміни.
 
@@ -78,7 +82,7 @@
 ## 💖 Підтримка
 
 - Повідомити про помилку：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - Пошта：<ZyNovaLauncher@outlook.com>
 - Офіційний X：<https://x.com/ZyNovaProject>
 - Підтримати проєкт：<https://afdian.com/a/hizzy>

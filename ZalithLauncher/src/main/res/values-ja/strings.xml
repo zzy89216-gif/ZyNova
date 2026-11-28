@@ -1321,4 +1321,33 @@
     <string name="onboarding_age_adult">18 歳以上</string>
     <string name="onboarding_age_note">正確に答えてください。法令のある地域では年齢によってプレイ可能時間が変わります。</string>
     <string name="onboarding_age_hint_global">お住まいの地域の法令で未成年に保護者の同意が必要な場合は、同意を得たうえでご利用ください。</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">最近プレイした</string>
+    <string name="home_recent_worlds_more">すべて表示</string>
+    <string name="world_list_title">すべてのワールド</string>
+    <string name="world_list_all_instances">すべてのインスタンス</string>
+    <string name="world_list_all_versions">すべてのゲームバージョン</string>
+    <string name="world_list_empty">現在の検索やフィルターに一致するワールドはありません。</string>
+    <string name="world_list_never_played">未プレイ</string>
+    <string name="home_feed_title">カスタムホーム</string>
+    <string name="home_feed_empty">表示できる内容がありません。後で自動的に更新されます。</string>
+    <string name="home_feed_source_minecraft_news">Minecraft ニュース</string>
+    <string name="home_feed_source_java_updates">Java バージョンの更新情報</string>
+    <string name="home_feed_source_modrinth">Modrinth のトレンド</string>
+    <string name="home_feed_source_curseforge">CurseForge のピックアップ</string>
+    <string name="home_feed_source_minecraft_events">Minecraft コミュニティ</string>
+    <string name="home_feed_settings_title">カスタムホームのフィード</string>
+    <string name="home_feed_settings_summary">ワールドの下にニュースやコミュニティの更新情報を表示します。取得に失敗した場合はキャッシュされたコンテンツを静かに使い、ホームの他の部分をブロックしません。</string>
+    <string name="home_feed_manage_entry_title">ホームカードを管理</string>
+    <string name="home_feed_manage_entry_summary">プリセットカードの追加・削除・非表示・並べ替えができます。</string>
+    <string name="home_feed_manage_title">ホームカード</string>
+    <string name="home_feed_manage_hint">左側のハンドルを長押ししてカードをドラッグします。スイッチはカードを非表示にし（再表示できます）、削除すると「利用可能なカード」に戻ります。</string>
+    <string name="home_feed_manage_none_added">追加されたカードはまだありません。</string>
+    <string name="home_feed_manage_available">利用可能なカード</string>
+    <string name="home_feed_manage_reset">既定に戻す</string>
+    <string name="home_feed_manage_drag_hint">ドラッグして並べ替え</string>
+    <string name="home_feed_manage_remove">削除</string>
+    <string name="home_feed_manage_add">追加</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">レンダラーの詳細（4 つのレンダラーすべて）</string>
 </resources>

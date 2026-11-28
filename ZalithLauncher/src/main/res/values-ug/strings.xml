@@ -86,4 +86,33 @@
     <string name="theme_color_urban_ash">تىتان سايىسى</string>
     <string name="theme_color_verdant_dawn">تىنچ ئورماندىكى تاڭ</string>
     <string name="theme_color_picker_title">رەڭ تاللىغۇچ</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">يېقىندا ئوينىغانلار</string>
+    <string name="home_recent_worlds_more">ھەممىسىنى كۆرۈش</string>
+    <string name="world_list_title">بارلىق دۇنيالار</string>
+    <string name="world_list_all_instances">بارلىق نۇسخىلار</string>
+    <string name="world_list_all_versions">بارلىق ئويۇن نەشرىلىرى</string>
+    <string name="world_list_empty">نۆۋەتتىكى ئىزدەش ياكى سۈزگۈچكە ماس كېلىدىغان دۇنيا يوق.</string>
+    <string name="world_list_never_played">ئەزەلدىن ئوينىمىغان</string>
+    <string name="home_feed_title">خاس باش بەت</string>
+    <string name="home_feed_empty">ھازىرچە كۆرسىتىدىغان مەزمۇن يوق. كېيىن ئاپتوماتىك يېڭىلىنىدۇ.</string>
+    <string name="home_feed_source_minecraft_news">Minecraft خەۋەرلىرى</string>
+    <string name="home_feed_source_java_updates">Java نەشرى يېڭىلانمىلىرى</string>
+    <string name="home_feed_source_modrinth">Modrinth نىڭ قىزىق تېمىلىرى</string>
+    <string name="home_feed_source_curseforge">CurseForge تاللانمىلىرى</string>
+    <string name="home_feed_source_minecraft_events">Minecraft جامائىتى</string>
+    <string name="home_feed_settings_title">خاس باش بەت ئېقىمى</string>
+    <string name="home_feed_settings_summary">دۇنيالىرىڭىزنىڭ ئاستىدا خەۋەر ۋە جامائەت يېڭىلانمىلىرىنى كۆرسىتىدۇ. تەلەپ مەغلۇپ بولغاندا ساقلىغۇچتىكى مەزمۇن تىنچ ئىشلىتىلىدۇ، باش بەتنىڭ قالغان قىسمىنى ھەرگىز توسمايدۇ.</string>
+    <string name="home_feed_manage_entry_title">باش بەت كارتىچكىلىرىنى باشقۇرۇش</string>
+    <string name="home_feed_manage_entry_summary">ئالدىن بېكىتىلگەن كارتىچكىلەرنى قوشۇش، ئۆچۈرۈش، يوشۇرۇش ياكى تەرتىپلەش.</string>
+    <string name="home_feed_manage_title">باش بەت كارتىچكىلىرى</string>
+    <string name="home_feed_manage_hint">كارتىچكىنى سۆرەش ئۈچۈن سول تەرەپتىكى تۇتقۇچنى ئۇزۇن بېسىڭ. ئالماشتۇرغۇچ كارتىچكىنى يوشۇرىدۇ (قايتا كۆرسىتەلەيسىز)؛ ئۆچۈرگەندە «ئىشلەتكىلى بولىدىغان كارتىچكىلەر» گە قايتىدۇ.</string>
+    <string name="home_feed_manage_none_added">ھازىرچە ھېچقانداق كارتىچكە قوشۇلمىدى.</string>
+    <string name="home_feed_manage_available">ئىشلەتكىلى بولىدىغان كارتىچكىلەر</string>
+    <string name="home_feed_manage_reset">كۆڭۈلدىكىگە قايتۇرۇش</string>
+    <string name="home_feed_manage_drag_hint">تەرتىپلەش ئۈچۈن سۆرەڭ</string>
+    <string name="home_feed_manage_remove">ئۆچۈرۈش</string>
+    <string name="home_feed_manage_add">قوشۇش</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">رەندېرلىغۇچ تەپسىلاتى (تۆت رەندېرلىغۇچنىڭ ھەممىسى)</string>
 </resources>

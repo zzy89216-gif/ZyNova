@@ -18,6 +18,9 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.elements
 
+import android.app.Activity
+import android.os.Build
+import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
@@ -30,12 +33,15 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -51,6 +57,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -67,9 +74,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -80,11 +89,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.ImageLoader
 import coil3.compose.AsyncImage
-import coil3.gif.GifDecoder
-import coil3.svg.SvgDecoder
+import coil3.imageLoader
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.game.addons.modloader.ModLoader
 import com.movtery.zalithlauncher.game.path.GamePath
@@ -598,6 +609,74 @@ fun DeleteVersionDialog(
 }
 
 /**
+ * 让「删除版本」的全屏进度界面真正铺满整屏（议题 #74 用户反馈的「不是真全屏」）。
+ *
+ * 成因：Compose 的 [Dialog] 用的是**独立 Window**，默认 `decorFitsSystemWindows = true`，
+ * 而且窗口尺寸默认不是 MATCH_PARENT。只设置 `usePlatformDefaultWidth = false` 时，
+ * 内容仍然只铺到系统栏以内，状态栏 / 导航栏那两条露出底下的 Activity 页面 —— 看着就没盖住全屏。
+ *
+ * 这里对 Dialog 自己的 Window 补四件事（都只用 WindowCompat / WindowInsetsControllerCompat，API 26–36 一致）：
+ * 1. `setDecorFitsSystemWindows(false)` + `setLayout(MATCH_PARENT, MATCH_PARENT)`：
+ *    内容延伸到系统栏下面，并强制窗口铺满（个别 ROM 只认窗口尺寸，不认 Compose 的布局参数）；
+ * 2. 系统栏透明：让卡片底色一直透到状态栏 / 导航栏，而不是系统栏自己画一条黑/白条；
+ * 3. 系统栏图标按卡片背景亮度反色：浅色背景用深色图标、深色背景用浅色图标，
+ *    避免状态栏时间 / 导航栏按键在浅色卡片上看不清；
+ * 4. 沿用启动器的沉浸式策略（启动器平时就是全屏的，Dialog 窗口默认会把系统栏唤回来）：
+ *    隐藏系统栏、上滑临时唤出，删除过程中的观感和其它页面一致。
+ *
+ * 只作用于 Dialog 窗口；对话框关闭后窗口销毁，不影响 Activity 自己的全屏设置。
+ */
+@Suppress("DEPRECATION")
+@Composable
+private fun FullScreenDialogWindowEffect() {
+    val view = LocalView.current
+    //浅色卡片背景要用深色系统栏图标（反之亦然），用卡片颜色亮度判断，跟随深浅色主题
+    val isLightBackground = cardColor(false).luminance() > 0.5f
+
+    DisposableEffect(view, isLightBackground) {
+        val window = (view.parent as? DialogWindowProvider)?.window
+        if (window != null) {
+            //1. 窗口铺满整屏（DialogProperties.decorFitsSystemWindows 已经设置过一次，这里再显式收口）
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
+
+            //2. 系统栏透明：窗口自己的卡片底色直接透到系统栏区域
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+            )
+            window.statusBarColor = android.graphics.Color.TRANSPARENT
+            window.navigationBarColor = android.graphics.Color.TRANSPARENT
+
+            //3. 允许画进刘海 / 挖孔区域（API 28+ 才有这个属性；API 26/27 没有挖孔屏，跳过即可）
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode =
+                        WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
+            }
+
+            //4. 系统栏图标反色 + 沉浸式（多窗口下系统栏由系统并排显示，不去抢它的显隐）
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = isLightBackground
+                isAppearanceLightNavigationBars = isLightBackground
+                val activity = view.context as? Activity
+                if (activity?.isInMultiWindowMode != true) {
+                    hide(WindowInsetsCompat.Type.systemBars())
+                    systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+            }
+        }
+        onDispose {}
+    }
+}
+
+/**
  * 删除版本的全屏进度界面（议题 #74）。
  *
  * 旧实现用 [SimpleTaskDialog] 直接跑 `FileUtils.deleteQuietly`：
@@ -614,7 +693,8 @@ fun DeleteVersionProgressDialog(
     onDismiss: () -> Unit,
     onError: (Throwable) -> Unit
 ) {
-    val progress by VersionsManager.deleteProgress.collectAsStateWithLifecycle()
+    //性能：删除进度在删除阶段大约每 120ms 变一次，这里只收集「结果」这种低频状态；
+    //高频进度交给下方 DeleteVersionProgressDetails 自己读，避免每次进度刷新都把整个全屏 Dialog 子树重启一遍。
     val result by VersionsManager.deleteResult.collectAsStateWithLifecycle()
 
     val versionName = remember(version) { version.getVersionName() }
@@ -650,10 +730,17 @@ fun DeleteVersionProgressDialog(
         onDismissRequest = {},
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
+            //⚠️ 全屏关键：Compose Dialog 默认「窗口贴合系统栏」（decorFitsSystemWindows = true），
+            //只设置 usePlatformDefaultWidth = false 时，内容仍被收在状态栏 / 导航栏之内，
+            //系统栏那两条会露出底下的页面 —— 看起来就不是真全屏（用户反馈的 Bug 就是这个）。
+            decorFitsSystemWindows = false,
             dismissOnClickOutside = false,
             dismissOnBackPress = false
         )
     ) {
+        //把 Dialog 自己的 Window 真正铺满整屏，并处理系统栏图标反色（见下方注释）
+        FullScreenDialogWindowEffect()
+
         //⚠️ dismissOnBackPress=false 只是不触发弹窗自己的关闭回调，系统返回键仍可能被导航层吃掉：
         //那样用户能退页、删除却在后台继续，结果也没人清理。这里显式吞掉返回键（进度/取消都只走界面按钮）。
         BackHandler(enabled = true) {}
@@ -666,6 +753,8 @@ fun DeleteVersionProgressDialog(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    //内容避开状态栏 / 导航栏 / 刘海挖孔：多窗口、系统栏被临时唤出时按钮也不会被挡
+                    .windowInsetsPadding(WindowInsets.safeDrawing)
                     .padding(horizontal = 32.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -692,10 +781,7 @@ fun DeleteVersionProgressDialog(
                         is DeleteVersionResult.Success -> stringResource(R.string.versions_delete_progress_done)
                         is DeleteVersionResult.Cancelled -> stringResource(R.string.versions_delete_progress_cancelled)
                         is DeleteVersionResult.Failed -> stringResource(R.string.versions_delete_progress_failed)
-                        null -> {
-                            val name = progress?.versionName ?: versionName
-                            stringResource(R.string.versions_delete_progress_title, name)
-                        }
+                        null -> stringResource(R.string.versions_delete_progress_title, versionName)
                     },
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
@@ -704,81 +790,8 @@ fun DeleteVersionProgressDialog(
                 )
 
                 if (result == null) {
-                    val currentProgress = progress
-                    val phase = currentProgress?.phase ?: DeleteVersionPhase.SCANNING
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = when (phase) {
-                            DeleteVersionPhase.SCANNING -> stringResource(R.string.versions_delete_phase_scanning)
-                            DeleteVersionPhase.DELETING -> stringResource(R.string.versions_delete_phase_deleting)
-                        },
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    val fraction = currentProgress?.fraction
-                    if (fraction == null) {
-                        //扫描阶段总数还不知道，只能给不确定进度；下面的实时数字说明扫描还在推进
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                    } else {
-                        LinearProgressIndicator(
-                            progress = { fraction },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-
-                    currentProgress?.let { data ->
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            text = if (data.phase == DeleteVersionPhase.SCANNING) {
-                                stringResource(
-                                    R.string.versions_delete_phase_scanning_detail,
-                                    data.totalFiles,
-                                    formatFileSize(data.totalBytes)
-                                )
-                            } else {
-                                stringResource(
-                                    R.string.versions_delete_progress_detail,
-                                    ((data.fraction ?: 0f) * 100).toInt(),
-                                    data.doneFiles,
-                                    data.totalFiles,
-                                    formatFileSize(data.doneBytes),
-                                    formatFileSize(data.totalBytes)
-                                )
-                            },
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
-
-                        data.currentEntry.takeIf { it.isNotBlank() }?.let { entry ->
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = stringResource(R.string.versions_delete_progress_current, entry),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(28.dp))
-                    Button(onClick = { VersionsManager.cancelDeleteVersion() }) {
-                        Text(text = stringResource(R.string.generic_cancel))
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = stringResource(R.string.versions_delete_progress_keep_open),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
+                    //性能：进度（约 120ms 一次）单独拆成子 composable，进度刷新只重组这一小块
+                    DeleteVersionProgressDetails()
                 } else {
                     val current = result
                     if (current is DeleteVersionResult.Cancelled) {
@@ -805,6 +818,93 @@ fun DeleteVersionProgressDialog(
             }
         }
     }
+}
+
+
+/**
+ * 删除进度详情：阶段文案、进度条、文件数 / 大小、当前文件与取消按钮。
+ *
+ * 性能：删除阶段进度大约每 120ms 更新一次；单独拆成 composable 后，
+ * 进度刷新只重组这一小块，不会连带重启整个全屏 Dialog（Surface / 标题 / BackHandler / 窗口效果层）。
+ */
+@Composable
+private fun DeleteVersionProgressDetails() {
+    val currentProgress by VersionsManager.deleteProgress.collectAsStateWithLifecycle()
+
+    val phase = currentProgress?.phase ?: DeleteVersionPhase.SCANNING
+
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = when (phase) {
+            DeleteVersionPhase.SCANNING -> stringResource(R.string.versions_delete_phase_scanning)
+            DeleteVersionPhase.DELETING -> stringResource(R.string.versions_delete_phase_deleting)
+        },
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center
+    )
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    val fraction = currentProgress?.fraction
+    if (fraction == null) {
+        //扫描阶段总数还不知道，只能给不确定进度；下面的实时数字说明扫描还在推进
+        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    } else {
+        LinearProgressIndicator(
+            progress = { fraction },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+
+    currentProgress?.let { data ->
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = if (data.phase == DeleteVersionPhase.SCANNING) {
+                stringResource(
+                    R.string.versions_delete_phase_scanning_detail,
+                    data.totalFiles,
+                    formatFileSize(data.totalBytes)
+                )
+            } else {
+                stringResource(
+                    R.string.versions_delete_progress_detail,
+                    ((data.fraction ?: 0f) * 100).toInt(),
+                    data.doneFiles,
+                    data.totalFiles,
+                    formatFileSize(data.doneBytes),
+                    formatFileSize(data.totalBytes)
+                )
+            },
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
+        )
+
+        data.currentEntry.takeIf { it.isNotBlank() }?.let { entry ->
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.versions_delete_progress_current, entry),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(28.dp))
+    Button(onClick = { VersionsManager.cancelDeleteVersion() }) {
+        Text(text = stringResource(R.string.generic_cancel))
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    Text(
+        text = stringResource(R.string.versions_delete_progress_keep_open),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center
+    )
 }
 
 @Composable
@@ -1168,14 +1268,10 @@ fun VersionIconImage(
     val defaultIcon = painterResource(defaultIconRes)
 
     val context = LocalContext.current
-    val loader = remember(version, refreshKey) {
-        ImageLoader.Builder(context)
-            .components {
-                add(GifDecoder.Factory())
-                add(SvgDecoder.Factory())
-            }
-            .build()
-    }
+    //性能：不要为每个列表项新建 ImageLoader —— 每次 new 都会各自建一套内存缓存 / 磁盘缓存，
+    //等于同一张图标反复解码、还和全局缓存互相不命中，版本列表 / 主页卡片滚动时会明显掉帧。
+    //统一用 Application 里配置好的单例 ImageLoader（自带 Gif / Svg 解码器、20MB 内存缓存、512MB 磁盘缓存）。
+    val loader = context.imageLoader
 
     val model = remember(version, refreshKey) {
         version?.let {

@@ -375,4 +375,33 @@
     <string name="error_bad_request">[%s เซิร์ฟเวอร์ไม่สามารถเข้าใจคําขอน้ได้</string>
     <string name="error_forbidden">(%s) คุณไม่มีสิทธิในการเข้าถึงทรัพยากรนี้</string>
     <string name="error_not_acceptable">(%s) ไม่ยอมรับ</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">เล่นล่าสุด</string>
+    <string name="home_recent_worlds_more">ดูทั้งหมด</string>
+    <string name="world_list_title">ทุกโลก</string>
+    <string name="world_list_all_instances">ทุกอินสแตนซ์</string>
+    <string name="world_list_all_versions">ทุกเวอร์ชันของเกม</string>
+    <string name="world_list_empty">ไม่มีโลกที่ตรงกับการค้นหาหรือตัวกรองปัจจุบัน</string>
+    <string name="world_list_never_played">ยังไม่เคยเล่น</string>
+    <string name="home_feed_title">หน้าแรกแบบกำหนดเอง</string>
+    <string name="home_feed_empty">ยังไม่มีอะไรจะแสดง ระบบจะรีเฟรชให้อัตโนมัติภายหลัง</string>
+    <string name="home_feed_source_minecraft_news">ข่าว Minecraft</string>
+    <string name="home_feed_source_java_updates">อัปเดตเวอร์ชัน Java</string>
+    <string name="home_feed_source_modrinth">กำลังมาแรงบน Modrinth</string>
+    <string name="home_feed_source_curseforge">คัดสรรจาก CurseForge</string>
+    <string name="home_feed_source_minecraft_events">คอมมูนิตี้ Minecraft</string>
+    <string name="home_feed_settings_title">ฟีดหน้าแรกแบบกำหนดเอง</string>
+    <string name="home_feed_settings_summary">แสดงข่าวและการอัปเดตของคอมมูนิตี้ใต้โลกของคุณ หากคำขอล้มเหลวจะใช้เนื้อหาที่แคชไว้อย่างเงียบ ๆ และไม่บล็อกส่วนอื่นของหน้าแรก</string>
+    <string name="home_feed_manage_entry_title">จัดการการ์ดหน้าแรก</string>
+    <string name="home_feed_manage_entry_summary">เพิ่ม ลบ ซ่อน หรือจัดเรียงการ์ดที่ตั้งไว้ล่วงหน้า</string>
+    <string name="home_feed_manage_title">การ์ดหน้าแรก</string>
+    <string name="home_feed_manage_hint">กดค้างที่ด้ามจับด้านซ้ายเพื่อลากการ์ด สวิตช์จะซ่อนการ์ด (แสดงอีกครั้งได้) ส่วนการลบจะส่งการ์ดกลับไปที่ «การ์ดที่ใช้ได้»</string>
+    <string name="home_feed_manage_none_added">ยังไม่มีการ์ดที่เพิ่มไว้</string>
+    <string name="home_feed_manage_available">การ์ดที่ใช้ได้</string>
+    <string name="home_feed_manage_reset">คืนค่าเริ่มต้น</string>
+    <string name="home_feed_manage_drag_hint">ลากเพื่อจัดเรียง</string>
+    <string name="home_feed_manage_remove">ลบออก</string>
+    <string name="home_feed_manage_add">เพิ่ม</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">รายละเอียดตัวเรนเดอร์ (ตัวเรนเดอร์ทั้งสี่)</string>
 </resources>

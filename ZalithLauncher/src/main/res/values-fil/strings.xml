@@ -246,4 +246,33 @@
     <string name="download_assets_category_decoration">Dekorasyon</string>
     <string name="download_assets_category_mobs">Mga Mob</string>
     <string name="download_assets_category_equipment">Kagamitan</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Mga kamakailang nilalaro</string>
+    <string name="home_recent_worlds_more">Tingnan lahat</string>
+    <string name="world_list_title">Lahat ng mundo</string>
+    <string name="world_list_all_instances">Lahat ng instance</string>
+    <string name="world_list_all_versions">Lahat ng bersyon ng laro</string>
+    <string name="world_list_empty">Walang mundo na tugma sa kasalukuyang paghahanap o mga filter.</string>
+    <string name="world_list_never_played">Hindi pa nalalaro</string>
+    <string name="home_feed_title">Pasadya na home</string>
+    <string name="home_feed_empty">Wala pang maipapakita ngayon. Awtomatiko itong magre-refresh mamaya.</string>
+    <string name="home_feed_source_minecraft_news">Balita ng Minecraft</string>
+    <string name="home_feed_source_java_updates">Mga update sa bersyon ng Java</string>
+    <string name="home_feed_source_modrinth">Mga trending sa Modrinth</string>
+    <string name="home_feed_source_curseforge">Mga pinili ng CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Komunidad ng Minecraft</string>
+    <string name="home_feed_settings_title">Pasadya na home feed</string>
+    <string name="home_feed_settings_summary">Magpapakita ng balita at mga update ng komunidad sa ilalim ng iyong mga mundo. Ang mga bigong kahilingan ay tahimik na gumagamit ng naka-cache na nilalaman at hindi kailanman hinaharangan ang iba pang bahagi ng home.</string>
+    <string name="home_feed_manage_entry_title">Pamahalaan ang mga card sa home</string>
+    <string name="home_feed_manage_entry_summary">Magdagdag, mag-alis, magtago o muling ayusin ang mga preset na card.</string>
+    <string name="home_feed_manage_title">Mga card sa home</string>
+    <string name="home_feed_manage_hint">Pindutin nang matagal ang handle sa kaliwa para i-drag ang card. Itinatago ng switch ang card (maipapakita mo muli); kapag inalis, babalik ito sa «Mga available na card».</string>
+    <string name="home_feed_manage_none_added">Wala pang naidagdag na card.</string>
+    <string name="home_feed_manage_available">Mga available na card</string>
+    <string name="home_feed_manage_reset">Ibalik sa default</string>
+    <string name="home_feed_manage_drag_hint">I-drag para ayusin</string>
+    <string name="home_feed_manage_remove">Alisin</string>
+    <string name="home_feed_manage_add">Idagdag</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Mga detalye ng renderer (lahat ng apat na renderer)</string>
 </resources>

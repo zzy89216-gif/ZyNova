@@ -1147,12 +1147,6 @@
     <string name="settings_launcher_background_video_volume_summary">When the background is a video, you can adjust the volume using this option.</string>
     <string name="settings_launcher_background_blur_summary">Adjust the background blur effect. This option consumes significant performance.</string>
     <string name="settings_launcher_liquid_glass_title">Liquid Glass Effect</string>
-    <string name="personalization_title">Personalization</string>
-    <string name="personalization_wallpaper_title">Wallpaper</string>
-    <string name="personalization_wallpaper_summary_set">Tap to change the current background image or video</string>
-    <string name="personalization_wallpaper_summary_empty">No wallpaper yet, tap to choose one</string>
-    <string name="personalization_more_settings">More settings</string>
-    <string name="personalization_more_settings_summary">Theme, language, full screen and other low-frequency options</string>
     <string name="settings_launcher_glass_strength_title">Glass Strength</string>
     <string name="settings_launcher_glass_strength_summary">How strong the single-color glass tint is. Lower values look closer to flat colors.</string>
     <string name="settings_launcher_corner_radius_title">Corner Radius</string>
@@ -1841,7 +1835,7 @@
     <string name="favorites_install_missing">These dependencies were not installed: %1$s</string>
     <string name="favorites_action_cancel_online">Remove online favorite</string>
     <string name="favorites_online_cancelled">Online favorite removed (archived file kept): %1$s</string>
-    <string name="settings_advanced_renderer_title">Renderer details (all three renderers)</string>
+    <string name="settings_advanced_renderer_title">Renderer details (all four renderers)</string>
     <string name="settings_mg_no_error_title">Skip GL error checks</string>
     <string name="settings_mg_no_error_summary">Slightly faster, but real problems stop being reported.</string>
     <string name="settings_mg_timer_query_title">Timer query extension</string>
@@ -2108,4 +2102,32 @@
     <string name="download_assets_search_empty">No results. Try another keyword, or clear the filters.</string>
     <string name="download_modpack_no_version">This project has no downloadable modpack version. Open its detail page to pick another one.</string>
     <string name="favorites_online_modpack_open_downloads">Modpacks need a version picker. Open the resource download page, search this project and choose a version.</string>
+
+    <!-- 主页改版（议题 #91）：最近游玩世界 / 全部世界列表 / 自定义主页资讯 -->
+    <string name="home_feed_empty">Nothing to show right now. It will refresh automatically later.</string>
+    <string name="home_feed_manage_add">Add</string>
+    <string name="home_feed_manage_available">Available cards</string>
+    <string name="home_feed_manage_drag_hint">Drag to reorder</string>
+    <string name="home_feed_manage_entry_summary">Add, remove, hide or reorder the preset cards.</string>
+    <string name="home_feed_manage_entry_title">Manage custom home cards</string>
+    <string name="home_feed_manage_hint">Long-press the handle on the left to drag a card. The switch hides a card (you can show it again); removing sends it back to "Available cards".</string>
+    <string name="home_feed_manage_none_added">No cards added yet.</string>
+    <string name="home_feed_manage_remove">Remove</string>
+    <string name="home_feed_manage_reset">Reset to default</string>
+    <string name="home_feed_manage_title">Custom home cards</string>
+    <string name="home_feed_settings_summary">Show news and community updates below your worlds. Failed requests fall back to cached content silently and never block the rest of the home page.</string>
+    <string name="home_feed_settings_title">Custom home feed</string>
+    <string name="home_feed_source_curseforge">CurseForge picks</string>
+    <string name="home_feed_source_java_updates">Java version updates</string>
+    <string name="home_feed_source_minecraft_events">Minecraft community</string>
+    <string name="home_feed_source_minecraft_news">Minecraft news</string>
+    <string name="home_feed_source_modrinth">Modrinth trending</string>
+    <string name="home_feed_title">Custom home</string>
+    <string name="home_recent_worlds_more">View all</string>
+    <string name="home_recent_worlds_title">Recently played</string>
+    <string name="world_list_all_instances">All instances</string>
+    <string name="world_list_all_versions">All game versions</string>
+    <string name="world_list_empty">No worlds match the current search or filters.</string>
+    <string name="world_list_never_played">Never played</string>
+    <string name="world_list_title">All worlds</string>
 </resources>

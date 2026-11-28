@@ -1205,4 +1205,33 @@
     <string name="versions_export_tip_remote_2">Al mismo tiempo, los mods desactivados se incluirán como componentes opcionales.</string>
     <string name="ai_error_runaway">«%1$s» se llamó %2$d veces con exactamente los mismos argumentos, parece atascado en un bucle y se ha detenido</string>
     <string name="ai_privacy_message">Cuando las funciones de IA están activas, lo siguiente **se envía al proveedor de IA que configuraste** (DeepSeek o el endpoint compatible que introdujiste):\n\n· datos del juego</string>
+    <!-- 28.3.2 移植（#91 主页改版）：最近游玩世界 / 全部世界列表 / 自定义主页资讯；渲染器详目标题修正 -->
+    <string name="home_recent_worlds_title">Jugados recientemente</string>
+    <string name="home_recent_worlds_more">Ver todo</string>
+    <string name="world_list_title">Todos los mundos</string>
+    <string name="world_list_all_instances">Todas las instancias</string>
+    <string name="world_list_all_versions">Todas las versiones del juego</string>
+    <string name="world_list_empty">Ningún mundo coincide con la búsqueda o los filtros actuales.</string>
+    <string name="world_list_never_played">Nunca jugado</string>
+    <string name="home_feed_title">Inicio personalizado</string>
+    <string name="home_feed_empty">Ahora no hay nada que mostrar. Se actualizará automáticamente más tarde.</string>
+    <string name="home_feed_source_minecraft_news">Noticias de Minecraft</string>
+    <string name="home_feed_source_java_updates">Novedades de la versión Java</string>
+    <string name="home_feed_source_modrinth">Tendencias de Modrinth</string>
+    <string name="home_feed_source_curseforge">Selección de CurseForge</string>
+    <string name="home_feed_source_minecraft_events">Comunidad de Minecraft</string>
+    <string name="home_feed_settings_title">Contenido del inicio personalizado</string>
+    <string name="home_feed_settings_summary">Muestra noticias y novedades de la comunidad bajo tus mundos. Si una petición falla, se usa el contenido en caché sin avisar y nunca bloquea el resto de la página de inicio.</string>
+    <string name="home_feed_manage_entry_title">Gestionar tarjetas del inicio</string>
+    <string name="home_feed_manage_entry_summary">Añade, quita, oculta o reordena las tarjetas predefinidas.</string>
+    <string name="home_feed_manage_title">Tarjetas del inicio</string>
+    <string name="home_feed_manage_hint">Mantén pulsado el tirador de la izquierda para arrastrar una tarjeta. El interruptor la oculta (puedes volver a mostrarla); si la eliminas, vuelve a «Tarjetas disponibles».</string>
+    <string name="home_feed_manage_none_added">Aún no has añadido ninguna tarjeta.</string>
+    <string name="home_feed_manage_available">Tarjetas disponibles</string>
+    <string name="home_feed_manage_reset">Restablecer predeterminadas</string>
+    <string name="home_feed_manage_drag_hint">Arrastra para reordenar</string>
+    <string name="home_feed_manage_remove">Quitar</string>
+    <string name="home_feed_manage_add">Añadir</string>
+    <!-- 28.3.2：渲染器详细参数标题（四个渲染器） -->
+    <string name="settings_advanced_renderer_title">Detalles del renderizador (los cuatro renderizadores)</string>
 </resources>

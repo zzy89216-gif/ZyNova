@@ -720,7 +720,9 @@ private fun ScreenshotGrid(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(items) { info ->
+                //性能（列表滚动）：截图文件路径是稳定唯一 key，筛选 / 排序后 Compose 按身份复用网格项，
+                //避免整列项被当成新项重建（缩略图重新解码、选中态动画重播）。
+                items(items, key = { it.file.absolutePath }) { info ->
                     ScreenshotItemLayout(
                         info = info,
                         selected = selected.contains(info),

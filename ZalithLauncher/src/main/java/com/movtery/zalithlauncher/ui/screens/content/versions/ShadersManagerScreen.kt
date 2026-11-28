@@ -589,7 +589,9 @@ private fun ShadersList(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 state = scrollState,
             ) {
-                items(list) { info ->
+                //性能（列表滚动）：光影包文件路径是稳定唯一 key，筛选 / 排序后 Compose 按身份复用列表项，
+                //避免整列项被当成新项重建（图标重新加载、内部状态丢失）。
+                items(list, key = { it.file.absolutePath }) { info ->
                     ShaderPackItem(
                         modifier = Modifier
                             .fillMaxWidth()

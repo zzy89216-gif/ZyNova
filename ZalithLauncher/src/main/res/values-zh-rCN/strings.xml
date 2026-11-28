@@ -1147,12 +1147,6 @@
     <string name="settings_launcher_background_video_volume_summary">背景内容是视频时，可以通过这个选项调整音量</string>
     <string name="settings_launcher_background_blur_summary">调整背景的模糊效果，此选项较为消耗性能</string>
     <string name="settings_launcher_liquid_glass_title">液态玻璃效果</string>
-    <string name="personalization_title">个性化</string>
-    <string name="personalization_wallpaper_title">壁纸</string>
-    <string name="personalization_wallpaper_summary_set">点一下更换当前的背景图片或视频</string>
-    <string name="personalization_wallpaper_summary_empty">还没有设置壁纸，点一下选择</string>
-    <string name="personalization_more_settings">更多设置</string>
-    <string name="personalization_more_settings_summary">主题、语言、全屏等低频选项都在这里</string>
     <string name="settings_launcher_glass_strength_title">玻璃强度</string>
     <string name="settings_launcher_glass_strength_summary">调整单色玻璃渐变的强度，调低更接近纯色，调高玻璃感更强</string>
     <string name="settings_launcher_corner_radius_title">卡片圆角</string>
@@ -1812,7 +1806,7 @@
     <string name="favorites_install_missing">这些前置没装上：%1$s</string>
     <string name="favorites_action_cancel_online">取消在线收藏</string>
     <string name="favorites_online_cancelled">已取消在线收藏（归档文件保留）：%1$s</string>
-    <string name="settings_advanced_renderer_title">渲染器详细参数（三个渲染器都能改）</string>
+    <string name="settings_advanced_renderer_title">渲染器详细参数（四个渲染器都能改）</string>
     <string name="settings_mg_no_error_title">关闭 GL 错误检查</string>
     <string name="settings_mg_no_error_summary">快一点；真出问题时不再报错，更难查原因。</string>
     <string name="settings_mg_timer_query_title">时间查询扩展</string>
@@ -2079,4 +2073,32 @@
     <string name="download_assets_search_empty">没有搜索结果，换个关键词或清空筛选条件试试。</string>
     <string name="download_modpack_no_version">这个项目没有可下载的整合包版本，可以进详情页换一个。</string>
     <string name="favorites_online_modpack_open_downloads">整合包需要选择版本：请到资源下载页搜索该项目，选一个版本安装。</string>
+
+    <!-- 主页改版（议题 #91）：最近游玩世界 / 全部世界列表 / 自定义主页资讯 -->
+    <string name="home_feed_empty">暂时没有内容，稍后会自动刷新。</string>
+    <string name="home_feed_manage_add">添加</string>
+    <string name="home_feed_manage_available">可添加的卡片</string>
+    <string name="home_feed_manage_drag_hint">拖动排序</string>
+    <string name="home_feed_manage_entry_summary">添加、删除、隐藏或拖动排序预设卡片。</string>
+    <string name="home_feed_manage_entry_title">管理自定义主页卡片</string>
+    <string name="home_feed_manage_hint">长按左侧手柄拖动排序。开关是隐藏（之后还能再打开）；删除后可在下方「可添加的卡片」里加回来。</string>
+    <string name="home_feed_manage_none_added">还没有添加任何卡片。</string>
+    <string name="home_feed_manage_remove">删除</string>
+    <string name="home_feed_manage_reset">恢复默认</string>
+    <string name="home_feed_manage_title">自定义主页卡片</string>
+    <string name="home_feed_settings_summary">在世界区下方展示新闻与社区动态。网络失败时静默使用缓存，不会阻塞主页其它功能。</string>
+    <string name="home_feed_settings_title">自定义主页资讯</string>
+    <string name="home_feed_source_curseforge">CurseForge 资讯</string>
+    <string name="home_feed_source_java_updates">Java 版本更新</string>
+    <string name="home_feed_source_minecraft_events">Minecraft 社区活动</string>
+    <string name="home_feed_source_minecraft_news">Minecraft 新闻</string>
+    <string name="home_feed_source_modrinth">Modrinth 动态</string>
+    <string name="home_feed_title">自定义主页</string>
+    <string name="home_recent_worlds_more">查看全部</string>
+    <string name="home_recent_worlds_title">最近游玩的</string>
+    <string name="world_list_all_instances">全部实例</string>
+    <string name="world_list_all_versions">全部游戏版本</string>
+    <string name="world_list_empty">没有符合当前搜索或筛选条件的世界。</string>
+    <string name="world_list_never_played">从未游玩</string>
+    <string name="world_list_title">全部世界</string>
 </resources>

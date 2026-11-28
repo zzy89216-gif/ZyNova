@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@
 แนวคิดมีข้อเดียว: **แตะน้อยลง** แทนที่จะกางการตั้งค่ายอกมาให้เลือกเอง ตัวเปิดเกมจะตัดสินใจให้ก่อน และถามเฉพาะตอนที่ตัดสินใจไม่ได้จริง ๆ
 
 ## ✨ การเปลี่ยนแปลงล่าสุด
+
+**28.3.2** (ล่าสุด): หน้าหลักใหม่ (โลกที่เล่นล่าสุด + รายการโลกทั้งหมด + ฟีดหน้าแรกแบบกำหนดเอง), ลบหน้า «ปรับแต่ง», แก้ชื่อหัวข้อรายละเอียดตัวเรนเดอร์, ลบเวอร์ชันแสดงความคืบหน้าเต็มหน้าจอ, ปรับปรุงประสิทธิภาพ, อัปเดตลิงก์ Discord
+
+> รูปลักษณ์ยังคงเหมือน 28.3.0 — ไม่มีกระจกไดนามิก การหักเห หรือเอฟเฟกต์แม่เหล็ก
 
 **28.3.0** (เวอร์ชันเสถียร): การเปลี่ยนแปลงสำคัญ
 
@@ -72,7 +76,7 @@
 ## 💖 สนับสนุน
 
 - แจ้งปัญหา：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - อีเมล：<ZyNovaLauncher@outlook.com>
 - X อย่างเป็นทางการ：<https://x.com/ZyNovaProject>
 - สนับสนุนโครงการ：<https://afdian.com/a/hizzy>

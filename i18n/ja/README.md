@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 ---
 
@@ -22,6 +22,10 @@ Android 向けの **Minecraft: Java Edition** ランチャー。ZalithLauncher2 
 方針は「**タップを減らす**」。設定を並べて選ばせるのではなく、まずこちらで判断し、判断できないときだけ一度聞く。ゲームの導入、MOD の依存解決、クラッシュログの読解までを AI に任せられます。
 
 ## ✨ 最近の変更
+
+**28.3.2**（最新）：ホーム画面を刷新（最近のワールド＋全ワールド一覧＋カスタムホーム情報）、「パーソナライズ」ページを廃止、レンダラー詳細のタイトルを修正、バージョン削除を全画面の進捗表示に、動作のもたつきを改善、Discord リンクを更新。
+
+> 見た目は 28.3.0 のまま。動くガラス・屈折・マグネット効果は含みません。
 
 **28.3.0**（正式版）の主な変更点です：
 
@@ -72,7 +76,7 @@ Android 向けの **Minecraft: Java Edition** ランチャー。ZalithLauncher2 
 ## 💖 サポート
 
 - 不具合報告：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - メール：<ZyNovaLauncher@outlook.com>
 - 公式 X：<https://x.com/ZyNovaProject>
 - 支援：<https://afdian.com/a/hizzy>

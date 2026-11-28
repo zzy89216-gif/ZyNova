@@ -122,13 +122,13 @@ import com.movtery.zalithlauncher.ui.screens.content.LicenseScreen
 import com.movtery.zalithlauncher.ui.screens.content.LogViewScreen
 import com.movtery.zalithlauncher.ui.screens.content.MultiplayerScreen
 import com.movtery.zalithlauncher.ui.screens.content.music.MusicScreen
-import com.movtery.zalithlauncher.ui.screens.content.PersonalizationScreen
 import com.movtery.zalithlauncher.ui.screens.content.SettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.VersionExportScreen
 import com.movtery.zalithlauncher.ui.screens.content.VersionSettingsScreen
 import com.movtery.zalithlauncher.ui.screens.content.navigateToLogView
 import com.movtery.zalithlauncher.ui.screens.content.VersionsManageScreen
 import com.movtery.zalithlauncher.ui.screens.content.WebViewScreen
+import com.movtery.zalithlauncher.ui.screens.content.WorldListScreen
 import com.movtery.zalithlauncher.ui.screens.content.assetinfo.AssetInfoScreen
 import com.movtery.zalithlauncher.ui.screens.content.navigateToDownload
 import com.movtery.zalithlauncher.ui.screens.navigateTo
@@ -190,16 +190,16 @@ fun MainScreen(
     }
 
     /**
-     * 切换「标签页」级别的界面（顶部胶囊上的入口：主菜单 / AI / 多人 / 下载 / 个性化 / 设置）
+     * 切换「标签页」级别的界面（顶部胶囊上的入口：主菜单 / AI / 多人 / 下载 / 设置）
      *
      * 27.10.2 的返回键乱跳根因就是这里：原来用 `removeAndNavigateTo(clearBeforeNavKeys)`，
-     * 那个列表只包含 设置 / 下载 / 多人，于是「设置 → 个性化 → 返回」会退回到栈里还没被移除的
+     * 那个列表只包含 设置 / 下载 / 多人，于是「设置 → 其他标签页 → 返回」会退回到栈里还没被移除的
      * AI 页面，看起来就是「返回键乱跳」。
      *
      * 现在的规则很简单：
      * - **标签页之间平级**：进任何标签页前，先把栈里除主界面以外的页面全部清掉，再压入目标页，
      *   所以任何标签页的返回都严格回到主界面；
-     * - **标签页内部逐级**：设置子项、下载子项、个性化 → 更多设置 这些是「上一级」关系，
+     * - **标签页内部逐级**：设置子项、下载子项这些是「上一级」关系，
      *   用普通 navigateTo 追加，返回时逐级回退，不会跨标签跳。
      */
     fun openTab(screenKey: TitledNavKey) {
@@ -318,8 +318,6 @@ fun MainScreen(
                 onScreenBack = { onBack(screenBackStackModel.mainScreen) },
                 toMainScreen = toMainScreen,
                 toSettingsScreen = { openTab(screenBackStackModel.settingsScreen) },
-                //个性化：独立的「个性化」页面（壁纸 / 不透明度 / 模糊 / 圆角 / 玻璃强度）
-                toPersonalization = { openTab(NormalNavKey.Personalization) },
                 toDownloadScreen = {
                     screenBackStackModel.navigateToDownload()
                 },
@@ -820,11 +818,6 @@ private fun NavigationUI(
                         eventViewModel = eventViewModel
                     )
                 }
-                entry<NormalNavKey.Personalization> {
-                    PersonalizationScreen(
-                        backScreenViewModel = screenBackStackModel,
-                    )
-                }
                 entry<NormalNavKey.Favorites> { key ->
                     FavoritesScreen(
                         screenKey = key,
@@ -842,6 +835,17 @@ private fun NavigationUI(
                 entry<NormalNavKey.HomePageEditor> {
                     HomePageEditorScreen(
                         backStackViewModel = screenBackStackModel,
+                    )
+                }
+                entry<NormalNavKey.WorldList> { key ->
+                    WorldListScreen(
+                        screenKey = key,
+                        currentKey = screenBackStackModel.mainScreen.currentKey,
+                        onPlayWorld = { version, saveName ->
+                            eventViewModel.sendEvent(
+                                EventViewModel.Event.Launch.PlaySave(version, saveName)
+                            )
+                        }
                     )
                 }
                 entry<NormalNavKey.LogView> { key ->

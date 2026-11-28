@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.3.2** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.0)
+[![Release](https://img.shields.io/badge/Release-28.3.2-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.2)
 
 本版彙整先前全部預發行的內容；預發行 Release 已移除，僅保留正式版。
 
@@ -30,6 +30,10 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 - **當機不用猜**：把日誌交給 AI 讀，比在論壇翻十頁快
 
 ## ✨ 最近變更
+
+**28.3.2**（最新）：首頁改版（最近遊玩世界＋全部世界清單＋自訂首頁資訊）、移除「個人化」頁面、修正渲染器詳細參數標題、刪除版本改為全螢幕確定進度、改善卡頓、更新 Discord 連結。
+
+> 介面視覺維持 28.3.0，未包含動態玻璃、折射與磁吸效果。
 
 本版為 **28.3.0** 正式版（由 28.2.4 預發行版轉正），重點如下：
 
@@ -83,7 +87,7 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 ## 💖 支持
 
 - 回報問題：<https://github.com/zzy89216-gif/ZyNova/issues>
-- Discord：<https://discord.gg/QwPpZQHrTa>
+- Discord：<https://discord.gg/dbHTApYNYJ>
 - 信箱：<ZyNovaLauncher@outlook.com>
 - 官方 X：<https://x.com/ZyNovaProject>
 - 贊助：<https://afdian.com/a/hizzy>
