@@ -24,7 +24,7 @@
 
 ## Instances
 
-- To open the instance page: the home screen no longer shows the old instance cards; open it from the **Versions** list (tap an instance entry).
+- To open the instance page: tap an instance entry in the **Versions** list.
 - **Version settings** changes Java, memory, renderer, resolution and JVM arguments.
 - **Mod management** enables, disables or deletes mods; Fabric API is added by the Fabric flow and must not be installed twice by hand.
 - **Run log** lives on the version overview page; when something crashes, share the log from there first.

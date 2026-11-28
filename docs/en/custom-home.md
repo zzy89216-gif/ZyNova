@@ -32,10 +32,9 @@ Each card shows up to three entries; tapping one opens the source page in your b
 
 ## Offline and failed loads
 
-- The feed is decorative: no network, a timeout or a changed source format only affects that one card;
-- When a cache exists it is shown first (the same source is not re-requested over and over); with no cache a
-  single line says "Nothing to show right now. It will refresh automatically later.";
-- Instance cards, launching and downloads are never affected — **the game still launches with no network at all**.
+- No network, a timeout or a changed source format only affects that one card;
+- A cache is shown first when available; otherwise one line says "Nothing to show right now. It will refresh automatically later.";
+- The world section, launching and downloads are never affected — **the game still launches with no network at all**.
 
 ## Privacy
 
