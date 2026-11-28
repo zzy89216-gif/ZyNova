@@ -49,16 +49,19 @@
 
 ## 版本基线说明（重要）
 
-- 当前版本 **28.3.2**（`launcher_version_code=283200`，**预发行 / 待验证发布**，分支 `28.3.2`；界面视觉保持 28.3.0）；
+- 当前版本 **28.3.2**（`launcher_version_code=283200`，**预发行 / 测试版**，已由 `28.3.2` 分支合并回 `main` 并发布；界面视觉保持 28.3.0）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
 - 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
-**当前版本：28.3.2**（`launcher_version_code=283200`，**预发行 / 待验证发布**）
+**当前版本：28.3.2**（`launcher_version_code=283200`，**预发行 / 测试版**，已发布）
 
 ### 28.3.2（界面视觉保持 28.3.0，只回移功能与修复）
+
+- 开发分支 `28.3.2`，CI 编译通过后合并回 `main`，以预发行 Release `v28.3.2` 发布；
+  先前废弃的 `28.3.1` 分支（含动态玻璃等未采用改动）已删除。
 
 - **主页改版（#91 回移）**：`ui/screens/main/card_home/RecentWorldsSection.kt`（最近游玩的 4 个世界 + 「更多」）、
   `ui/screens/content/WorldListScreen.kt`（全部世界列表：搜索 / 排序 / 按实例与版本筛选 / 直接启动）、
