@@ -1080,9 +1080,7 @@ private fun ModsList(
             }
 
             val list = modsList ?: emptyList()
-            //性能（列表滚动）：给每项一个稳定 key（模组对象本身），筛选 / 排序 / 启停刷新后
-            //Compose 能按身份复用已有列表项，不会把整列项当成新项重建（图标重新加载、内部状态重置）。
-            items(list, key = { it.localMod }) { mod ->
+            items(list) { mod ->
                 ModItemLayout(
                     modifier = Modifier.fillMaxWidth(),
                     mod = mod,

@@ -189,10 +189,8 @@ object VersionsManager {
                     Logger.debug(TAG, "Has attempted to save the current version: $trySetVersion")
                 }
 
-                //性能（列表滚动 / 刷新抖动）：以前这里先清空版本列表再重新扫描填回，
-                //每次刷新（打开版本页、文件管理器改动、删除结束）都会让 LazyColumn 整表销毁重建：
-                //所有列表项重新组合、animateItem 入场动画重播、滚动位置被顶回顶部。
-                //扫描很快且结果随后整体替换，保留旧列表直到新列表就绪，配合列表的稳定 key 只会更新有变化的项。
+                _versions.update { emptyList() }
+
                 val newVersions = mutableListOf<Version>()
                 File(getVersionsHome()).listFiles()?.forEach { versionFile ->
                     runCatching {
