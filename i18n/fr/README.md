@@ -29,7 +29,14 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 
 ## ✨ Changements récents
 
-**28.3.3** (dernière) : page d’accueil repensée (mondes récents + liste complète + fil personnalisé), page « Personnalisation » supprimée, titre des détails du moteur corrigé, progression plein écran lors de la suppression d’une version, meilleures performances, lien Discord mis à jour.
+**28.3.3** (dernière) : principaux changements :
+
+- Page d’accueil repensée : mondes récents + liste complète des mondes + fil personnalisé.
+- Page « Personnalisation » supprimée, titre des détails du moteur corrigé, lien Discord mis à jour.
+- La suppression d’une version affiche désormais une progression déterminée en plein écran.
+- Suppression des anciennes cartes de mondes groupées par version au centre de l’accueil (#100).
+- Correction de la détection erronée de l’état vide : lorsque toutes les versions sont masquées, aucun téléchargement n’est plus suggéré.
+- Annulation des changements de 28.3.2 qui faisaient planter certains écrans de gestion des ressources (cache des listes / cache global des icônes / chargement asynchrone des extensions) ; seule la correction plein écran de la suppression de version est conservée.
 
 > L’apparence reste celle de 28.3.0 : pas de verre dynamique, de réfraction ni d’effets magnétiques.
 

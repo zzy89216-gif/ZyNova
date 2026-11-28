@@ -23,7 +23,14 @@ Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengatura
 
 ## ✨ Perubahan terbaru
 
-**28.3.3** (terbaru): halaman utama baru (dunia terakhir + daftar lengkap + feed kustom), halaman «Personalisasi» dihapus, judul detail perender diperbaiki, progres layar penuh saat menghapus versi, peningkatan performa, tautan Discord diperbarui.
+**28.3.3** (terbaru): perubahan utama:
+
+- Halaman utama dirombak: dunia terakhir + daftar lengkap dunia + feed kustom.
+- Halaman «Personalisasi» dihapus, judul detail perender diperbaiki, tautan Discord diperbarui.
+- Menghapus versi kini menampilkan progres pasti layar penuh.
+- Kartu dunia lama yang dikelompokkan per versi di tengah halaman utama dihapus (#100).
+- Deteksi status kosong yang salah diperbaiki: saat semua versi disembunyikan, tidak lagi menyarankan unduhan.
+- Perubahan 28.3.2 yang menyebabkan beberapa layar pengelolaan sumber daya mogok dibatalkan (cache daftar / cache ikon global / pemuatan plugin asinkron); hanya perbaikan layar penuh penghapusan versi yang dipertahankan.
 
 > Tampilan tetap seperti 28.3.0 — tanpa kaca dinamis, refraksi, atau efek magnetik.
 

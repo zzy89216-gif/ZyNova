@@ -23,7 +23,14 @@ Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pe
 
 ## ✨ Haal ki tabdeeliyan
 
-**28.3.3** (latest): home naya (haali worlds + poori list + custom home feed), «Personalization» page hata diya, renderer details ka title theek kiya, version delete par full-screen progress, performance behtar, Discord link update.
+**28.3.3** (latest): aham tabdeeliyan:
+
+- Home naya: haali worlds + poori world list + custom home feed.
+- «Personalization» page hata diya, renderer details ka title theek kiya, Discord link update.
+- Version delete ab full-screen par mukarrar progress dikhata hai.
+- Home ke beech se version ke hisaab se group kiye purane world cards hata diye (#100).
+- Home ki khaali halat ki ghalat pehchan theek ki: jab saare versions chhupe hon to ab download ki tajweez nahi hoti.
+- 28.3.2 ki woh tabdeeliyan wapas li gayin jin se kuch resource management screens crash hoti thin (list cache / icons ka global cache / plugins ki async loading); sirf version delete ki full-screen fix rakhi gayi.
 
 > Look 28.3.0 jaisa hi hai — dynamic glass, refraction aur magnetic effects shamil nahi.
 

@@ -29,7 +29,14 @@ L'idea è una sola: **meno tocchi**. Invece di mostrare venti impostazioni, il l
 
 ## ✨ Modifiche recenti
 
-**28.3.3** (ultima): home rinnovata (mondi recenti + elenco completo + contenuti personalizzati), pagina «Personalizzazione» rimossa, titolo dei dettagli del renderer corretto, avanzamento a schermo intero durante l’eliminazione di una versione, prestazioni migliorate, link Discord aggiornato.
+**28.3.3** (ultima): modifiche principali:
+
+- Home rinnovata: mondi recenti + elenco completo dei mondi + contenuti personalizzati.
+- Pagina «Personalizzazione» rimossa, titolo dei dettagli del renderer corretto, link Discord aggiornato.
+- L’eliminazione di una versione mostra ora un avanzamento determinato a schermo intero.
+- Rimosse le vecchie schede dei mondi raggruppate per versione dal centro della home (#100).
+- Corretta l’errata rilevazione dello stato vuoto: con tutte le versioni nascoste non viene più suggerito il download.
+- Annullate le modifiche della 28.3.2 che causavano crash in alcune schermate di gestione delle risorse (cache degli elenchi / cache globale delle icone / caricamento asincrono dei plugin); resta solo la correzione a schermo intero dell’eliminazione versione.
 
 > L’aspetto resta quello di 28.3.0: niente vetro dinamico, rifrazione o effetti magnetici.
 

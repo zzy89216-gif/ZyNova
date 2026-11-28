@@ -23,7 +23,14 @@ Trình khởi chạy **Minecraft: Java Edition** trên Android, phát triển đ
 
 ## ✨ Thay đổi gần đây
 
-**28.3.3** (mới nhất): trang chủ làm mới (thế giới gần đây + danh sách đầy đủ + bảng tin tùy chỉnh), bỏ trang «Cá nhân hóa», sửa tiêu đề chi tiết renderer, tiến trình toàn màn hình khi xoá phiên bản, cải thiện hiệu năng, cập nhật liên kết Discord.
+**28.3.3** (mới nhất): thay đổi chính:
+
+- Trang chủ làm mới: thế giới gần đây + danh sách đầy đủ + bảng tin tùy chỉnh.
+- Bỏ trang «Cá nhân hóa», sửa tiêu đề chi tiết renderer, cập nhật liên kết Discord.
+- Xoá phiên bản giờ hiển thị tiến trình xác định toàn màn hình.
+- Bỏ các thẻ thế giới cũ nhóm theo phiên bản ở giữa trang chủ (#100).
+- Sửa lỗi nhận diện trạng thái trống: khi mọi phiên bản bị ẩn, không còn gợi ý tải xuống.
+- Hoàn nguyên các thay đổi của 28.3.2 gây thoát một số màn hình quản lý tài nguyên (bộ nhớ đệm danh sách / bộ nhớ đệm biểu tượng toàn cục / tải plugin bất đồng bộ); chỉ giữ bản sửa toàn màn hình khi xoá phiên bản.
 
 > Giao diện giữ như 28.3.0 — không có kính động, khúc xạ hay hiệu ứng từ tính.
 

@@ -1,6 +1,6 @@
 # Custom home page
 
-The card-based home screen has a news area at the very bottom (below the instance cards) called
+The card-based home screen has a news area at the very bottom (below the world section) called
 **Custom home**: preset cards show Minecraft news, version updates and community activity.
 It is **on by default**, so there is content without any setup.
 

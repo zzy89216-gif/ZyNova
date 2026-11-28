@@ -23,7 +23,14 @@ Ideea: **mai puține atingeri**. În loc să-ți arunce în față douăzeci de 
 
 ## ✨ Modificări recente
 
-**28.3.3** (cea mai nouă): pagina principală refăcută (ultimele lumi + lista completă + flux personalizat), pagina „Personalizare” eliminată, titlul detaliilor rendererului corectat, progres pe tot ecranul la ștergerea unei versiuni, performanță îmbunătățită, link Discord actualizat.
+**28.3.3** (cea mai nouă): principalele modificări:
+
+- Pagina principală refăcută: ultimele lumi + lista completă a lumilor + flux personalizat.
+- Pagina „Personalizare” eliminată, titlul detaliilor rendererului corectat, link Discord actualizat.
+- Ștergerea unei versiuni afișează acum progres determinat pe tot ecranul.
+- Eliminate cardurile vechi de lumi grupate după versiune din centrul paginii principale (#100).
+- Corectată detectarea greșită a stării goale: când toate versiunile sunt ascunse, nu mai sugerează descărcarea.
+- Revenite asupra modificărilor din 28.3.2 care produceau închideri pe unele ecrane de gestionare a resurselor (cache pentru liste / cache global pentru pictograme / încărcare asincronă a pluginurilor); se păstrează doar corectarea pe tot ecranul la ștergerea versiunii.
 
 > Aspectul rămâne ca în 28.3.0 — fără sticlă dinamică, refracție sau efecte magnetice.
 

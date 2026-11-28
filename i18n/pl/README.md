@@ -23,7 +23,14 @@ Pomysł jest jeden: **mniej kliknięć**. Zamiast wyrzucać na ekran dwadzieści
 
 ## ✨ Najnowsze zmiany
 
-**28.3.3** (najnowsza): przebudowana strona główna (ostatnie światy + pełna lista + własny kanał informacyjny), usunięta strona „Personalizacja”, poprawiony tytuł szczegółów renderera, pełnoekranowy postęp usuwania wersji, lepsza wydajność, zaktualizowany link Discord.
+**28.3.3** (najnowsza): najważniejsze zmiany:
+
+- Przebudowana strona główna: ostatnie światy + pełna lista światów + własny kanał informacyjny.
+- Usunięto stronę „Personalizacja”, poprawiono tytuł szczegółów renderera, zaktualizowano link Discord.
+- Usuwanie wersji pokazuje teraz określony postęp na pełnym ekranie.
+- Usunięto stare karty światów grupowane według wersji ze środka strony głównej (#100).
+- Naprawiono błędne wykrywanie pustego stanu: gdy wszystkie wersje są ukryte, nie proponuje już pobierania.
+- Wycofano zmiany z 28.3.2, które powodowały awarie niektórych ekranów zarządzania zasobami (pamięć podręczna list / globalna pamięć ikon / asynchroniczne ładowanie wtyczek); zachowano tylko poprawkę pełnoekranową usuwania wersji.
 
 > Wygląd pozostaje jak w 28.3.0 — bez dynamicznego szkła, załamania światła i efektów magnetycznych.
 

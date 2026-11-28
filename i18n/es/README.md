@@ -23,7 +23,14 @@ La idea: **menos toques**. En lugar de soltarte veinte ajustes, el lanzador deci
 
 ## ✨ Cambios recientes
 
-**28.3.3** (última): inicio rediseñado (mundos recientes + lista completa + contenido personalizado), se elimina la página «Personalización», corregido el título de detalles del renderizador, progreso a pantalla completa al eliminar una versión, mejoras de rendimiento, enlace de Discord actualizado.
+**28.3.3** (última): cambios principales:
+
+- Inicio rediseñado: mundos recientes + lista completa de mundos + contenido personalizado.
+- Se elimina la página «Personalización», se corrige el título de detalles del renderizador y se actualiza el enlace de Discord.
+- Eliminar una versión ahora muestra un progreso determinado a pantalla completa.
+- Se eliminan las tarjetas antiguas de mundos agrupadas por versión del centro del inicio (#100).
+- Corregida la detección errónea del estado vacío: con todas las versiones ocultas ya no se sugiere descargar.
+- Revertidos los cambios de 28.3.2 que provocaban cierres en algunas pantallas de gestión de recursos (caché de listas / caché global de iconos / carga asíncrona de plugins); solo se mantiene la corrección de pantalla completa al eliminar una versión.
 
 > La apariencia sigue igual que en 28.3.0: sin vidrio dinámico, refracción ni efectos magnéticos.
 

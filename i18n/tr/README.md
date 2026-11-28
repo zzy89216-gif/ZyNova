@@ -23,7 +23,14 @@ Fikir tek: **daha az dokunuş**. Yirmi ayarı önüne dökmek yerine önce kendi
 
 ## ✨ Son değişiklikler
 
-**28.3.3** (en yeni): ana sayfa yenilendi (son dünyalar + tam liste + özel ana sayfa akışı), «Kişiselleştirme» sayfası kaldırıldı, oluşturucu ayrıntıları başlığı düzeltildi, sürüm silmede tam ekran ilerleme, performans iyileştirmeleri, Discord bağlantısı güncellendi.
+**28.3.3** (en yeni): önemli değişiklikler:
+
+- Ana sayfa yenilendi: son dünyalar + tam dünya listesi + özel ana sayfa akışı.
+- «Kişiselleştirme» sayfası kaldırıldı, oluşturucu ayrıntıları başlığı düzeltildi, Discord bağlantısı güncellendi.
+- Sürüm silme artık tam ekranda belirli ilerleme gösteriyor.
+- Ana sayfanın ortasındaki sürüme göre gruplanmış eski dünya kartları kaldırıldı (#100).
+- Ana sayfanın boş durum yanlış tespiti düzeltildi: tüm sürümler gizliyken artık indirme önerilmiyor.
+- 28.3.2’de bazı kaynak yönetimi ekranlarının çökmesine yol açan değişiklikler geri alındı (liste önbelleği / genel simge önbelleği / eklentilerin eşzamansız yüklenmesi); yalnızca sürüm silmenin tam ekran düzeltmesi korundu.
 
 > Görünüm 28.3.0 ile aynı — dinamik cam, kırılma veya manyetik efekt yok.
 

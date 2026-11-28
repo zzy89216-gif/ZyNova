@@ -23,7 +23,14 @@ Das Prinzip: **weniger tippen**. Erst entscheiden, dann fragen — und nur dort 
 
 ## ✨ Aktuelle Änderungen
 
-**28.3.3** (Neueste): überarbeitete Startseite (letzte Welten + vollständige Weltliste + individueller Startseiten-Feed), Seite „Personalisierung“ entfernt, Titel der Renderer-Details korrigiert, bildschirmfüllender Fortschritt beim Löschen einer Version, bessere Leistung, aktualisierter Discord-Link.
+**28.3.3** (Neueste) – wichtigste Änderungen:
+
+- Überarbeitete Startseite: letzte Welten + vollständige Weltliste + individueller Startseiten-Feed.
+- Seite „Personalisierung“ entfernt, Titel der Renderer-Details korrigiert, Discord-Link aktualisiert.
+- Beim Löschen einer Version wird jetzt ein bestimmter Fortschritt im Vollbild angezeigt.
+- Alte, nach Version gruppierte Weltkarten aus der Mitte der Startseite entfernt (#100).
+- Fehlerhafte Leerzustands-Erkennung behoben: Wenn alle Versionen ausgeblendet sind, wird kein Download mehr vorgeschlagen.
+- Änderungen aus 28.3.2 zurückgenommen, die einige Seiten zur Ressourcenverwaltung zum Absturz brachten (Listen-Cache / globaler Icon-Cache / asynchrones Laden von Plugins); nur die Vollbild-Korrektur beim Löschen einer Version bleibt.
 
 > Die Optik bleibt wie in 28.3.0 — ohne dynamisches Glas, Refraktion oder Magneteffekte.
 
