@@ -229,7 +229,7 @@ PY
 
 ## 八、给你的建议顺序
 
-1. 读本文件 → `HANDOFF.md` 对应章节 → `CHANGELOG.md` 首条 → `docs/zh/README.md`。
+1. 读本文件 → `HANDOFF.md` 对应章节 → `CHANGELOG.md` 首条 → `docs/zh/README.md`；文件分类见 `REPO_MAP.md`。
 2. `git log --oneline -20` 看最近做了什么。
 3. 要改功能：先 `grep` 相关 `docs/` 与代码，**改完同步中英文档**。
 4. 要发版：严格按第四节，别跳步。
