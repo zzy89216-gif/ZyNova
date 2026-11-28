@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -23,7 +23,7 @@ Soch sirf ek hai: **kam taps**. Bees settings samne rakhne ke bajaye launcher pe
 
 ## ✨ Haal ki tabdeeliyan
 
-**28.3.3** (latest): aham tabdeeliyan:
+**28.4.0** (latest): aham tabdeeliyan:
 
 - Home naya: haali worlds + poori world list + custom home feed.
 - «Personalization» page hata diya, renderer details ka title theek kiya, Discord link update.

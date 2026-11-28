@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## ✨ การเปลี่ยนแปลงล่าสุด
 
-**28.3.3** (ล่าสุด): การเปลี่ยนแปลงสำคัญ
+**28.4.0** (ล่าสุด): การเปลี่ยนแปลงสำคัญ
 
 - หน้าหลักใหม่: โลกที่เล่นล่าสุด + รายการโลกทั้งหมด + ฟีดหน้าแรกแบบกำหนดเอง
 - ลบหน้า «ปรับแต่ง», แก้ชื่อหัวข้อรายละเอียดตัวเรนเดอร์, อัปเดตลิงก์ Discord

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## ✨ Последни промени
 
-**28.3.3** (най-ново) — основни промени:
+**28.4.0** (най-ново) — основни промени:
 
 - Обновен начален екран: последни светове + пълен списък на световете + персонализиран информационен поток.
 - Премахната страница „Персонализация“, поправено заглавие на подробностите за рендера, обновен Discord линк.

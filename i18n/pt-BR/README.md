@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -29,7 +29,7 @@ A ideia é simples: **menos toques**. Em vez de despejar vinte configurações n
 
 ## ✨ Mudanças recentes
 
-**28.3.3** (mais recente): principais mudanças:
+**28.4.0** (mais recente): principais mudanças:
 
 - Tela inicial reformulada: mundos recentes + lista completa de mundos + feed personalizado.
 - Página «Personalização» removida, título dos detalhes do renderizador corrigido, link do Discord atualizado.

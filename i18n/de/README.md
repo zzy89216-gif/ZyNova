@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -23,7 +23,7 @@ Das Prinzip: **weniger tippen**. Erst entscheiden, dann fragen — und nur dort 
 
 ## ✨ Aktuelle Änderungen
 
-**28.3.3** (Neueste) – wichtigste Änderungen:
+**28.4.0** (Neueste) – wichtigste Änderungen:
 
 - Überarbeitete Startseite: letzte Welten + vollständige Weltliste + individueller Startseiten-Feed.
 - Seite „Personalisierung“ entfernt, Titel der Renderer-Details korrigiert, Discord-Link aktualisiert.

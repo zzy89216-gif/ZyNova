@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -29,7 +29,7 @@ La promesse tient en trois mots : **moins de clics**. Plutôt que d'étaler des 
 
 ## ✨ Changements récents
 
-**28.3.3** (dernière) : principaux changements :
+**28.4.0** (dernière) : principaux changements :
 
 - Page d’accueil repensée : mondes récents + liste complète des mondes + fil personnalisé.
 - Page « Personnalisation » supprimée, titre des détails du moteur corrigé, lien Discord mis à jour.

@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -23,7 +23,7 @@ Trình khởi chạy **Minecraft: Java Edition** trên Android, phát triển đ
 
 ## ✨ Thay đổi gần đây
 
-**28.3.3** (mới nhất): thay đổi chính:
+**28.4.0** (mới nhất): thay đổi chính:
 
 - Trang chủ làm mới: thế giới gần đây + danh sách đầy đủ + bảng tin tùy chỉnh.
 - Bỏ trang «Cá nhân hóa», sửa tiêu đề chi tiết renderer, cập nhật liên kết Discord.

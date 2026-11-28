@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -29,7 +29,7 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 
 ## ✨ 최근 변경 사항
 
-**28.3.3**(최신) 주요 변경 사항:
+**28.4.0**(최신) 주요 변경 사항:
 
 - 홈 화면 개편: 최근 월드 + 전체 월드 목록 + 사용자 지정 홈 피드.
 - «개인 설정» 페이지 제거, 렌더러 세부 정보 제목 수정, Discord 링크 갱신.

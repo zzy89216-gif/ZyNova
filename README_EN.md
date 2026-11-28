@@ -10,7 +10,7 @@
 **A Minecraft: Java Edition launcher for Android** · maintained from ZalithLauncher2 · GPL-3.0
 
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 [![Docs](https://img.shields.io/badge/Docs-78%20articles-blue)](docs/en/README.md)
 
 One rule: **fewer taps**. Decide for you first, ask only when it cannot; installing games, modpacks and mods, resolving dependencies and reading crash logs is delegated to the AI wherever possible.
@@ -52,9 +52,9 @@ If the fingerprint does not match, **do not install it** — download again from
 
 Networks in China: mirrors are used on demand and fall back to the official source; CurseForge may need a mirror, Modrinth usually works directly. On errors, try another network or turn off proxies first.
 
-## What's new in 28.3.3
+## What's new in 28.4.0
 
-**28.3.3** reworks the home screen, removes the Personalization page and fixes a batch of issues on top of the 28.3.0 stable release. **The look of the UI stays the same as 28.3.0** — this build does not include dynamic glass, real refraction, magnetic snapping or the motion system.
+**28.4.0 stable** reworks the home screen, removes the Personalization page and fixes a batch of issues on top of the 28.3.0 stable release. **The look of the UI stays the same as 28.3.0** — this build does not include dynamic glass, real refraction, magnetic snapping or the motion system.
 
 - **Old home cards removed** (#100): the grouped-by-instance world cards in the middle of the home page are gone; worlds are reached through "Recent worlds + View all".
 - **Home redesign** (#91): the top of the home screen now shows your four most recently played worlds, and **View all** opens the full world list (search, sorting, filters by instance and game version, launch right from the list); a new **Custom home** feed below the world section (Minecraft news / Java version updates / Modrinth / CurseForge / Minecraft community) can be added to, removed, hidden and reordered, and offline never blocks launching.

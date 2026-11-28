@@ -10,10 +10,10 @@
 
 # ZyNova
 
-> 📌 **Current release: 28.3.3** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
-[![Release](https://img.shields.io/badge/Release-28.3.3-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.3.3)
+[![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
 
 ---
 
@@ -23,7 +23,7 @@ Idenya satu: **lebih sedikit ketukan**. Daripada menumpahkan dua puluh pengatura
 
 ## ✨ Perubahan terbaru
 
-**28.3.3** (terbaru): perubahan utama:
+**28.4.0** (terbaru): perubahan utama:
 
 - Halaman utama dirombak: dunia terakhir + daftar lengkap dunia + feed kustom.
 - Halaman «Personalisasi» dihapus, judul detail perender diperbaiki, tautan Discord diperbarui.
