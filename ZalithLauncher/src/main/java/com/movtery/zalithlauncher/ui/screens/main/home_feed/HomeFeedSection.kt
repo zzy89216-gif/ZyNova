@@ -107,12 +107,6 @@ fun HomeFeedSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(14.dp * scale)
     ) {
-        Text(
-            text = stringResource(R.string.home_feed_title),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
         sources.forEach { source ->
             HomeFeedSourceCard(
                 source = source,

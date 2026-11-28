@@ -277,15 +277,6 @@ fun cardHomePage(
         return
     }
 
-    //按实例隐藏：只过滤掉「被单独隐藏」的那些，其它卡片照常显示。
-    //（以前这里是一个全局开关，点一个版本会连带藏掉全部卡片。）
-    val hiddenInstances = AllSettings.hiddenHomeInstances.state.toSet()
-    val visibleInstances = if (hiddenInstances.isEmpty()) {
-        instances
-    } else {
-        instances.filterNot { it.orderKey() in hiddenInstances }
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -303,7 +294,7 @@ fun cardHomePage(
             )
         }
 
-        if (visibleInstances.isEmpty()) {
+        if (instances.isEmpty()) {
             //空状态：左边一大片空白很难看，也让人不知道下一步干什么。
             //直接给一个「下载一个实例」的入口，点了就进下载游戏本体页。
             Column(
@@ -328,7 +319,7 @@ fun cardHomePage(
         }
 
         //（议题 #100）旧的「按实例分组的世界卡片」已删除：世界统一走顶部「最近游玩 + 查看全部」，
-        //主页只保留最近世界与自定义资讯，不再重复展示旧卡片。
+        //主页只保留最近世界与自定义资讯；空状态按「真实是否装过实例」判断（不再受「在主页隐藏」影响）。
 
         //世界区下方：自定义主页资讯区块（默认开启，设置里可关 / 管理预设卡片）
         HomeFeedSection(scale = cardScale)

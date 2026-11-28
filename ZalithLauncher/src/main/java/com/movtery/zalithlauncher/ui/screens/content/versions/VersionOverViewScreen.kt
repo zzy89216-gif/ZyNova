@@ -429,27 +429,6 @@ private fun VersionQuickActions(
                         text = stringResource(R.string.versions_overview_version_folder)
                     )
                 }
-                //隐藏 / 显示**这个实例**的主页卡片（成对切换）
-                val hiddenInstances = AllSettings.hiddenHomeInstances.state
-                val thisHidden = versionName in hiddenInstances
-                OutlinedButton(
-                    modifier = Modifier.padding(end = 12.dp),
-                    onClick = {
-                        val next = if (thisHidden) {
-                            hiddenInstances - versionName
-                        } else {
-                            hiddenInstances + versionName
-                        }
-                        AllSettings.hiddenHomeInstances.save(next)
-                    }
-                ) {
-                    Text(
-                        text = stringResource(
-                            if (thisHidden) R.string.versions_overview_show_this_card
-                            else R.string.versions_overview_hide_this_card
-                        )
-                    )
-                }
                 OutlinedButton(
                     modifier = Modifier.padding(end = 12.dp),
                     onClick = { accessFolder(VersionFolders.SAVES.folderName) }
