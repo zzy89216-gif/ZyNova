@@ -5,14 +5,14 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 <div dir="rtl" align="right">
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -47,7 +47,7 @@
 - **هوش مصنوعی تقویت شد**: می‌توان چند نسخهٔ بازی را هم‌زمان نصب کرد؛ ابزارهای کنترل موسیقی اضافه شد (در مجموع ۵۳ ابزار).
 - **گزینهٔ تازهٔ «بازی چندنفره» در منوی داخل بازی**: منو بسته می‌شود، لانچر مستقیماً صفحهٔ بازی چندنفره را باز می‌کند و بازی بسته نمی‌شود و در پس‌زمینه ادامه می‌یابد.
 
-همهٔ تغییرها: [CHANGELOG.md](../../CHANGELOG.md).
+همهٔ تغییرها: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ چه می‌کند
 
@@ -85,8 +85,8 @@
 | نصب / استفاده / خروجی | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | رندر / ورود / هوش مصنوعی | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | رفع اشکال / پرسش‌ها / حریم خصوصی | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| ساخت / تغییرات | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| تحویل / پروانه‌های اشخاص ثالث / پروانه | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| ساخت / تغییرات | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| تحویل / پروانه‌های اشخاص ثالث / پروانه | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 پشتیبانی
 
@@ -99,7 +99,7 @@
 ## ⚖️ پروانه
 
 GPL-3.0 — پروژه متن‌باز می‌ماند. اجزای اشخاص ثالث و پروانهٔ هرکدام در
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) و [docs/en/licenses.md](../../docs/en/licenses.md) آمده است.
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) و [docs/en/licenses.md](../../docs/en/licenses.md) آمده است.
 
 > ⚠️ **Terracotta (بازی چندنفره) زیر AGPL-3.0 است** و سخت‌گیرانه‌تر از بقیه: بدون تغییر توزیع می‌شود.
 > اگر آن را تغییر دهید و دوباره توزیع کنید، بند ۱۳ AGPL-3.0 شما را به انتشار کد منبع متناظر ملزم می‌کند.

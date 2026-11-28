@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **今本：28.4.0** · [沿革](../../CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **今本：28.4.0** · [沿革](../../meta/CHANGELOG.md) · [新出](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -52,7 +52,7 @@
 - **AI 之增**：可並裝數本體；又添樂事二器，凡五十三器。
 - **戲側之欄，新增「多人聯機」**：斂其單，歸於啟動器，徑至聯機之頁；戲不輟也。
 
-詳見 [沿革](../../CHANGELOG.md)。
+詳見 [沿革](../../meta/CHANGELOG.md)。
 
 ## 🛠️ 主要之能
 
@@ -78,8 +78,8 @@
 | 安裝 / 使用 / 匯出 | [docs/zh/install.md](../../docs/zh/install.md) · [docs/zh/usage.md](../../docs/zh/usage.md) |
 | 渲染器 / 登入 / 收藏 / AI | [docs/zh/renderers.md](../../docs/zh/renderers.md) · [docs/zh/login.md](../../docs/zh/login.md) · [docs/zh/favorites.md](../../docs/zh/favorites.md) · [docs/zh/ai-agent.md](../../docs/zh/ai-agent.md) |
 | 疑難 / 常見 / 數據與隱私 | [docs/zh/troubleshooting.md](../../docs/zh/troubleshooting.md) · [docs/zh/faq.md](../../docs/zh/faq.md) · [docs/zh/data-and-privacy.md](../../docs/zh/data-and-privacy.md) |
-| 沿革 | [CHANGELOG.md](../../CHANGELOG.md) |
-| 第三方授權 | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
+| 沿革 | [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| 第三方授權 | [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) |
 | 授權 | [LICENSE](../../LICENSE) |
 
 ## 💖 相助
@@ -93,7 +93,7 @@
 ## ⚖️ 授權
 
 GPL-3.0，必守開源。第三方元件與各自授權見
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) 與 [docs/zh/licenses.md](../../docs/zh/licenses.md)。
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) 與 [docs/zh/licenses.md](../../docs/zh/licenses.md)。
 
 > ⚠️ **陶瓦聯機 Terracotta（多人連線）為 AGPL-3.0**，較諸元件為嚴：本專案如其原樣而布之，未改其
 > 二進位。若汝改而復布，須依 AGPL-3.0 §13 公開相應源碼。

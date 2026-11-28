@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -51,7 +51,7 @@
 - **AI став сильнішим**: можна ставити кілька версій гри одночасно; додано інструменти керування музикою (загалом 53 інструменти).
 - **Новий пункт «Мережева гра» в ігровому меню**: меню закривається, лаунчер одразу відкриває сторінку мережевої гри — гра продовжує працювати у фоні.
 
-Повний список змін: [CHANGELOG.md](../../CHANGELOG.md).
+Повний список змін: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Що вміє
 
@@ -83,8 +83,8 @@
 | Встановлення / користування / експорт | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Рендерери / вхід / обране / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Проблеми / FAQ / дані та приватність | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Збірка / журнал змін | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Передача / ліцензії третіх сторін / ліцензія | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Збірка / журнал змін | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Передача / ліцензії третіх сторін / ліцензія | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Підтримка
 
@@ -97,7 +97,7 @@
 ## ⚖️ Ліцензія
 
 GPL-3.0 — проєкт лишається відкритим. Компоненти третіх сторін та їхні ліцензії перелічені в
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) і [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) і [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (мультиплеєр) поширюється за AGPL-3.0** — суворіше за решту: постачається без змін.
 > Якщо ви його зміните й розповсюдите далі, §13 AGPL-3.0 вимагає опублікувати відповідний код.

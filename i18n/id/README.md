@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@ Versi stabil ini menggabungkan seluruh isi dari versi prarilis sebelumnya (versi
 - **AI diperkuat**: beberapa versi game bisa dipasang sekaligus; alat kendali musik ditambahkan (total 53 alat).
 - **Entri baru «Multipemain» di menu dalam game**: menu menutup, launcher langsung membuka halaman Multipemain, dan game tetap berjalan di latar belakang.
 
-Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
+Perubahan lengkap: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Kemampuan
 
@@ -83,8 +83,8 @@ Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
 | Pasang / pemakaian / ekspor | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Renderer / masuk akun / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Penanganan masalah / FAQ / privasi | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Build / catatan perubahan | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Serah terima / lisensi pihak ketiga / lisensi | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Build / catatan perubahan | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Serah terima / lisensi pihak ketiga / lisensi | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Dukungan
 
@@ -97,7 +97,7 @@ Perubahan lengkap: [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Lisensi
 
 GPL-3.0 — proyek tetap sumber terbuka. Komponen pihak ketiga dan lisensinya ada di
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) dan [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) dan [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (multipemain) memakai AGPL-3.0**, lebih ketat dari yang lain: didistribusikan tanpa
 > perubahan. Jika Anda mengubahnya lalu menyebarkan ulang, Pasal 13 AGPL-3.0 mewajibkan Anda

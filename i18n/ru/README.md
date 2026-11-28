@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@
 - **AI стал сильнее**: можно ставить несколько версий игры одновременно; добавлены инструменты управления музыкой (всего 53 инструмента).
 - **Новый пункт «Сетевая игра» в игровом меню**: меню закрывается, лаунчер сразу открывает страницу сетевой игры — игра продолжает работать в фоне.
 
-Полный список изменений: [CHANGELOG.md](../../CHANGELOG.md).
+Полный список изменений: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Возможности
 
@@ -78,8 +78,8 @@
 | Установка / использование / экспорт | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Рендереры / вход / избранное / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Проблемы / FAQ / данные и приватность | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Сборка / журнал изменений | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Передача / лицензии третьих сторон / лицензия | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Сборка / журнал изменений | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Передача / лицензии третьих сторон / лицензия | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Поддержка
 
@@ -92,7 +92,7 @@
 ## ⚖️ Лицензия
 
 GPL-3.0 — проект остаётся открытым. Компоненты третьих сторон и их лицензии перечислены в
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) и [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) и [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (мультиплеер) распространяется по AGPL-3.0** — строже остальных: поставляется без
 > изменений. Если вы его измените и будете распространять дальше, §13 AGPL-3.0 требует опубликовать

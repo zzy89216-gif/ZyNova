@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@ Bản chính thức này tổng hợp toàn bộ nội dung của các bản ph�
 - **AI mạnh hơn**: có thể cài nhiều phiên bản game cùng lúc; thêm công cụ điều khiển nhạc (tổng cộng 53 công cụ).
 - **Thêm mục «Nhiều người chơi» trong menu trong game**: menu đóng lại, trình khởi chạy mở thẳng trang Nhiều người chơi; game không thoát mà tiếp tục chạy nền.
 
-Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
+Toàn bộ thay đổi: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Tính năng
 
@@ -77,8 +77,8 @@ Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
 | Cài đặt / sử dụng / xuất dữ liệu | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Kết xuất / đăng nhập / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Xử lý sự cố / FAQ / dữ liệu và quyền riêng tư | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Tự build / nhật ký thay đổi | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Bàn giao / giấy phép bên thứ ba / giấy phép | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Tự build / nhật ký thay đổi | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Bàn giao / giấy phép bên thứ ba / giấy phép | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Ủng hộ
 
@@ -91,7 +91,7 @@ Toàn bộ thay đổi: [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Giấy phép
 
 GPL-3.0 — dự án giữ mã nguồn mở. Thành phần bên thứ ba và giấy phép tương ứng nằm trong
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) và [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) và [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (chơi nhiều người) dùng AGPL-3.0**, chặt hơn phần còn lại: phân phối nguyên bản.
 > Nếu bạn sửa rồi phát hành lại, Điều 13 AGPL-3.0 buộc bạn phải công bố mã nguồn tương ứng.

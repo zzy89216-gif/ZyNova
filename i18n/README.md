@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova — 多语言介绍 / Language index

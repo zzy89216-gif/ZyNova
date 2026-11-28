@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@ Această versiune stabilă reunește tot conținutul versiunilor preliminare ant
 - **AI extins**: se pot instala mai multe versiuni ale jocului simultan; unelte noi pentru controlul muzicii (53 de unelte în total).
 - **Intrare nouă „Multijucător” în meniul din joc**: meniul se închide, launcherul deschide direct pagina Multijucător, iar jocul continuă în fundal.
 
-Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
+Toate modificările: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Ce poate face
 
@@ -77,8 +77,8 @@ Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
 | Instalare / utilizare / export | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Randare / autentificare / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Depanare / FAQ / date și confidențialitate | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Compilare / jurnal de modificări | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Predare / licențe terțe / licență | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Compilare / jurnal de modificări | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Predare / licențe terțe / licență | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Sprijin
 
@@ -91,7 +91,7 @@ Toate modificările: [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Licență
 
 GPL-3.0 — proiectul rămâne open source. Componentele terțe și licențele lor sunt în
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) și [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) și [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (multiplayer) este sub AGPL-3.0**, mai strictă decât restul: este distribuită
 > nemodificată. Dacă o modifici și o redistribui, art. 13 din AGPL-3.0 te obligă să publici codul sursă

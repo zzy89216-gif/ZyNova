@@ -3,7 +3,7 @@
 <a href="i18n/uk/README.md">Українська</a> · <a href="i18n/pl/README.md">Polski</a> · <a href="i18n/pt-BR/README.md">Português (Brasil)</a> · <a href="i18n/ar/README.md">العربية</a> · <a href="i18n/fa/README.md">فارسی</a> · <a href="i18n/id/README.md">Bahasa Indonesia</a> · <a href="i18n/it/README.md">Italiano</a> · <a href="i18n/el/README.md">Ελληνικά</a> · <a href="i18n/ml/README.md">മലയാളം</a> · <a href="i18n/ur-Latn/README.md">Roman Urdu</a> · <a href="i18n/ro/README.md">Română</a> · <a href="i18n/bg/README.md">Български</a> · <a href="i18n/lzh/README.md">文言</a>
 </sub></p>
 
-<p align="center"><img src="assets/icon.png" width="120" alt="ZyNova"></p>
+<p align="center"><img src="docs/assets/icon.png" width="120" alt="ZyNova"></p>
 
 # ZyNova
 
@@ -63,17 +63,17 @@
 - **修复渲染器文案**：高级设置里「渲染器详细参数」标题数量与实际不符（三个 → 四个）。
 - **回退不稳定优化**：28.3.2 的列表缓存 / 插件异步加载等改动导致部分资源管理界面崩溃，本版已全部回退；卡顿优化后续另做。
 
-旧版本内容（28.3.0 汇总的 28.2.2–28.2.4、音乐播放器、渲染器自动选择、AI 53 工具、#65–#83 修复）已全部包含，详见 [CHANGELOG.md](CHANGELOG.md)。
+旧版本内容（28.3.0 汇总的 28.2.2–28.2.4、音乐播放器、渲染器自动选择、AI 53 工具、#65–#83 修复）已全部包含，详见 [CHANGELOG.md](meta/CHANGELOG.md)。
 
 ## 文档与反馈
 
-用户文档 [中文](docs/zh/README.md) · [English](docs/en/README.md) ｜ [更新日志](CHANGELOG.md) ｜ [第三方声明](THIRD_PARTY_NOTICES.md) ｜ [许可证](docs/zh/licenses.md) ｜ 开发与发版 [AGENTS.md](AGENTS.md) · [HANDOFF.md](HANDOFF.md) ｜ [仓库结构](REPO_MAP.md)
+用户文档 [中文](docs/zh/README.md) · [English](docs/en/README.md) ｜ [更新日志](meta/CHANGELOG.md) ｜ [第三方声明](meta/THIRD_PARTY_NOTICES.md) ｜ [许可证](docs/zh/licenses.md) ｜ 开发与发版 [AGENTS.md](AGENTS.md) · [HANDOFF.md](meta/HANDOFF.md) ｜ [仓库结构](meta/REPO_MAP.md)
 
 反馈：[Issues](https://github.com/zzy89216-gif/ZyNova/issues) · [Discord](https://discord.gg/dbHTApYNYJ) · [X](https://x.com/ZyNovaProject) ｜ 邮箱：<ZyNovaLauncher@outlook.com> ｜ 赞助：<https://afdian.com/a/hizzy>
 
 ## 许可证
 
-GPL-3.0。第三方组件的许可证与使用边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+GPL-3.0。第三方组件的许可证与使用边界见 [THIRD_PARTY_NOTICES.md](meta/THIRD_PARTY_NOTICES.md)。
 其中**陶瓦联机 Terracotta 是 AGPL-3.0**（更严格）：本项目原样分发、未改其二进制；若你修改后分发，需按 AGPL-3.0 §13 公开对应源码。
 
 **ZyNova — Context First. Less Steps.**

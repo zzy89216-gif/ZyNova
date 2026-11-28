@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@ Yeh stable version pichhle pre-releases ka poora content ek saath laati hai (woh
 - **AI mazboot hua**: ek saath kai game versions install kiye ja sakte hain; music control ke tools shamil kiye gaye (kul 53 tools).
 - **Game ke menu mein nayi «Multiplayer» entry**: menu band hota hai, launcher seedha Multiplayer page kholta hai; game band nahi hota, background mein chalta rehta hai.
 
-Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
+Tam tabdeeliyan: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Kya kar sakta hai
 
@@ -83,8 +83,8 @@ Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
 | Install / usage / export | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Rendering / login / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Troubleshooting / FAQ / privacy | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Build / changelog | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Handoff / third-party licences / licence | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Build / changelog | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Handoff / third-party licences / licence | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Support
 
@@ -97,7 +97,7 @@ Tam tabdeeliyan: [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Licence
 
 GPL-3.0 — project open source rehta hai. Third-party components aur unke licences
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) aur [docs/en/licenses.md](../../docs/en/licenses.md) mein hain.
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) aur [docs/en/licenses.md](../../docs/en/licenses.md) mein hain.
 
 > ⚠️ **Terracotta (multiplayer) AGPL-3.0 par hai**, baaki sab se sakht: bila tabdeeli distribute hota hai.
 > Agar ise modify karke dobara distribute karein, to AGPL-3.0 §13 ke tehat mutabiq source code publish

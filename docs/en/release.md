@@ -4,7 +4,7 @@ The full procedure (and its pitfalls) lives in `AGENTS.md`, section 4:
 
 1. Only edit `modules/ZalithLauncher/gradle.properties`: `launcher_version_name` (the in-APK version) and
    `launcher_version_code`;
-2. Sync the docs: `CHANGELOG.md`, `AGENTS.md`, `HANDOFF.md`, `docs/` (zh and en pairs),
+2. Sync the docs: `meta/CHANGELOG.md`, `AGENTS.md`, `meta/HANDOFF.md`, `docs/` (zh and en pairs),
    `README.md` / `README_EN.md`;
 3. Wait for the push build to go green (docs-only pushes do not trigger a build);
 4. Create the Release (`target_commitish` must be the **full 40-character SHA**; tick `prerelease` for a

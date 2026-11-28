@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@
 - **AI แข็งแกร่งขึ้น**: ติดตั้งเวอร์ชันเกมหลายรายการพร้อมกันได้ เพิ่มเครื่องมือควบคุมเพลง (รวม 53 เครื่องมือ)
 - **เพิ่มรายการ «ผู้เล่นหลายคน» ในเมนูในเกม**: เมนูปิดลง ตัวเปิดเกมเปิดหน้าผู้เล่นหลายคนให้ทันที เกมไม่ปิดและทำงานต่อเบื้องหลัง
 
-การเปลี่ยนแปลงทั้งหมด: [CHANGELOG.md](../../CHANGELOG.md).
+การเปลี่ยนแปลงทั้งหมด: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ ความสามารถ
 
@@ -77,8 +77,8 @@
 | ติดตั้ง / ใช้งาน / ส่งออก | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | ตัวเรนเดอร์ / เข้าสู่ระบบ / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | แก้ปัญหา / คำถามที่พบบ่อย / ข้อมูลและความเป็นส่วนตัว | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| คอมไพล์เอง / บันทึกการเปลี่ยนแปลง | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| การส่งต่องาน / สัญญาอนุญาตบุคคลที่สาม / สัญญาอนุญาต | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| คอมไพล์เอง / บันทึกการเปลี่ยนแปลง | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| การส่งต่องาน / สัญญาอนุญาตบุคคลที่สาม / สัญญาอนุญาต | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 สนับสนุน
 
@@ -91,7 +91,7 @@
 ## ⚖️ สัญญาอนุญาต
 
 GPL-3.0 — โครงการยังคงเป็นโอเพนซอร์ส คอมโพเนนต์ของบุคคลที่สามและสัญญาอนุญาตอยู่ใน
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) และ [docs/en/licenses.md](../../docs/en/licenses.md)
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) และ [docs/en/licenses.md](../../docs/en/licenses.md)
 
 > ⚠️ **Terracotta (เล่นหลายคน) ใช้ AGPL-3.0** ซึ่งเข้มงวดกว่าส่วนอื่น: แจกจ่ายแบบไม่แก้ไข
 > หากคุณแก้ไขแล้วเผยแพร่ต่อ มาตรา 13 ของ AGPL-3.0 กำหนดให้เปิดเผยซอร์สโค้ดที่เกี่ยวข้อง

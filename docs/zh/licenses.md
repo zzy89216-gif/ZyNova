@@ -20,7 +20,7 @@ GPL-3.0 的含义（说人话）：
 
 ## 二、第三方组件：谁、什么许可
 
-完整清单与逐项版权见仓库 [THIRD_PARTY_NOTICES.md](https://github.com/zzy89216-gif/ZyNova/blob/main/THIRD_PARTY_NOTICES.md)，
+完整清单与逐项版权见仓库 [THIRD_PARTY_NOTICES.md](https://github.com/zzy89216-gif/ZyNova/blob/main/meta/THIRD_PARTY_NOTICES.md)，
 应用内「设置 → 关于与插件 → 开源与合规」里，每个第三方组件的许可证原文都能点开查看。
 
 最需要你知道的四个：
@@ -77,7 +77,7 @@ GPL-3.0 的含义（说人话）：
 |---|---|---|
 | 1 | 附 **GPL-3.0 全文**与版权声明 | ✅ 仓库 `LICENSE`，应用内可读 |
 | 2 | 提供**完整对应源码**（GPL/AGPL 要求） | ✅ 公开仓库 <https://github.com/zzy89216-gif/ZyNova> |
-| 3 | 附**第三方声明**（组件清单 + 许可证 + 版权） | ✅ `THIRD_PARTY_NOTICES.md`，并打进 APK `assets/licenses/` |
+| 3 | 附**第三方声明**（组件清单 + 许可证 + 版权） | ✅ `meta/THIRD_PARTY_NOTICES.md`，并打进 APK `assets/licenses/` |
 | 4 | 每个第三方组件的**许可证原文**可查 | ✅ 应用内「设置 → 关于与插件 → 开源与合规」逐项可点开 |
 | 5 | **AGPL-3.0**（Terracotta）单独说明，且二进制未修改 | ✅ 声明第 4 节 + 关于与插件页显著提示 |
 | 6 | LGPL 组件保持**可替换**（独立 `.so`，不静态链接） | ✅ MobileGlues / LTW-Turbo / sora-editor 均为独立库 |
@@ -85,7 +85,7 @@ GPL-3.0 的含义（说人话）：
 | 8 | 不使用上游名称/商标做**背书暗示** | ✅ README 与非官方声明均已写明「无隶属关系」 |
 
 > 发布前自检：`grep -rIl "ghp_\|BEGIN .*PRIVATE KEY" .` 确认没有把密钥打进包里；
-> 发布物至少应包含 APK + 本清单 + `THIRD_PARTY_NOTICES.md`。
+> 发布物至少应包含 APK + 本清单 + `meta/THIRD_PARTY_NOTICES.md`。
 
 ## 九、首次启动条款与地区限制
 
@@ -94,7 +94,7 @@ GPL-3.0 的含义（说人话）：
 | # | 文档 | 关键内容 |
 |---|---|---|
 | 1 | 《最终用户许可协议 + 隐私政策》 | GPL-3.0、非 Mojang 官方、需自备账号、无担保与免责、数据本地存储、**不收集身份证**、权限用途 |
-| 2 | 《第三方开源合规声明 + 补充免责与风险告知》 | **直接渲染 APK 内 `THIRD_PARTY_NOTICES.md`**（与仓库一字不差）+ 风险告知；AGPL/LGPL 标红 |
+| 2 | 《第三方开源合规声明 + 补充免责与风险告知》 | **直接渲染 APK 内 `meta/THIRD_PARTY_NOTICES.md`**（与仓库一字不差）+ 风险告知；AGPL/LGPL 标红 |
 | 3 | 《使用教程 + 适用地区与法律管辖》 | 5 条上手 + 五国法律要点（PIPL / CCPA·COPPA / PIPA / APPI / 152-FZ）+ 未覆盖地区使用的完整后果 |
 
 同意后选择年龄：

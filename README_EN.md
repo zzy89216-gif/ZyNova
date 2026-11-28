@@ -3,7 +3,7 @@
 <a href="i18n/uk/README.md">Українська</a> · <a href="i18n/pl/README.md">Polski</a> · <a href="i18n/pt-BR/README.md">Português (Brasil)</a> · <a href="i18n/ar/README.md">العربية</a> · <a href="i18n/fa/README.md">فارسی</a> · <a href="i18n/id/README.md">Bahasa Indonesia</a> · <a href="i18n/it/README.md">Italiano</a> · <a href="i18n/el/README.md">Ελληνικά</a> · <a href="i18n/ml/README.md">മലയാളം</a> · <a href="i18n/ur-Latn/README.md">Roman Urdu</a> · <a href="i18n/ro/README.md">Română</a> · <a href="i18n/bg/README.md">Български</a> · <a href="i18n/lzh/README.md">文言</a>
 </sub></p>
 
-<p align="center"><img src="assets/icon.png" width="120" alt="ZyNova"></p>
+<p align="center"><img src="docs/assets/icon.png" width="120" alt="ZyNova"></p>
 
 # ZyNova
 
@@ -63,17 +63,17 @@ Networks in China: mirrors are used on demand and fall back to the official sour
 - **Renderer wording fix**: the "Renderer advanced settings" title in Advanced settings no longer claims the wrong number of renderers (three → four).
 - **Unstable optimisation reverted**: the list caching / async plugin loading from 28.3.2 caused crashes in several resource manager screens; all of it is reverted in this build. Performance work will be revisited separately.
 
-Everything from earlier versions (the 28.3.0 roll-up of 28.2.2–28.2.4, the music player, device-aware renderer selection, 53 AI tools and the #65–#83 fixes) is included — see [CHANGELOG.md](CHANGELOG.md).
+Everything from earlier versions (the 28.3.0 roll-up of 28.2.2–28.2.4, the music player, device-aware renderer selection, 53 AI tools and the #65–#83 fixes) is included — see [CHANGELOG.md](meta/CHANGELOG.md).
 
 ## Docs and feedback
 
-User docs: [English](docs/en/README.md) · [中文](docs/zh/README.md) ｜ [Changelog](CHANGELOG.md) ｜ [Third-party notices](THIRD_PARTY_NOTICES.md) ｜ [Licenses](docs/en/licenses.md) ｜ Development and releases: [AGENTS.md](AGENTS.md) · [HANDOFF.md](HANDOFF.md) ｜ [Repository structure](REPO_MAP.md)
+User docs: [English](docs/en/README.md) · [中文](docs/zh/README.md) ｜ [Changelog](meta/CHANGELOG.md) ｜ [Third-party notices](meta/THIRD_PARTY_NOTICES.md) ｜ [Licenses](docs/en/licenses.md) ｜ Development and releases: [AGENTS.md](AGENTS.md) · [HANDOFF.md](meta/HANDOFF.md) ｜ [Repository structure](meta/REPO_MAP.md)
 
 Feedback: [Issues](https://github.com/zzy89216-gif/ZyNova/issues) · [Discord](https://discord.gg/dbHTApYNYJ) · [X](https://x.com/ZyNovaProject) ｜ Mail: <ZyNovaLauncher@outlook.com> ｜ Sponsor: <https://afdian.com/a/hizzy>
 
 ## License
 
-GPL-3.0. Component licenses and usage boundaries are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+GPL-3.0. Component licenses and usage boundaries are listed in [THIRD_PARTY_NOTICES.md](meta/THIRD_PARTY_NOTICES.md).
 **Terracotta (multiplayer) is AGPL-3.0** and stricter: it ships unmodified; if you modify and redistribute it, AGPL-3.0 §13 requires publishing the corresponding source.
 
 **ZyNova — Context First. Less Steps.**

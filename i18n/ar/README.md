@@ -5,14 +5,14 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 <div dir="rtl" align="right">
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -47,7 +47,7 @@
 - **تعزيز الذكاء الاصطناعي**: يمكن تثبيت عدة إصدارات من اللعبة في وقت واحد؛ وأُضيفت أدوات للتحكم بالموسيقى (53 أداة إجمالًا).
 - **إضافة «اللعب الجماعي» إلى قائمة اللعبة**: تُغلق القائمة ويفتح المشغّل صفحة اللعب الجماعي مباشرة، واللعبة لا تُغلق بل تبقى تعمل في الخلفية.
 
-التغييرات الكاملة: [CHANGELOG.md](../../CHANGELOG.md).
+التغييرات الكاملة: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ ما يستطيعه
 
@@ -85,8 +85,8 @@
 | التثبيت / الاستخدام / التصدير | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | العرض / الدخول / الذكاء الاصطناعي | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | حل المشكلات / الأسئلة الشائعة / الخصوصية | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| البناء / سجل التغييرات | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| التسليم / تراخيص الأطراف الثالثة / الرخصة | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| البناء / سجل التغييرات | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| التسليم / تراخيص الأطراف الثالثة / الرخصة | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 الدعم
 
@@ -99,7 +99,7 @@
 ## ⚖️ الرخصة
 
 GPL-3.0 — يبقى المشروع مفتوح المصدر. مكوّنات الأطراف الثالثة وتراخيصها في
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) و[docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) و[docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (اللعب الجماعي) تحت AGPL-3.0**، وهي أشد من البقية: تُوزَّع دون تعديل. إذا عدّلتها
 > وأعدت توزيعها، فالمادة 13 من AGPL-3.0 تُلزمك بنشر الشيفرة المصدرية المقابلة.

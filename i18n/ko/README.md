@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -51,7 +51,7 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 - **AI 강화**: 게임 본체를 동시에 여러 개 설치할 수 있고, 음악 제어 도구를 추가했습니다(도구 총 53개).
 - **게임 내 메뉴에 '멀티플레이' 추가**: 메뉴를 닫고 런처로 돌아가 멀티플레이 화면을 바로 엽니다. 게임은 종료되지 않고 백그라운드에서 계속 실행됩니다.
 
-전체 변경 사항: [CHANGELOG.md](../../CHANGELOG.md).
+전체 변경 사항: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ 주요 기능
 
@@ -77,8 +77,8 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 | 설치 / 사용 / 내보내기 | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | 렌더러 / 로그인 / 즐겨찾기 / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | 문제 해결 / FAQ / 데이터와 개인정보 | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| 빌드 / 변경 기록 | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| 인수인계 / 제3자 라이선스 / 라이선스 | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| 빌드 / 변경 기록 | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| 인수인계 / 제3자 라이선스 / 라이선스 | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 지원
 
@@ -91,7 +91,7 @@ Android용 **Minecraft: Java Edition** 런처입니다. ZalithLauncher2 소스�
 ## ⚖️ 라이선스
 
 GPL-3.0 — 프로젝트는 오픈소스로 유지됩니다. 제3자 구성 요소와 라이선스는
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md)와 [docs/en/licenses.md](../../docs/en/licenses.md)에 있습니다.
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md)와 [docs/en/licenses.md](../../docs/en/licenses.md)에 있습니다.
 
 > ⚠️ **Terracotta(멀티플레이)는 AGPL-3.0**으로 다른 구성 요소보다 엄격합니다. 본 프로젝트는
 > 바이너리를 수정 없이 배포합니다. 수정 후 재배포하려면 AGPL-3.0 §13에 따라 해당 소스 코드를

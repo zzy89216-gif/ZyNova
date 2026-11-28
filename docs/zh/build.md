@@ -1,6 +1,6 @@
 # 构建与发布
 
-> 完整发布步骤、签名、Secrets、Release 流程以根目录 `HANDOFF.md` 为准；
+> 完整发布步骤、签名、Secrets、Release 流程以根目录 `meta/HANDOFF.md` 为准；
 > 这里只给日常构建入口。
 
 ## 本地构建
@@ -29,7 +29,7 @@ modules/ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<版本>.apk
 ## 发布前
 
 1. 改 `modules/ZalithLauncher/gradle.properties` 的版本号（name + code）；
-2. 同步 `CHANGELOG.md` / `HANDOFF.md` / `README*.md` / `docs/`；
+2. 同步 `meta/CHANGELOG.md` / `meta/HANDOFF.md` / `README*.md` / `docs/`；
 3. 隐私扫描；
 4. 等 CI 绿；
 5. 按 HANDOFF 第十二节创建 Release。

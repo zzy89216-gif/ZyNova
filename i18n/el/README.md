@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@
 - **Ισχυρότερο AI**: μπορείτε να εγκαταστήσετε πολλές εκδόσεις του παιχνιδιού ταυτόχρονα· προστέθηκαν εργαλεία ελέγχου μουσικής (53 εργαλεία συνολικά).
 - **Νέα καταχώριση «Πολλοί παίκτες» στο μενού του παιχνιδιού**: το μενού κλείνει, ο launcher ανοίγει απευθείας τη σελίδα Πολλοί παίκτες — το παιχνίδι συνεχίζει στο παρασκήνιο.
 
-Πλήρεις αλλαγές: [CHANGELOG.md](../../CHANGELOG.md).
+Πλήρεις αλλαγές: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Τι κάνει
 
@@ -77,8 +77,8 @@
 | Εγκατάσταση / χρήση / εξαγωγή | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Rendering / σύνδεση / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Προβλήματα / FAQ / δεδομένα και απόρρητο | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Build / αλλαγές | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Παράδοση / άδειες τρίτων / άδεια | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Build / αλλαγές | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Παράδοση / άδειες τρίτων / άδεια | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Υποστήριξη
 
@@ -91,7 +91,7 @@
 ## ⚖️ Άδεια
 
 GPL-3.0 — το έργο παραμένει ανοιχτού κώδικα. Τα στοιχεία τρίτων και οι άδειές τους είναι στα
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) και [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) και [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Το Terracotta (multiplayer) είναι υπό AGPL-3.0**, αυστηρότερη από τα υπόλοιπα: διανέμεται χωρίς
 > αλλαγές. Αν το τροποποιήσετε και το διανείμετε ξανά, το §13 της AGPL-3.0 σας υποχρεώνει να

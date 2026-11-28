@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -51,7 +51,7 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 - **AI 強化**：可同時安裝多個遊戲本體；新增音樂控制工具（工具總數 53）。
 - **遊戲內選單新增「多人聯機」**：收起選單回到啟動器並直接開啟多人聯機頁，遊戲不會退出、繼續在背景執行。
 
-完整變更：[CHANGELOG.md](../../CHANGELOG.md)。
+完整變更：[CHANGELOG.md](../../meta/CHANGELOG.md)。
 
 ## 🛠️ 主要功能
 
@@ -87,8 +87,8 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 | 安裝 / 使用 / 匯出 | [docs/zh/install.md](../../docs/zh/install.md) · [docs/zh/usage.md](../../docs/zh/usage.md) |
 | 渲染器 / 登入 / 收藏 / AI | [docs/zh/renderers.md](../../docs/zh/renderers.md) · [docs/zh/login.md](../../docs/zh/login.md) · [docs/zh/favorites.md](../../docs/zh/favorites.md) · [docs/zh/ai-agent.md](../../docs/zh/ai-agent.md) |
 | 疑難排解 / 常見問題 / 資料與隱私 | [docs/zh/troubleshooting.md](../../docs/zh/troubleshooting.md) · [docs/zh/faq.md](../../docs/zh/faq.md) · [docs/zh/data-and-privacy.md](../../docs/zh/data-and-privacy.md) |
-| 更新日誌 | [CHANGELOG.md](../../CHANGELOG.md) |
-| 第三方授權 | [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) |
+| 更新日誌 | [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| 第三方授權 | [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) |
 | 授權 | [LICENSE](../../LICENSE) |
 
 ## 💖 支持
@@ -102,7 +102,7 @@ Android 上的 **Minecraft: Java Edition** 啟動器，以 ZalithLauncher2 原�
 ## ⚖️ 授權
 
 GPL-3.0，必須保持開源。第三方元件與各自的授權見
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) 與 [docs/zh/licenses.md](../../docs/zh/licenses.md)。
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) 與 [docs/zh/licenses.md](../../docs/zh/licenses.md)。
 
 > ⚠️ **陶瓦聯機 Terracotta（多人連線）為 AGPL-3.0**，比其他元件更嚴格：本專案原樣散布、未修改其
 > 二進位檔。若你修改後再散布，需依 AGPL-3.0 §13 公開對應原始碼。

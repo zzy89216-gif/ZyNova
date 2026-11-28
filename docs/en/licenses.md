@@ -22,7 +22,7 @@ What GPL-3.0 means in plain words:
 ## 2. Third-party components
 
 The complete list with per-component copyright is in
-[THIRD_PARTY_NOTICES.md](https://github.com/zzy89216-gif/ZyNova/blob/main/THIRD_PARTY_NOTICES.md);
+[THIRD_PARTY_NOTICES.md](https://github.com/zzy89216-gif/ZyNova/blob/main/meta/THIRD_PARTY_NOTICES.md);
 in-app, Settings → About & Plugins → Open source & compliance lets you open each licence text.
 
 The ones that matter most:
@@ -79,7 +79,7 @@ Because the app is now promoted publicly, shipping it counts as **real distribut
 |---|---|---|
 | 1 | Ship the **full GPL-3.0 text** and copyright notices | ✅ `LICENSE` in the repo, readable in-app |
 | 2 | Provide the **complete corresponding source** (GPL/AGPL) | ✅ public repo <https://github.com/zzy89216-gif/ZyNova> |
-| 3 | Ship **third-party notices** (components + licences + copyright) | ✅ `THIRD_PARTY_NOTICES.md`, also bundled in `assets/licenses/` |
+| 3 | Ship **third-party notices** (components + licences + copyright) | ✅ `meta/THIRD_PARTY_NOTICES.md`, also bundled in `assets/licenses/` |
 | 4 | Every third-party licence **full text** reachable | ✅ in-app: Settings → About & Plugins → Open source & compliance |
 | 5 | **AGPL-3.0** (Terracotta) called out, binary unmodified | ✅ notices §4 + prominent note on the About & Plugins page |
 | 6 | LGPL components stay **replaceable** (separate `.so`, no static linking) | ✅ MobileGlues / LTW-Turbo / sora-editor are separate libraries |
@@ -87,7 +87,7 @@ Because the app is now promoted publicly, shipping it counts as **real distribut
 | 8 | No implied **endorsement** by upstream projects' names/trademarks | ✅ README and the in-app unofficial notice say so |
 
 > Pre-release self-check: `grep -rIl "ghp_\|BEGIN .*PRIVATE KEY" .` to make sure no secrets ship in the package.
-> A public release should include at least the APK, this checklist and `THIRD_PARTY_NOTICES.md`.
+> A public release should include at least the APK, this checklist and `meta/THIRD_PARTY_NOTICES.md`.
 
 ## 9. First-launch terms and region limits
 
@@ -97,7 +97,7 @@ On first launch (including the first launch after updating) **three merged docum
 | # | Document | Key points |
 |---|---|---|
 | 1 | EULA + Privacy Policy | GPL-3.0, no Mojang affiliation, bring your own account, no warranty/disclaimers, local-only data, **no ID collection**, permission usage |
-| 2 | Third-party open-source notice + risk disclosure | **Renders the bundled `THIRD_PARTY_NOTICES.md` verbatim** (same file as the repo) plus risk disclosure; AGPL/LGPL highlighted |
+| 2 | Third-party open-source notice + risk disclosure | **Renders the bundled `meta/THIRD_PARTY_NOTICES.md` verbatim** (same file as the repo) plus risk disclosure; AGPL/LGPL highlighted |
 | 3 | Tutorial + regions & governing law | Five quick-start steps, key points for the five countries (PIPL / CCPA·COPPA / PIPA / APPI / 152-FZ), full consequences outside covered regions |
 
 Then choose an age group:

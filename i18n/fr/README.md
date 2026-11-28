@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -51,7 +51,7 @@ Cette version stable regroupe tout le contenu des pré-versions précédentes (c
 - **IA renforcée** : installation simultanée de plusieurs versions du jeu ; nouveaux outils de contrôle musical (53 outils au total).
 - **Nouveau « Multijoueur » dans le menu en jeu** : le menu se referme, le lanceur ouvre directement la page Multijoueur — le jeu continue de tourner en arrière-plan.
 
-Changements complets : [CHANGELOG.md](../../CHANGELOG.md).
+Changements complets : [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Fonctionnalités
 
@@ -77,8 +77,8 @@ Changements complets : [CHANGELOG.md](../../CHANGELOG.md).
 | Installation / utilisation / export | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Rendu / connexion / favoris / IA | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Dépannage / FAQ / données et vie privée | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Compilation / journal des modifications | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Reprise / licences tierces / licence | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Compilation / journal des modifications | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Reprise / licences tierces / licence | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Soutien
 
@@ -91,7 +91,7 @@ Changements complets : [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Licence
 
 GPL-3.0 : le projet reste open source. Les composants tiers et leurs licences sont listés dans
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) et [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) et [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **Terracotta (multijoueur) est sous AGPL-3.0**, plus stricte que le reste : distribué tel quel.
 > Si vous le modifiez et le redistribuez, l'article 13 de l'AGPL-3.0 vous oblige à publier le code source

@@ -2,7 +2,7 @@
 
 > **这份文件是入口。** 下一个接手的人或 AI，只看这一份就能知道：项目是什么、现在什么状态、发版怎么做、哪些坑不能踩、文档怎么维护。
 >
-> 读完后请按顺序读：**本文件 → [`HANDOFF.md`](HANDOFF.md)（架构与历史）→ [`CHANGELOG.md`](CHANGELOG.md)（改了什么）→ [`docs/zh/README.md`](docs/zh/README.md)（用户文档总索引）**。
+> 读完后请按顺序读：**本文件 → [`HANDOFF.md`](meta/HANDOFF.md)（架构与历史）→ [`CHANGELOG.md`](meta/CHANGELOG.md)（改了什么）→ [`docs/zh/README.md`](docs/zh/README.md)（用户文档总索引）**。
 >
 > 维护者通常只说一句「了解一下这个项目，看文档，然后做」——所以**所有约定都必须写在这里或 HANDOFF 里，不要依赖聊天记录**。
 
@@ -88,7 +88,7 @@
 
 ### 0. 前置
 - 版本号只改 `modules/ZalithLauncher/gradle.properties`（name + code），**别处不要写死版本号**。
-- 同步：`CHANGELOG.md`、`HANDOFF.md`、`docs/`，以及介绍页 `README.md` / `README_EN.md` + `i18n/*/README.md`（25 种语言，索引见 `i18n/README.md`）。
+- 同步：`meta/CHANGELOG.md`、`meta/HANDOFF.md`、`docs/`，以及介绍页 `README.md` / `README_EN.md` + `i18n/*/README.md`（25 种语言，索引见 `i18n/README.md`）。
 - 推送命令（Token 只放命令行，**绝不入库**）：
   ```bash
   git -c credential.helper= push "https://<user>:<TOKEN>@github.com/zzy89216-gif/ZyNova.git" HEAD:main
@@ -159,7 +159,7 @@ POST /repos/zzy89216-gif/ZyNova/releases
 5. **不要写一次性表述**：类似「只提供 LTS」「只保留一个 Release」「这是第一个（或最后一个）公开版本」说法，发一次就过期。
 6. **版本号只能有一个来源**（`gradle.properties`），文档里的数字必须与它一致。
 7. **改完必须全量检查**：坏链、中英对齐、索引登记、版本一致、CHANGELOG 首条。
-8. **`THIRD_PARTY_NOTICES.md` 有两个副本**：仓库根目录 + `modules/ZalithLauncher/src/main/assets/licenses/`。
+8. **`meta/THIRD_PARTY_NOTICES.md` 有两个副本**：`meta/` 仓库版 + `modules/ZalithLauncher/src/main/assets/licenses/` 的 APK 内版本。
    应用内「第三方声明」页渲染的是**APK 里那份**，所以改动必须两边同步，**并且跟着一次真实构建走**——
    只改仓库会造成「应用内文本 ≠ 仓库文本」。
 
@@ -205,7 +205,7 @@ PY
 - 曾经加过一个文档自检脚本 + `Docs Check` 工作流，后来**按维护者要求删除了**。
   现在文档检查靠本节第五部分的命令 / 人工检查，**不要擅自把它加回 CI**。
 - 维护者要「正常维护、正常修 Bug、正常发版」，**不要**在标题、版本名、文档里加「LTS / 长期支持」这类标签。
-- **所有文档一律严肃写实**（`README.md` / `README_EN.md` / `i18n` 各语言介绍页 / `docs/` / `CHANGELOG.md` / `HANDOFF.md` / `THIRD_PARTY_NOTICES.md` / GitHub Release 说明）：不玩梗、不用颜文字 / 亚文化用语 / 段子；只写事实，不写预期；不能写不存在的功能，也不能把没修的写成修好了。
+- **所有文档一律严肃写实**（`README.md` / `README_EN.md` / `i18n` 各语言介绍页 / `docs/` / `meta/CHANGELOG.md` / `meta/HANDOFF.md` / `meta/THIRD_PARTY_NOTICES.md` / GitHub Release 说明）：不玩梗、不用颜文字 / 亚文化用语 / 段子；只写事实，不写预期；不能写不存在的功能，也不能把没修的写成修好了。
 - **发版待办不再写进文档**，统一放在 Issue 里跟踪。<br>
   原先在仓库根目录另存过一份《下一次的更新内容》，维护者已要求**删除**：待办只在 Issue 里，别再加回仓库。
 - **28.1.1 起只发一个通用版 APK**：取消 `-arm64-v8a` 体积优化版（功能完全相同，只是省体积），
@@ -229,7 +229,7 @@ PY
 
 ## 八、给你的建议顺序
 
-1. 读本文件 → `HANDOFF.md` 对应章节 → `CHANGELOG.md` 首条 → `docs/zh/README.md`；文件分类见 `REPO_MAP.md`。
+1. 读本文件 → `meta/HANDOFF.md` 对应章节 → `meta/CHANGELOG.md` 首条 → `docs/zh/README.md`；文件分类见 `meta/REPO_MAP.md`。
 2. `git log --oneline -20` 看最近做了什么。
 3. 要改功能：先 `grep` 相关 `docs/` 与代码，**改完同步中英文档**。
 4. 要发版：严格按第四节，别跳步。

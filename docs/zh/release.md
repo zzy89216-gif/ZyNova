@@ -3,7 +3,7 @@
 完整步骤以 `AGENTS.md` 第四节（发版流程与坑）为准：
 
 1. 只改 `modules/ZalithLauncher/gradle.properties`：`launcher_version_name`（APK 内版本号）+ `launcher_version_code`；
-2. 同步文档：`CHANGELOG.md`、`AGENTS.md`、`HANDOFF.md`、`docs/`（中英成对）、`README.md` / `README_EN.md`；
+2. 同步文档：`meta/CHANGELOG.md`、`AGENTS.md`、`meta/HANDOFF.md`、`docs/`（中英成对）、`README.md` / `README_EN.md`；
 3. 等 push 触发的构建变绿（只改文档的 push 不会触发编译）；
 4. 创建 Release（`target_commitish` 用**完整 40 位 SHA**，勾 `prerelease` 表示测试版），
    这会触发发布构建并自动上传资产；

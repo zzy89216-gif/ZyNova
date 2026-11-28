@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@ Bu kararlı sürüm, önceki ön sürümlerin tüm içeriğini bir araya getirir
 - **Yapay zekâ güçlendirildi**: aynı anda birden çok oyun sürümü kurulabilir; müzik denetimi araçları eklendi (toplam 53 araç).
 - **Oyun içi menüye «Çok oyunculu» eklendi**: menü kapanır, launcher doğrudan Çok oyunculu sayfasını açar; oyun kapanmaz, arka planda çalışmaya devam eder.
 
-Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
+Tüm değişiklikler: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ Neler yapabilir
 
@@ -77,8 +77,8 @@ Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
 | Kurulum / kullanım / dışa aktarma | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Görüntüleyici / giriş / yapay zekâ | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Sorun giderme / SSS / veri ve gizlilik | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Derleme / sürüm notları | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Devir / üçüncü taraf lisansları / lisans | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Derleme / sürüm notları | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Devir / üçüncü taraf lisansları / lisans | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Destek
 
@@ -91,7 +91,7 @@ Tüm değişiklikler: [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Lisans
 
 GPL-3.0 — proje açık kaynak kalır. Üçüncü taraf bileşenler ve lisansları
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) ile [docs/en/licenses.md](../../docs/en/licenses.md) içinde.
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) ile [docs/en/licenses.md](../../docs/en/licenses.md) içinde.
 
 > ⚠️ **Terracotta (çok oyunculu) AGPL-3.0 altında** ve diğerlerinden daha katı: değiştirilmeden dağıtılır.
 > Değiştirip yeniden dağıtırsanız AGPL-3.0 §13 uyarınca ilgili kaynak kodu yayımlamanız gerekir.

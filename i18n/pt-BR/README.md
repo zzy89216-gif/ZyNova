@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -51,7 +51,7 @@ Esta versão estável reúne todo o conteúdo das versões de pré-lançamento a
 - **IA reforçada**: dá para instalar várias versões do jogo ao mesmo tempo; novas ferramentas de controle de música (53 ferramentas no total).
 - **Novo atalho «Multijogador» no menu do jogo**: o menu fecha, o launcher abre direto a página Multijogador e o jogo continua rodando em segundo plano.
 
-Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
+Mudanças completas: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ O que faz
 
@@ -84,8 +84,8 @@ Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 | Instalação / uso / exportação | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | Renderização / login / IA | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | Problemas / FAQ / dados e privacidade | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| Compilação / changelog | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| Passagem de bastão / licenças de terceiros / licença | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| Compilação / changelog | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| Passagem de bastão / licenças de terceiros / licença | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 Apoio
 
@@ -98,7 +98,7 @@ Mudanças completas: [CHANGELOG.md](../../CHANGELOG.md).
 ## ⚖️ Licença
 
 GPL-3.0 — o projeto continua aberto. Componentes de terceiros e suas licenças estão em
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) e [docs/en/licenses.md](../../docs/en/licenses.md).
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) e [docs/en/licenses.md](../../docs/en/licenses.md).
 
 > ⚠️ **O Terracotta (multijogador) usa AGPL-3.0**, mais rígida que o restante: é distribuído sem
 > alterações. Se você modificá-lo e redistribuí-lo, o §13 da AGPL-3.0 exige publicar o código-fonte

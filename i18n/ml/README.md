@@ -5,12 +5,12 @@
 </sub></p>
 
 <p align="center">
-  <img src="../../assets/icon.png" width="160" alt="ZyNova">
+  <img src="../../docs/assets/icon.png" width="160" alt="ZyNova">
 </p>
 
 # ZyNova
 
-> 📌 **Current release: 28.4.0** · [Changelog](../../CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
+> 📌 **Current release: 28.4.0** · [Changelog](../../meta/CHANGELOG.md) · [Releases](https://github.com/zzy89216-gif/ZyNova/releases/latest)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen)](https://developer.android.com/)
 [![Release](https://img.shields.io/badge/Release-28.4.0-purple)](https://github.com/zzy89216-gif/ZyNova/releases/tag/v28.4.0)
@@ -45,7 +45,7 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 - **AI കൂടുതൽ ശക്തം**: ഒരേസമയം ഒന്നിലധികം ഗെയിം പതിപ്പുകൾ ഇൻസ്റ്റാൾ ചെയ്യാം; സംഗീത നിയന്ത്രണത്തിനുള്ള ടൂളുകൾ ചേർത്തു (ആകെ 53 ടൂളുകൾ).
 - **ഗെയിമിനുള്ളിലെ മെനുവിൽ പുതിയ «മൾട്ടിപ്ലെയർ»**: മെനു അടയുന്നു, ലോഞ്ചർ നേരിട്ട് മൾട്ടിപ്ലെയർ പേജ് തുറക്കുന്നു; ഗെയിം അടയ്ക്കുന്നില്ല, പിന്നിൽ തുടരും.
 
-എല്ലാ മാറ്റങ്ങളും: [CHANGELOG.md](../../CHANGELOG.md).
+എല്ലാ മാറ്റങ്ങളും: [CHANGELOG.md](../../meta/CHANGELOG.md).
 
 ## 🛠️ എന്തു ചെയ്യും
 
@@ -83,8 +83,8 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 | ഇൻസ്റ്റാൾ / ഉപയോഗം / എക്സ്പോർട്ട് | [docs/en/install.md](../../docs/en/install.md) · [docs/en/usage.md](../../docs/en/usage.md) |
 | റെൻഡറിംഗ് / ലോഗിൻ / AI | [docs/en/renderers.md](../../docs/en/renderers.md) · [docs/en/login.md](../../docs/en/login.md) · [docs/en/ai-agent.md](../../docs/en/ai-agent.md) |
 | പ്രശ്ന പരിഹാരം / FAQ / സ്വകാര്യത | [docs/en/troubleshooting.md](../../docs/en/troubleshooting.md) · [docs/en/faq.md](../../docs/en/faq.md) · [docs/en/data-and-privacy.md](../../docs/en/data-and-privacy.md) |
-| ബിൽഡ് / മാറ്റങ്ങൾ | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../CHANGELOG.md) |
-| കൈമാറ്റം / മൂന്നാം കക്ഷി ലൈസൻസുകൾ / ലൈസൻസ് | [HANDOFF.md](../../HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
+| ബിൽഡ് / മാറ്റങ്ങൾ | [docs/en/build.md](../../docs/en/build.md) · [CHANGELOG.md](../../meta/CHANGELOG.md) |
+| കൈമാറ്റം / മൂന്നാം കക്ഷി ലൈസൻസുകൾ / ലൈസൻസ് | [HANDOFF.md](../../meta/HANDOFF.md) · [THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md) · [LICENSE](../../LICENSE) |
 
 ## 💖 പിന്തുണ
 
@@ -97,7 +97,7 @@ Android-നുള്ള **Minecraft: Java Edition** ലോഞ്ചർ. ZalithLa
 ## ⚖️ ലൈസൻസ്
 
 GPL-3.0 — പ്രോജക്റ്റ് ഓപ്പൺ സോഴ്സായി തുടരുന്നു. മൂന്നാം കക്ഷി ഘടകങ്ങളും ലൈസൻസുകളും
-[THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md), [docs/en/licenses.md](../../docs/en/licenses.md) എന്നിവയിൽ.
+[THIRD_PARTY_NOTICES.md](../../meta/THIRD_PARTY_NOTICES.md), [docs/en/licenses.md](../../docs/en/licenses.md) എന്നിവയിൽ.
 
 > ⚠️ **Terracotta (മൾട്ടിപ്ലെയർ) AGPL-3.0-ൽ ആണ്**, മറ്റുള്ളവയേക്കാൾ കർശനം: മാറ്റമില്ലാതെ വിതരണം
 > ചെയ്യുന്നു. മാറ്റി വീണ്ടും വിതരണം ചെയ്താൽ, AGPL-3.0 §13 പ്രകാരം ബന്ധപ്പെട്ട സോഴ്സ് കോഡ്
