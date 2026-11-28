@@ -61,7 +61,7 @@ Networks in China: mirrors are used on demand and fall back to the official sour
 - **Personalization removed**: the top-bar palette entry and the Personalization page are gone; appearance settings (theme, wallpaper, corner radius, glass, background blur and more) still live under **Settings → Launcher**.
 - **Deleting a version**: the progress screen is now truly full screen — it covers the whole display, the back key no longer dismisses it by accident, and you can cancel at any time.
 - **Renderer wording fix**: the "Renderer advanced settings" title in Advanced settings no longer claims the wrong number of renderers (three → four).
-- **Performance**: smoother startup, list scrolling and icon loading.
+- **Unstable optimisation reverted**: the list caching / async plugin loading from 28.3.2 caused crashes in several resource manager screens; all of it is reverted in this build. Performance work will be revisited separately.
 
 Everything from earlier versions (the 28.3.0 roll-up of 28.2.2–28.2.4, the music player, device-aware renderer selection, 53 AI tools and the #65–#83 fixes) is included — see [CHANGELOG.md](CHANGELOG.md).
 
