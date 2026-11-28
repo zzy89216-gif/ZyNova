@@ -7,6 +7,6 @@
 Outputs:
 
 ```
-ZalithLauncher/build/outputs/apk/universal/release/
-ZalithLauncher/build/outputs/apk/arm64/release/
+modules/ZalithLauncher/build/outputs/apk/universal/release/
+modules/ZalithLauncher/build/outputs/apk/arm64/release/
 ```

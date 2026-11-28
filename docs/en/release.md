@@ -2,7 +2,7 @@
 
 The full procedure (and its pitfalls) lives in `AGENTS.md`, section 4:
 
-1. Only edit `ZalithLauncher/gradle.properties`: `launcher_version_name` (the in-APK version) and
+1. Only edit `modules/ZalithLauncher/gradle.properties`: `launcher_version_name` (the in-APK version) and
    `launcher_version_code`;
 2. Sync the docs: `CHANGELOG.md`, `AGENTS.md`, `HANDOFF.md`, `docs/` (zh and en pairs),
    `README.md` / `README_EN.md`;

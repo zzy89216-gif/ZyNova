@@ -19,7 +19,7 @@ fun writeVersion(file: File, inputs: List<File>) {
     file.writeText(digest.digest().joinToString("") { "%02x".format(it) })
 }
 
-val lwjglVersion = "3.4.1"
+val lwjglVersion = "3.3.3"
 group = "org.lwjgl.glfw"
 
 configurations {
@@ -31,14 +31,15 @@ configurations {
 dependencies {
     compileOnly(fileTree(mapOf("dir" to "../compileOnly", "include" to listOf("*.jar"))))
     implementation(fileTree(mapOf("dir" to "libs/$lwjglVersion", "include" to listOf("*.jar"))))
-    add(
-        "lwjglModules",
-        fileTree(mapOf("dir" to "libs/$lwjglVersion", "include" to listOf("*.jar")))
-    )
+    // jsr305 仅为编译期注解依赖（@Nullable 等），不得打入运行时 assets，
+    // 否则会与 JDK 内置 java.annotation 模块导出同名包导致 ResolutionException
+    val lwjglModules = fileTree("libs/$lwjglVersion") {
+        include("*.jar")
+        exclude("jsr305.jar")
+    }
+    add("lwjglModules", lwjglModules)
     add("lwjglModules", project(":LWJGL:patches"))
     implementation(project(":LWJGL:patches"))
-    implementation(libs.jspecify) // lwjgl3.3.3 has jsr305 included as a jar
-
 }
 
 tasks.jar {
@@ -48,25 +49,27 @@ tasks.jar {
 
     // Modules to copy over to the components directory instead of patching and merging
     val excludedModules = arrayOf(
-        "lwjgl-lwjglx.jar",
         "lwjgl.jar",
-        "jsr305.jar",
         "lwjgl-freetype.jar",
+//            "lwjgl-glfw.jar",
+        "lwjgl-lwjglx.jar",
         "lwjgl-jemalloc.jar",
         "lwjgl-nanovg.jar",
         "lwjgl-openal.jar",
+//            "lwjgl-opengl.jar",
+        "lwjgl-sdl.jar",
+        "lwjgl-shaderc.jar",
+        "lwjgl-spng.jar",
+        "lwjgl-spvc.jar",
         "lwjgl-stb.jar",
         "lwjgl-tinyfd.jar",
-        "lwjgl-shaderc.jar",
-        "lwjgl-spvc.jar",
         "lwjgl-vma.jar",
-        "lwjgl-vulkan.jar",
-        "lwjgl-spng.jar"
+        "lwjgl-vulkan.jar"
     )
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName.set("lwjgl-${lwjglVersion}-merged-modules")
-    destinationDirectory.set(file("$rootDir/ZalithLauncher/src/main/assets/app_runtime/lwjgl/${lwjglVersion}"))
+    destinationDirectory.set(file("$rootDir/modules/ZalithLauncher/src/main/assets/app_runtime/lwjgl/${lwjglVersion}"))
 
     from({
         // Ensure that the core lwjgl jar is processed first so duplicates in META-INF from other classes
@@ -101,16 +104,15 @@ tasks.jar {
         }
         writeVersion(versionFile, listOf(archiveFile.get().asFile) + excludedModulesFileList)
     }
-    // Adds the jank to outputs
     outputs.file(versionFile)
     outputs.files(excludedModules.map { path -> File(destinationDirectory.get().asFile, path) })
     exclude("net/java/openjdk/cacio/ctc/**")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }

@@ -29,7 +29,7 @@
 |---|---|
 | 版本名 | 当前 `28.4.0`（**正式版**，已发布到 Releases；界面视觉与 28.3.0 一致，**不含**动态玻璃 / 真折射 / 磁吸 / 动效体系；APK 内 `versionName` 为纯数字 `28.4.0`） |
 | versionCode | `284000` |
-| 版本号唯一来源 | `ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
+| 版本号唯一来源 | `modules/ZalithLauncher/gradle.properties` 的 `launcher_version_name` / `launcher_version_code` |
 | Release | `v28.4.0`（最新，正式版）+ `v28.3.0` / `v28.2.1` / `v28.2.0` / `v28.1.0`（正式，保留） |
 | 分支 | `main` 是稳定线；**每次改动先开分支**（如 `28.3.2`），构建与验证彻底没问题后再合并回 `main` |
 | 发布资产 | `ZyNova-<版本>.apk`（唯一通用版）+ `mapping.universal.zip`（arm64 版已取消） |
@@ -43,7 +43,7 @@
 
 ## 三、这个版本实现了什么（别重复造）
 
-### 首次启动合规流程（`ZalithLauncher/.../onboarding/`）
+### 首次启动合规流程（`modules/ZalithLauncher/.../onboarding/`）
 - **3 份合并文档**，每份**必须滑到底部**（`derivedStateOf` 判断 scrollState 到底）+ **逐份勾选**才能下一步；换页重置勾选**并把滚动位置复位到顶部**；最后选年龄。
 - 正文由 `LegalDocuments` 组装：**该语言正文 + 该国家/地区的补充条款**（数据法、监管机构、未成年年龄、争议管辖），
   所以同一份声明在不同国家内容不同、在不同系统语言下文字不同。
@@ -87,7 +87,7 @@
 ## 四、发版：完整流程与坑（照做即可）
 
 ### 0. 前置
-- 版本号只改 `ZalithLauncher/gradle.properties`（name + code），**别处不要写死版本号**。
+- 版本号只改 `modules/ZalithLauncher/gradle.properties`（name + code），**别处不要写死版本号**。
 - 同步：`CHANGELOG.md`、`HANDOFF.md`、`docs/`，以及介绍页 `README.md` / `README_EN.md` + `i18n/*/README.md`（25 种语言，索引见 `i18n/README.md`）。
 - 推送命令（Token 只放命令行，**绝不入库**）：
   ```bash
@@ -144,7 +144,7 @@ POST /repos/zzy89216-gif/ZyNova/releases
 
 > ⚠️ **坑 4（资产名）**：APK 文件名只取版本号的数字部分（`launcherVersionFileTag = launcher_version_name.substringBefore(' ')`）。
 > 如果版本名带后缀（如 `28.1.1 beta`），空格会被 GitHub 转成点，出现 `ZyNova-28.1.1.beta.apk` 这种名字。
-> 真要改回来：改 `ZalithLauncher/build.gradle.kts` 的 `launcherVersionFileTag`。
+> 真要改回来：改 `modules/ZalithLauncher/build.gradle.kts` 的 `launcherVersionFileTag`。
 > GitHub 支持 `PATCH /releases/assets/{id}` 直接改名，不需要重传。
 
 ### 5. 修 Bug 必须升版本号
@@ -159,7 +159,7 @@ POST /repos/zzy89216-gif/ZyNova/releases
 5. **不要写一次性表述**：类似「只提供 LTS」「只保留一个 Release」「这是第一个（或最后一个）公开版本」说法，发一次就过期。
 6. **版本号只能有一个来源**（`gradle.properties`），文档里的数字必须与它一致。
 7. **改完必须全量检查**：坏链、中英对齐、索引登记、版本一致、CHANGELOG 首条。
-8. **`THIRD_PARTY_NOTICES.md` 有两个副本**：仓库根目录 + `ZalithLauncher/src/main/assets/licenses/`。
+8. **`THIRD_PARTY_NOTICES.md` 有两个副本**：仓库根目录 + `modules/ZalithLauncher/src/main/assets/licenses/`。
    应用内「第三方声明」页渲染的是**APK 里那份**，所以改动必须两边同步，**并且跟着一次真实构建走**——
    只改仓库会造成「应用内文本 ≠ 仓库文本」。
 
@@ -191,7 +191,7 @@ PY
 | Git 历史 | **不要重写**（维护者明确要求） |
 | 构建耗时 | 一次 push 构建 ≈ 19 分钟，一次发布构建 ≈ 18 分钟（只改文档的 push 已被 `paths-ignore` 跳过） |
 | 条款文本冻结 | APK 内的条款/声明是打包时冻结的，改条款必须重新构建 |
-| `gradle.properties` 位置 | 版本号在 `ZalithLauncher/gradle.properties`，不在根目录 |
+| `gradle.properties` 位置 | 版本号在 `modules/ZalithLauncher/gradle.properties`，不在根目录 |
 | `namespace` | 不要改 `com.movtery.zalithlauncher`，否则要改几百个文件的 package |
 
 ## 七、历史决定（避免反复讨论）
@@ -219,11 +219,11 @@ PY
   且只回滚本次写入的文件）。
 - **离线 / 第三方登录入口按界面语言显示**：中文展示，其他语言隐藏；只收入口不删账号。
 - **CurseForge API Key 在构建期注入，不在应用内让用户填**：只经 CI Secret（`CURSEFORGE_API_KEY`）注入，
-  本地可放 `.curseforge_api.txt` 或 `ZalithLauncher/gradle.properties` 的 `curseforge_api_key`，
+  本地可放 `.curseforge_api.txt` 或 `modules/ZalithLauncher/gradle.properties` 的 `curseforge_api_key`，
   最终编进 `BuildConfig.CURSEFORGE_API`；**值绝不入库**。CurseForge 条款对「随包分发内置 Key」有风险，
   维护者**已知并接受**；将来真被限流 / 封 Key，再改成引导用户自填（需要新增设置项），不要提前改架构。
   Key 缺失时 CurseForge 请求走 MCIM 镜像兜底，不会崩。
-- **签名密钥不更换、证书指纹公开**：Release 与 Debug 共用 `ZalithLauncher/zalith_launcher_debug.jks`
+- **签名密钥不更换、证书指纹公开**：Release 与 Debug 共用 `modules/ZalithLauncher/zalith_launcher_debug.jks`
   （别名 `movtery_zalith_debug`，口令是上游公开默认值）；换密钥会让老用户无法覆盖安装，**不要动**。
   官方证书 SHA-256 指纹公布在 `README.md` / `README_EN.md` 的「校验官方安装包」一节，跨版本稳定，不用每版重算。
 

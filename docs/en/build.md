@@ -18,7 +18,7 @@ There are two flavors:
 Output path:
 
 ```
-ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<version>.apk
+modules/ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<version>.apk
 ```
 
 ## CI
@@ -28,7 +28,7 @@ ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<version>.apk
 
 ## Before a release
 
-1. Bump the version in `ZalithLauncher/gradle.properties` (name + code);
+1. Bump the version in `modules/ZalithLauncher/gradle.properties` (name + code);
 2. Sync `CHANGELOG.md` / `HANDOFF.md` / `README*.md` / `docs/`;
 3. Privacy scan;
 4. Wait for green CI;

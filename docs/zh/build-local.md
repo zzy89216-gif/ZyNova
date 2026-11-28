@@ -6,4 +6,4 @@
 ./gradlew ZalithLauncher:assembleRelease
 ```
 
-产物在 `ZalithLauncher/build/outputs/apk/<flavor>/release/`。
+产物在 `modules/ZalithLauncher/build/outputs/apk/<flavor>/release/`。

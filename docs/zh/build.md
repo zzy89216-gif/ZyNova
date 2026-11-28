@@ -18,7 +18,7 @@
 产物路径：
 
 ```
-ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<版本>.apk
+modules/ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<版本>.apk
 ```
 
 ## CI
@@ -28,7 +28,7 @@ ZalithLauncher/build/outputs/apk/universal/release/ZyNova-<版本>.apk
 
 ## 发布前
 
-1. 改 `ZalithLauncher/gradle.properties` 的版本号（name + code）；
+1. 改 `modules/ZalithLauncher/gradle.properties` 的版本号（name + code）；
 2. 同步 `CHANGELOG.md` / `HANDOFF.md` / `README*.md` / `docs/`；
 3. 隐私扫描；
 4. 等 CI 绿；

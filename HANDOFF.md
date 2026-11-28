@@ -52,7 +52,7 @@
 - 当前版本 **28.3.3**（`launcher_version_code=283300`，**预发行 / 测试版**，已由 `28.3.2` 分支合并回 `main` 并发布；界面视觉保持 28.3.0）；
 - 版本号正常迭代：改动累积到可发布程度就升 `launcher_version_code` / `launcher_version_name`，然后正常发版；
 - 26.x / 27.x / 28.0.x 为内部迭代，未单独对外发布；需要追溯请看 Git 提交记录；
-- 对外文档里的版本号一律以 `ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
+- 对外文档里的版本号一律以 `modules/ZalithLauncher/gradle.properties` 为准，发版时同步 README / CHANGELOG / HANDOFF。
 
 ## 二、当前版本与进度
 
@@ -1796,7 +1796,7 @@ else { /* 223.5.5.5 / 119.29.29.29 */ }
 
 - 只改了**仓库 Secret `OAUTH_CLIENT_ID`** 的取值，**没有改任何代码**，
   认证流程（`MicrosoftAuthenticator.kt` 等）与 26.4.1 **完全一致**
-- 取值优先级 **环境变量（CI Secret）> `.oauth_client_id.txt` > `ZalithLauncher/gradle.properties`**，
+- 取值优先级 **环境变量（CI Secret）> `.oauth_client_id.txt` > `modules/ZalithLauncher/gradle.properties`**，
   因此 `gradle.properties` 里仍是原来的兜底值，源码中**不包含任何实际生效的 Client ID**
 - 版本号提升为 26.4.2（`launcher_version_code=260402`）
 
@@ -1916,7 +1916,7 @@ HTTP 403
   其租户 ID / 对象 ID 属于项目维护者的目录标识，**不写入本文档**，
   需要时请到维护者的 Entra 后台查看
 - **注入方式**：仓库 Secret **`OAUTH_CLIENT_ID`**，**构建时注入**，
-  **不写进源码**；因此 `ZalithLauncher/gradle.properties` 里保留的是 ZyNova 自己的
+  **不写进源码**；因此 `modules/ZalithLauncher/gradle.properties` 里保留的是 ZyNova 自己的
   那个作为兜底（该注册已于 2026-09-30 获批准），它只在 Secret 缺失时才会生效
 - **上游 ZalithLauncher2 的做法完全一致**：其仓库里同样是注释掉的
   `#oauth_client_id=xxx`，真实 ID 通过 CI Secret / `.oauth_client_id.txt` 在构建时注入。
@@ -1944,7 +1944,7 @@ HTTP 403
 | `game/account/microsoft/MinecraftProfileException.kt` | 构造函数增加可选 `message`；新增 `APP_NOT_REGISTERED` 状态及 `toLocal()` 分支 |
 | `game/account/yggdrasil/YggdrasilApi.kt` | `getPlayerProfile()` 失败时记录状态码与响应体 |
 | `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 新增 `account_logging_app_not_registered` 文案（默认英文 + 简体中文） |
-| `ZalithLauncher/gradle.properties` | 版本号 26.4.1（`launcher_version_code=260401`） |
+| `modules/ZalithLauncher/gradle.properties` | 版本号 26.4.1（`launcher_version_code=260401`） |
 | 仓库 Secret `OAUTH_CLIENT_ID` | 设为上游已获批准的 Client ID（**不在仓库文件中，不是代码改动**） |
 
 ⚠️ **日志安全**：`login_with_xbox` 只在**非 2xx** 时读取响应体，
@@ -1997,7 +1997,7 @@ HTTP 403
 
 **三、签名（未改动）**
 
-- Release 与 Debug 都使用 `ZalithLauncher/zalith_launcher_debug.jks`，别名 `movtery_zalith_debug`，
+- Release 与 Debug 都使用 `modules/ZalithLauncher/zalith_launcher_debug.jks`，别名 `movtery_zalith_debug`，
   口令取 `gradle.properties` 里的上游公开默认值（`default_store_password` / `default_key_password`）
 - 该证书 SHA-1：`0D:FD:FB:0D:DF:B4:D0:3F:73:1C:F4:7F:0F:40:FF:D7:7A:CB:02:DC`
   （CN=MovTery，有效期至 2050-05-17）
@@ -2098,7 +2098,7 @@ HTTP 403
 
 **六、发布形态：一个通用版本 + 代码混淆**
 
-- `ZalithLauncher/build.gradle.kts`：`splits { … }` 已删除，`projectArch` 固定为 `"all"`，
+- `modules/ZalithLauncher/build.gradle.kts`：`splits { … }` 已删除，`projectArch` 固定为 `"all"`，
   不再读取 `-Darch`，也不再按架构裁剪 JRE / LWJGL 资源
 - Release 保持 `isMinifyEnabled = true` + `isShrinkResources = true`
 - 产物名：`ZyNova-<版本>.apk`（不再有 `-arm64-v8a` 之类的后缀）
@@ -2531,7 +2531,7 @@ HTTP 403
 | `ui/screens/content/download/Download*Screen.kt` | 安装上下文传递 |
 | `ui/screens/content/download/assets/**` | 快捷安装入口按上下文显隐 + 已安装状态 |
 | `ui/screens/BackStackNavKey.kt` | 新增资源安装上下文 |
-| `ZalithLauncher/gradle.properties` | 版本 26.1.0，主页链接指向 ZyNova |
+| `modules/ZalithLauncher/gradle.properties` | 版本 26.1.0，主页链接指向 ZyNova |
 
 ### 26.2.x 涉及文件
 
@@ -2578,7 +2578,7 @@ HTTP 403
 | `game/download/assets/platform/modrinth/ModrinthAPI.kt` | `platformClasses.modrinth!!` 改为明确的 `UnsupportedClassesException` |
 | `game/download/assets/platform/_PlatformSearch.kt` | 无 CurseForge API Key 时也启用 MCIM 镜像源（否则官方接口必然 403） |
 | `game/download/resources/ResourceInstallManager.kt` | 存档解压后兜底清理残留的 `.zip` |
-| `ZalithLauncher/build.gradle.kts` | `getKeyFromLocal` 把空字符串环境变量视为未配置，可回退到本地文件 / gradle 属性 |
+| `modules/ZalithLauncher/build.gradle.kts` | `getKeyFromLocal` 把空字符串环境变量视为未配置，可回退到本地文件 / gradle 属性 |
 
 ### 26.2.4 涉及文件
 
@@ -2597,7 +2597,7 @@ HTTP 403
 | `game/home/HomeLayoutStore.kt` | **新增**：拖动后的顺序持久化（MMKV，按标识符保存） |
 | `ui/screens/main/card_home/CardHomePage.kt` | 卡片重建为单层背景（去阴影 / 去缩放图层，点击用默认按压动画）；版本卡片与卡片内世界 / 服务器接入拖动排序 |
 | `ui/screens/content/LauncherScreen.kt` | 右侧菜单由 `ConstraintLayout` 改为可拖动的 `Column`（`Arrangement.SpaceBetween` 保持原观感），三块各自接入拖动排序；版本下拉菜单的锚点逻辑保持不变 |
-| `ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
+| `modules/ZalithLauncher/gradle.properties` | 版本号 26.2.5 |
 
 ### 26.4.0 涉及文件
 
@@ -2612,7 +2612,7 @@ HTTP 403
 | `ui/screens/content/download/assets/elements/_Search.Result.kt` | Issue #6：`ResultList` → `ResultProjectLayout` 补上漏传的 `classes = classes` |
 | `ui/screens/content/settings/IronizedZinkConfigCards.kt` | Issue #7：删除 13 个单独参数控件，面板只剩预设卡（`CardPosition.Single`） |
 | `res/values/strings.xml`、`res/values-zh-rCN/strings.xml` | 补回 11 条微软提示文案；新增 `download_assets_filter_category_with_source`；改写 3 条 Ironized Zink 文案 |
-| `ZalithLauncher/gradle.properties` | 配置 `oauth_client_id`；版本号 26.4.0（`launcher_version_code=260400`） |
+| `modules/ZalithLauncher/gradle.properties` | 配置 `oauth_client_id`；版本号 26.4.0（`launcher_version_code=260400`） |
 
 ### 26.3.0 涉及文件
 
@@ -2630,7 +2630,7 @@ HTTP 403
 | `ui/screens/content/settings/RendererSettingsScreen.kt` | 选中 Ironized Zink 时在下方插入配置面板 |
 | `ui/components/Reorder.kt` | `onBounds()` 仅在拖动中处理位移（修复滚动时卡片异常移动） |
 | `library/_Libraries.kt` | 移除 NG-GL4ES，Mesa 改完整许可集，新增 Ironized Zink / MobileGlues |
-| `ZalithLauncher/build.gradle.kts` | 删除 ABI 拆分与 `-Darch` 资源裁剪，固定通用版本 |
+| `modules/ZalithLauncher/build.gradle.kts` | 删除 ABI 拆分与 `-Darch` 资源裁剪，固定通用版本 |
 | `.github/workflows/build.yml` | 去掉 ABI 矩阵，只构建通用包；注入 `GITHUB_TOKEN` |
 | `.github/workflows/build_apk.yml` | 改为通用版本；注入 `GITHUB_TOKEN` |
 | `.github/workflows/release_ci.yml` | 传递 `GH_TOKEN`；按通用包整理产物 |
@@ -2821,7 +2821,7 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
      更不要写进源码、文档、workflow（workflow 里必须用 `${{ secrets.XXX }}`）
    - 克隆 / 推送时即使把 Token 放进 `git remote` 的 URL，也只会留在本地 `.git/config`（不会被提交），
      但收尾时应当把它清掉：`git remote set-url origin https://github.com/zzy89216-gif/ZyNova.git`
-   - `ZalithLauncher/gradle.properties` 里的 `default_store_password` / `default_key_password`
+   - `modules/ZalithLauncher/gradle.properties` 里的 `default_store_password` / `default_key_password`
      是**上游公开**的默认签名口令（官方 debug 密钥本来就公开），属于刻意保留的项目资产，不要删；
      CI 会用 `KEY_PASSWORD` / `STORE_PASSWORD` Secrets 覆盖它们
    - **文档同样不能写密钥**：HANDOFF（本文）、CHANGELOG、README、Issue、Release 说明里
@@ -2859,8 +2859,8 @@ curl -sL -H "Authorization: Bearer $TOKEN" \
      `THIRD_PARTY_NOTICES.md`、`assets/licenses/`、`res/raw/`、`library/_Libraries.kt`
 6. **签名**：release 与 debug 都使用官方公开的 `zalith_launcher_debug.jks`（密码在 gradle.properties，官方本来就公开），不要生成新密钥硬编码密码。
 7. **⛔ 绝对不要删除或修改仓库中的签名密钥文件**（维护者刻意保留的项目资产）：
-   - `ZalithLauncher/zalith_launcher_debug.jks`
-   - `ZalithLauncher/zalith_launcher.jks`
+   - `modules/ZalithLauncher/zalith_launcher_debug.jks`
+   - `modules/ZalithLauncher/zalith_launcher.jks`
    - 后者虽然当前构建配置未引用，但**维护者是刻意保留它的**，
      **不要因为「未被引用」就把它当作无用文件清理掉**。
 8. **不要移除正版（微软）登录入口**（**2026-09-28 由维护者明确要求，取代此前的相反规定**）：
@@ -3170,7 +3170,7 @@ OAuth client id / CurseForge API key / Cookie / Session / 本地绝对路径 / �
 > 下面是**从 README 移出来、但仍需要记录**的内容，统一放在这里，不要再塞回 README：
 >
 > - **项目结构**：仓库同时是源码、开发、文档与 Release 仓库；Android 工程在根目录与
->   `ZalithLauncher/`，文档为 `README*.md` / `CHANGELOG.md` / `HANDOFF.md` / `THIRD_PARTY_NOTICES.md`
+>   `modules/ZalithLauncher/`，文档为 `README*.md` / `CHANGELOG.md` / `HANDOFF.md` / `THIRD_PARTY_NOTICES.md`
 > - **技术栈**：Kotlin/Java + Compose、C/C++（NDK）、Gradle、GitHub Actions
 > - **开发与发布流程**：需求 → 源码分析 → 改代码 → push 触发 Actions 编译 → 真机验证 → Release
 > - **多语言文档**：简中 / 英 / 繁中 / 日 / 韩 / 俄，六份必须同步（版本徽标、更新要点、功能列表）
@@ -3209,7 +3209,7 @@ ZyNova 面向 Android，目标不是复制上游，而是在 ZalithLauncher2 的
 **4. 项目结构**
 
 仓库同时承担源码仓库、开发仓库、文档仓库与 Release 发布仓库；
-Android 工程主要在仓库根目录与 `ZalithLauncher/`，文档为 `README*.md`、`CHANGELOG.md`、
+Android 工程主要在仓库根目录与 `modules/ZalithLauncher/`，文档为 `README*.md`、`CHANGELOG.md`、
 `HANDOFF.md`、`THIRD_PARTY_NOTICES.md`，许可证为 `LICENSE`。
 
 **5. 登录与渲染器**
@@ -3294,7 +3294,7 @@ Token 只放在环境变量或临时凭据助手里，用完即弃（见第八�
 TOKEN="$GITHUB_TOKEN"   # 只从环境变量读，不要把值写进任何文件
 REPO="zzy89216-gif/ZyNova"
 
-# 1. 改代码 + 版本号（ZalithLauncher/gradle.properties 的 launcher_version_name / _code）
+# 1. 改代码 + 版本号（modules/ZalithLauncher/gradle.properties 的 launcher_version_name / _code）
 #    并同步文档（CHANGELOG / HANDOFF / README ×3 / THIRD_PARTY_NOTICES），然后 push 到 main
 
 # 2. 等 push 触发的通用版本验证编译跑完（这是最快的编译闸门，约 10~25 分钟）

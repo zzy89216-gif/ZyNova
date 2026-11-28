@@ -1,7 +1,7 @@
 name: Build APK
 
 # 只发布一个通用版 APK（全部 ABI）；arm64 体积优化版已于 28.1.1 取消。
-# Release 构建保持代码混淆（见 ZalithLauncher/build.gradle.kts 的 buildTypes.release）。
+# Release 构建保持代码混淆（见 modules/ZalithLauncher/build.gradle.kts 的 buildTypes.release）。
 
 on:
   workflow_dispatch:
@@ -66,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: release apk (universal)
-          path: ZalithLauncher/build/outputs/apk/**/release/**/*.apk
+          path: modules/ZalithLauncher/build/outputs/apk/**/release/**/*.apk
 
       - name: Upload Release Mapping (universal)
         if: inputs.variant == 'Release'
@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: mapping.universal
-          path: ZalithLauncher/build/outputs/mapping/**/mapping.txt
+          path: modules/ZalithLauncher/build/outputs/mapping/**/mapping.txt
 
       - name: Upload Debug APK (universal)
         if: inputs.variant == 'Debug'
@@ -82,4 +82,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: debug apk (universal)
-          path: ZalithLauncher/build/outputs/apk/**/debug/**/*.apk
+          path: modules/ZalithLauncher/build/outputs/apk/**/debug/**/*.apk

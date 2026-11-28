@@ -16,7 +16,7 @@
 - **内网穿透客户端**：frp / frpc（樱花定制构建）= **Apache-2.0**
 - **陶瓦联机 Terracotta（含 `libterracotta.so`）= AGPL-3.0** ⚠️
   AGPL-3.0 比 GPL-3.0 更严格：**重新分发时（含修改版）需要按 AGPL-3.0 §13 提供完整对应源码**，
-  即使只通过网络提供服务也一样。完整文本见 `Terracotta/src/main/res/raw/terracotta_license.txt`，
+  即使只通过网络提供服务也一样。完整文本见 `modules/Terracotta/src/main/res/raw/terracotta_license.txt`，
   也可在应用内「设置 → 关于 → 开源许可 → Terracotta」里查看。
 
 ---
@@ -42,9 +42,9 @@
 | 上游 | https://github.com/MobileGL-Dev/MobileGlues |
 | 发行版 | https://github.com/MobileGL-Dev/MobileGlues-release |
 | 版本 | 2.0.1-dev（上游 ZalithLauncher2 2.8.1 内置的预发布构建） |
-| 许可证 | **GNU LGPL-2.1**（含上游版权头 `Copyright (c) 2025-2026 MobileGL-Dev`）——完整文本见 `ZalithLauncher/src/main/res/raw/mobileglues_license.txt` |
+| 许可证 | **GNU LGPL-2.1**（含上游版权头 `Copyright (c) 2025-2026 MobileGL-Dev`）——完整文本见 `modules/ZalithLauncher/src/main/res/raw/mobileglues_license.txt` |
 | 随附形式 | 未经修改的预编译共享库 `libmobileglues.so`（arm64-v8a / armeabi-v7a / x86 / x86_64） |
-| 二进制来源 | 上游 ZalithLauncher2 2.8.1 的 `ZalithLauncher/libs/MobileGlues-release.aar`（`jni/<abi>/libmobileglues.so`） |
+| 二进制来源 | 上游 ZalithLauncher2 2.8.1 的 `modules/ZalithLauncher/libs/MobileGlues-release.aar`（`jni/<abi>/libmobileglues.so`） |
 
 **对应源码（LGPL-2.1 §6 要求）**：所分发的 `libmobileglues.so` 取自上述 AAR，
 本项目**未做任何修改**。上游构建对应的 MobileGlues 源码为：
@@ -63,7 +63,7 @@
 |---|---|
 | 上游 | https://github.com/PojavLauncherTeam/gl4es_extra_extra |
 | 版权 | Copyright © 2016-2018 Sebastien Chevalier；Copyright © 2013-2016 Ryan Hileman |
-| 许可证 | **MIT** — 文本见 `ZalithLauncher/src/main/res/raw/gl4es_license.txt` |
+| 许可证 | **MIT** — 文本见 `modules/ZalithLauncher/src/main/res/raw/gl4es_license.txt` |
 | 随附形式 | 未经修改的预编译共享库 `libgl4es_114.so`（四个 ABI） |
 
 ### 2.3 LTW-Turbo（实验性）
@@ -73,8 +73,8 @@
 | 上游 | https://github.com/gaowan-u/LTW-Turbo |
 | 作者 / 维护者 | MathCode（gaowan-u） |
 | 版本 | v1.0.3-preview.1（commit `8df9045`，`fix/render-and-minor-bugs` 分支） |
-| 许可证 | **GNU LGPL-3.0** — 完整文本见 `ZalithLauncher/src/main/res/raw/ltw_turbo_license.txt` |
-| 随附声明 | `ZalithLauncher/src/main/assets/licenses/ltw-turbo-CREDITS.md` |
+| 许可证 | **GNU LGPL-3.0** — 完整文本见 `modules/ZalithLauncher/src/main/res/raw/ltw_turbo_license.txt` |
+| 随附声明 | `modules/ZalithLauncher/src/main/assets/licenses/ltw-turbo-CREDITS.md` |
 | 随附形式 | 未经修改的预编译共享库 `libltw_turbo.so`（**仅 arm64-v8a**），取自上游 release 资产 `LTW.Turbo.v1.0.3-preview.1.apk` |
 
 LTW-Turbo 是 LTW（Large Thin Wrapper）的维护分支：一个把桌面 OpenGL 实时翻译到
@@ -92,9 +92,9 @@ artDev、SerpentSpirale、CADIndie；LTW-Turbo 由 MathCode 等维护。
 | 上游 | https://github.com/GoyDevv/IronizedZink |
 | 作者 | GoyDevv |
 | 版本 | 1.1.0（commit `88f7c2028defe513fd05f591e42a2253e842e4fe`） |
-| 许可证 | **GNU GPL-3.0** — 完整文本见 `ZalithLauncher/src/main/res/raw/ironized_zink_license.txt` |
-| 随附声明 | `ZalithLauncher/src/main/assets/licenses/ironized-zink-CREDITS.md`（上游 `CREDITS.md` 原文，未改动） |
-| 随附形式 | 配置 / 预设代码移植进启动器（`game/renderer/ironizedzink/`），渲染引擎二进制由 `ZalithLauncher/libs/kopper-zink-release.aar` 提供 |
+| 许可证 | **GNU GPL-3.0** — 完整文本见 `modules/ZalithLauncher/src/main/res/raw/ironized_zink_license.txt` |
+| 随附声明 | `modules/ZalithLauncher/src/main/assets/licenses/ironized-zink-CREDITS.md`（上游 `CREDITS.md` 原文，未改动） |
+| 随附形式 | 配置 / 预设代码移植进启动器（`game/renderer/ironizedzink/`），渲染引擎二进制由 `modules/ZalithLauncher/libs/kopper-zink-release.aar` 提供 |
 
 Ironized Zink 自身是一个「打包 + 配置」项目，把 Mesa 的 Zink Gallium 驱动与
 Kopper 窗口系统层包装成一个渲染器；上游许可证全文与署名文件随 APK 一同分发。
@@ -109,7 +109,7 @@ Kopper 窗口系统层包装成一个渲染器；上游许可证全文与署名�
 | 版权 | Copyright © 1999-2007 Brian Paul and the Mesa contributors，以及各组件各自作者 |
 | 组件许可证 | **主 Mesa 代码 / Gallium 代码：MIT**；**GLX 客户端代码：SGI Free Software License B**；**扩展头文件（`include/GL/glext.h`、`include/GL/glxext.h`）：Khronos**；C11 线程模拟：Boost（宽松许可） |
 | 随附形式 | 未经修改的预编译共享库：`libEGL_mesa.so`、`libglxshim.so`、`libglapi.so`、`libzink_dri.so`、`libcutils.so`（Mesa 23.0.4，四个 ABI，由 `libs/kopper-zink-release.aar` 打包） |
-| 完整文本 | 仓库内：`ZalithLauncher/src/main/res/raw/mesa_licenses.txt`（随 APK 分发）；<br>APK 内另有一份由 `libs/kopper-zink-release.aar` 提供的 `assets/licenses/mesa-licenses.rst`（该文件只存在于 AAR 与成品 APK 中，**不在仓库工作树里**） |
+| 完整文本 | 仓库内：`modules/ZalithLauncher/src/main/res/raw/mesa_licenses.txt`（随 APK 分发）；<br>APK 内另有一份由 `libs/kopper-zink-release.aar` 提供的 `assets/licenses/mesa-licenses.rst`（该文件只存在于 AAR 与成品 APK 中，**不在仓库工作树里**） |
 
 > 依 Mesa 项目的要求：本软件不得被称作 “MesaGL”，它是 *Mesa* 或
 > *The Mesa 3-D Graphics Library*。
@@ -132,7 +132,7 @@ Kopper 窗口系统层包装成一个渲染器；上游许可证全文与署名�
 | 上游 | https://github.com/fatedier/frp |
 | 分发者 | SakuraFrp（https://www.natfrp.com/），使用其定制构建 |
 | 版本 | `0.51.0-sakura-15.1`（构建于 2026-10-24，commit `cbfb558`） |
-| 许可证 | **Apache License 2.0** — 完整文本见 `ZalithLauncher/src/main/res/raw/apache_license_2.txt` |
+| 许可证 | **Apache License 2.0** — 完整文本见 `modules/ZalithLauncher/src/main/res/raw/apache_license_2.txt` |
 | 随附形式 | 未经修改的预编译可执行文件 `libfrpc.so`（arm64-v8a / armeabi-v7a / x86 / x86_64），由启动器在本地启动 |
 | 二进制来源 | SakuraFrp 官方客户端清单 `https://api.natfrp.com/v4/system/clients` 的 `frpc.archs` 对应架构下载地址 |
 
@@ -153,7 +153,7 @@ Kopper 窗口系统层包装成一个渲染器；上游许可证全文与署名�
 |---|---|
 | 上游 | https://github.com/burningtnt/Terracotta |
 | 版权 | Copyright © 2025 Burning_TNT |
-| 许可证 | **GNU AGPL-3.0** — 完整文本见 `Terracotta/src/main/res/raw/terracotta_license.txt` |
+| 许可证 | **GNU AGPL-3.0** — 完整文本见 `modules/Terracotta/src/main/res/raw/terracotta_license.txt` |
 | 随附形式 | 独立的 Gradle 模块 `Terracotta`：预编译动态库 `libterracotta.so`（arm64-v8a / armeabi-v7a / x86 / x86_64）+ 该库自带的 VPN 前台服务与 JNI 绑定代码 |
 | 二进制是否修改 | **未修改**（直接使用上游构件） |
 

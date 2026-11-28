@@ -1,6 +1,6 @@
 # 仓库结构
 
-根目录只放「入口文档」和「工程入口」，其余内容按用途分类。**不要往根目录随手丢临时文件或第二份清单**。
+根目录只放「入口文档」和「工程入口」，源码模块统一在 `modules/`，其余内容按用途分类。**不要往根目录随手丢临时文件或第二份清单**。
 
 ## 入口文档
 
@@ -13,16 +13,16 @@
 | [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) | 第三方开源声明（另有 APK 内副本，两处必须同步） |
 | [`LICENSE`](LICENSE) | GPL-3.0 许可证全文 |
 
-## 应用与业务模块（Gradle 子项目）
+## 应用与业务模块（Gradle 子项目，统一放在 `modules/` 下）
 
 | 目录 | 用途 |
 |---|---|
-| `ZalithLauncher/` | 主应用模块：启动器 UI、游戏管理、AI Agent、渲染器、联机等 |
-| `ColorPicker/` | 颜色选择器组件（主题自定义用） |
-| `InputMap/` | 输入映射组件（控制布局用） |
-| `LayerController/` | 图层 / 视图控制组件 |
-| `LWJGL/` | LWJGL 相关补丁与多版本模块 |
-| `Terracotta/` | 陶瓦联机（AGPL-3.0，原样分发） |
+| `modules/ZalithLauncher/` | 主应用模块：启动器 UI、游戏管理、AI Agent、渲染器、联机等 |
+| `modules/ColorPicker/` | 颜色选择器组件（主题自定义用） |
+| `modules/InputMap/` | 输入映射组件（控制布局用） |
+| `modules/LayerController/` | 图层 / 视图控制组件 |
+| `modules/LWJGL/` | LWJGL 相关补丁与多版本模块 |
+| `modules/Terracotta/` | 陶瓦联机（AGPL-3.0，原样分发） |
 
 ## 工程与构建
 
@@ -31,7 +31,7 @@
 | `build.gradle.kts` / `settings.gradle.kts` | 根构建脚本与子项目声明 |
 | `gradle/` | Wrapper 与版本目录（`libs.versions.toml`） |
 | `gradlew` / `gradlew.bat` | Gradle Wrapper |
-| `gradle.properties` | 根工程属性；**版本号不在这里**（见 `ZalithLauncher/gradle.properties`） |
+| `gradle.properties` | 根工程属性；**版本号不在这里**（见 `modules/ZalithLauncher/gradle.properties`） |
 | `.github/` | CI 工作流与 Issue 模板 |
 | `.gitignore` | 忽略规则 |
 
